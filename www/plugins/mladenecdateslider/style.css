@@ -1,0 +1,137 @@
+.mladenecdateslider {
+	display: block;
+	position: relative;
+	width: 100%;
+	height: 32px;
+	margin-top: 24px;
+}
+
+.mladenecdateslider > div {
+	border-color: #c6c6c6;
+	border-style: solid;
+	display: block;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+}
+.mladenecdateslider-before {
+	left: 0;
+	border-radius: 4px 0 0 4px;
+}
+.mladenecdateslider-after {
+	right: 0;
+	border-radius: 0 4px 4px 0;
+}
+.mladenecdateslider-body {
+	left: 0px;
+	right: 0px;
+	height: 32px;
+	background: #fafbef;
+	box-shadow: inset 0 0 1px #ddded5;
+}
+
+.mladenecdateslider-before,
+.mladenecdateslider-after {
+	width: 32px;
+	height: 32px;
+	border-width: 1px;
+	cursor: pointer;
+	
+	background: #ffffff;
+	background: -moz-linear-gradient(top, #ffffff 0%, #ececec 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#ececec));
+	background: -webkit-linear-gradient(top, #ffffff 0%,#ececec 100%);
+	background: -o-linear-gradient(top, #ffffff 0%,#ececec 100%);
+	background: -ms-linear-gradient(top, #ffffff 0%,#ececec 100%);
+	background: linear-gradient(to bottom, #ffffff 0%,#ececec 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ececec',GradientType=0 );	
+}
+
+/* .mladenecdateslider-before:hover,
+.mladenecdateslider-after:hover {
+	
+	background: #ffffff;
+	background: -moz-linear-gradient(top,  #ffffff 0%, #f7f7f7 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#f7f7f7));
+	background: -webkit-linear-gradient(top,  #ffffff 0%,#f7f7f7 100%);
+	background: -o-linear-gradient(top,  #ffffff 0%,#f7f7f7 100%);
+	background: -ms-linear-gradient(top,  #ffffff 0%,#f7f7f7 100%);
+	background: linear-gradient(to bottom,  #ffffff 0%,#f7f7f7 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f7f7f7',GradientType=0 );
+}
+
+.mladenecdateslider-before:active,
+.mladenecdateslider-after:active {
+	padding-bottom: 0px;
+	background: #f7f7f7;
+	background: -moz-linear-gradient(top,  #f7f7f7 0%, #ffffff 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f7f7f7), color-stop(100%,#ffffff));
+	background: -webkit-linear-gradient(top,  #f7f7f7 0%,#ffffff 100%);
+	background: -o-linear-gradient(top,  #f7f7f7 0%,#ffffff 100%);
+	background: -ms-linear-gradient(top,  #f7f7f7 0%,#ffffff 100%);
+	background: linear-gradient(to bottom,  #f7f7f7 0%,#ffffff 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', endColorstr='#ffffff',GradientType=0 );
+} */
+
+.mladenecdateslider-body {
+	border-width: 1px;
+}
+
+.mladenecdateslider-before div,
+.mladenecdateslider-after div
+{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 10px;
+	height: 10px;
+	margin-left: -5px;
+	margin-top: -5px;
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+}
+.mladenecdateslider-before div{
+	background-image: url(/plugins/mladenecdateslider/bracket-left.svg);
+}
+.mladenecdateslider-after div{
+	background-image: url(/plugins/mladenecdateslider/bracket-right.svg);
+}
+
+.mladenecdateslider-date {
+	display: block;
+	position: relative;
+	float: left;
+	line-height: 30px;
+	text-align: center;
+	width: 30px;
+	height: 30px;
+	margin: 1px 17px;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.mladenecdateslider-date:hover {
+	background-color: #a8f2ff;
+}
+
+.mladenecdateslider-date.earlier {
+	opacity: 0.5;
+	cursor: default;
+}
+
+.mladenecdateslider-date.current {
+	background: #43dcf3;
+	font-weight: bold;
+}
+
+.mladenecdateslider-date.current > span {
+	color: #fff;
+}
+
+.mladenecdateslider-label{
+	position: absolute;
+	top: -30px;
+	left: 0;
+	width: 30px;
+	height: 30px;
+}

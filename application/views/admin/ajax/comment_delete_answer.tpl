@@ -1,0 +1,1 @@
+{if $result}ok{else}no{/if}

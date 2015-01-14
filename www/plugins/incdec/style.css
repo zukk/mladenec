@@ -1,0 +1,59 @@
+.incdeced {
+    white-space: nowrap;
+    height: 32px;
+    width: 85px;
+    line-height: 26px;
+}
+
+.incdeced > input {
+    border: 1px solid #c2c2c2;
+    border-left: none;
+    border-right: none;
+    float: left;
+    padding: 0;
+    height: 23px;
+    line-height: 24px;
+    width: 32px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+    color: #555;
+    border-radius: 0;
+    background: url(/j/fancybox/blank.gif) #fff !important;
+    box-shadow: 0 1px 1px #ececec;
+}
+
+.incdeced > a.dec, .incdeced > a.inc {
+    text-align: center;
+    float: left;
+    display: block;
+    height: 21px;
+    font: bold 18px/20px Tahoma, sans-serif;
+    border: 1px solid #c2c2c2;
+    width: 21px;
+    padding: 1px 0;
+    box-shadow: 0 1px 1px #ececec;
+    cursor: pointer;
+    color: #959595;
+    background: #fff;
+    background: -moz-linear-gradient(180deg, #fefefe 0%, #ededed 100%);
+    background: -webkit-linear-gradient(180deg, #fefefe 0%, #ededed 100%);
+    background: -o-linear-gradient(180deg, #fefefe 0%, #ededed 100%);
+    background: -ms-linear-gradient(180deg, #fefefe 0%, #ededed 100%);
+    background: linear-gradient(180deg, #fefefe 0%, #ededed 100%);
+}
+
+.incdeced > a.inc {
+    border-right: 1px solid #c2c2c2;
+    border-radius: 0 3px 3px 0;
+    margin-right: 3px;
+}
+
+.incdeced > a.dec:hover, .incdeced > a.inc:hover {
+    color: #22bbea;
+}
+
+.incdeced > a.dec {
+    border-radius: 3px 0 0 3px;
+}
+

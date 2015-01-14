@@ -1,0 +1,436 @@
+body {
+    background: #fff url(/i/ogurchik/grad.png) repeat-x 50% 100px;
+}
+
+#logo {
+    top: 25px;
+}
+
+#body {
+    background: none;
+    width: 994px;
+}
+
+#all {
+    background: url(/i/ogurchik/fon.jpg) no-repeat 50% 0;
+}
+
+body.main #all {
+    background: url(/i/ogurchik/bg.jpg) no-repeat 50% 0;
+}
+
+#catalog {
+    background: url(/i/ogurchik/menu.png) repeat-x;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, .3);
+    top: 115px;
+}
+
+#catalog td {
+    width: auto;
+    height: 50px;
+    border-right: 1px solid #ffe652;
+}
+
+#catalog td + td {
+    border-left: 1px solid #fed606;
+}
+
+#catalog td.last {
+    border-right: none;
+}
+
+#catalog td div {
+    line-height: 47px;
+    padding: 0 5px;
+    min-height: 48px;
+}
+
+#catalog td div > a {
+    color: #271106;
+    text-shadow: 0 1px #fff495;
+    font: normal bold 11px Verdana, Tahoma, Geneva, sans-serif;
+    letter-spacing: 0;
+    white-space: nowrap;
+    text-transform: uppercase;
+}
+
+#catalog td:first-child > div {
+    border: none;
+    padding-left: 10px;
+}
+
+#catalog td:first-child:hover {
+    border-radius: 20px 0 0;
+}
+
+#catalog td:last-child, #catalog td.last {
+    border-radius: 0 20px 0 0;
+}
+
+#catalog td:last-child:hover, #catalog td.last:hover {
+    border-radius: 0 20px 0 0;
+}
+
+#catalog td.last > div {
+    padding-right: 6px;
+    right: 0;
+}
+
+#catalog td:hover {
+    background: lightgoldenrodyellow;
+}
+
+#catalog td:hover > div > a {
+    color: #424242;
+}
+
+#catalog td ul > li a {
+    padding: 6px;
+    border-bottom: 1px solid #eff2cc;
+    color: #4f6700;
+}
+
+#catalog div > div {
+    top: 48px;
+    background: lightgoldenrodyellow;
+}
+
+#catalog td > div:hover > div {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, .3);
+}
+
+#catalog td > div.r:hover > div {
+    right: 0;
+}
+
+#catalog td > div.l:hover > div {
+    left: 0;
+}
+
+#catalog td ul {
+    min-width: 150px;
+    width: auto;
+}
+
+#catalog td ul li {
+    white-space: nowrap;
+}
+
+#catalog.first {
+    border-radius: 20px 20px 20px 0 !important;
+}
+
+#catalog.last {
+    border-radius: 20px 20px 0 20px !important;
+}
+
+#catalog div.r > div {
+    right: 0;
+    left: auto;
+}
+
+#foot2 > a:first-child {
+    background-image: url(/i/ogurchik/foot_logo.png);
+    width: 140px;
+}
+
+#seofoot {
+    background: none;
+}
+
+#foot {
+    background: #ffebb9;
+    padding-bottom: 10px;
+}
+
+#breadcrumb i {
+    display: none;
+}
+
+a#ctg {
+    border-color: transparent;
+}
+
+div.index {
+    float: left;
+    background: url(/i/ogurchik/type.png) no-repeat 50% 100%;
+    width: 236px;
+    padding: 0 6px 20px;
+    margin-bottom: 30px;
+}
+
+div.index img {
+    width: 236px;
+}
+
+div.index a {
+    display: block;
+    color: #474644;
+    text-align: center;
+}
+
+#maina {
+    margin: 0 auto;
+    overflow: hidden;
+    width: 954px;
+}
+
+#search input.q {
+    /*width:518px; */
+    border-radius: 15px;
+}
+
+#search button {
+    background: url("/i/ogurchik/menu.png") repeat-x scroll 0 0 transparent;
+    border: 2px solid #febb11;
+    border-radius: 15px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(136, 136, 136, 0.3) inset;
+    color: #555555;
+    width: 4em;
+}
+
+#search.active button {
+    border-radius: 15px;
+
+}
+
+#search.active input {
+    background-image: none;
+    padding-left: 15px;
+
+}
+
+#good_good {
+    background: #fff;
+    border-radius: 15px;
+    padding: 15px;
+}
+
+/* styles */
+input.txt:active, input.txt:focus, input.txt.focus, textarea.txt:active, textarea.txt:focus, textarea.txt.focus {
+    border-color: #febb11;
+}
+
+form.small input.txt:active, form.small input.txt:focus, form.small input.txt.focus, form.small textarea.txt:active, form.small textarea.txt:focus, form.small textarea.txt.focus {
+    border-color: #febb11;
+}
+
+div.range span.range-ui .line {
+    background-color: #febb11;
+}
+
+#userpad > form, #reg_form .regpoll {
+    border-color: #febb11;
+}
+
+#userpad > a.open {
+    border-color: #febb11;
+}
+
+#selector .dropdown {
+    border-color: #febb11;
+}
+
+#view_mode a.a {
+    background-color: #febb11;
+}
+
+.butt {
+    font: bold 16px/25px Verdana, Tahoma, Geneva, sans-serif;
+    white-space: nowrap;
+    outline: none;
+    display: block;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    text-shadow: 0 1px #fff495;
+    color: #271106 !important;
+    padding: 8px 27px;
+    box-shadow: 0 1px 1px rgba(0, 1, 1, .5);
+
+    background: #ffea00;
+    background: -moz-linear-gradient(90deg, #ffea00 0%, #febc11 100%);
+    background: -webkit-linear-gradient(90deg, #ffea00 0%, #febc11 100%);
+    background: -o-linear-gradient(90deg, #ffea00 0%, #febc11 100%);
+    background: -ms-linear-gradient(90deg, #ffea00 0%, #febc11 100%);
+    background: linear-gradient(180deg, #ffea00 0%, #febc11 100%);
+}
+
+.butt:hover, .butt:focus {
+    background: #fff153;
+    background: -moz-linear-gradient(90deg, #fff153 0%, #ffcf0c 100%);
+    background: -webkit-linear-gradient(90deg, #fff153 0%, #ffcf0c 100%);
+    background: -o-linear-gradient(90deg, #fff153 0%, #ffcf0c 100%);
+    background: -ms-linear-gradient(90deg, #fff153 0%, #ffcf0c 100%);
+    background: linear-gradient(180deg, #fff153 0%, #ffcf0c 100%);
+}
+
+.butt:active {
+    background: #febb11;
+    background: -moz-linear-gradient(90deg, #febb11 0%, #ffe900 100%);
+    background: -webkit-linear-gradient(90deg, #febb11 0%, #ffe900 100%);
+    background: -o-linear-gradient(90deg, #febb11 0%, #ffe900 100%);
+    background: -ms-linear-gradient(90deg, #febb11 0%, #ffe900 100%);
+    background: linear-gradient(180deg, #febb11 0%, #ffe900 100%);
+
+    box-shadow: 0 -1px 1px rgba(0, 1, 1, .5);
+}
+
+.slider > i {
+    background-image: url(/i/ogurchik/nswe.png);
+}
+
+.buy > a.dec:hover, .buy > a.inc:hover {
+    color: #febb11;
+}
+
+h1, h1.yell {
+    font-family: Verdana, sans-serif;
+    text-transform: uppercase;
+    color: #271106;
+    width: 520px;
+    padding: 15px 0 35px 15px;
+    margin: 0;
+    background: none;
+}
+
+#breadcrumb {
+    padding-top: 80px;
+    padding-left: 15px;
+}
+
+li > label.label.checked {
+    background: #feec99;
+}
+
+label.label:hover i.check, label.label.hover i.check, label.label.checked i.check {
+    border-color: #febb11;
+}
+
+label.label:hover i.radio, label.label.hover i.check {
+    border-color: #febb11;
+}
+
+label.label.checked i.radio {
+    border-color: #febb11;
+}
+
+#list_props {
+    height: 40px;
+    background: #ffeeb3;
+    border-radius: 5px;
+    padding: 10px 15px 0;
+    margin-bottom: 15px;
+}
+
+#list_props > label.label {
+    right: 15px;
+}
+
+#view_mode {
+    background: #fff;
+    top: -82px;
+    border: 2px solid #7ad6f2;
+    border-radius: 7px;
+    padding: 2px 10px;
+}
+
+.tab-content.wide {
+    margin-left: 0;
+    width: 100%;
+}
+
+.tab-content.wide i {
+    display: none;
+}
+
+.tab-content.wide ul {
+    margin-left: 0;
+}
+
+.na {
+    margin-right: 25px;
+}
+
+.slider {
+    background: #fff;
+}
+
+/* Index slider */
+#index_slider {
+    width: 990px;
+    margin: 40px auto 0;
+    padding-bottom: 40px;
+    background: url('/i/ogurchik/index_slider/shadow.png') 50% 100% no-repeat;
+}
+
+#index_slider div.is_outer {
+    width: 930px;
+    border: 12px solid #fff;
+    border-radius: 39px;
+    margin: 0 0 18px 18px;
+}
+
+#index_slider div.is_inner {
+    border: 5px solid #ffdb05;
+    border-radius: 25px;
+    height: 350px;
+    width: 920px;
+}
+
+#index_slider div.is_runner {
+    border-radius: 10px;
+    height: 350px;
+}
+
+#index_slider div.is_runner a {
+    width: 920px;
+    height: 350px;
+}
+
+#index_slider i.l, #index_slider i.r {
+    top: 155px;
+    width: 30px;
+    height: 76px;
+    background: url('/i/ogurchik/index_slider/arrows.png');
+    opacity: 1;
+    left: 0;
+}
+
+#index_slider i.l:hover {
+    background-position: 0 0;
+}
+
+#index_slider i.r, #index_slider i.r:hover {
+    background-position: 100% 0;
+    left: auto;
+    right: 0;
+}
+
+#index_slider #nav {
+    background: none;
+    bottom: auto;
+}
+
+#index_slider b.point {
+    width: 16px;
+    height: 16px;
+    margin: 0 7px;
+    background: rgba(255, 255, 255, .7);
+    border-radius: 8px;
+}
+
+#index_slider b.point.active {
+    background: #fff;
+}
+
+#promotop {
+    left: 0;
+    top: 9px;
+}
+
+#simple_menu > a {
+    padding: 0 15px;
+}

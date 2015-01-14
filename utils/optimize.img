@@ -1,0 +1,5 @@
+#/bin/bash
+
+optipng -o7 'file.png'
+jpegoptim -f -o --strip-all --strip-icc --strip-iptc -m100 'file.jpg'
+gifsicle -b -O3 'file.gif'

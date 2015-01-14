@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<!DOCTYPE yml_catalog SYSTEM "shops.dtd"><yml_catalog date="2011-11-16 16:21">
+    <shop>
+		<name>maldenec.ru</name>
+			<company>ООО "младенец.ру"</company>
+			<url>http://www.mladenec-shop.ru/</url>
+			<platform>"1С-Битрикс: Управление сайтом"</platform>
+			<version>10.0.7</version>
+			<agency></agency>
+			<email>parfenov.a@mladenec.ru</email>
+
+			<currencies>
+				    <currency id="RUR" rate="1"/>
+					<currency id="USD" rate="CBRF" plus="1"/>
+					<currency id="EUR" rate="CBRF" plus="1"/>
+			</currencies>
+<categories><category id="29798" parentId="29777">Подгузники</category><category id="29777">Подгузники и пеленки</category></categories>
+<local_delivery_cost>350</local_delivery_cost>
+<offers><offer id="51764" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/podguzniki-merries-min-do-5-kg-60-sht-razmer-nb/29851.51764.html</url>
+<price>640.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/c85/b_41_3440.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Merries Mini до 5 кг (60 шт.) Размер NB</name>
+<vendor>Merries</vendor>
+<description>Подгузники Merries Мериес до 5 кг. 60 шт. (NB) 
+
+Мягкая поверхность с выпуклостями и углубленьями позволяет воздуху проникать 
+между подгузником и кожей ребенка и делает подгузник в 3 раза более "дышащим". 
+Так как влажный воздух не задерживается в подгузнике, попа малыша всегда 
+остается сухой. Подгузник великолепно впитывает, не протекает, но при этом 
+отлично пропускает воздух, что защищает кожу ребенка от появления опрелостей. 
+ 
+
+- Внутренний слой подгузника Merries сделан из натурального хлопка, пропитаны 
+экстрактом растения Гамамелис, известного в медицине своими антисептическим 
+и антибактериальным действием, а также смягчающими и увлажняющими свойствами 
+- Эластичная резинка на поясе сделана из высококачественной лайкры, благодаря 
+которой подгузники плотно прилегают к телу ребёнка и не создают излишнего 
+давления и дискомфорта. 
+- Подгузники снабжены многоразовыми застежками. 
+- Индикатор наполняемости (подгузник следует заменить, когда 3 полоски 
+посередине станут синими). 
+- От протекания предохраняют боковые сборки. 
+- Сами подгузники Merries супертонкие, безупречно облегают живот и ножки, 
+не сковывают движений ребенка и не допускают воспаления и раздражения кожи 
+малыша. 
+
+ 
+
+Производитель: KAO Corporation (Япония).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="51765" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/podguzniki-merries-mid-do-5-kg-88-sht-razmer-nb/29850.51765.html</url>
+<price>820.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/4f4/b_42_3441.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Merries Econom до 5 кг (88 шт.) Размер NB</name>
+<vendor>Merries</vendor>
+<description>Подгузники Merries Мериес до 5 кг. 88 шт. (NB) 
+
+Мягкая поверхность с выпуклостями и углубленьями позволяет воздуху проникать 
+между подгузником и кожей ребенка и делает подгузник в 3 раза более "дышащим". 
+Так как влажный воздух не задерживается в подгузнике, попа малыша всегда 
+остается сухой. Подгузник великолепно впитывает, не протекает, но при этом 
+отлично пропускает воздух, что защищает кожу ребенка от появления опрелостей. 
+ 
+
+- Внутренний слой подгузника Merries сделан из натурального хлопка, пропитан 
+экстрактом растения Гамамелис, известного в медицине своими антисептическим 
+и антибактериальным действием, а также смягчающими и увлажняющими свойствами 
+- Эластичная резинка на поясе сделана из высококачественной лайкры, благодаря 
+которой подгузники плотно прилегают к телу ребёнка и не создают излишнего 
+давления и дискомфорта. 
+- Подгузники снабжены многоразовыми застежками. 
+- Индикатор наполняемости (подгузник следует заменить, когда 3 полоски 
+посередине станут синими). 
+- От протекания предохраняют боковые сборки. 
+- Сами подгузники Merries супертонкие, безупречно облегают живот и ножки, 
+не сковывают движений ребенка и не допускают воспаления и раздражения кожи 
+малыша. 
+
+ 
+
+Производитель: KAO Corporation (Япония).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="51766" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/podguzniki-merries-min-4-8-kg-54-sht-razmer-s/29851.51766.html</url>
+<price>640.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/1ba/-4-8_54-s-1.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Merries Mini 4-8 кг (54 шт.) Размер S</name>
+<vendor>Merries</vendor>
+<description>Подгузники Merries Мериес 4-8 кг 54 шт S 
+
+Подгузники Мериес изготавливаются только из натуральных природных материалов 
+прошедших строгий контроль качества. Мягкий хлопчатый материал подгузника 
+не протекает и при этом предохранит Вашего малыша от появления опрелостей. 
+Безупречно облегая живот и ножки, позволяют малышу свободно двигаться. 
+
+- Эластичная резинка. 
+- Наличие индикатора наполняемости. 
+- Подгузник Merries следует заменить, когда 3 полоски посередине станут 
+синими. 
+- Великолепно впитывают. 
+
+Производитель: KAO Corporation (Япония).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="51767" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/podguzniki-merries-mid-4-8-kg-80-2-sht-razmer-s/29850.51767.html</url>
+<price>820.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/493/b_44_3443.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Merries Econom 4-8 кг (80 шт.) Размер S</name>
+<vendor>Merries</vendor>
+<description>Подгузники Merries Мериес 4-8 кг. 80 шт. (S)Подгузники 
+Мериес изготавливаются только из натуральных 
+природных материалов прошедших строгий контроль качества. Мягкий 
+хлопчатый материал подгузника не протекает и при этом предохранит Вашего 
+малыша от появления опрелостей. Безупречно облегая 
+живот и ножки, позволяют малышу свободно двигаться, а экстракт растения 
+Гамамелис не допустит воспаления и раздражения мест касания подгузника с 
+кожей ребенка. Эластичная резинка. Наличие 
+индикатора наполняемости. Подгузник Merries 
+следует заменить, когда 3 полоски посередине станут синими. Великолепно 
+впитывают.Производитель: 
+KAO Corporation (Япония).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="51768" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/podguzniki-merries-min-6-11-kg-42-sht-razmer-m/29851.51768.html</url>
+<price>640.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/3f6/-6-11_42-m-1.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Merries Mini 6-11 кг (42 шт.) Размер M</name>
+<vendor>Merries</vendor>
+<description>Подгузники Merries Мериес 6-11 кг. 42 шт. M 
+
+Подгузники Merries изготавливаются только из натуральных материалов, прошедших 
+строгий контроль качества. Мягкий хлопчатый материал подгузника не протекает 
+и при этом предохранит Вашего малыша от появления опрелостей.Внутренний 
+слой подгузника Merries сделан из натурального хлопка. 
+
+- Эластичная резинка на поясе сделана из высококачественной лайкры, благодаря 
+которой подгузники плотно прилегают к телу ребёнка и не создают излишнего 
+давления и дискомфорта. 
+- Подгузники снабжены многоразовыми застежками. 
+- Индикатор наполняемости (подгузник следует заменить, когда 3 полоски 
+посередине станут синими). 
+- От протекания предохраняют боковые сборки. 
+- Сами подгузники супертонкие, безупречно облегают живот и ножки, не сковывают 
+движений ребенка и не допускают воспаления и раздражения кожи малыша. 
+- Три вида дизайна подгузников (в каждой пачке подгузники одного вида). 
+
+Производитель: KAO Corporation (Япония).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="51769" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/podguzniki-merries-mid-6-11-kg-62-2-sht-razmer-m/29850.51769.html</url>
+<price>820.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/0b1/b_46_7246.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Merries Econom 6-11 кг (64 шт.) Размер M</name>
+<vendor>Merries</vendor>
+<description>Подгузники Merries изготавливаются 
+только из натуральных материалов, прошедших строгий контроль качества. Мягкий 
+хлопчатый материал подгузника не протекает и при этом предохранит Вашего 
+малыша от появления опрелостей.Внутренний 
+слой подгузника Merries сделан из натурального 
+хлопка, пропитаны экстрактом растения Гамамелис, известного в медицине своими 
+антисептическим и антибактериальным действием, а также смягчающими и увлажняющими 
+свойствами.Эластичная резинка на поясе сделана из высококачественной 
+лайкры, благодаря которой подгузники плотно прилегают к телу ребёнка и не 
+создают излишнего давления и дискомфорта.Подгузники 
+снабжены многоразовыми застежками.Индикатор наполняемости 
+(подгузник следует заменить, когда 3 полоски посередине станут синими).От 
+протекания предохраняют боковые сборки.Сами подгузники 
+супертонкие, безупречно облегают живот и ножки, не сковывают движений ребенка 
+и не допускают воспаления и раздражения кожи малыша.Три 
+вида дизайна подгузников (в каждой пачке подгузники одного вида).Производитель: 
+KAO Corporation (Япония).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="51770" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/podguzniki-merries-min-9-14-kg-36-sht-razmer-l/29851.51770.html</url>
+<price>640.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/06a/-9-14_36-l-1.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Merries Mini 9-14 кг (36 шт.) Размер L</name>
+<vendor>Merries</vendor>
+<description>Подгузники Merries Мериес 9-14 кг 36 шт. L 
+
+Ребенку удобно, даже если он много двигается в новых подгузниках Merries. 
+Специально для таких активных малышей и предназначены подгузники "Сухие 
+и дышащие". Внутренний слой подгузника Merries сделан из натурального хлопка. 
+
+- Эластичная резинка на поясе сделана из высококачественной лайкры, благодаря 
+которой подгузники плотно прилегают к телу ребёнка и не создают излишнего 
+давления и дискомфорта. 
+- Японские подгузники снабжены многоразовыми застежками. 
+- Индикатор наполняемости (подгузник следует заменить, когда 3 полоски 
+посередине станут синими). 
+- От протекания предохраняют боковые сборки. 
+- Сами подгузники супертонкие, безупречно облегают живот и ножки, не сковывают 
+движений ребенка и не допускают воспаления и раздражения кожи малыша. 
+- Подгузник великолепно впитывает(остается тонким и не разбухает),не протекает, 
+но при этом отлично пропускает воздух, что защищает кожу ребенка от появления 
+опрелостей. 
+
+Производитель: KAO Corporation (Япония).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="51771" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/podguzniki-merries-mid-9-14-kg-52-2-sht-razmer-l/29850.51771.html</url>
+<price>820.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/38d/b_48_3466.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Merries Econom 9-14 кг (54 шт.) Размер L</name>
+<vendor>Merries</vendor>
+<description>Подгузники Merries Мериес 9-14 кг. 54 шт. (L)Ребенку 
+удобно, даже если он много двигается в новых подгузниках Merries. 
+Специально для таких активных малышей и предназначены подгузники "Сухие 
+и дышащие".Внутренний слой подгузника 
+Merries сделан из натурального хлопка, пропитаны экстрактом 
+растения Гамамелис, известного в медицине своими антисептическим и антибактериальным 
+действием, а также смягчающими и увлажняющими свойствами.Японские 
+подгузники снабжены многоразовыми застежками.Индикатор 
+наполняемости (подгузник следует заменить, когда 3 полоски посередине 
+станут синими).От протекания предохраняют боковые 
+сборки.Сами подгузники 
+супертонкие, безупречно облегают живот и ножки, не сковывают движений ребенка 
+и не допускают воспаления и раздражения кожи малыша.Подгузник 
+великолепно впитывает(остается тонким и не разбухает),не протекает, 
+но при этом отлично пропускает воздух, что защищает кожу ребенка от появления 
+опрелостей.Производитель: 
+KAO Corporation (Япония).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55332" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-merries-6-10-kg-56-sht-razmer-m/29852.55332.html</url>
+<price>835.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/d0f/-6-10_56+2-m-1.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Merries 6-10 кг (56 шт.) Размер M</name>
+<vendor>Merries</vendor>
+<description>Трусики Merries Мериес 6-10 кг. 56 шт. M 
+
+Подгузники-трусики Merries удобны в период обучения малыша к горшку, они 
+надеваются и снимаются, как настоящие трусики, поэтому ребенок очень скоро 
+научится пользоваться ими самостоятельно. Трусики Merries изготовлены из 
+чистого хлопка, гладкого как шёлк и очень мягкого на ощупь. Специально разработанная 
+"дышащая" поверхность трусиков позволяет ребёнку чувствовать 
+себя сухо и комфортно. 
+
+- Трусики идеально подходят для сна, длительных прогулок и поездок. 
+- Они мягко облегают тело малыша, не стягивая талию и не сдавливая кожу. 
+- Трусики снабжены системой side up (впитывание по бокам), которая предохраняет 
+их от протекания, сколько бы ребёнок не двигался. 
+- Длина индикатора наполнения увеличена сзади, для легкого определения 
+время замены трусиков. 
+- Полоски изменили свой цвет? Меняйте подгузник! 
+
+Производитель: KAO Corporation (Япония).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55334" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-merries-9-14-kg-42-sht-razmer-l/29852.55334.html</url>
+<price>835.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/71c/9-14-44.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Merries 9-14 кг (44 шт.) Размер L</name>
+<vendor>Merries</vendor>
+<description>Трусики Merries Мериес  9-14 кг. 42 шт. (L)Подгузники-трусики 
+Merries удобны в период обучения малыша к горшку, они надеваются 
+и снимаются, как настоящие трусики, поэтому ребенок очень скоро научится 
+пользоваться ими самостоятельно.Трусики 
+Merries изготовлены из чистого хлопка, гладкого как шёлк 
+и очень мягкого на ощупь.Специально разработанная "дышащая" 
+поверхность трусиков позволяет ребёнку чувствовать себя сухо и комфортно.Трусики 
+идеально подходят для сна, длительных прогулок и поездок.Они 
+мягко облегают тело малыша, не стягивая талию и не сдавливая кожу.Трусики 
+снабжены системой side up (впитывание по бокам), которая предохраняет 
+их от протекания, сколько бы ребёнок не двигался.Длина 
+индикатора наполнения увеличена сзади, для легкого определения время замены 
+трусиков.Полоски изменили свой цвет? Меняйте подгузник!  Производитель: 
+KAO Corporation (Япония).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55336" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-merries-12-22-kg-36-sht-razmer-big/29852.55336.html</url>
+<price>835.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/72e/12-22-38.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Merries 12-22 кг (38 шт.) Размер BIG</name>
+<vendor>Merries</vendor>
+<description>Трусики Merries Мериес 12-22 кг. 36 шт. (BIG)Подгузники-трусики 
+Merries удобны в период обучения малыша к горшку, они надеваются 
+и снимаются, как настоящие трусики, поэтому ребенок очень скоро научится 
+пользоваться ими самостоятельно.Трусики 
+Merries изготовлены из чистого хлопка, гладкого как шёлк 
+и очень мягкого на ощупь.Специально разработанная "дышащая" 
+поверхность трусиков позволяет ребёнку чувствовать себя сухо и комфортно.Трусики 
+идеально подходят для сна, длительных прогулок и поездок.Они 
+мягко облегают тело малыша, не стягивая талию и не сдавливая кожу.Трусики 
+снабжены системой side up (впитывание по бокам), которая предохраняет 
+их от протекания, сколько бы ребёнок не двигался.Длина 
+индикатора наполнения увеличена сзади, для легкого определения время замены 
+трусиков.Полоски изменили свой цвет? Меняйте подгузник! 
+Производитель: KAO Corporation 
+(Япония).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55338" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-merries-nochnye-12-22-kg-21-sht/29853.55338.html</url>
+<price>835.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/0a9/b_10174_4686.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Merries ночные ночные 12-22 кг (21 шт.)</name>
+<vendor>Merries</vendor>
+<description>Трусики Merries Мериес ночные 12-22 кг. 21 шт.Ночные 
+трусики Merries чтобы не намочить постель. Ребенок 
+подрастает и сам по себе, естественным путем, перестанет писаться ночью. 
+Мамы, не торопите события и не сердитесь на ребенка. Если ребенка будить, 
+чтобы он шел в туалет, то это может вызвать противоположный эффект. Самый 
+короткий путь к тому, чтобы ребенок перестал писаться ночью, это дать ему 
+крепко проспать до самого утра. Если ребенок спит в ночных трусиках Merries, 
+которые не протекают всю ночь, он проснется в хорошем настроении и с улыбкой 
+скажет Вам "Доброе утро!" И мама тоже крепко проспит всю ночь, не тревожась 
+ни о чем, и проснется с улыбкой. Трусики 
+предназначены для детей, чей рост составляет 85-120 см, а вес 12-22 кг.Более 
+широкие - абсорбирующая поверхность расширилась, благодаря чему она способна 
+впитывать всю влагу до самого утра.Непрерывно впитывают 
+- та часть трусиков, на которую попадает влага, имеет абсорбирующее покрытие, 
+которое быстро и полностью поглотит влагуМежду трусиками 
+и телом не создается щелей - трусики Merries 
+имеют тройные сборочки вокруг ножек и мягкие боковые сборочки. В какой бы 
+позе ребенок не спал, трусики плотно облегают его. Таким образом, между 
+кожей малыша и трусиками не возникают щели, и трусики не протекают.Можно 
+не беспокоиться о воспалениях и опрелостяхТрусики не 
+задерживают влажный воздух - та поверхность, которая прилегает к телу, имеет 
+покрытие, содержащее смягчающий экстракт растения гамамелис.Трусики 
+мягкие и их удобно одевать - благодаря мягким тянущимся боковым сборочкам 
+даже сам ребенок с легкостью сможет надеть эти трусики. Размер подходит 
+и для больших детей, чей рост составляет 120 см.При 
+ношении трусики Merries 
+ощущаются, словно очень мягкое нижнее белье - кожа чувствует мягкое воздушное 
+прикосновение хлопкового материала. Внешне трусики выглядят совсем как обычное 
+нижнее белье.Ребенок будет видеть веселые сны в ночных 
+трусиках с забавными рисунками с крольчатами.Эти милые 
+рисунки есть и на попе и на животике (большой рисунок должен находиться 
+на попе). Всего 6 различных вариантов. В 1 упаковке находятся трусики 
+с идентичным рисунком. Производитель: 
+KAO Corporation (Япония).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="100970" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-merries-15-28-kg-26-sht-xxl/29852.100970.html</url>
+<price>835.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Merries 15-28 кг. 26 шт. (XXL)</name>
+<vendor>Merries</vendor>
+<description></description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="103892" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/podguzniki-merries-econom-12-20-kg-44-sht-razmer-xl/29850.103892.html</url>
+<price>820.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/245/86850g1b.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Merries Econom 12-20 кг (44 шт.) Размер XL</name>
+<vendor>Merries</vendor>
+<description>Подгузники Merries Мериес 12-20 кг. 44 шт. (XL)Подгузники 
+Мериес изготавливаются только из натуральных 
+природных материалов прошедших строгий контроль качества. Мягкий 
+хлопчатый материал подгузника не протекает и при этом предохранит Вашего 
+малыша от появления опрелостей. Безупречно облегая 
+живот и ножки, позволяют малышу свободно двигаться, а экстракт растения 
+Гамамелис не допустит воспаления и раздражения мест касания подгузника с 
+кожей ребенка. Эластичная резинка. Наличие 
+индикатора наполняемости. Подгузник Merries 
+следует заменить, когда 3 полоски посередине станут синими. Великолепно 
+впитывают.Производитель: 
+KAO Corporation (Япония).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="142282" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/_ELEMENT_/29851.142282.html</url>
+<price>566.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Merries Mini 12-20 кг. 28 шт.*6 (XL)</name>
+<vendor>Merries</vendor>
+<description></description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="142285" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/_ELEMENT_/29852.142285.html</url>
+<price>572.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Merries 6-10 кг. 33 шт. (M)</name>
+<vendor>Merries</vendor>
+<description></description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="142286" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/_ELEMENT_/29852.142286.html</url>
+<price>572.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Merries 9-14 кг. 27 шт. (L)</name>
+<vendor>Merries</vendor>
+<description></description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="142287" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/_ELEMENT_/29852.142287.html</url>
+<price>572.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Merries 12-22 кг. 24 шт. (L)</name>
+<vendor>Merries</vendor>
+<description></description>
+<sales_notes></sales_notes>
+</offer>
+</offers>
+</shop>
+</yml_catalog>

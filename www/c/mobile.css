@@ -1,0 +1,206 @@
+html, body {
+	margin: 0;
+	font-family: Tahoma, Arial, sans-serif;
+	font-size: 13px;
+}
+.clear {
+	clear: both;
+	height: 0;
+}
+
+.mhead {
+	height: 55px;
+	position: relative;
+	
+	background: #ccc;
+	background: #68d4fd;
+	background: -moz-linear-gradient(top,  #68d4fd 0%, #02aceb 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#68d4fd), color-stop(100%,#02aceb));
+	background: -webkit-linear-gradient(top,  #68d4fd 0%,#02aceb 100%);
+	background: -o-linear-gradient(top,  #68d4fd 0%,#02aceb 100%);
+	background: -ms-linear-gradient(top,  #68d4fd 0%,#02aceb 100%);
+	background: linear-gradient(to bottom,  #68d4fd 0%,#02aceb 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#68d4fd', endColorstr='#02aceb',GradientType=0 );
+}
+
+.mlogo {
+	background-image: url(/i/mobile/mladenec/logo.png);
+	width: 124px;
+	height: 34px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-left: -62px;
+	margin-top: -23px;
+	display: block;
+}
+
+.mcart {
+	background-image: url(/i/mobile/mladenec/cart.png);
+	width: 25px;
+	height: 16px;
+	position: absolute;
+	top: 50%;
+	right: 24px;
+	margin-top: -10px;
+	display: block;
+}
+
+.msearch {
+	background-image: url(/i/mobile/mladenec/search.png);
+	width: 15px;
+	height: 16px;
+	position: absolute;
+	top: 50%;
+	right: 70px;
+	margin-top: -10px;
+	display: block;
+}
+
+.mmenu {
+	background-image: url(/i/mobile/mladenec/menu.png);
+	width: 15px;
+	height: 13px;
+	position: absolute;
+	top: 50%;
+	left: 22px;
+	margin-top: -8px;
+	display: block;
+}
+
+.mvitrina a {
+	display: block;
+	position: relative;
+	line-height: 80px;
+	padding-left: 100px;
+	color: inherit;
+	text-decoration: none;
+}
+
+.mvitrina a:hover {
+	background: #f9f9f9;
+}
+
+.mvitrina a img {
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: auto;
+	height: 100%;
+}
+
+.mvitrina a i {
+	display: block;
+	position: absolute;
+	top: 50%;
+	right: 20px;
+	margin-top: -9px;
+	width: 18px;
+	height: 18px;
+	background-image: url(/i/mobile/mladenec/arrow-right.png);
+}
+
+.mh1 {
+	color: #05aae8;
+	font-weight: bold;
+	font-size: 1.3em;
+	padding: 20px;
+}
+
+.mh2 {
+	color: #fff;
+	font-weight: bold;
+	padding: 10px 20px;
+	border: 1px solid #d6d6d3;
+	border-width: 1px 0;
+	
+	background: #6fd564;
+	background: -moz-linear-gradient(top,  #6fd564 0%, #60c57f 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#6fd564), color-stop(100%,#60c57f));
+	background: -webkit-linear-gradient(top,  #6fd564 0%,#60c57f 100%);
+	background: -o-linear-gradient(top,  #6fd564 0%,#60c57f 100%);
+	background: -ms-linear-gradient(top,  #6fd564 0%,#60c57f 100%);
+	background: linear-gradient(to bottom,  #6fd564 0%,#60c57f 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6fd564', endColorstr='#60c57f',GradientType=0 );
+}
+
+.mfooter {
+	height: 40px;
+	border-top: 1px solid #d6d6d3;
+	
+	background: #67d4fd;
+	background: -moz-linear-gradient(top,  #67d4fd 0%, #03adec 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#67d4fd), color-stop(100%,#03adec));
+	background: -webkit-linear-gradient(top,  #67d4fd 0%,#03adec 100%);
+	background: -o-linear-gradient(top,  #67d4fd 0%,#03adec 100%);
+	background: -ms-linear-gradient(top,  #67d4fd 0%,#03adec 100%);
+	background: linear-gradient(to bottom,  #67d4fd 0%,#03adec 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#67d4fd', endColorstr='#03adec',GradientType=0 );
+}
+
+.mreverse-call {
+	display: block;
+	float: left;
+	border-radius: 8px;
+	padding: 5px 15px;
+	box-shadow: inset 1px 1px 1px #666;
+	border: 1px solid #24c4fe;
+	color: #fff;
+	margin-top: 5px;
+	margin-left: 5px;
+	text-decoration: none;
+}
+
+.mfull-version {
+	color: #93e8fd;
+	text-decoration: none;
+	display: block;
+	float: left;
+	border-radius: 8px;
+	padding: 5px 15px;
+	margin-top: 5px;
+	margin-left: 5px;
+}
+
+.mslider-item {
+	height: 240px;
+	width: 120px;
+	margin: 5px;
+	border: 1px solid #d3d3d3;
+	border-radius: 5px;
+	float: left;
+	position: relative;
+	display: block;
+	color: inherit !important;
+	text-decoration: none !important;
+}
+
+.mslider-item img {
+	width: 110px;
+	height: 110px;
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 50%;
+	margin-left: -55px;
+}
+
+.mslider-item-name {
+	position: absolute;
+	top: 120px;
+	font-size: 10px !important;
+	padding: 3px;
+}
+.mslider-item-name span {
+	font-weight: bold;
+}
+
+.mslider-item-price {
+	position: absolute;
+	bottom: 3px;
+	left: 3px;
+	color: #05aae8;
+	font-weight: bold;
+	font-size: 1.1em;
+}

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<!DOCTYPE yml_catalog SYSTEM "shops.dtd"><yml_catalog date="2012-04-03 12:09">
+    <shop>
+		<name>mladenec.ru</name>
+			<company>ООО "младенец.ру"</company>
+			<url>http://www.mladenec-shop.ru/</url>
+			<platform>"1С-Битрикс: Управление сайтом"</platform>
+			<version>10.0.7</version>
+			<agency></agency>
+			<email>parfenov.a@mladenec.ru</email>
+
+			<currencies>
+				    <currency id="RUR" rate="1"/>
+					<currency id="USD" rate="CBRF" plus="1"/>
+					<currency id="EUR" rate="CBRF" plus="1"/>
+			</currencies>
+<categories><category id="30136" parentId="30073">Косметика</category><category id="30073">Японские товары</category></categories>
+<local_delivery_cost>350</local_delivery_cost>
+<offers><offer id="52737" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/mylo-gyunyu-sekken-dlya-ruk-250-ml-antibakterialjnoe/30138.52737.html</url>
+<price>407.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>30136</categoryId>
+<picture>http://www.mladenec-shop.ru</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Мыло Kewpi Для рук 250 мл. (антибактериальное)</name>
+<vendor>Kewpi</vendor>
+<description>Жидкое мыло для рук антибактериальное 250 мл. (Япония)Это 
+нежное мыло для рук создано на основе твердого 
+мыла из растительных компонентов. Благодаря 
+содержанию антисептических и увлажняющих компонентов, оказывает двойное 
+воздействие на кожу. Триклозан 
+(антисептик) устраняет бактерии, обеззараживает и поддерживает чистоту 
+кожи рук.Экстракт зеленого чая 
+и экстракт ромашки, оказывают антисептическое и тонизирующее действие. Сквалан 
+прекрасно питает, увлажняет и сохраняет влагу в коже.Имеет 
+нежный и тонкий аромат. Хорошо 
+и обильно пенится, легко смывается и не остается на руках. Производитель: 
+Япония.</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="54982" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/sredstvo-dlya-kupaniya-gyunyu-sekken-quot-kjyupi-quot-350-ml/30138.54982.html</url>
+<price>420.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>30136</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/8d0/dk4.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Мыло Kewpi &quot;Кьюпи&quot; жидкое  350 мл. для купания (помпа-дозатор)</name>
+<vendor>Kewpi</vendor>
+<description>Жидкое мыло для тела "Кьюпи" 350 мл. (Япония) 
+
+- Детское мыло для всего тела используется также и для мытья волос. Кожа 
+ребёнка нуждается в умывании мягкими моющими средствами и очень важно содержать 
+её в чистоте. 
+- Содержит сквалан, компонент, защищающий кожу. 
+- Не слишком интенсивно удаляет жир, обеспечивает нежное мытьё. 
+- Рекомендуется также и взрослым, которые заботятся о нежности своей кожи. 
+- Пониженная кислотность - нежное омовение для тела. 
+- Средство гипоаллергенно, не содержит красителей и ароматизаторов. 
+
+Производитель: Kewpi (Япония).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="107649" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/mylo-gyunyu-sekken-quot-kjyupi-quot-zhidkoe-300-ml-dlya-kupaniya-zapasnoi-blok/30138.107649.html</url>
+<price>310.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>30136</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/6be/dk3.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Мыло Kewpi &quot;Кьюпи&quot; жидкое 300 мл. для купания (запасной блок)</name>
+<vendor>Kewpi</vendor>
+<description>Жидкое мыло для тела "Кьюпи" 300 мл. (запасной блок) (Япония) 
+
+
+- Детское мыло для всего тела используется также и для мытья волос. Кожа 
+ребёнка нуждается в умывании мягкими моющими средствами и очень важно содержать 
+её в чистоте. 
+- Содержит сквалан, компонент, защищающий кожу. 
+- Не слишком интенсивно удаляет жир, обеспечивает нежное мытьё. 
+- Рекомендуется также и взрослым, которые заботятся о нежности своей кожи. 
+- Пониженная кислотность - нежное омовение для тела. 
+- Средство гипоаллергенно, не содержит красителей и ароматизаторов. 
+ Производитель: Kewpi (Япония).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="107650" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/mylo-gyunyu-sekken-quot-kjyupi-quot-penyaszeesya-350-ml-zapasnoi-blok/30138.107650.html</url>
+<price>340.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>30136</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/b4b/dk6.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Мыло Kewpi &quot;Кьюпи&quot; пенящееся 350 мл. (запасной блок)</name>
+<vendor>Kewpi</vendor>
+<description>Жидкое мыло для детей "Кьюпи" пенящееся (запасной блок) 350 мл. (Япония) 
+
+
+- Без аромата, не содержит красителей. 
+- Гипоаллергенно. 
+- Не вызывает аллергических кожных реакций. 
+- Пена прекрасно моет, щадящим образом действует на естественную жировую 
+защитную смазку кожи, не смывая ее до конца. 
+- Содержит активные компоненты и мягкие моющие вещества аминокислотного 
+происхождения со слабой кислотностью. 
+- Натуральный сквалан (защита кожи) - поддерживает баланс влажности кожи. 
+- Глициризинат дикалия (увлажняющий компонент, полученный из лакричника). 
+- Смягчает, устраняет зуд кожи при ее сухости. 
+- Детское мыло рекомендуется и для взрослых, заботящихся о мягком уходе 
+за кожей. 
+ Производитель: Kewpi (Япония).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="139094" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/shampunj-gyunyu-sekken-quot-kjyupi-quot-350-ml-dozator/30139.139094.html</url>
+<price>459.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>30136</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/59f/dk2.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Шампунь Kewpi &quot;Кьюпи&quot; 350 мл. (дозатор)</name>
+<vendor>Kewpi</vendor>
+<description>Шампунь Kewpi 350 мл. (дозатор) 
+
+Детский шампунь Kewpi на основе растительных аминокислот, содержит сквалан 
+(компонент, защищающий кожу). Шампунь оказывает минимальное раздражение 
+на кожу, мягко воздействующий на естественный жировой защитный слой кожи, 
+бережно очищает, не раздражает глаза малыша. 
+
+
+- Шампунь подходит для мытья волос и кожи головы с первых дней жизни 
+- Не слишком интенсивно удаляет жир, обеспечивает нежное мытьё.  
+- Гипоаллергенен.  
+- Не содержит красителей и ароматизаторов.  
+- Обладает низкой кислотностью. 
+- Также рекомендуется взрослым, которые заботятся о нежности своей кожи. 
+- Состав: вода, сквален, лимонная кислота, дипропиленгликоль, натрия лауроил-метилаланин, 
+натрий кокоамфодиацетат, дикалия глициризинат. 
+ Производство: Kewpi (Япония). </description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="147770" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/shampunj-penka-kewpi-quot-kjyupi-quot-350-ml-dozator/31040.147770.html</url>
+<price>369.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>30136</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/b5d/dk1.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Шампунь-пенка Kewpi &quot;Кьюпи&quot; 350 мл. (дозатор)</name>
+<vendor>Kewpi</vendor>
+<description>Шампунь-пенка Kewpi "Кьюпи" 350 мл. (дозатор) 
+
+Детский шампунь-пенка содержит аминокислотный состав, нежный для волос 
+и кожи ребенка и сквалан (компонент, защищающий кожу). 
+
+- Шампунь подходит для мытья волос и кожи головы с первых дней жизни  
+- Не сушит нежную кожу, не щиплет глазки.  
+- Обильно пенится.  
+- Гипоаллергенный.  
+- Без красителей и ароматизаторов. 
+- Также рекомендуется для взрослых с чувствительной, аллергичной кожей 
+головы. 
+ Производство: Kewpi (Япония).</description>
+<sales_notes></sales_notes>
+</offer>
+</offers>
+</shop>
+</yml_catalog>

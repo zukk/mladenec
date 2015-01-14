@@ -1,0 +1,15 @@
+#good_side, div.review {
+    display: none;
+}
+
+#view {
+    max-height: none !important;
+}
+
+body, #all {
+    background: none;
+}
+
+#totals tfoot {
+    display: none;
+}

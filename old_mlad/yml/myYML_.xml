@@ -1,0 +1,1251 @@
+<?xml version="1.0" encoding="windows-1251"?><!DOCTYPE yml_catalog SYSTEM "shops.dtd"><yml_catalog date="2012-05-21 13:44">
+		<shop>
+			<name>mladenec.ru</name>
+				<company>ООО "младенец.ру"</company>
+				<url>http://www.mladenec-shop.ru/</url>
+				<platform>"1С-Битрикс: Управление сайтом"</platform>
+				<version>10.0.7</version>
+				<agency></agency>
+				<email>parfenov.a@mladenec.ru</email>
+
+				<currencies>
+						<currency id="RUR" rate="1"/>
+						<currency id="USD" rate="CBRF" plus="1"/>
+						<currency id="EUR" rate="CBRF" plus="1"/>
+				</currencies>
+	<categories><category id="30073">Японские товары</category>
+<category id="29890">Сон, прогулка и путешествие</category>
+<category id="29777">Подгузники и пеленки</category>
+<category id="29690">Одежда</category>
+<category id="29558">Игрушки</category>
+<category id="29429">Для мамы</category>
+<category id="28934">Детское питание</category>
+<category id="28627">Гигиена и уход</category>
+<category id="28552">Безопасность и здоровье</category>
+<category id="30300" parentId="29690">Карнавальные костюмы</category>
+<category id="30167" parentId="30073">Уход за ребенком</category>
+<category id="30136" parentId="30073">Косметика</category>
+<category id="30068" parentId="29890">Шасси для колясок</category>
+<category id="30074" parentId="30073">Бытовая химия</category>
+<category id="30042" parentId="29890">Манежи</category>
+<category id="30025" parentId="29890">Кроватки</category>
+<category id="31541" parentId="29558">Игрушки для девочек</category>
+<category id="31542" parentId="29558">Игрушки для мальчиков</category>
+<category id="31558" parentId="29558">Контейнеры для игрушек</category>
+<category id="29982" parentId="29890">Коляски</category>
+<category id="29977" parentId="29890">Колыбельки</category>
+<category id="31668" parentId="29429">Белье для мам</category>
+<category id="29962" parentId="29890">Детский транспорт</category>
+<category id="29949" parentId="29890">Аксессуары для сна</category>
+<category id="29946" parentId="29890">Аксессуары для путешествия</category>
+<category id="29940" parentId="29890">Аксессуары для колясок</category>
+<category id="29891" parentId="29890">Автокресла</category>
+<category id="29798" parentId="29777">Подгузники</category>
+<category id="29781" parentId="29777">Пеленки</category>
+<category id="29778" parentId="29777">Аксессуары</category>
+<category id="29773" parentId="29690">Шапочки и панамки</category>
+<category id="29768" parentId="29690">Халаты и полотенца</category>
+<category id="29740" parentId="29690">Первая одежда малыша</category>
+<category id="31759" parentId="29558">Игрушки для улицы</category>
+<category id="29725" parentId="29690">Носки, колготки</category>
+<category id="29713" parentId="29690">Нижнее белье и купальники</category>
+<category id="29706" parentId="29690">Кофточки</category>
+<category id="29699" parentId="29690">Комплекты одежды</category>
+<category id="29696" parentId="29690">Комбинезоны</category>
+<category id="29661" parentId="29558">Ходунки и прыгунки</category>
+<category id="29675" parentId="29558">Шезлонги</category>
+<category id="29691" parentId="29690">Боди</category>
+<category id="29650" parentId="29558">Музыкальные инструменты</category>
+<category id="29642" parentId="29558">Лошадки, каталки</category>
+<category id="29632" parentId="29558">Качели</category>
+<category id="31341" parentId="29558">Конструкторы</category>
+<category id="29583" parentId="29558">Музыкальные диски</category>
+<category id="29585" parentId="29558">Игрушки для малышей</category>
+<category id="29562" parentId="29558">Деревянные игрушки</category>
+<category id="29559" parentId="29558">Аксессуары для игрушек</category>
+<category id="29553" parentId="29429">Техника для кухни</category>
+<category id="29546" parentId="29429">Сумки</category>
+<category id="31074" parentId="29777">Клеенки</category>
+<category id="29534" parentId="29429">Сувениры и подарки</category>
+<category id="29510" parentId="29429">Питание для мам</category>
+<category id="29494" parentId="29429">Косметика</category>
+<category id="30990" parentId="29690">Наша Мама</category>
+<category id="29444" parentId="29429">Кенгуру и слинги</category>
+<category id="29461" parentId="29429">Кормление грудью</category>
+<category id="29430" parentId="29429">Гигиена</category>
+<category id="29413" parentId="28934">Чай</category>
+<category id="29293" parentId="28934">Средства для кормления</category>
+<category id="29253" parentId="28934">Соки и напитки</category>
+<category id="29150" parentId="28934">Пюре</category>
+<category id="29138" parentId="28934">Печенье</category>
+<category id="29065" parentId="28934">Молочные смеси</category>
+<category id="29051" parentId="28934">Молочная продукция</category>
+<category id="28985" parentId="28934">Каши</category>
+<category id="28968" parentId="28934">Диетическое питание</category>
+<category id="28962" parentId="28934">Десерты</category>
+<category id="28935" parentId="28934">Вода</category>
+<category id="28903" parentId="28627">Стульчики, комоды и пеленальные столики</category>
+<category id="28856" parentId="28627">Салфетки</category>
+<category id="28836" parentId="28627">Принадлежности для купания</category>
+<category id="28783" parentId="28627">Косметика</category>
+<category id="28719" parentId="28627">Ежедневный уход</category>
+<category id="28704" parentId="28627">Горшки и сиденья для унитаза</category>
+<category id="28682" parentId="28627">Весы и термометры</category>
+<category id="28616" parentId="28552">Радионяни</category>
+<category id="28628" parentId="28627">Бытовая химия</category>
+<category id="28599" parentId="28552">Здоровье</category>
+<category id="28592" parentId="28552">Видеоняни</category>
+<category id="28553" parentId="28552">Безопасность для дома</category>
+<category id="30325" parentId="30073">Кошки и Собаки</category>
+<category id="30400" parentId="29690">Play Today</category>
+<category id="30519" parentId="29429">Фирменная продукция</category>
+</categories>
+<local_delivery_cost>350</local_delivery_cost>
+<offers>
+		<offer id="112789" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/stuljchik-happy-baby-quot-brian-quot-red/30564.112789.html</url>
+			<price>2500.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>28903</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/763/brain_red.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Стульчик HAPPY BABY &quot;Brian&quot; Red</name>
+			<vendor>HAPPY BABY</vendor>
+			<description>Стульчик с мягким, удобным сиденьем и надежными ножками и 5-точечными ремнями 
+безопасности. Благодаря специальным накладкам Brian надежно встанет на вашей 
+кухне. Регулируемый столик сделан из специального легко моющегося пластика, 
+а сиденье — из ткани, которая хорошо стирается и поддается очистке. 
+Вся конструкция очень легкая и удобная. Ничего лишнего. Просто выберите 
+расцветку, наиболее подходящую дизайну дома. 
+
+- Размеры в сложенном виде: 43 см Х 32 см Х 49 см 
+- Размеры в собранном виде: 52 см Х 70 см Х 90 см 
+- Вес: 4,14 кг. 
+
+Производитель: Happy Baby (Англия). Страна производства: Китай.</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="156978" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/shezlong-chicco-quot-mia-quot-s-igrushkoi-quot-magia-quot/31391.156978.html</url>
+			<price>5520.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29675</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/44b/kks13.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Шезлонг Chicco &quot;Mia&quot; с игрушкой &quot;Magia&quot;</name>
+			<vendor>Chicco</vendor>
+			<description>Шезлонг Chicco &quot;Mia&quot; с игрушкой  &quot;Magia&quot; 
+
+Шезлонг CHICCO Mia обеспечит необходимый комфорт Вашему ребенку. Специальный 
+вкладыш с набивкой Ergos превращает креслице в уютное гнездышко для новорожденного. 
+Когда ребенок подрастет, вкладыш можно убрать, чтобы не было тесно. К шезлонгу 
+прилагается  подвеска с игрушками, стимулирующими развитие зрения и осязания 
+ребенка. 
+
+Основные характеристики: 
+
+
+- возраст:  с рождения до 9 кг веса 
+- вкладыш из мягкой дышащей ткани с анатомической набивкой 
+- многофункциональная подвеска с игрушками 
+- возможность использовать как качалку и как обычное кресло, установив 
+блокираторы 
+- регулируемая спинка 
+- трехточечный ремень безопасности 
+- может разбираться, чтобы занимать минимум места при хранении 
+- механизм сложения имеет двойную защиту 
+- ручки для переноски 
+ Общие размеры: 
+
+
+- размер шезлонга (шхдхв): 79х44х32-62 см 
+- размер в сложенном виде (шхдхв): 79х44х27 см   
+- вес: 3,49 кг   
+ Производитель: Chicco (Италия)</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="160292" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/stuljchik-peg-perego-quot-tatamia-quot-cacao/31588.160292.html</url>
+			<price>12352.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>28903</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/0b5/wvnvc.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Стульчик Peg Perego &quot;Tatamia&quot; Cacao</name>
+			<vendor>Peg Perego</vendor>
+			<description>Стульчик для кормления Peg-Perego Tatamia  
+     Одновременно удобный шезлонг, расслабляющее кресло-качалка, многофункциональный 
+и сверхкомпактный стульчик для кормления и отдыха.  Стульчик предназначен 
+для детей от 0 до 36 месяцев. 
+ОСНОВНЫЕ ХАРАКТЕРИСТИКИ: 
+
+- двойной поднос, можно мыть в посудомоечной машине; 
+- угол наклона стула регулируется, имеет 4 положения. 
+- пятиточечные ремни безопасности и анатомическая вставка для разделения 
+ног удерживают ребенка в надежном и безопасном положении; 
+- имеет 9 положений сидения по высоте, благодаря этому стул является многофункциональным; 
+- в собранном состоянии компактен и занимает очень мало места. 
+- обивка из экологичной кожи. 
+РАЗМЕРЫ:  
+
+- размеры в сложенном виде (ВxШxГ):  94,5х59х35 см;  
+- размеры в разложенном виде (ВxШxГ): 103х59х87 см; 
+- вес стульчика: 14 кг. 
+Производитель: Peg-Perego 
+Производство: Италия</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="160283" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/stuljchik-peg-perego-quot-prima-pappa-diner-quot-savana-verde/28927.160283.html</url>
+			<price>6250.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>28903</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/9f2/mzkcc%20uzbbk%20pchugp%20ufcfh.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Стульчик Peg Perego &quot;Prima Pappa Diner&quot; Savana Verde</name>
+			<vendor>Peg Perego</vendor>
+			<description>Стульчик для кормления Peg-Perego Prima Pappa Diner.  
+      Удoбный и кpacивый дeтcкий стул - cтoл для кopмлeния и игp. Пoдoйдeт 
+для дeтeй, нaчинaя c 5-6 мecяцeв (кoгдa мaлыш ужe мoжeт caмocтoятeльнo cидeть). 
+Лeгкo пepeмeщaeтcя пo квapтиpe c пoмoщью кoлec, кoтopыe мoжнo зaфикcиpoвaть 
+пpи нeoбxoдимocти. 
+ОСНОВНЫЕ ХАРАКТЕРИСТИКИ: 
+
+- 7 пoлoжeний cидeнья пo выcoтe; 
+- угoл нaклoнa cпинки фикcиpуeтcя в 4-x пoлoжeнияx; 
+- бoльшoй cъeмный cтoлик; 
+- кoлeca co cтoпopaми; 
+- cтульчик pacчитaн нa мaлышa дo тpex лeт; 
+- cидeниe мoющeecя; 
+- peгулиpуeмaя пoднoжкa; 
+- бoльшaя уcтoйчивocть; 
+- пятитoчeчныe peмни бeзoпacнocти и aнaтoмичecкaя вcтaвкa для paздeлeния 
+нoг удepживaют peбeнкa в нaдeжнoм и бeзoпacнoм пoлoжeнии. 
+РАЗМЕРЫ: 
+
+- размеры в разложенном виде (ВxШxГ): 103,5x58x77 см 
+- размеры в сложенном виде (ВxШxГ): 103,5x58x28,5 см 
+- вес стульчика: 10,3 кг 
+Производитель: Peg-Perego 
+Производство: Италия</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="112794" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/stuljchik-happy-baby-quot-kevin-quot-green/28918.112794.html</url>
+			<price>4280.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>28903</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/ab7/kevin_green.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Стульчик HAPPY BABY &quot;Кевин&quot; Green</name>
+			<vendor>HAPPY BABY</vendor>
+			<description>Happy Baby Kevin - многофункциональный стульчик для кормления с двойным 
+подносиком английской фирмы Happy Baby. Красочные расцветки не оставят равнодушным 
+Вашего малыша. 
+ 
+
+- Для детей от 4 мес. 
+- Пятиточечные ремни безопасности и анатомическая вставка для разделения 
+ног удерживают ребенка в надежном и безопасном положении. 
+- Материал обивки - 60% хлопок, 40% полиэстр. 
+- Имеет 6 положений сидения по высоте, благодаря этому стул является многофункциональным. 
+- Спинка стульчика Happy Baby Kevin регулируется по углу наклона и фиксируется 
+в 3-х положениях. 
+- Съемная столешница регулируется в 3 положениях и имеет съемный подносик. 
+- Съемный поднос можно мыть в посудомоечной машине. 
+- Стульчик Happy Baby Kevin обладает хорошей маневренностью. 
+- В собранном состоянии компактен и занимает очень мало места 
+- Стопоры на двух колесиках. 
+- Огромная корзина для игрушек. 
+- Соответствует европейскому стандарту EN 1178-1-1999 и российскому стандарту 
+ГОСТ 19917-93. 
+
+Производитель: Happy Baby (Англия). Страна производства: Китай.</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="112791" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/stuljchik-happy-baby-quot-steven-quot-grey/30565.112791.html</url>
+			<price>3300.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>28903</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/af5/stiven_grey.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Стульчик HAPPY BABY &quot;Steven&quot; Grey</name>
+			<vendor>HAPPY BABY</vendor>
+			<description>Стульчик для кормления STEVEN ТМ Наррy Baby входит в коллекцию «Little 
+Traveler » созданную специально для маленьких и активных путешественников. 
+Это значит, что продукция этой коллекции компактна в сложенном виде, легко 
+собирается и разбирается, мало весит. При этом имеет демократичную цену. 
+
+Стульчик «Steven» Happy Baby имеет следующие особенности: 
+
+- Для детей от 4 месяцев 
+- Регулируемый столик, три позиции 
+- Регулируемая по высоте подставка для ног, две позиции 
+- Пятиточечные ремни с мягкими вставками 
+- Легко моющееся и удобное сиденье 
+- Размеры в сложенном виде: 71х59х17 см 
+- Размеры в разложенном виде: 67х59х94 см 
+- Легкая и прочная конструкция, легко раскладывающаяся одной рукой 
+- Вес: 7,3 кг 
+
+Производитель: Happy Baby (Англия). Страна производства: Китай.</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="159391" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/elektrokacheli-graco-quot-lovin-hug-quot-poise/31216.159391.html</url>
+			<price>4340.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29632</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/f96/kks51.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Электрокачели Graco &quot;Lovin Hug&quot; Poise</name>
+			<vendor>Graco</vendor>
+			<description>Приятные особенности качелей электронных Graco Lovin Hug: качели сочетают 
+в себе удобство, легкость, современный стильный дизайн и обеспечивают полную 
+безопасность для малыша. Ваш малыш сможет расположившись в удобном кресле 
+поиграть, отдохнуть и, возможно, вздремнуть под приятную музыку. А мама, 
+тем временем, получит прекрасную возможность заняться домашними делами. 
+
+Основные характеристики: 
+
+
+- качели используются от рождения до 13 кг 
+- очень удобное сидение 
+- 4 наклона позиции сидения 
+- шесть скоростей качания 
+- игрушки на крутящейся вертушке над головой ребенка и на столике 
+- дополнительная подкладка на сидение и несколько положений наклона спинки 
+- съемный двойной подголовник 
+- съемная подставка для игрушек, чтобы малыш легко заходил/выходил из качелей 
+- интересные мелодии 
+- моющееся сиденье 
+- таймер с автоматическим выключением музыки 
+ Материалы: 
+
+
+- пластмассовое сидение, смягченное мягкой тканевой обивкой 
+- алюминиевая рама 
+ Общие размеры: 
+
+
+- (дхшхв): 83х67х100см 
+- (шхв): 45х100см Вес: 7,3 кг 
+
+Производитель: Graco (США)</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="74487" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/kreslo-shezlong-tiny-love-s-vibriruyuszim-rezhimom/30290.74487.html</url>
+			<price>3384.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29675</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/738/-10.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Кресло-шезлонг Tiny Love с вибрирующим режимом</name>
+			<vendor>Tiny Love</vendor>
+			<description>Кресло-шезлонг Tiny Love с вибрирующим режимом 
+
+Интересное переносное детское кресло Tiny Love с режимом вибрации и съёмными 
+дугами, на которые крепятся игрушки: крабик со звуковыми и световыми эффектами, 
+бегемотик-погремушка и прорезыватели для зубок. 
+
+
+- Возраст: от 0 месяцев. 
+- Игрушка крабик имеет 2 режима игры: 1.Для продолжительной игры включается 
+родителями: светомузыкальные эффекты будут развлекать малыша в течение 15 
+минут. 2.Легко ударив по крабику, малыш сам включает проигрывание коротких 
+мелодий, сопровождающихся световыми эффектами.Каждая из двух игр может работать 
+в светомузыкальном режиме или без музыки (только световые эффекты). 
+- Игрушки мобильны, их можно снять, прикрепить на кроватку, автомобильное 
+кресло,коляску или играть ими отдельно 
+- Уровень наклона кресла можно регулировать (сидя, лёжа). 
+- Устройство вибрации. 
+- Противоскользящие ножки. 
+- Мягкий чехол и ремни безопасности. 
+ 
+- Максимальный вес ребенка: 9 кг. Производитель: Tiny Love (Израиль). 
+
+Страна производства: Китай</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="53436" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/kreslo-shezlong-fisher-price-quot-zanimateljnoe-obuchenie-quot/29685.53436.html</url>
+			<price>4480.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29675</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/f21/b_17416_10444.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Кресло-шезлонг Fisher Price &quot;Яркое кресло&quot;</name>
+			<vendor>Fisher Price</vendor>
+			<description>Кресло-шезлонг Fisher Price &quot;Яркое кресло&quot; 
+
+2 в 1! Кресло-шезлонг Fisher-price можно покачать вручную или включить 
+режим колыбельной, чтобы задействовать легкую вибрацию и убаюкать малыша 
+(виброблок расположен под сиденьем).  
+Спинка кресла фиксируется в двух положениях, а трехточечный ремень обеспечит 
+безопасность малыша. Стопорами блокируется раскачивание, когда это необходимо. 
+Кресло-качалка редназначена для игры, отдыха, короткого сна и приема пищи. 
+Визуальное восприятия младенца стимулируют красочные игрушки: слоник с 
+вращающимся корпусом, слоник-погремушка и музыкльный зонтик с колечком. 
+Их легко снимать, мыть или заменять на другие. Панель с игрушками съёмная, 
+на время кормления или сна её можно убрать. Подросший малыш использует качалку 
+без дуги и ремней. 
+
+Вес кресла-шезлонга - около 3,5 кг 
+
+Д х Ш х В в режиме сидя - 85 х 48 х 63 см  
+Д х Ш х В в режиме лежа - 63 х 48 х 63 см  
+
+Размер упаковки: 58,8 x 43,4 x 8,8 см 
+
+Обивка кресла-качалки съёмная, стирать необходимо при 30 °C в стиральной 
+машине, а сушить при низких температурах. 
+
+Питание: 1 &quot;D&quot;-батарейка (в комплект НЕ входит) 
+
+В качестве сидения кресло-шезлонг предназначено для малышей в возрасте 
+от 5-ти месяцев (которые могут самостоятельно сидеть). 
+
+Возраст: 0 мес.+ / 5 мес.+ 
+
+Производитель: Fisher-Price (США). 
+
+Страна производства: Китай.</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="150215" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/kreslo-kachalka-bright-starts-quot-komfort-i-garmoniya-quot-quot-utochka-quot-muzykaljnoe/30475.150215.html</url>
+			<price>3398.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29675</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/7f3/kks1.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Кресло-качалка Bright Starts &quot;Комфорт и гармония&quot; &quot;Уточка&quot; музыкальное</name>
+			<vendor>Bright Starts</vendor>
+			<description>Кресло-качалка &quot;Уточка&quot; музыкальное 
+
+Теперь даже самые маленькие дети могут качаться, отдыхать и играть с максимальным 
+комфортом! 
+
+Особенности: 
+
+
+- Для малышей от 0 месяцев. 
+- Мягкая съемная подушка поддерживает спинку ребенка 
+- 3-х позиционное сиденье с технологией Comfort Recline  
+- Может фиксироваться в устойчивом положении  
+- Успокаивающая вибрация, 7 мелодий, регулировка громкости и автоматическое 
+отключение  
+- Съемная перекладина для игрушек может поворачиваться для быстрого доступа 
+к ребенку 
+ Дополнительные характеристики: 
+
+
+- легко складывается для хранения и путешествий 
+- 5-точечный ремень безопасности  
+- возможность машинной стирки сиденья  
+- размеры товара: 45 * 70 * 60 см 
+- размеры коробки: 61 * 13 * 39 см. 
+ Производитель: Bright StartsTM (США).</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="158176" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/kreslo-shezlong-baby-bjorn-quot-balance-quot-korichnevo-oranzhevyi/30976.158176.html</url>
+			<price>8090.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29675</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/860/kks18.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Кресло-шезлонг Baby Bjorn &quot;Balance&quot; (коричнево-оранжевый)</name>
+			<vendor>Baby Bjorn</vendor>
+			<description>Особенности Baby Bjorn Balance: рассчитанное на детей от рождения и до 
+2-х лет (3,5 кг до 13 кг). Оптимальная поддержка для спины и головы ребенка. 
+Эргономический дизайн с формируемым сиденьем. Батарейки не требуются, собственные 
+движения ребенка приводят к раскачиванию кресла-шезлонга. Превращается в 
+удобный стул для ребенка постарше, который сам может садиться в кресло-шезлонг. 
+Трусики-фиксатор следует тогда убрать. 
+
+Основные характеристики: 
+
+
+- мягкое тканевое кресло, повторяющее форму тела 
+- глубокое дно не дает ребенку выскользнуть из кресла 
+- просто и беззвучно регулируется с помощью предохранительной защелки 
+- 3 регулируемые положения (игра, отдых, сон) 
+- легко расстегивающиеся кнопки позволяют без труда посадить и вынуть ребенка 
+- устойчиво стоит на полу благодаря основательной противоскользящей защите, 
+которая, кроме того, предохраняет пол от царапанья 
+- легко и компактно складывается 
+- чехол и &quot;трусики&quot; двусторонние, можно менять внешний вид кресла под настроение 
+- обивка легко снимается и стирается 
+- машинная стирка при 40 градусах 
+- легко и компактно складывается 
+ Материал: 
+
+
+- удобно и долговечно, из мягкого износостойкого материала 
+- мягкая набивка вокруг каркаса создает ощущение уюта 
+ Игра: максимальный вес 13 кг 
+Отдых: максимальный вес 10 кг 
+Сон: максимальный вес 7 кг 
+
+Производитель: BabyBjorn (Швеция)</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="161153" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/hodunki-jetem-quot-mobile-quot-sinie/31614.161153.html</url>
+			<price>1880.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29661</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/c4c/kks98.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Ходунки Jetem &quot;Mobile&quot; Синие</name>
+			<vendor>Jetem</vendor>
+			<description>Ходунки Jetem Mobile имеют игровую музыкальную панель, погремушки. Помогут 
+в развитии мелкой моторики и координации движений ребенка. Высота ходунков 
+регулируется в трех положениях по мере роста ребенка, четыре свободно вращающихся 
+колеса обеспечивают хорошую маневренность. 
+
+
+- Рекомендовано для детей от 6 месяцев до 1,5 лет 
+- Регулируются по высоте в 3х положениях 
+- Легкая рама 
+- Устойчивые 
+- Поворотные, силиконовые колеса облегчают перемещение и не повреждают 
+напольные покрытия 
+- Замок-фиксатор защищает от произвольного складывания 
+- Стопоры позволяют контролировать передвижения ребенка 
+- Игровой центр легко снимается, после чего можно пользоваться лотком как 
+столиком 
+- Мягкое сидение из моющегося материала, снимается для стирки 
+- Ходунки компактно складываются гармошкой 
+- Вес 4,3 кг. 
+ Производитель: Jetem (Китай)</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="161146" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/hodunki-jetem-quot-easygo-quot-sinie/31619.161146.html</url>
+			<price>2300.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29661</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/903/xk1.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Ходунки Jetem &quot;EasyGo&quot; Синие</name>
+			<vendor>Jetem</vendor>
+			<description>Ходунки Jetem EasyGo имеют три варианта использования: пока малыш еще совсем 
+мал, ему подойдет вариант ходунки с опорой для ножек, когда малыш уже пытается 
+вставать на ножки, ему подойдет вариант без опоры для ножек с возможностью 
+отталкивания от пола, когда малыш начинает ходить можно снять сиденье, переставить 
+поручень и опору для ножек и он сможет ходить без помощи мамы, держась за 
+ходунки. 
+
+
+- Рекомендовано для детей от 6 месяцев до 1,5 лет. 
+- Превосходное качество. 
+- Эксклюзивный дизайн. 
+- Очень легкая рама. 
+- 2 положения крепления опоры для ножек и поручня-спинки. 
+- 2 положения крепления поручня-спинки. 
+- Широкое основание для максимальной устойчивости. 
+- Двойные силиконовые поворотные колеса облегчают перемещение и не повреждают 
+напольные покрытия. 
+- Мягкое сидение из моющегося материала. 
+- Игровой центр легко снимается, после чего можно пользоваться лотком как 
+столиком. 
+- Замок-фиксатор исключающий произвольное складывание. 
+- 3 положения регулировки высоты от пола. 
+- Компактно складываются (гармошка)для хранения. 
+- Полностью съемная обивка (для удобства стирки). 
+- Вес 5,4 кг. 
+ Производитель: Jetem (Китай)</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="112758" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/hodunki-happy-baby-quot-mikki-quot-orange/29673.112758.html</url>
+			<price>2100.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29661</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/a6e/mikky_orange.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Ходунки Happy Baby &quot;Mikki&quot; Orange</name>
+			<vendor>Happy Baby</vendor>
+			<description>Детские ходунки HAPPY BABY Mikki, модель 2008 года, оснащены игровой музыкальной 
+панелью со съемной машинкой и телефоном, помогут в развитии мелкой моторики 
+и координации движений ребенка. 
+ 
+
+- Высота ходунков регулируется в трех положениях по мере роста ребенка. 
+- Широкое основание обеспечивает максимальную устойчивость. 
+- Восемь силиконовых, свободно вращающихся колес, обеспечивают хорошую 
+маневренность и  не царапают напольное покрытие. 
+- Благодаря качественному пластику и соответствию всем Европейским стандартам 
+ходунки HAPPY BABY Mikki устойчивы и безопасны. 
+- Игровая панель легко снимается, таким образом, вместо нее может использоваться 
+поднос. 
+- Сиденье имеет мягкую обивку - ткань 100% полиэстр. 
+- В собранном состоянии ходунки компактны и занимают очень мало места. 
+- Положение по высоте от пола до сидения: 1 - 22 см., 2 - 24 см., 3 - 26 
+см. 
+- Сидение: ш. 22 см. Х д. 24 см. 
+- Размеры базы: ш. 61 см. Х д. 71 см. 
+- Вес: 4,20 кг. 
+- Соответствует европейскому стандарту EN 1178-1-1999 и российскому стандарту 
+ГОСТ 19917-93. 
+
+Производитель: Happy Baby (Англия). Страна производства: Китай.</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="52937" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/elektronnye-kacheli-fisher-price-quot-tropicheskii-les-quot-kolybeljnye-kacheli/29634.52937.html</url>
+			<price>8655.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29632</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/33a/b_12883_5671.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Электронные качели Fisher Price &quot;Тропический лес&quot; (колыбельные качели)</name>
+			<vendor>Fisher Price</vendor>
+			<description>Колыбельные качели Fisher Price &quot;Тропический лес&quot; 
+ 
+
+- Колыбелька-качели со световыми и музыкальными эффектами для малышей от 
+0 до 6 месяцев (максимальный вес малыша - 9 кг) 
+ 
+- Это замечательное многофункциональное устройство идеально подходит для 
+любого состояния ребёнка: активного бодрствования и развивающих игр, спокойного 
+отдыха и дневного сна. 
+- Люлька может быть подвешена в 2 положениях: колыбелька — для самых 
+маленьких крох, с наклоном под углом 45 градусов, что является также оптимальным 
+для засыпания малыша; качели – в полусидячем положении для малышей постарше; 
+- Люлька может раскачиваться по 2 направлениям: вперёд-назад как классические 
+качели или из стороны в сторону как классическая колыбель. 
+- Мягкие игрушки, которые крутятся на карусельке, позволят вашему малышу 
+окунуться в сказочный мир леса. 
+- Съёмная подставка может быть установлена на люльку и использоваться как 
+маленький столик для раскладывания любимых игрушек или кормления малыша. 
+- 12 мелодий ( в том числе и звуки леса) они развеселят и успокоят малыша. 
+- 6 скоростей укачивания. 
+- Работает от батареек( в комплект не входят). 
+ 
+
+Производитель: Fisher-Price (США) 
+
+Производство: Китай.</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="117929" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/kacheli-bright-starts-quot-safari-quot-muzykaljnye/30772.117929.html</url>
+			<price>4760.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29632</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/86e/6917000.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Кресло-качалка Bright Starts &quot;Сафари&quot; (с 6-ю мелодиями)</name>
+			<vendor>Bright Starts</vendor>
+			<description> 
+  Для малышей с рождения. 
+ 
+    
+   Ощутите, как Ваш ребенок любит скорость, пользуясь новаторскими 
+переносными качельками! 
+    
+   ОСОБЕННОСТИ: Технология TrueSpeed&amp; trade; 
+обеспечивает выбор 6-ти скоростей по мере того, как ребенок взрослеет. 2-х 
+позиционное сиденье с технологией Comfort Recline&amp; trade;. 6 мелодий 
+с регулятором громкости. Перекладина для игрушек легко убирается для быстрого 
+доступа к ребенку и содержит 2 занимательные игрушки. Таймер с 3-мя режимами: 
+15, 30 и 45 минут. 
+    
+   
+    
+   Дополнительные характеристики: 
+    
+   &amp; bull;Бесшумная технология 
+    
+   &amp; bull;Легко складывается для хранения и путешествий 
+    
+   &amp; bull;5-точечный ремень безопасности 
+    
+   &amp; bull;Возможность машинной стирки сиденья 
+    
+   &amp; bull;Специальные «нескользкие» ножки 
+    
+   &amp; bull;размеры товара: 56 * 71 * 57,5 см 
+    
+   &amp; bull;размеры коробки: 55 * 12,5 * 35,5 см 
+    
+   &amp; bull;до 11 кг 
+    
+   
+    
+   Производитель: Bright Starts (США).
+</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="117927" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/kacheli-bright-starts-quot-progulka-slonenka-quot-muzykaljnye/30772.117927.html</url>
+			<price>2690.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29632</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/ca1/6923.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Кресло-качалка Bright Starts &quot;Прогулка слоненка&quot; музыкальные</name>
+			<vendor>Bright Starts</vendor>
+			<description>Кресло-качалка &quot;Прогулка слонёнка&quot; с 5 мелодиями. 
+
+Нежная вибрация, приятные мелодии и забавные игрушки надолго привлекут 
+внимание ребенка! 
+
+Особенности: 
+
+
+- Для детей в возрасте: от 0 до 12 месяцев 
+- Успокаивающая вибрация с 5 мелодиями и автоматическим отключением через 
+15 минут 
+- Перекладина с игрушками убирается одной рукой для быстрого доступа к 
+ребенку 
+- 3 игрушки: мягкая игрушка слон, мягкая игрушка жираф, вращающаяся погремушка 
+- Сиденье колыбельного типа 
+ Дополнительная информация: 
+
+
+- Для сборки не требуется специальный инструмент 
+- 3-точечный ремень безопасности 
+- Возможность машинной стирки сиденья 
+- Специальные нескользкие ножки 
+- Размеры товара: 47,5 х 52,5 х 41,5 см 
+- Размеры коробки: 49 х 81 х 34 см Производитель: KIDS II INC (Китай).</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="156390" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/kreslo-kachalka-bright-starts-quot-kroha-cherepashka-quot-s-7-yu-melodiyami/30772.156390.html</url>
+			<price>2150.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29632</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/645/2030037.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Кресло-качалка Bright Starts &quot;Кроха черепашка&quot; (с 7-ю мелодиями)</name>
+			<vendor>Bright Starts</vendor>
+			<description>Кресло-качалка с 7-ю мелодиями, Кроха черепашка, голубое 
+
+
+ 
+
+ 
+
+Мелодии и вибрация быстро успокоят ребенка в этой уютной и забавной качалке!  
+
+Особенности: 
+ 
+
+- 7 мелодий с успокаивающей вибрацией и автоматическим отключением через 
+15 минут 
+- Съёмная поддерживающая голову подушка в форме черепахи  
+- 3 занимательные игрушки:  
+- Мягкая игрушка - черепашка с кольцом, за которое легко ухватиться  
+- Погремушка с цветными шариками  
+- Игрушка с бусинками спиралевидной формы  
+- Все эти игрушки убираются одной рукой, что обеспечивает легкий доступ 
+к ребенку  
+- Сиденье колыбельного типа Дополнительные характеристики: 
+
+
+
+- Регулируемый 3-точечный ремень безопасности 
+- Возможность машинной стирки сиденья  
+- Специальные 'нескользкие' ножки  
+- Для сборки не требуется специальный инструмент  
+- Размеры товара: 60 * 60 * 50 см  
+- Размеры коробки: 50 * 9 * 34 см  
+- До 9 кг Производитель: KIDS II INC (Китай).</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="140044" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/elektronnye-kacheli-chicco-sea-dreams-80/30288.140044.html</url>
+			<price>8529.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29632</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/d95/SwingUp_80.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Электронные качели Chicco Sea Dreams 80</name>
+			<vendor>Chicco</vendor>
+			<description>Электронные качели Chicco 
+
+- 5-ти точечный ремень безопасности 
+- 4 скорости качания для укачивания малыша 
+- 6 различных мелодий (расслабляющие природные шумы и тоны сердца) 
+- съемная музыкальная панель, мигает 6-ю разноцветными огнями 
+- работают от стандартных батареек (в комплект не входят) 
+- съемный козырек с 3 мягкими игрушками 
+- тканевые детали снимаются для стирки 
+- компактный размер в сложенном виде 
+
+Вес: 6,1 кг 
+
+Размеры (шЧдЧв): 55Ч57Ч63-71 см Размеры в сложенном 
+виде (шЧдЧв): 55Ч14Ч67-78 см</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="140811" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/kolybelj-kacheli-bright-starts-quot-ingenuity-collection-quot-serye-6985/30945.140811.html</url>
+			<price>4677.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29632</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/de8/Bright-Starts-6985.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Качели Bright Starts &quot;InGenuity collection&quot; Серые (6985)</name>
+			<vendor>Bright Starts</vendor>
+			<description>Благодаря детским качелям малыш всегда может быть &quot;под присмотром&quot;, даже 
+когда Вы отдыхаете или занимаетесь своими делами! 
+
+Особенности: 
+
+
+- Сиденье способно поворачиваться на 180, обеспечивая возможность качаться 
+в 3-х направлениях 
+- Бесшумное раскачивание благодаря технологии Whisper Quiet  
+- Технология TrueSpeed обеспечивает выбор 6-ти скоростей  
+- 2-х позиционное сиденье с технологией Comfort Recline со съёмным чехлом  
+- Мобиль с 3-мя мягкими игрушками не мешает раскачиванию  
+- Новаторский съёмный столик с 2-мя мягкими игрушками  
+- 10 мелодий и звуков природы 
+ Дополнительная информация: 
+
+
+- Мягкие, плюшевые игрушки 
+- Таймер с 3-мя режимами: 30, 45, 60 минут  
+- 5-точечный ремень безопасности  
+- Возможность машинной стирки  
+- Размеры товара: 104 * 96,5 * 79 см  
+- Размеры коробки: 55 * 19 * 77 см  
+- Допустимая нагрузка до 11,3 кг 
+ Производитель: KIDS II INC (Китай).</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="156391" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/kreslo-kachalka-bright-starts-quot-solnechnoe-safari-quot/30772.156391.html</url>
+			<price>1990.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29632</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/503/orig_7079BSs1w.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Кресло-качалка Bright Starts &quot;Солнечное сафари&quot;</name>
+			<vendor>Bright Starts</vendor>
+			<description>Кресло-качалка Солнечное сафари 
+
+Яркий персонажи развлекут вашего малыша, а нежная вибрация поможет его 
+успокоить! 
+
+Особенности: 
+
+
+- Новое углубленное сиденье дает дополнительную поддержку спинке малыша 
+и пространство по мере роста ребенка 
+- Успокаивающая вибрация 
+- Съемная перекладина с 2-мя мягкими игрушками может поворачиваться для 
+быстрого доступа к ребенку 
+ Дополнительные характеристики: 
+
+
+- 3-х точечный регулирующийся ремень безопасности 
+- Возможность машинной стирки сиденья  
+- Не требует инструментов для сборки  
+- Специальные «нескользкие» ножки 
+- Размеры товара: 49 * 54 * 52 см 
+- Размеры коробки: 51 * 9 * 34 см 
+- До 11 кг 
+ Производитель: KIDS II INC (Китай).</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="52860" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/elektronnye-kacheli-fisher-price-quot-chudesa-i-dostizheniya-quot/29634.52860.html</url>
+			<price>5034.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29632</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/de8/b_12556_5044.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Электронные качели Fisher Price &quot;Чудеса и достижения&quot;</name>
+			<vendor>Fisher Price</vendor>
+			<description>Качающееся кресло Fisher Price с большим зеркалом и черно-белыми акцентами 
+способствует развитию зрения малыша, оно идеально подходит для любого состояния 
+ребёнка: активного бодрствования, развивающих игр или спокойного отдыха. 
+
+
+- 5 скоростей качания для выбора оптимально подходящей Вашему ребёнку. 
+- Воспроизведение 7-ми приятных успокаивающих мелодий. 
+- Контроль звука мелодий. 
+- Большое съемное развивающее зеркало в виде панды. 
+- Устойчивый и упругий металлический каркас с резиновыми накладками на 
+ножках надежно удерживают качалку. 
+- Чехол сиденья съемный, возможна машинная стирка. 
+- Пояс-держатель с двумя регулируемыми застёжками надёжно и нежно удержит 
+малыша. 
+- Три игрушки, которые фиксируются на кресле, изготовлены из материалов 
+с различными фактурами, что стимулирует развитие тактильных ощущений малыша. 
+- Качели легко и удобно собирать и переносить, что позволяет брать их с 
+собой на прогулку. 
+- Спинка качелей имеет регулируемый угол наклона. 
+- Размер качелей: 60х50х65 см. 
+- Для качания необходимы батарейки: 4хС 1,5V (в комплект не входят). 
+- Максимальный вес малыша: 9 кг. 
+ 
+
+Производитель: Fisher-Price (США). 
+
+Страна производства: Китай.</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="52929" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/kolybelj-simplicity-3-v-1-3012/29979.52929.html</url>
+			<price>5790.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29977</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/0da/Simplicity3012-SOM.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Колыбель Simplicity 3 в 1 (3012) SOM</name>
+			<vendor>Simplicity</vendor>
+			<description>Колыбель Simplisiti Симплисити 3 в 1 (3012) 
+
+- Детская колыбель с электронной системой укачивания, колыбельными мелодиями 
+и подвесными игрушками. 
+- Мягкая подсветка для проверки малыша ночью. 
+- Вибрация и колыбельные мелодии. 
+- Удобный матрасик с простынкой. 
+- Подвесные мягкие игрушки для развлечения малыша. 
+- Пять регулируемых уровней высоты. 
+- Большая корзина для хранения вещей или игрушек. 
+- С помощью легко убираемых колес детская колыбель трансформируется в качалку. 
+- Легко снимающиеся для чистки части из ткани. 
+- Детскую колыбель можно использовать в прикроватном варианте. 
+- Может трансформироваться в удобный пеленальный столик. 
+- Вес: 8кг. 
+- Размер: (длина*ширина*высота) 80*43*24 см. 
+- Высота от пола до 1 уровня: 60 см. 
+- Высота от пола до 5 уровня: 80 см. 
+
+Производство: Simplisiti (США).</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="52931" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/kolybelj-simplicity-3-v-1-3046-gtm/29979.52931.html</url>
+			<price>5790.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29977</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/83d/Simplicity3046-HAN.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Колыбель Simplicity 3 в 1 (3046) HAN</name>
+			<vendor>Simplicity</vendor>
+			<description>Детская колыбель Simplicity Симплисити 3 в 1 (3046) Съемная электронная карусель с подвесными 
+игрушками и мерцающими огонькамиЭлектронный блок с 
+вибрационной системой и колыбельными мелодиямиМягкая 
+подсветка для проверки малыша ночьюУдобный матрасик 
+с простынкойПодвесные мягкие игрушки для развлечения 
+малышаПять регулируемых уровней высотыБольшая 
+корзина для хранения вещей или игрушекС помощью легко 
+убираемых колес трансформируется в качалкуЛегко снимающиеся 
+для чистки части из тканиМожет использоваться в прикроватном 
+вариантеМожет трансформироваться в удобный пеленальный 
+столикВес 8 кгРазмер колыбели 
+80x43x24 смВысота от пола до 1 уровня 60 см , до 5 
+уровня 80 смГабариты упаковки 49x89x15,5 см Производство: 
+Simplisiti (США).           </description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="159819" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/kolyaska-happy-baby-orbit-st-001-sinii/31629.159819.html</url>
+			<price>1090.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29982</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/e1f/kj85.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Коляска HAPPY BABY Orbit ST-001 Синий</name>
+			<vendor>HAPPY BABY</vendor>
+			<description>Коляска-трость Happy Baby Orbit ST-001 - легкая, компактная модель коляски, 
+отлично подходящая для путешествий или коротких прогулок. 
+
+
+- Для детей с 6 мес до 3  лет. 
+- Легкая рама 
+- Козырек от солнца 
+- Фиксированное положение спинки 
+- Механизм сложения трость 
+- 5-ти точечные ремни безопасности с мягкими накладками 
+- Съемный защитный бампер 
+- Удобные ручки, с ограничителями 
+- Передние сдвоенные колеса вращаются, а задние имеют стояночный тормоз  
+- Корзина для покупок 
+- Размеры в разложенном виде (шxдxв): 62х37х95 см 
+- Вес: 5 кг 
+ Производитель: Happy Baby (Англия). 
+
+Страна производства: Китай.</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="159822" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/kolyaska-happy-baby-orbit-st-002-fioletovyi/31630.159822.html</url>
+			<price>1350.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29982</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/a4b/kj86.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Коляска HAPPY BABY Orbit ST-002 Фиолетовый</name>
+			<vendor>HAPPY BABY</vendor>
+			<description>Коляска-трость Happy Baby Orbit ST-002 - прекрасно подойдет для активного 
+отдыха. 
+
+
+- Для детей с 6 мес до 3  лет. 
+- Легкая рама 
+- Большой капюшон 
+- Механизм сложения трость 
+- 2 положения спинки, вертикальное и условно горизонтальное  
+- 5-ти точечные ремни безопасности с мягкими накладками 
+- Защитный бампер с игрушкой, съёмный 
+- Удобные ручки эргономичной формы, с подстаканником 
+- Передние сдвоенные колеса вращаются, а задние имеют стояночный тормоз.  
+- Корзина для покупок 
+- Глубина сидения: 21 см 
+- Размеры в разложенном виде (шxдxв): 70х47х91 см 
+- Вес: 5 кг 
+ Производитель: Happy Baby (Англия). 
+
+Страна производства: Китай.</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="156807" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/velosiped-smart-trike-bonbon-zelenyi-s-sinim-5131100/31336.156807.html</url>
+			<price>2790.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29962</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/86e/dt54.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Велосипед Smart Trike Bonbon Зеленый с синим (5131100)</name>
+			<vendor>Smart Trike</vendor>
+			<description>Велосипед Smart Trike Bonbon Зеленый с синим 
+
+Трёхколёсный велосипед-трансформер Smart Trike Bonbon предназначен для 
+самых юных путешественников. Велосипед растёт вместе с Вашим ребёнком, меняясь 
+и подстраиваясь под него. Из безопасного и удобного детского велосипеда, 
+рассчитанного на 10-месячных малышей, данная модель превращается в велосипед, 
+предназначенный для самостоятельных поездок детей старше 2-х лет. 
+
+Особенность: 
+
+
+- Для детей в возрасте от 10-ти месяцев до 3-х лет и старше. 
+- Крепкий металлический каркас.  
+- Ремень безопасности и защитная дуга. 
+- Подставка под бутылку 
+- Широкий хват ручки управления. 
+- Блокировка. 
+- Съемный козырек. 
+- Резиновые колеса. 
+- Не скользящие педали. 
+- Корзина. 
+ Производитель: Smart Trike (Израиль)</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="156866" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/samokat-smoby-princessa-rozovyi/31390.156866.html</url>
+			<price>2320.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29962</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/8fe/dt37.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Самокат Smoby Принцесса (розовый)</name>
+			<vendor>Smoby</vendor>
+			<description>Самокат Smoby Принцесса (розовый) 
+
+Яркий трехколесный самокат в красочном стиле любимых принцесс из диснеевских 
+мультфильмов. Малышка будет в восторге! 
+
+Особенности: 
+
+
+- Для детей от 2,5  лет. 
+- надежная металлическая рама 
+- колеса (одно спереди и два сзади) из прозрачного прорезиненного пластика, 
+с фактурным рисунком против скольжения 
+- без тормоза 
+- накладки на ручки — резиновые рифленные, с боковыми ограничителями 
+(чтобы ручки ребенка не соскальзывали) 
+- высота стойки регулируется – плавная регулировка, от 64 до 72 см 
+- площадка для ноги с фактурной антискользящей поверхностью 
+- спереди на рулевую стойку вешается пластиковый щит с яркой наклейкой 
+- сзади устанавливается пластиковый флажок с наклейкой 
+- сзади платформа оканчивается удобной рифленой ручкой для переноски  
+- максимальная нагрузка 25 кг 
+ Общие размеры: 
+
+
+- Размер самоката: 60х25х64-72 см, 
+- ширина по рукояткам – 36 см,  
+- переднее колесо – диаметр 15 см,  
+- задние колеса – диаметр 12,5 см. 
+- Размер упаковки: 54х21х14,5 см. 
+- Вес с упаковкой: 2,9 кг. 
+ Производитель: Smoby (Франция)</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="111529" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/detskii-transport-smoby-katalka-quot-mcqueen-quot-s-12-mes/30542.111529.html</url>
+			<price>5416.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29962</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/412/56380.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Каталка Smoby Каталка &quot;McQUEEN&quot; с 12 мес.</name>
+			<vendor>Smoby</vendor>
+			<description>Новинка из мира Disney Pixar - машинка-каталка &quot;Молния МакКуин&quot; со звуковыми 
+эффектами. Стильная машинка McQUEEN теперь всегда будет рядом. И теперь 
+можно не только катать машинку МакКуина, но и кататься на нем самому. Поверни 
+ключ &quot;зажигания&quot; - и зазвучит шум работающего мотора. Нажми на клаксон - 
+и он весело поприветствует тебя. Колеса сделаны почти как настоящие - реалистичный 
+протектор, яркие красные диски . Колеса прорезинены, что уменьшает шум при 
+езде по квартире. В этой каталки прорисовано все до мелочей, чтобы максимально 
+приблизить любимого героя фильма &quot;Тачки&quot; к реальному. Удобное кресло. Машинка 
+сделана из особопрочного пластика, так что не бойтесь, что малыш ее сломает. 
+
+
+- Для детей от 1 года. 
+- Размеры: 70 х 30 х 39 см Производитель: Франция</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="155903" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/italtrike-velosiped-italtrike-magic-goluboi/31317.155903.html</url>
+			<price>4340.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29962</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/ed8/dt1.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Велосипед Italtrike Magic Голубой</name>
+			<vendor>Italtrike</vendor>
+			<description>Велосипед Italtrike Magic стильный и современный, создан итальянским дизайнером 
+Fabio Fratelli эксклюзивно для России. Italtrike Magic — велосипед, 
+имеющий поворотную ручку, что поможет Вам преодолевать препятствия на дороге 
+и одновременно поворачивать велосипед направо и налево. Чтобы ноги малыша 
+отдыхали пока велосипед везет мама, есть подножка, которая легко складывается 
+и убирается под сиденье. Небольшой вес будет удобен в дальнейшем использовании 
+ребенком для самостоятельной езды. 
+
+Основные характеристики: 
+
+
+- предназначен для детей от 1,5 лет 
+- ультрамодный дизайн 
+- прочная хромированная рама 
+- телескопическая pодительская ручка управляет передним колесом 
+- уникальная система управляемых тросиков спрятана в раме. Система имеет 
+патент, надежна и долговечна 
+- ручку можно регулировать по высоте 
+- большие колеса из мягкого пластика (непрокалываемые и прочные, бесшумный 
+ход, безопасность и удобство в использовании) 
+- стильные диски 
+- новая форма сиденья с мягкой подушечкой, с точностью повторяет форму 
+тела ребенка 
+- 3-х точечные ремни безопасности 
+- cпинка эргономичная и высокая 
+- нескользящие подножки, которые легко складываются под раму 
+- блокировка педалей переднего колеса 
+- cтояночный тормоз (блокировка задних колес) 
+- ручной тормоз задних колес 
+- съемный сетчатый тент от солнца и дождя новой технологии 
+- вместительная и стильная багажная корзина (легко снимается и чистится) 
+- максимальная допустимая нагрузка 25 кг 
+ Общие размеры: 
+
+
+- велосипеда (дxшxв): 89х36х53 см 
+- Вес: 6,5 кг 
+ Производитель: Italtrike (Италия)</description>
+			<sales_notes></sales_notes>
+		</offer>
+
+		<offer id="52543" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/pyure-gerber-myasnoe-80-gr-govyadina-s-6-mes/29161.52543.html</url>
+			<price>67.50</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29150</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/7dc/-owruqfiv-3.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Пюре Gerber мясное 80 гр. Говядина с 6 мес.</name>
+			<vendor>Gerber</vendor>
+			<description>Пюре Gerber Гербер говядина с 6 мес. 80 гр. Пюре Говядина GERBER отличается 
+низким содержанием жира и нежной консистенцией, поэтому наверняка оно придется 
+по вкусу вашему малышу, а отсутствие сахара и соли в составе позволит маленькому 
+с самого начала привыкнуть к натуральному вкусу мяса. Говядина является 
+ценным источником железа и белка. 
+
+
+- Без крахмала. 
+- Без соли. 
+- Состав: пюре из мяса говядины, крахмал, растительные масла, вода. 
+
+Производитель: Gerber (США) 
+
+Страна производства: Польша.</description>
+			<sales_notes></sales_notes>
+		</offer>
+</offers>
+</shop>
+	</yml_catalog>

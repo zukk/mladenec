@@ -1,0 +1,936 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<!DOCTYPE yml_catalog SYSTEM "shops.dtd"><yml_catalog date="2011-11-21 16:21">
+    <shop>
+		<name>maldenec.ru</name>
+			<company>ООО "младенец.ру"</company>
+			<url>http://www.mladenec-shop.ru/</url>
+			<platform>"1С-Битрикс: Управление сайтом"</platform>
+			<version>10.0.7</version>
+			<agency></agency>
+			<email>parfenov.a@mladenec.ru</email>
+
+			<currencies>
+				    <currency id="RUR" rate="1"/>
+					<currency id="USD" rate="CBRF" plus="1"/>
+					<currency id="EUR" rate="CBRF" plus="1"/>
+			</currencies>
+<categories><category id="29798" parentId="29777">Подгузники</category><category id="29777">Подгузники и пеленки</category></categories>
+<local_delivery_cost>350</local_delivery_cost>
+<offers><offer id="55315" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-dry-nites-quot-nochnye-dlya-devochek-17-30-kg-10-sht/29834.55315.html</url>
+<price>256.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/5c6/-dry-nites-pqq-17-30-10_1.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Dry Nites&quot; ночные Для девочек 17-30 кг 10 шт.</name>
+<vendor>Huggies</vendor>
+<description>Трусики Huggies Хаггис Dry Nites ночные для девочек 17-30 кг 10 шт. 
+ 
+
+- Если Вашем малышу больше четырех лет, и он просыпается мокрым по утрам, 
+то неоценимую помощь окажут ночные впитывающие трусики DryNites. 
+
+- Впитывающий слой DryNites и защитные барьерчики позволяют обеспечивать 
+надежную защиту на всю ночь, так что родителям не придется вставать среди 
+ночи, чтобы сменить постель и пижаму ребенка. 
+
+- Трусики DryNites мягкие на ощупь, тонкие и незаметные. По выкройке и 
+по расцветке они напоминают обычное нижнее белье. Дети могут легко воспользоваться 
+ими сами, благодаря чему будут чувствовать себя более уверенными и независимыми. 
+
+- С DryNites ребенок будет спокоен за себя и дома, и в детском саду, и 
+оставаясь ночевать в гостях, а значит сможет быстрее справиться с проблемой 
+мокрой постели. Производитель: Huggies Хаггис (Чехия)</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55317" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-little-walkers-quot-maxi-14-18-kg-48-sht-razmer-5/29835.55317.html</url>
+<price>733.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/852/11-18.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Little Walkers Jeans&quot; Mega Pack 11-18 кг (48 шт.) Размер 5 (новогодний дизайн)</name>
+<vendor>Huggies</vendor>
+<description>Трусики-подгузники HUGGIES Little Walkers 
+— лучшее решение для активных малышей, которых сложно уложить на пеленальный 
+стол, чтобы сменить подгузник.Благодаря 
+мягким эластичным вставкам по бокам трусики 
+отлично сидят и обеспечивают легкость движения.Легко 
+снимаются и надеваются, как настоящие трусики.Трусики 
+растягиваются во все стороны благодаря эластичным боковинкамВпитываемость 
+Little Walkers настолько велика, что одной 
+пары трусиков хватит на всю ночь.Специальные одноразовые 
+застежки по бокам использованных трусиков можно легко разорвать и снять 
+трусики, не испачкав малыша.Трусики 
+HUGGIES Little Walkers идеальны для детей, которые уже начали 
+ходить.Производитель: 
+Huggies (Чехия).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55318" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-little-walkers-quot-midi-14-18-kg-32-sht-razmer-5/29836.55318.html</url>
+<price>493.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/3a1/2dhuggies_little_walkers_5_11-18kg_32x6_v9_out_curve.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Little Walkers&quot; Jumbo Pack 11-18 кг (32 шт) Размер 5</name>
+<vendor>Huggies</vendor>
+<description>Трусики-подгузники HUGGIES Little Walkers 
+— лучшее решение для активных малышей, которых сложно уложить на пеленальный 
+стол, чтобы сменить подгузник.Благодаря 
+мягким эластичным вставкам по бокам трусики 
+отлично сидят и обеспечивают легкость движения.Легко 
+снимаются и надеваются, как настоящие трусики.Трусики 
+растягиваются во все стороны благодаря эластичным боковинкамВпитываемость 
+Little Walkers настолько велика, что одной 
+пары трусиков хватит на всю ночь.Специальные одноразовые 
+застежки по бокам использованных трусиков можно легко разорвать и снять 
+трусики, не испачкав малыша.Трусики 
+HUGGIES Little Walkers идеальны для детей, которые уже начали 
+ходить.Производитель: 
+Huggies (Чехия).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55319" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-little-walkers-quot-midi-17-kg-30-sht-razmer-6/29836.55319.html</url>
+<price>493.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/f20/2dhuggies_little_walkers_6_16-23kg_30x6_v4.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Little Walkers&quot; Jumbo Pack 16-23 кг (30 шт.) Размер 6</name>
+<vendor>Huggies</vendor>
+<description>Трусики-подгузники HUGGIES Little Walkers 
+— лучшее решение для активных малышей, которых сложно уложить на пеленальный 
+стол, чтобы сменить подгузник.Благодаря 
+мягким эластичным вставкам по бокам трусики 
+отлично сидят и обеспечивают легкость движения.Легко 
+снимаются и надеваются, как настоящие трусики.Трусики 
+растягиваются во все стороны благодаря эластичным боковинкамВпитываемость 
+Little Walkers настолько велика, что одной 
+пары трусиков хватит на всю ночь.Специальные одноразовые 
+застежки по бокам использованных трусиков можно легко разорвать и снять 
+трусики, не испачкав малыша.Трусики 
+HUGGIES Little Walkers идеальны для детей, которые уже начали 
+ходить.Производитель: 
+Huggies (Чехия).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55320" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-little-walkers-quot-maxi-9-15-kg-52-sht-razmer-4/29835.55320.html</url>
+<price>733.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/c29/7-15-52.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Little Walkers Jeans&quot; Mega Pack 7-15 кг (52 шт) Размер 4 (новогодний дизайн)</name>
+<vendor>Huggies</vendor>
+<description>Трусики-подгузники HUGGIES Little Walkers 
+— лучшее решение для активных малышей, которых сложно уложить на пеленальный 
+стол, чтобы сменить подгузник.Благодаря 
+мягким эластичным вставкам по бокам трусики 
+отлично сидят и обеспечивают легкость движения.Легко 
+снимаются и надеваются, как настоящие трусики.Трусики 
+растягиваются во все стороны благодаря эластичным боковинкамВпитываемость 
+Little Walkers настолько велика, что одной 
+пары трусиков хватит на всю ночь.Специальные одноразовые 
+застежки по бокам использованных трусиков можно легко разорвать и снять 
+трусики, не испачкав малыша.Трусики 
+HUGGIES Little Walkers идеальны для детей, которые уже начали 
+ходить.Производитель: 
+Huggies (Чехия).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55321" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-little-walkers-quot-midi-9-15-kg-34-sht-razmer-4/29836.55321.html</url>
+<price>493.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/6cb/b_10136_5962.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Little Walkers&quot; Jumbo Pack 7-15 кг (34 шт.) Размер 4</name>
+<vendor>Huggies</vendor>
+<description>Трусики-подгузники HUGGIES Little Walkers 
+— лучшее решение для активных малышей, которых сложно уложить на пеленальный 
+стол, чтобы сменить подгузник.Благодаря 
+мягким эластичным вставкам по бокам трусики 
+отлично сидят и обеспечивают легкость движения.Легко 
+снимаются и надеваются, как настоящие трусики.Трусики 
+растягиваются во все стороны благодаря эластичным боковинкамВпитываемость 
+Little Walkers настолько велика, что одной 
+пары трусиков хватит на всю ночь.Специальные одноразовые 
+застежки по бокам использованных трусиков можно легко разорвать и снять 
+трусики, не испачкав малыша.Трусики 
+HUGGIES Little Walkers идеальны для детей, которые уже начали 
+ходить.Производитель: 
+Huggies (Чехия).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55322" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-pull-ups-girls-quot-mini-9-15-kg-16-sht-razmer-m/29839.55322.html</url>
+<price>284.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/afa/b_3601_5966.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Pull Ups Girls&quot; 9-15 кг (16 шт.) Размер M</name>
+<vendor>Huggies</vendor>
+<description>Huggies Pull-Ups помогут 
+Вашему малышу оставаться сухим. Внешне одноразовые 
+трусики ничем не отличаются от обычного белья, а благодаря диснеевским Мики 
+и Мини, нарисованным на трусиках, носить их будет для Вашего малыша одним 
+удовольствием. Снимать и надевать трусики очень легко, 
+и поэтому Ваш малыш очень скоро сможет самостоятельно пользоваться ими. 
+Интересней приучаться к горшку с помощью рисунков, 
+которые пропадают при намокании. А если "неожиданность" 
+все-таки произойдет, то Вы можете быть полностью спокойны, т.к. трусики 
+быстро впитают в себя влагу и защитят Вашего малыша.Производитель: 
+Huggies (Чехия).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55323" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-pull-ups-girls-quot-midi-9-15-kg-29-sht-razmer-m/29839.55323.html</url>
+<price>456.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/aa0/b_3602_5967.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Pull Ups Girls&quot; 9-15 кг (29 шт.) Размер M</name>
+<vendor>Huggies</vendor>
+<description>Huggies Pull-Ups помогут 
+Вашему малышу оставаться сухим. Внешне одноразовые 
+трусики ничем не отличаются от обычного белья, а благодаря диснеевским Мики 
+и Мини, нарисованным на трусиках, носить их будет для Вашего малыша одним 
+удовольствием. Снимать и надевать трусики очень легко, 
+и поэтому Ваш малыш очень скоро сможет самостоятельно пользоваться ими. 
+Интересней приучаться к горшку с помощью рисунков, 
+которые пропадают при намокании. А если "неожиданность" 
+все-таки произойдет, то Вы можете быть полностью спокойны, т.к. трусики 
+быстро впитают в себя влагу и защитят Вашего малыша.Производитель: 
+Huggies (Чехия).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55324" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-pull-ups-girls-quot-mini-14-18-kg-14-sht-razmer-l/29839.55324.html</url>
+<price>284.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/b58/b_3603_5968.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Pull Ups Girls&quot; 14-18 кг (14 шт.) Размер L</name>
+<vendor>Huggies</vendor>
+<description>Huggies Pull-Ups помогут 
+Вашему малышу оставаться сухим. Внешне одноразовые 
+трусики ничем не отличаются от обычного белья, а благодаря диснеевским Мики 
+и Мини, нарисованным на трусиках, носить их будет для Вашего малыша одним 
+удовольствием. Снимать и надевать трусики очень легко, 
+и поэтому Ваш малыш очень скоро сможет самостоятельно пользоваться ими. 
+Интересней приучаться к горшку с помощью рисунков, 
+которые пропадают при намокании. А если "неожиданность" 
+все-таки произойдет, то Вы можете быть полностью спокойны, т.к. трусики 
+быстро впитают в себя влагу и защитят Вашего малыша.Производитель: 
+Huggies (Чехия).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55325" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-pull-ups-girls-quot-midi-14-18-kg-26-sht-razmer-l/29839.55325.html</url>
+<price>456.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/694/b_3604_5969.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Pull Ups Girls&quot; 14-18 кг (26 шт.) Размер L</name>
+<vendor>Huggies</vendor>
+<description>Huggies Pull-Ups помогут 
+Вашему малышу оставаться сухим. Внешне одноразовые 
+трусики ничем не отличаются от обычного белья, а благодаря диснеевским Мики 
+и Мини, нарисованным на трусиках, носить их будет для Вашего малыша одним 
+удовольствием. Снимать и надевать трусики очень легко, 
+и поэтому Ваш малыш очень скоро сможет самостоятельно пользоваться ими. 
+Интересней приучаться к горшку с помощью рисунков, 
+которые пропадают при намокании. А если "неожиданность" 
+все-таки произойдет, то Вы можете быть полностью спокойны, т.к. трусики 
+быстро впитают в себя влагу и защитят Вашего малыша.Производитель: 
+Huggies (Чехия).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55326" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-pull-ups-girls-quot-mini-17-kg-12-sht-razmer-xl/29839.55326.html</url>
+<price>284.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/9a6/-pull-ups-girls-17-23mn-12.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Pull Ups Girls&quot; 17+ кг  (12 шт.) Размер XL</name>
+<vendor>Huggies</vendor>
+<description>Huggies Pull-Ups помогут 
+Вашему малышу оставаться сухим. Внешне одноразовые 
+трусики ничем не отличаются от обычного белья, а благодаря диснеевским Мики 
+и Мини, нарисованным на трусиках, носить их будет для Вашего малыша одним 
+удовольствием. Снимать и надевать трусики очень легко, 
+и поэтому Ваш малыш очень скоро сможет самостоятельно пользоваться ими. 
+Интересней приучаться к горшку с помощью рисунков, 
+которые пропадают при намокании. А если "неожиданность" 
+все-таки произойдет, то Вы можете быть полностью спокойны, т.к. трусики 
+быстро впитают в себя влагу и защитят Вашего малыша.Производитель: 
+Huggies (Чехия).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55327" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-pull-ups-boys-quot-mini-9-15-kg-16-sht-razmer-m/29837.55327.html</url>
+<price>284.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/b25/b_3607_5971.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Pull Ups Boys&quot; 9-15 кг (16 шт.) Размер M</name>
+<vendor>Huggies</vendor>
+<description>Huggies Pull-Ups помогут 
+Вашему малышу оставаться сухим. Внешне одноразовые 
+трусики ничем не отличаются от обычного белья, а благодаря диснеевским Мики 
+и Мини, нарисованным на трусиках, носить их будет для Вашего малыша одним 
+удовольствием. Снимать и надевать трусики очень легко, 
+и поэтому Ваш малыш очень скоро сможет самостоятельно пользоваться ими. 
+Интересней приучаться к горшку с помощью рисунков, 
+которые пропадают при намокании. А если "неожиданность" 
+все-таки произойдет, то Вы можете быть полностью спокойны, т.к. трусики 
+быстро впитают в себя влагу и защитят Вашего малыша.Производитель: 
+Huggies (Чехия).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55328" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-pull-ups-boys-quot-midi-9-15-kg-29-sht-razmer-m/29837.55328.html</url>
+<price>456.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/558/b_3608_5972.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Pull Ups Boys&quot; 9-15 кг (29 шт.) Размер M</name>
+<vendor>Huggies</vendor>
+<description>Huggies Pull-Ups помогут 
+Вашему малышу оставаться сухим. Внешне одноразовые 
+трусики ничем не отличаются от обычного белья, а благодаря диснеевским Мики 
+и Мини, нарисованным на трусиках, носить их будет для Вашего малыша одним 
+удовольствием. Снимать и надевать трусики очень легко, 
+и поэтому Ваш малыш очень скоро сможет самостоятельно пользоваться ими. 
+Интересней приучаться к горшку с помощью рисунков, 
+которые пропадают при намокании. А если "неожиданность" 
+все-таки произойдет, то Вы можете быть полностью спокойны, т.к. трусики 
+быстро впитают в себя влагу и защитят Вашего малыша.Производитель: 
+Huggies (Чехия).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55329" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-pull-ups-boys-quot-mini-14-18-kg-14-sht-razmer-l/29837.55329.html</url>
+<price>284.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/4fd/b_3609_5973.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Pull Ups Boys&quot; 14-18 кг (14 шт.) Размер L</name>
+<vendor>Huggies</vendor>
+<description>Huggies Pull-Ups помогут 
+Вашему малышу оставаться сухим. Внешне одноразовые 
+трусики ничем не отличаются от обычного белья, а благодаря диснеевским Мики 
+и Мини, нарисованным на трусиках, носить их будет для Вашего малыша одним 
+удовольствием. Снимать и надевать трусики очень легко, 
+и поэтому Ваш малыш очень скоро сможет самостоятельно пользоваться ими. 
+Интересней приучаться к горшку с помощью рисунков, 
+которые пропадают при намокании. А если "неожиданность" 
+все-таки произойдет, то Вы можете быть полностью спокойны, т.к. трусики 
+быстро впитают в себя влагу и защитят Вашего малыша.Производитель: 
+Huggies (Чехия).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55330" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-pull-ups-boys-quot-midi-14-18-kg-26-sht-razmer-l/29837.55330.html</url>
+<price>456.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/28a/b_3610_5974.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Pull Ups Boys&quot; 14-18 кг (26 шт.) Размер L</name>
+<vendor>Huggies</vendor>
+<description>Huggies Pull-Ups помогут 
+Вашему малышу оставаться сухим. Внешне одноразовые 
+трусики ничем не отличаются от обычного белья, а благодаря диснеевским Мики 
+и Мини, нарисованным на трусиках, носить их будет для Вашего малыша одним 
+удовольствием. Снимать и надевать трусики очень легко, 
+и поэтому Ваш малыш очень скоро сможет самостоятельно пользоваться ими. 
+Интересней приучаться к горшку с помощью рисунков, 
+которые пропадают при намокании. А если "неожиданность" 
+все-таки произойдет, то Вы можете быть полностью спокойны, т.к. трусики 
+быстро впитают в себя влагу и защитят Вашего малыша.Производитель: 
+Huggies (Чехия).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55331" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-pull-ups-boys-quot-mini-17-kg-12-sht-razmer-xl/29837.55331.html</url>
+<price>284.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/de8/-pull-ups-boy-17-23ji-12.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Pull Ups Boys&quot; 17+ кг (12 шт.) Размер XL</name>
+<vendor>Huggies</vendor>
+<description>Huggies Pull-Ups помогут 
+Вашему малышу оставаться сухим. Внешне одноразовые 
+трусики ничем не отличаются от обычного белья, а благодаря диснеевским Мики 
+и Мини, нарисованным на трусиках, носить их будет для Вашего малыша одним 
+удовольствием. Снимать и надевать трусики очень легко, 
+и поэтому Ваш малыш очень скоро сможет самостоятельно пользоваться ими. 
+Интересней приучаться к горшку с помощью рисунков, 
+которые пропадают при намокании. А если "неожиданность" 
+все-таки произойдет, то Вы можете быть полностью спокойны, т.к. трусики 
+быстро впитают в себя влагу и защитят Вашего малыша.Производитель: 
+Huggies (Чехия).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55544" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/podguzniki-huggies-quot-newborn-quot-mini-2-5-kg-28-sht-razmer-1/29826.55544.html</url>
+<price>249.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/49a/.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Huggies &quot;Newborn&quot; Conv Pack 2-5 кг (28 шт.) Размер 1</name>
+<vendor>Huggies</vendor>
+<description>Кожа новорожденного малыша очень нежная и уязвимая, поэтому подгузники 
+HUGGIES Newborn изготовлены из материалов, обладающих повышенной 
+мягкостью и обеспечивющих максимальную сухость. Это самые мягкие и самые 
+дышащие подгузники для новорожденных малышей. Чтобы обеспечить абсолютный 
+комфорт и защиту, в них используется уникальный, очень мягкий и нежный материал 
+Babysoft. Супердышащая поверхность подгузников пропускает так много свежего 
+воздуха, что нежная кожа малыша остается естественно сухой и здоровой.Супермягкие эластичные резинки вокруг ножек предохраняют 
+от любых протеканий;Huggies Newborn 
+помогают предотвращать возникновение раздражения на коже малыша и обеспечивают 
+непревзойденную сухость, что было доказано в ходе клинических испытаний;Благодаря 
+новому мягкому, еще более эластичному пояску и очень удобным застежкам, 
+подгузник нежно "обнимает" малыша и идеально сидит;подгузник 
+впитывает до 12 часов подряд и обеспечивает спокойный сон Вам и Вашему крохе;впитывающая 
+система надежно запирает жидкость на "замок";По тестам 
+2006 года, HUGGIES Newborn пропускают больше 
+воздуха, чем другие популярные подгузники для новорожденных.Производитель: 
+Huggies (Великобритания).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55545" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/podguzniki-huggies-quot-newborn-quot-mini-3-6-kg-32-sht-razmer-2/29826.55545.html</url>
+<price>287.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/ca9/.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Huggies &quot;Newborn&quot; Conv Pack 3-6 кг (32 шт.) Размер 2</name>
+<vendor>Huggies</vendor>
+<description>Кожа новорожденного малыша очень нежная и уязвимая, поэтому подгузники 
+HUGGIES Newborn изготовлены из материалов, обладающих повышенной 
+мягкостью и обеспечивющих максимальную сухость. Это самые мягкие и самые 
+дышащие подгузники для новорожденных малышей. Чтобы обеспечить абсолютный 
+комфорт и защиту, в них используется уникальный, очень мягкий и нежный материал 
+Babysoft. Супердышащая поверхность подгузников пропускает так много свежего 
+воздуха, что нежная кожа малыша остается естественно сухой и здоровой.Супермягкие эластичные резинки вокруг ножек предохраняют 
+от любых протеканий;Huggies Newborn 
+помогают предотвращать возникновение раздражения на коже малыша и обеспечивают 
+непревзойденную сухость, что было доказано в ходе клинических испытаний;Благодаря 
+новому мягкому, еще более эластичному пояску и очень удобным застежкам, 
+подгузник нежно "обнимает" малыша и идеально сидит;подгузник 
+впитывает до 12 часов подряд и обеспечивает спокойный сон Вам и Вашему крохе;впитывающая 
+система надежно запирает жидкость на "замок";По тестам 
+2006 года, HUGGIES Newborn пропускают больше 
+воздуха, чем другие популярные подгузники для новорожденных.Производитель: 
+Huggies (Великобритания).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55546" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/podguzniki-huggies-quot-newborn-quot-midi-3-6-kg-66-sht-razmer-2/29825.55546.html</url>
+<price>564.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/2e4/.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Huggies &quot;Newborn&quot; Jumbo Pack 3-6 кг (66 шт.) Размер 2</name>
+<vendor>Huggies</vendor>
+<description>Кожа новорожденного малыша очень нежная и уязвимая, поэтому подгузники 
+HUGGIES Newborn изготовлены из материалов, обладающих повышенной 
+мягкостью и обеспечивющих максимальную сухость. Это самые мягкие и самые 
+дышащие подгузники для новорожденных малышей. Чтобы обеспечить абсолютный 
+комфорт и защиту, в них используется уникальный, очень мягкий и нежный материал 
+Babysoft. Супердышащая поверхность подгузников пропускает так много свежего 
+воздуха, что нежная кожа малыша остается естественно сухой и здоровой. Супермягкие эластичные резинки вокруг ножек предохраняют 
+от любых протеканий;Huggies Newborn 
+помогают предотвращать возникновение раздражения на коже малыша и обеспечивают 
+непревзойденную сухость, что было доказано в ходе клинических испытаний;Благодаря 
+новому мягкому, еще более эластичному пояску и очень удобным застежкам, 
+подгузник нежно "обнимает" малыша и идеально сидит;подгузник 
+впитывает до 12 часов подряд и обеспечивает спокойный сон Вам и Вашему крохе;впитывающая 
+система надежно запирает жидкость на "замок";По тестам 
+2006 года, HUGGIES Newborn пропускают больше 
+воздуха, чем другие популярные подгузники для новорожденных. 
+Производитель: Huggies (Великобритания).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55547" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/podguzniki-huggies-quot-slassic-quot-mini-3-6-kg-37-sht-razmer-2/29833.55547.html</url>
+<price>285.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/4c6/cc%202_3-6-1.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Huggies &quot;Сlassic&quot; 3-6 кг (37 шт.) Размер 2</name>
+<vendor>Huggies</vendor>
+<description>HUGGIES Classic обеспечат Вашему малышу надежную 
+защиту и комфорт!Высокоэффективные абсорбирующие 
+материалы, отлично впитывающие влагу;Пропускают воздух 
+по всей поверхности;Мягкий пояс по талии;Новые 
+более удобные застежки;Мягкие эластичные манжетики 
+для предотвращения бокового протекания;Барьерчики вокруг 
+ног пропускают воздух, но не пропускают жидкость;Мягкая, 
+дышащая внешняя сторонa;Исключительное соотношение 
+качества и цены.Производитель: 
+(Huggies) Чехия.</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55560" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/podguzniki-huggies-quot-ultra-comfort-quot-mini-8-14-kg-44-sht-razmer-4/29830.55560.html</url>
+<price>533.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/090/8-14-44.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Huggies &quot;Ultra Comfort&quot; Jumbo Pack 8-14 кг (44 шт.) Размер 4 (производство Россия)</name>
+<vendor>Huggies</vendor>
+<description>Подгузники HUGGIES Ultra Comfort впитывают 
+на 20% больше, чем раньше, и отлично сидят! Надежная, на 20% больше 
+впитывающая система и хорошая циркуляция воздуха помогают сохранить попки 
+малышей сухими и здоровыми. Подгузники HUGGIES 
+Ultra Comfort созданы для впитывания в течении 12 часов и 
+обеспечивают спокойный сон вашему малышу. Пропускающие 
+воздух материалы позволяют коже дышать и оставаться сухой.Весёлый 
+дизайн с любимыми героями обрадует Вашего малыша. Широкий 
+эластичный поясок и удобные многоразовые застежки - подгузник отлично сидит 
+по фигуре, помогая предотвратить протекания, даже ночью!Производитель: 
+(Huggies) Турция.</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="74678" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/podguzniki-huggies-quot-slassic-quot-maxi-7-18-kg-46-sht-razmer-4/29833.74678.html</url>
+<price>470.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/8a8/c%20%20jumbo%204_7-18-1.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Huggies &quot;Сlassic&quot; 7-18 кг (46 шт.) Размер 4</name>
+<vendor>Huggies</vendor>
+<description>Подгузники Huggies Хаггис CLASSIC  7-18 кг. 
+46 шт. (4)HUGGIES 
+Classic обеспечат Вашему малышу надежную защиту и  комфорт!Высокоэффективные абсорбирующие материалы, 
+отлично  впитывающие влагу;Пропускают воздух 
+по всей поверхности;Мягкий  пояс по талии;Новые 
+более удобные застежки;Новый тянущийся поясок на спинке;Мягкие  эластичные манжетики для предотвращения 
+бокового протекания;Барьерчики  вокруг ног 
+пропускают воздух, но не пропускают жидкость;Мягкая,  дышащая 
+внешняя сторонa;Рисунки по всей поверхности подгузника;Исключительное соотношение качества и  цены.Производитель: 
+(Huggies) Россия. </description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="74679" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/podguzniki-huggies-quot-slassic-quot-maxi-7-18-kg-66-sht-razmer-4/29831.74679.html</url>
+<price>594.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/91d/.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Huggies &quot;Сlassic&quot; Mega Pack 7-18 кг (66 шт.) Размер 4</name>
+<vendor>Huggies</vendor>
+<description>Подгузники Huggies Хаггис CLASSIC  7-18 кг. 
+66 шт. (4)HUGGIES  Classic 
+обеспечат Вашему малышу надежную защиту и  комфорт!Высокоэффективные  абсорбирующие 
+материалы, отлично  впитывающие влагу;Пропускают  воздух 
+по всей поверхности;Мягкий  пояс по талии;Новые  более 
+удобные застежки;Новый тянущийся поясок на спинке;Мягкие   эластичные манжетики для предотвращения 
+бокового протекания;Барьерчики   вокруг ног 
+пропускают воздух, но не пропускают жидкость;Мягкая,   
+дышащая внешняя сторонa;Рисунки по всей поверхности  подгузника;Исключительное соотношение качества и  цены.Производитель:  (Huggies) 
+Россия.</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="74681" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-naturemade-quot-midi-10-14-kg-42-sht-razmer-4/30303.74681.html</url>
+<price>697.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/a35/2d-j4_42_10-14girl.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Huggies &quot;Naturemade&quot; Для девочек 10-14 кг (42 шт.) Размер 4</name>
+<vendor>Huggies</vendor>
+<description>Подгузники Huggies Хаггис Naturemade для девочек 
+10-14 кг. 42 шт. (4) Специальный 
+впитывающий слойВнутренний слой, изготовленный из натурального 
+материала, нежно прилегает к чувствительной коже Вашего малышаМягкий 
+и широкий эластичный поясок обнимает малыша со всех сторон3D 
+дизайн подгузника учитывает форму тела и движения малыша, и поэтому более 
+широко сидит на спинке для того, чтобы ребенок чувствовалсебя более комфортноКармашек 
+на пояске сзади помогает предотвратить протекания даже жидкого стула во 
+время движений малыша.Индикатор намоканияТройная 
+защита от протеканий (кармашек для жидкого стула, широкий тянущийся 
+поясок, мягкие барьерчики)Производитель: 
+Huggies (Корея)</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="74682" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-naturemade-quot-midi-4-8-kg-54-sht-razmer-2/30303.74682.html</url>
+<price>697.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/54e/2d-j2_54_4-6girl.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Huggies &quot;Naturemade&quot; Для девочек 4-8 кг (54 шт.) Размер 2</name>
+<vendor>Huggies</vendor>
+<description>Подгузники Huggies Хаггис Naturemade для девочек 4-8 кг. 54 шт. 
+(2)Специальный впитывающий слойВнутренний 
+слой, изготовленный из натурального материала, нежно прилегает к чувствительной 
+коже Вашего малышаМягкий и широкий эластичный поясок 
+обнимает малыша со всех сторон3D дизайн подгузника 
+учитывает форму тела и движения малыша, и поэтому более широко сидит на 
+спинке для того, чтобы ребенок чувствовалсебя более комфортноКармашек 
+на пояске сзади помогает предотвратить протекания даже жидкого стула во 
+время движений малыша.Индикатор намоканияТройная 
+защита от протеканий (кармашек для жидкого стула, широкий тянущийся 
+поясок, мягкие барьерчики)Производитель: 
+Huggies (Корея)</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="74683" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-naturemade-quot-midi-7-11-kg-52-sht-razmer-3/30303.74683.html</url>
+<price>697.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/1a2/2d-j3_52_7-11girl.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Huggies &quot;Naturemade&quot; Для девочек 7-11 кг (52 шт.) Размер 3</name>
+<vendor>Huggies</vendor>
+<description>Подгузники Huggies Хаггис Naturemade для девочек 
+7-11 кг. 52 шт. (3)Специальный 
+впитывающий слойВнутренний слой, изготовленный из натурального 
+материала, нежно прилегает к чувствительной коже Вашего малышаМягкий 
+и широкий эластичный поясок обнимает малыша со всех сторон3D 
+дизайн подгузника учитывает форму тела и движения малыша, и поэтому более 
+широко сидит на спинке для того, чтобы ребенок чувствовалсебя более комфортноКармашек 
+на пояске сзади помогает предотвратить протекания даже жидкого стула во 
+время движений малыша.Индикатор намоканияТройная 
+защита от протеканий (кармашек для жидкого стула, широкий тянущийся 
+поясок, мягкие барьерчики)Производитель: 
+Huggies (Корея)</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="74684" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-naturemade-quot-midi-10-14-kg-42-sht-razmer-4/30303.74684.html</url>
+<price>717.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/74d/2d-j4_42_10-14boy.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Huggies &quot;Naturemade&quot; Для мальчиков 10-14 кг (42 шт.) Размер 4</name>
+<vendor>Huggies</vendor>
+<description>Подгузники Huggies Хаггис Naturemade для мальчиков 
+10-14 кг. 42 шт. (4)Специальный 
+впитывающий слойВнутренний слой, изготовленный из натурального 
+материала, нежно прилегает к чувствительной коже Вашего малышаМягкий 
+и широкий эластичный поясок обнимает малыша со всех сторон3D 
+дизайн подгузника учитывает форму тела и движения малыша, и поэтому более 
+широко сидит на спинке для того, чтобы ребенок чувствовалсебя более комфортноКармашек 
+на пояске сзади помогает предотвратить протекания даже жидкого стула во 
+время движений малыша.Индикатор намоканияТройная 
+защита от протеканий (кармашек для жидкого стула, широкий тянущийся 
+поясок, мягкие барьерчики)Производитель: 
+Huggies (Корея)</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="74685" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-naturemade-quot-midi-7-11-kg-52-sht-razmer-3/30303.74685.html</url>
+<price>697.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/acd/2d-j3_52_7-11boy.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Huggies &quot;Naturemade&quot; Для мальчиков 7-11 кг (52 шт.) Размер 3</name>
+<vendor>Huggies</vendor>
+<description>Подгузники Huggies Хаггис Naturemade для мальчиков 
+7-11 кг. 52 шт. (3)Специальный 
+впитывающий слойВнутренний слой, изготовленный из натурального 
+материала, нежно прилегает к чувствительной коже Вашего малышаМягкий 
+и широкий эластичный поясок обнимает малыша со всех сторон3D 
+дизайн подгузника учитывает форму тела и движения малыша, и поэтому более 
+широко сидит на спинке для того, чтобы ребенок чувствовалсебя более комфортноКармашек 
+на пояске сзади помогает предотвратить протекания даже жидкого стула во 
+время движений малыша.Индикатор намоканияТройная 
+защита от протеканий (кармашек для жидкого стула, широкий тянущийся 
+поясок, мягкие барьерчики)Производитель: 
+Huggies (Корея)</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="74686" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-naturemade-quot-midi-do-4-5-kg-64-sht-razmer-3/30303.74686.html</url>
+<price>697.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/36c/2d-j_64_4.5uni.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Huggies &quot;Naturemade&quot; до 4,5 кг (64 шт.) Размер 1 Uni Sex</name>
+<vendor>Huggies</vendor>
+<description>Подгузники Huggies Хаггис Naturemade до 4,5 кг. 
+64 шт. (1)Специальный 
+впитывающий слойВнутренний слой, изготовленный из натурального 
+материала, нежно прилегает к чувствительной коже Вашего малышаМягкий 
+и широкий эластичный поясок обнимает малыша со всех сторон3D 
+дизайн подгузника учитывает форму тела и движения малыша, и поэтому более 
+широко сидит на спинке для того, чтобы ребенок чувствовалсебя более комфортноКармашек 
+на пояске сзади помогает предотвратить протекания даже жидкого стула во 
+время движений малыша.Индикатор намоканияТройная 
+защита от протеканий (кармашек для жидкого стула, широкий тянущийся 
+поясок, мягкие барьерчики)Производитель: 
+Huggies (Корея)</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="100976" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/podguzniki-huggies-quot-naturemade-quot-midi-dlya-maljchikov-4-8-kg-54-sht-2/30303.100976.html</url>
+<price>697.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/ae9/-naturemade-zidi-wfedm-4-8_54-2.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Huggies &quot;Naturemade&quot; Для мальчиков 4-8 кг. 54 шт. (2)</name>
+<vendor>Huggies</vendor>
+<description>Подгузники Huggies "Naturemade" Мidi для мальчиков 4-8 кг. 54 шт. (2) 
+
+Подгузники Хаггис Naturemade - уникальная новейшая разработка. Созданы 
+из удивительно мягкого и нежного материала с добавлением хлопка, пропитанного 
+лосьоном с маслом жожоба. кроме того у подгузников есть эластичный поясок 
+тянущийся по всей спинке и специальный "кармашек" для жидкого стула, поэтомк 
+протекания по спинке предотвращаются. Новейшая впитывающая система - впитывающий 
+слой по разному расположен для мальчиков и для девочек. Подгузнкики имеют 
+анатомическую форму и благодаря этому идеально сидят на малыше и не стесняют 
+его движений. 
+
+
+- 3D дизайн подгузника учитывает форму тела и движения малыша, и поэтому 
+более широко сидит на спинке для того, чтобы ребенок чувствовал себя более 
+комфортно. 
+- Внутренний слой, изготовленный из натурального материала, нежно прилегает 
+к чувствительной коже вашего малыша. 
+- Мягкий и широкий эластичный поясок обнимает малыша со всех сторон. 
+- Кармашек на пояске сзади помогает предотвратить протекания даже жидкого 
+стула во время движений малыша. 
+- Индикатор намокания. 
+- Содержит натуральные материалы. 
+Производство: Kimberly Clark (США). 
+
+Страна производства: Южная Корея</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="117139" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-magic-pants-girls-quot-8-11-kg-48-sht-3/30601.117139.html</url>
+<price>800.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/432/3_48_girl.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Magic Pants Girls&quot; 8-11 кг. 48 шт. (3)</name>
+<vendor>Huggies</vendor>
+<description></description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="117140" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-magic-pants-boys-quot-8-11-kg-48-sht-3/30600.117140.html</url>
+<price>800.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/1de/3_48_boy.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Magic Pants Boys&quot; 8-11 кг. 48 шт. (3)</name>
+<vendor>Huggies</vendor>
+<description></description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="117175" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-magic-pants-girls-quot-13-18-kg-33-sht-5/30601.117175.html</url>
+<price>800.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/55a/5_33_girl.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Magic Pants Girls&quot; 13-18 кг. 33 шт. (5)</name>
+<vendor>Huggies</vendor>
+<description></description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="117176" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-magic-pants-girls-quot-17-kg-28-sht-6/30601.117176.html</url>
+<price>800.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/977/6_28_girl.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Magic Pants Girls&quot; 17+ кг. 28 шт. (6)</name>
+<vendor>Huggies</vendor>
+<description></description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="117177" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-magic-pants-boys-quot-10-14-kg-40-sht-4/30600.117177.html</url>
+<price>800.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/05e/4_40_boy.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Magic Pants Boys&quot; 10-14 кг. 40 шт. (4)</name>
+<vendor>Huggies</vendor>
+<description></description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="117179" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-magic-pants-boys-quot-17-kg-28-sht-6/30600.117179.html</url>
+<price>800.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/6f0/6_28_boy.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Magic Pants Boys&quot; 17+ кг. 28 шт. (6)</name>
+<vendor>Huggies</vendor>
+<description></description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="117618" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-huggies-quot-magic-pants-girls-quot-10-14-kg-40-sht-4/30601.117618.html</url>
+<price>800.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/b1d/4_40_girl.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Huggies &quot;Magic Pants Girls&quot; 10-14 кг. 40 шт. (4)</name>
+<vendor>Huggies</vendor>
+<description></description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="138852" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/_ELEMENT_/29828.138852.html</url>
+<price>801.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/3e5/12-22-56.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Huggies &quot;Ultra Comfort&quot; Giga Pack 12-22 кг (56 шт.) Размер 5 (производство Россия)</name>
+<vendor>Huggies</vendor>
+<description></description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="139808" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/_ELEMENT_/29829.139808.html</url>
+<price>801.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/453/10-16-60.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Huggies &quot;Ultra Comfort&quot; Mega Pack 10-14 кг (60 шт.) Размер 4+ (производство Россия)</name>
+<vendor>Huggies</vendor>
+<description></description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="140554" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/_ELEMENT_/29829.140554.html</url>
+<price>980.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/f5f/12-22-64.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Huggies &quot;Ultra Comfort&quot; Mega Pack 12-22 кг (64 шт.) Размер 5 (производство Россия)</name>
+<vendor>Huggies</vendor>
+<description></description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="140920" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/_ELEMENT_/29829.140920.html</url>
+<price>802.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/25a/5-9-80.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Huggies &quot;Ultra Comfort&quot; Mega Pack 5-9 кг (80 шт.) Размер 3 (производство Россия)</name>
+<vendor>Huggies</vendor>
+<description></description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="141676" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/_ELEMENT_/29828.141676.html</url>
+<price>981.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Huggies &quot;Ultra Comfort&quot; Giga Pack 8-14 кг (80 шт.) Размер 4 (производство Россия)</name>
+<vendor>Huggies</vendor>
+<description></description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="141992" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/_ELEMENT_/29828.141992.html</url>
+<price>981.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Подгузники Huggies &quot;Ultra Comfort&quot; Giga Pack 5-9 кг (94 шт.) Размер 3 (производство Россия)</name>
+<vendor>Huggies</vendor>
+<description></description>
+<sales_notes></sales_notes>
+</offer>
+</offers>
+</shop>
+</yml_catalog>

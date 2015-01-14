@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <table name="z_good">
+        <column>id</column>
+        <column>name</column>
+        <column>group_name</column>
+        <column>translit</column>
+        <column>section_id</column>
+        <column>brand_id</column>
+        <column>group_id</column>
+        <column>promo_id</column>
+        <column>active</column>
+        <column>order</column>
+        <column>image</column>
+        <column>xml_id</column>
+        <column>code</column>
+        <column>code1c</column>
+        <column>id1c</column>
+        <column>price</column>
+        <column>price_buy</column>
+        <column>pack</column>
+        <column>rating</column>
+        <column>review_qty</column>
+        <column>qty</column>
+        <column>popularity</column>
+        <column>upc</column>
+        <column>old_price</column>
+        <column>barcode</column>
+        <column>big</column>
+        <column>promo_id</column>
+        <column>show</column>
+        <column>new</column>
+        <column>zombie</column>
+        <row>
+            <value>1</value>
+            <value>Товар тест 1</value>
+            <value>Группа тест 1</value>
+            <value>tovar_test_1</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>I like it!</value>
+            <null />
+            <value>2010-04-26 12:14:20</value>
+        </row>
+    </table>
+</dataset>

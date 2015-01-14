@@ -1,0 +1,1043 @@
+<?xml version="1.0" encoding="windows-1251"?><!DOCTYPE yml_catalog SYSTEM "shops.dtd"><yml_catalog date="2012-10-04 13:40">
+		<shop>
+			<name>mladenec.ru</name>
+				<company>ООО "младенец.ру"</company>
+				<url>http://www.mladenec-shop.ru/</url>
+				<platform>"1С-Битрикс: Управление сайтом"</platform>
+				<version>10.0.7</version>
+				<agency></agency>
+				<email>parfenov.a@mladenec.ru</email>
+
+				<currencies>
+						<currency id="RUR" rate="1"/>
+						<currency id="USD" rate="CBRF" plus="1"/>
+				</currencies>
+	<categories><category id="30073">Японские товары</category>
+<category id="29890">Прогулка и путешествие</category>
+<category id="29777">Подгузники и пеленки</category>
+<category id="31800">Сезонные товары</category>
+<category id="29690">Одежда</category>
+<category id="29558">Игрушки</category>
+<category id="29429">Для мамы</category>
+<category id="28934">Детское питание</category>
+<category id="28627">Гигиена и уход</category>
+<category id="28552">Безопасность и здоровье</category>
+<category id="31868">Продукты питания</category>
+<category id="32122">Детская мебель</category>
+<category id="30300" parentId="29690">Карнавальные костюмы</category>
+<category id="30167" parentId="30073">Уход за ребенком</category>
+<category id="30136" parentId="30073">Косметика</category>
+<category id="30068" parentId="29890">Шасси для колясок</category>
+<category id="30074" parentId="30073">Бытовая химия</category>
+<category id="30042" parentId="29890">Манежи</category>
+<category id="30025" parentId="32122">Кроватки</category>
+<category id="31541" parentId="29558">Игрушки для девочек</category>
+<category id="31542" parentId="29558">Игрушки для мальчиков</category>
+<category id="31552" parentId="29558">Игровой транспорт</category>
+<category id="29982" parentId="29890">Коляски</category>
+<category id="29977" parentId="32122">Колыбельки</category>
+<category id="31668" parentId="29429">Белье для мам</category>
+<category id="29962" parentId="29890">Детский транспорт</category>
+<category id="29949" parentId="32122">Аксессуары для сна</category>
+<category id="29946" parentId="29890">Аксессуары для путешествия</category>
+<category id="29940" parentId="29890">Аксессуары для колясок</category>
+<category id="29891" parentId="29890">Автокресла</category>
+<category id="29883" parentId="29777">Подгузники для взрослых</category>
+<category id="29798" parentId="29777">Подгузники</category>
+<category id="29781" parentId="29777">Пеленки</category>
+<category id="29778" parentId="29777">Аксессуары</category>
+<category id="29773" parentId="29690">Шапочки и панамки</category>
+<category id="29768" parentId="29690">Халаты и полотенца</category>
+<category id="29740" parentId="29690">Первая одежда малыша</category>
+<category id="31759" parentId="29558">Игрушки для улицы</category>
+<category id="31776" parentId="30073">Подгузники</category>
+<category id="29725" parentId="29690">Носки, колготки</category>
+<category id="29713" parentId="29690">Нижнее белье и купальники</category>
+<category id="29706" parentId="29690">Кофточки</category>
+<category id="29699" parentId="29690">Комплекты одежды</category>
+<category id="31801" parentId="31800">Летний отдых</category>
+<category id="29696" parentId="29690">Комбинезоны</category>
+<category id="29661" parentId="32122">Ходунки и прыгунки</category>
+<category id="29675" parentId="32122">Шезлонги</category>
+<category id="29691" parentId="29690">Боди</category>
+<category id="29650" parentId="29558">Музыкальные инструменты</category>
+<category id="29642" parentId="29558">Лошадки, каталки</category>
+<category id="29632" parentId="32122">Качели</category>
+<category id="31341" parentId="29558">Конструкторы</category>
+<category id="29583" parentId="29558">Музыкальные диски</category>
+<category id="29585" parentId="29558">Игрушки для малышей</category>
+<category id="29562" parentId="29558">Деревянные игрушки</category>
+<category id="29559" parentId="29558">Аксессуары для игрушек</category>
+<category id="29553" parentId="29429">Техника для кухни</category>
+<category id="29546" parentId="29429">Сумки</category>
+<category id="31074" parentId="29777">Клеенки</category>
+<category id="29534" parentId="29429">Сувениры и подарки</category>
+<category id="29510" parentId="29429">Питание для мам</category>
+<category id="29494" parentId="29429">Косметика</category>
+<category id="30990" parentId="29690">Наша Мама</category>
+<category id="29444" parentId="29429">Кенгуру и слинги</category>
+<category id="29461" parentId="29429">Кормление грудью</category>
+<category id="29430" parentId="29429">Гигиена</category>
+<category id="29413" parentId="28934">Чай</category>
+<category id="29293" parentId="28934">Средства для кормления</category>
+<category id="29253" parentId="28934">Соки и напитки</category>
+<category id="29150" parentId="28934">Пюре</category>
+<category id="29138" parentId="28934">Печенье</category>
+<category id="29065" parentId="28934">Молочные смеси</category>
+<category id="29051" parentId="28934">Молочная продукция</category>
+<category id="28985" parentId="28934">Каши</category>
+<category id="28968" parentId="28934">Диетическое питание</category>
+<category id="28962" parentId="28934">Десерты</category>
+<category id="28935" parentId="28934">Вода</category>
+<category id="28903" parentId="32122">Стульчики для кормления</category>
+<category id="28856" parentId="28627">Салфетки</category>
+<category id="28836" parentId="28627">Принадлежности для купания</category>
+<category id="28783" parentId="28627">Косметика</category>
+<category id="28719" parentId="28627">Ежедневный уход</category>
+<category id="28704" parentId="28627">Горшки и сиденья для унитаза</category>
+<category id="28682" parentId="28627">Весы и термометры</category>
+<category id="28616" parentId="28552">Радионяни</category>
+<category id="28628" parentId="28627">Бытовая химия</category>
+<category id="28599" parentId="28552">Здоровье</category>
+<category id="28592" parentId="28552">Видеоняни</category>
+<category id="28553" parentId="28552">Безопасность для дома</category>
+<category id="30325" parentId="30073">Кошки и Собаки</category>
+<category id="30519" parentId="29429">Фирменная продукция</category>
+<category id="31869" parentId="31868">Вода</category>
+<category id="31997" parentId="32122">Мебель для игр</category>
+<category id="32048" parentId="29690">Комплекты на выписку</category>
+<category id="32129" parentId="32122">Комоды</category>
+<category id="32132" parentId="32122">Пеленальные столики</category>
+<category id="32134" parentId="32122">Столы и стулья</category>
+</categories>
+<local_delivery_cost>350</local_delivery_cost>
+<offers>
+		<offer id="168992" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/hodunki-peg-perego-quot-walk-n-play-jumper-quot-theo-arancio/31612.168992.html</url>
+			<price>3650.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29661</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/51f/xd2.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Ходунки Peg Perego &quot;Walk'n Play Jumper&quot; Theo Arancio</name>
+			<vendor>Peg Perego</vendor>
+			<description>Ходунки Peg Perego &quot;Walk'n Play Jumper&quot;: посаженный в ходунки, ребенок 
+быстро учится отталкиваться ногами от пола. Неожиданно для себя он обретает 
+свободу и легкость перемещения в пространстве. 
+
+Основные характеристики: 
+
+
+- Предназначены для детей в возрасте до 1 года, рост до 85 см 
+- Рама из алюминия обеспечивает сверхлегкую структуру ходунков 
+- Сиденье удобной эргономичной формы, регулируются по высоте в 5 положениях 
+- Сиденье имеет съемное и моющееся покрытие 
+- Широкое основание придает ходункам максимальную стабильность 
+- 4 поворотных колеса облегчают ребенку перемещение 
+- Мягкий профиль защищает ребенка от ударов 
+- Ходунки используются как прыгунки 
+- Игровой центр (музыкальная панель) ходунков легко снимается, и поднос 
+может использоваться по другому назначению 
+- Компактная система сложения 
+ Общие размеры: 
+
+
+- в разложенном виде (шxдxв): 68,5x62х51 см 
+- в сложенном виде (шxд): 68,5х25,5 см 
+ Вес: 4,7 кг 
+
+Производитель: Peg-Perego (Италия)</description>
+		</offer>
+
+		<offer id="159391" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/elektrokacheli-graco-quot-lovin-hug-quot-poise/31216.159391.html</url>
+			<price>4560.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29632</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/f96/kks51.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Электрокачели Graco &quot;Lovin Hug&quot; Poise</name>
+			<vendor>Graco</vendor>
+			<description>Приятные особенности качелей электронных Graco Lovin Hug: качели сочетают 
+в себе удобство, легкость, современный стильный дизайн и обеспечивают полную 
+безопасность для малыша. Ваш малыш сможет расположившись в удобном кресле 
+поиграть, отдохнуть и, возможно, вздремнуть под приятную музыку. А мама, 
+тем временем, получит прекрасную возможность заняться домашними делами. 
+
+Основные характеристики: 
+
+
+- качели используются от рождения до 13 кг 
+- очень удобное сидение 
+- 4 наклона позиции сидения 
+- шесть скоростей качания 
+- игрушки на крутящейся вертушке над головой ребенка и на столике 
+- дополнительная подкладка на сидение и несколько положений наклона спинки 
+- съемный двойной подголовник 
+- съемная подставка для игрушек, чтобы малыш легко заходил/выходил из качелей 
+- интересные мелодии 
+- моющееся сиденье 
+- таймер с автоматическим выключением музыки 
+ Материалы: 
+
+
+- пластмассовое сидение, смягченное мягкой тканевой обивкой 
+- алюминиевая рама 
+ Общие размеры: 
+
+
+- (дхшхв): 83х67х100см 
+- (шхв): 45х100см Вес: 7,3 кг 
+
+Производитель: Graco (США)</description>
+		</offer>
+
+		<offer id="55251" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/termosumka-avent-chernaya/29552.55251.html</url>
+			<price>1199.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29546</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/515/b_3338_6530.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Термосумка Avent Черная</name>
+			<vendor>Avent</vendor>
+			<description>- Можно хранить холодное грудное молоко или молочную смесь, а так-же горячую 
+кипяченую воду в течении 4 часов. 
+- Вмещает 2 бутылочки Авент, 4 контейнеры VIA, 2 поильника &quot;Волшебные 
+чашка&quot;. 
+- Нельзя стирать. 
+- Не оставлять на солнце. 
+- ТЕРМОСУМКА НЕ ВЫПОЛНЯЕТ ФУНКЦИИ ТЕРМОСА. 
+
+Производитель: Avent (Англия).</description>
+		</offer>
+
+		<offer id="165168" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/shezlong-jetem-quot-premium-quot-beige/31625.165168.html</url>
+			<price>2650.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29675</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/e9f/kc7.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Шезлонг Jetem &quot;Premium&quot; Beige</name>
+			<vendor>Jetem</vendor>
+			<description>Шезлонг Jetem &quot;Premium&quot; с функцией качалки станет любимым предметом вашего 
+малыша. Приятные мелодии позволят ребенку получать положительные эмоции 
+и приятные ощущения. 
+
+Основные характеристики: 
+
+
+- Рекомендуется для детей от 0 месяцев и весом до 9 кг. 
+- Спинка регулируется от сидячего до полностью лежачего положения. 
+- Наклон сидения регулируется автоматически в зависимости от веса ребенка. 
+- Поддержка для головы. 
+- Успокаивающая вибрация на 2 скоростях. 
+- Электронный музыкальный центр - 3 мелодии с таймером. 
+- Можно трансформировать в качалку. 
+- Имеется капюшон. 
+- Есть ручки для переноски. 
+- Пятиточечные ремни безопасности с дополнительной прокладкой. 
+- Очень компактно складывается. 
+- Суперудобное сиденье с мягкой подкладкой, подголовником и тентом. 
+- Чехол можно стирать в стиральной машине. 
+ Размеры: 48 x 47 x 14 см. 
+
+Вес: 3,7 кг. 
+
+Производитель: Jetem (Китай)</description>
+		</offer>
+
+		<offer id="165170" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/shezlong-jetem-quot-premium-quot-field-and-garden/31625.165170.html</url>
+			<price>2650.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29675</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/47b/kc9.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Шезлонг Jetem &quot;Premium&quot; Field and Garden</name>
+			<vendor>Jetem</vendor>
+			<description>Шезлонг Jetem &quot;Premium&quot; с функцией качалки станет любимым предметом вашего 
+малыша. Приятные мелодии позволят ребенку получать положительные эмоции 
+и приятные ощущения. 
+
+Основные характеристики: 
+
+
+- Рекомендуется для детей от 0 месяцев и весом до 9 кг. 
+- Спинка регулируется от сидячего до полностью лежачего положения. 
+- Наклон сидения регулируется автоматически в зависимости от веса ребенка. 
+- Поддержка для головы. 
+- Успокаивающая вибрация на 2 скоростях. 
+- Электронный музыкальный центр - 3 мелодии с таймером. 
+- Можно трансформировать в качалку. 
+- Имеется капюшон. 
+- Есть ручки для переноски. 
+- Пятиточечные ремни безопасности с дополнительной прокладкой. 
+- Очень компактно складывается. 
+- Суперудобное сиденье с мягкой подкладкой, подголовником и тентом. 
+- Чехол можно стирать в стиральной машине. 
+ Размеры: 48 x 47 x 14 см. 
+
+Вес: 3,7 кг. 
+
+Производитель: Jetem (Китай)</description>
+		</offer>
+
+		<offer id="145976" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/prokladki-peligrin-dlya-kormyaszih-mam-24-sht-odnorazovye/31024.145976.html</url>
+			<price>116.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29461</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/da3/24.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Прокладки Пелигрин Для кормящих мам 24 шт. (одноразовые)</name>
+			<vendor>Пелигрин</vendor>
+			<description>Прокладки для груди «Пелигрин» идеально подходят мамам в период 
+лактации. 
+
+
+- Они отлично впитывают и прекрасно защищают кожи груди, оставляя ее сухой 
+между кормлениями. 
+ 
+- Мягкие и приятные на ощупь, прокладки оптимально подходят для чувствительной 
+кожи сосков. 
+ 
+- Повторяют форму груди и незаметны снаружи. 
+ 
+- Надежно защищают белье. 
+ 
+- Специальный фиксирующий слой предотвращает смещение прокладки. 
+ 
+- Внесено в государственный реестр изделий медицинского назначения. 
+ Производитель: Пелигрин (Россия)</description>
+		</offer>
+
+		<offer id="159390" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/elektrokacheli-graco-quot-lovin-hug-quot-hoops/31216.159390.html</url>
+			<price>4340.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29632</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/483/kks52.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Электрокачели Graco &quot;Lovin Hug&quot; Hoops</name>
+			<vendor>Graco</vendor>
+			<description>Приятные особенности качелей электронных Graco Lovin Hug: качели сочетают 
+в себе удобство, легкость, современный стильный дизайн и обеспечивают полную 
+безопасность для малыша. Ваш малыш сможет расположившись в удобном кресле 
+поиграть, отдохнуть и, возможно, вздремнуть под приятную музыку. А мама, 
+тем временем, получит прекрасную возможность заняться домашними делами. 
+
+Основные характеристики: 
+
+
+- качели используются от рождения до 13 кг 
+- очень удобное сидение 
+- 4 наклона позиции сидения 
+- шесть скоростей качания 
+- игрушки на крутящейся вертушке над головой ребенка и на столике 
+- дополнительная подкладка на сидение и несколько положений наклона спинки 
+- съемный двойной подголовник 
+- съемная подставка для игрушек, чтобы малыш легко заходил/выходил из качелей 
+- интересные мелодии 
+- моющееся сиденье 
+- таймер с автоматическим выключением музыки 
+ Материалы: 
+
+
+- пластмассовое сидение, смягченное мягкой тканевой обивкой 
+- алюминиевая рама 
+ Общие размеры: 
+
+
+- (дхшхв): 83х67х100см 
+- (шхв): 45х100см Вес: 7,3 кг 
+
+Производитель: Graco (США)</description>
+		</offer>
+
+		<offer id="112792" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/stuljchik-happy-baby-quot-steven-quot-purple/30565.112792.html</url>
+			<price>3300.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>28903</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/9f9/stiven_purple.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Стульчик HAPPY BABY &quot;Steven&quot; Purple</name>
+			<vendor>HAPPY BABY</vendor>
+			<description>Стульчик для кормления STEVEN ТМ Наррy Baby входит в коллекцию «Little 
+Traveler » созданную специально для маленьких и активных путешественников. 
+Это значит, что продукция этой коллекции компактна в сложенном виде, легко 
+собирается и разбирается, мало весит. При этом имеет демократичную цену. 
+
+Стульчик «Steven» Happy Baby имеет следующие особенности: 
+
+- Для детей от 4 месяцев 
+- Регулируемый столик, три позиции 
+- Регулируемая по высоте подставка для ног, две позиции 
+- Пятиточечные ремни с мягкими вставками 
+- Легко моющееся и удобное сиденье 
+- Размеры в сложенном виде: 71х59х17 см 
+- Размеры в разложенном виде: 67х59х94 см 
+- Легкая и прочная конструкция, легко раскладывающаяся одной рукой 
+- Вес: 7,3 кг 
+
+Производитель: Happy Baby (Англия). Страна производства: Китай.</description>
+		</offer>
+
+		<offer id="112791" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/stuljchik-happy-baby-quot-steven-quot-grey/30565.112791.html</url>
+			<price>3300.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>28903</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/af5/stiven_grey.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Стульчик HAPPY BABY &quot;Steven&quot; Grey</name>
+			<vendor>HAPPY BABY</vendor>
+			<description>Стульчик для кормления STEVEN ТМ Наррy Baby входит в коллекцию «Little 
+Traveler » созданную специально для маленьких и активных путешественников. 
+Это значит, что продукция этой коллекции компактна в сложенном виде, легко 
+собирается и разбирается, мало весит. При этом имеет демократичную цену. 
+
+Стульчик «Steven» Happy Baby имеет следующие особенности: 
+
+- Для детей от 4 месяцев 
+- Регулируемый столик, три позиции 
+- Регулируемая по высоте подставка для ног, две позиции 
+- Пятиточечные ремни с мягкими вставками 
+- Легко моющееся и удобное сиденье 
+- Размеры в сложенном виде: 71х59х17 см 
+- Размеры в разложенном виде: 67х59х94 см 
+- Легкая и прочная конструкция, легко раскладывающаяся одной рукой 
+- Вес: 7,3 кг 
+
+Производитель: Happy Baby (Англия). Страна производства: Китай.</description>
+		</offer>
+
+		<offer id="168707" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/velosiped-rich-toys-quot-lexus-trike-grand-print-quot-cvet-bronzovyi/31327.168707.html</url>
+			<price>4590.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29962</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/487/vl4.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Велосипед Rich Toys &quot;Lexus Trike Grand Print&quot; Цвет - Бронзовый</name>
+			<vendor>Rich Toys</vendor>
+			<description>Велосипед трехколесный Rich Toys Lexus Trike GRAND (бронзовый) 
+
+
+ 
+
+Уникальный дизайн Lexus Trike GRAND гармонично сочетает в себе изящество 
+и мощь. Мощь, которую видно невооруженным глазом.GRAND определенно будет 
+обладать статусом в своем классе. Наши инженеры разработали новую конструкцию 
+рамы, в результате они достигли оптимальное распределение весовых нагрузок 
+между передней и задней осью, что улучшило управляемость велосипеда и повысило 
+удобство вождения. 
+
+
+ 
+
+Основные характеристики:  
+ 
+
+- новая геометрия рамы обеспечивает велосипеду отличную управляемость, 
+легкость поворота руля в стороны, сохраняя при этом мягкость при езде, сглаживая 
+все неровности дорожного покрытия 
+- металлический трос вдоль рамы соединяет руль и Родительскую ручку, что 
+позволяет легко управлять велосипедом 
+- механизм, подкручивая который Вы можете отрегулировать длину троса для 
+удобства управления Родительской ручкой 
+- управляемая родительская ручка 
+- смещенный центр тяжести ближе к средней части велосипеда, что позволило 
+сбалансировать динамику и добиться плавности хода 
+- раскрывающий барьер безопасности с мягким покрытием. Конструкция резьбы 
+если нужно закрыть его, чтоб ребенок не открыл сам 
+- капюшон из легкой ткани, покрытой тефлоновой пропиткой от воды и грязи, 
+легкий в уходе. На капюшоне есть две боковые красные кнопки. Благодаря им, 
+вы можете регулировать наклон капюшона выше или ниже 
+- удобные противоскользящие подножки. Малыш может ставить на них ножки 
+в поездке, когда велосипедом управляет взрослый. И может убрать, когда сам 
+крутит педали. Легким движением руки подножки полностью складываются и убираются 
+под раму . Механизм настолько легок, что Вы справитесь с этим за 3 секунды 
+- вместительная багажная сумка 
+- сиденье создано, чтобы Ваш малыш почувствовал полный комфорт в долгой 
+поездке. Две части сиденья обтянуты искусственной кожей. Оно сделано как 
+будто по меркам, специально для Вашего малыша 
+- регулировка сиденья по мере как растет малыш, три положения 
+- оригинальные по дизайну педали. Они сделаны в форме медвежонка с ушами 
+- хромированные диски делают облик GRAND эстетически совершенным и будут 
+притягивать восхищенные взгляды 
+- крылья на задних колесах 
+- маленькое зеркальце на руле 
+- педали сделаны в форме медвежонка - это логотип компании Rich Toys 
+- колеса изготовлены из ПВХ плотной резины с протектором. Тихие и бесшумные 
+на асфальте. Никогда не проколятся и не сдуются. Производитель: Rich Toys 
+(Италия)</description>
+		</offer>
+
+		<offer id="168989" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/kolyaska-progulochnaya-peg-perego-quot-mini-quot-diamante/31631.168989.html</url>
+			<price>6600.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29982</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/965/1.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Коляска прогулочная Peg-Perego &quot;Mini&quot; Diamante</name>
+			<vendor>Peg Perego</vendor>
+			<description>Коляска-трость Peg-Perego Pliko Mini весит всего 5,7 кг, но она сохранила 
+все преимущества классической модели Peg-Perego Pliko. Современные материалы 
+позволяют коляске оставаться чистой, даже если Вы &quot;паркуете&quot; ее возле магазина, 
+в подъезде и т.п. Спинка откидывается на 150°, это является удобным 
+и одобрено для малышей с первых месяцев жизни. На капюшоне имеется специальное 
+крепление для любимой игрушки малыша. Pliko Mini - образец практичности, 
+ее можно сложить одной рукой и разложить не нагибаясь. Коляска легко поместится 
+в багажнике и оставит много места для других вещей.  
+Особенности:  
+
+
+- одобрена для использования с рождения;  
+- пятиточечные ремни безопасности;  
+- 3 положения спинки до наклона 150 градусов;  
+- 2 положения опоры для ног; регулируемая подножка;  
+- подставка для напитков;  
+- надежные тормоза;  
+- диаметр колес - 14,6 см;  
+- размер посадочного места: 32х29 см;  
+- размеры в разложенном виде: 49х100х83 см;  
+- размеры в сложенном виде: 33х94х30,5 см;  
+- вес: 5,7 кг; вместительная корзина для покупок. Производитель: Peg Perego 
+(Италия).</description>
+		</offer>
+
+		<offer id="165171" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/shezlong-jetem-quot-premium-quot-grey/31625.165171.html</url>
+			<price>2650.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29675</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/7a3/kc8.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Шезлонг Jetem &quot;Premium&quot; Grey</name>
+			<vendor>Jetem</vendor>
+			<description>Шезлонг Jetem &quot;Premium&quot; с функцией качалки станет любимым предметом вашего 
+малыша. Приятные мелодии позволят ребенку получать положительные эмоции 
+и приятные ощущения. 
+
+Основные характеристики: 
+
+
+- Рекомендуется для детей от 0 месяцев и весом до 9 кг. 
+- Спинка регулируется от сидячего до полностью лежачего положения. 
+- Наклон сидения регулируется автоматически в зависимости от веса ребенка. 
+- Поддержка для головы. 
+- Успокаивающая вибрация на 2 скоростях. 
+- Электронный музыкальный центр - 3 мелодии с таймером. 
+- Можно трансформировать в качалку. 
+- Имеется капюшон. 
+- Есть ручки для переноски. 
+- Пятиточечные ремни безопасности с дополнительной прокладкой. 
+- Очень компактно складывается. 
+- Суперудобное сиденье с мягкой подкладкой, подголовником и тентом. 
+- Чехол можно стирать в стиральной машине. 
+ Размеры: 48 x 47 x 14 см. 
+
+Вес: 3,7 кг. 
+
+Производитель: Jetem (Китай)</description>
+		</offer>
+
+		<offer id="168991" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/hodunki-peg-perego-quot-walk-n-play-jumper-quot-savana-rosa/31612.168991.html</url>
+			<price>3650.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29661</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/87a/xd3.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Ходунки Peg Perego &quot;Walk'n Play Jumper&quot; Savana Rosa</name>
+			<vendor>Peg Perego</vendor>
+			<description>Ходунки Peg Perego &quot;Walk'n Play Jumper&quot;: посаженный в ходунки, ребенок 
+быстро учится отталкиваться ногами от пола. Неожиданно для себя он обретает 
+свободу и легкость перемещения в пространстве. 
+
+Основные характеристики: 
+
+
+- Предназначены для детей в возрасте до 1 года, рост до 85 см 
+- Рама из алюминия обеспечивает сверхлегкую структуру ходунков 
+- Сиденье удобной эргономичной формы, регулируются по высоте в 5 положениях 
+- Сиденье имеет съемное и моющееся покрытие 
+- Широкое основание придает ходункам максимальную стабильность 
+- 4 поворотных колеса облегчают ребенку перемещение 
+- Мягкий профиль защищает ребенка от ударов 
+- Ходунки используются как прыгунки 
+- Игровой центр (музыкальная панель) ходунков легко снимается, и поднос 
+может использоваться по другому назначению 
+- Компактная система сложения 
+ Общие размеры: 
+
+
+- в разложенном виде (шxдxв): 68,5x62х51 см 
+- в сложенном виде (шxд): 68,5х25,5 см 
+ Вес: 4,7 кг 
+
+Производитель: Peg-Perego (Италия)</description>
+		</offer>
+
+		<offer id="165172" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/shezlong-jetem-quot-premium-quot-kenzo/31625.165172.html</url>
+			<price>2650.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29675</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/d22/kc23.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Шезлонг Jetem &quot;Premium&quot; Kenzo</name>
+			<vendor>Jetem</vendor>
+			<description>Шезлонг Jetem &quot;Premium&quot; с функцией качалки станет любимым предметом вашего 
+малыша. Приятные мелодии позволят ребенку получать положительные эмоции 
+и приятные ощущения. 
+
+Основные характеристики: 
+
+
+- Рекомендуется для детей от 0 месяцев и весом до 9 кг. 
+- Спинка регулируется от сидячего до полностью лежачего положения. 
+- Наклон сидения регулируется автоматически в зависимости от веса ребенка. 
+- Поддержка для головы. 
+- Успокаивающая вибрация на 2 скоростях. 
+- Электронный музыкальный центр - 3 мелодии с таймером. 
+- Можно трансформировать в качалку. 
+- Имеется капюшон. 
+- Есть ручки для переноски. 
+- Пятиточечные ремни безопасности с дополнительной прокладкой. 
+- Очень компактно складывается. 
+- Суперудобное сиденье с мягкой подкладкой, подголовником и тентом. 
+- Чехол можно стирать в стиральной машине. 
+ Размеры: 48 x 47 x 14 см. 
+
+Вес: 3,7 кг. 
+
+Производитель: Jetem (Китай)</description>
+		</offer>
+
+		<offer id="54548" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/ryukzak-molodoi-mamy-avent-sinii/29550.54548.html</url>
+			<price>3779.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29546</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/bef/b_2727_6513.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Рюкзак молодой мамы Avent Синий</name>
+			<vendor>Avent</vendor>
+			<description>Если вам нужно пойти кудато с ребенком, вы можете поместить 
+все необходимое в рюкзак AVENT. Рюкзак 
+изготовлен из прочной, легко моющейся водостойкой ткани с микрофиброй, края 
+отделаны кожей. Благодаря широким мягким плечевым ремням 
+рюкзак удобно носить. Наружный карман из термоизолирующего 
+материала 3М Thinsulate, застегивающийся на молнию, вмещает 2 бутылочки 
+AVENT. Кипяеная вода в них остается теплой, а грудное 
+молоко или молочная смесь - холодными в течении нескольких часов. Детское 
+питание хранится в переднем отделении, а комплекты детского белья или подгузников 
+можно сложить в изолированное отделение. Компактный 
+на вид рюкзак очень вместителен. Имеются отдельные 
+карманы и для маминых вещей: косметички, мобильного телефона, бумажника.В 
+комплект входят : матрасик для пеленания, пакет для использованных 
+подгузников.Производитель: 
+Avent (Англия).</description>
+		</offer>
+
+		<offer id="55250" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/termosumka-avent-krasnaya/29552.55250.html</url>
+			<price>1199.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29546</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/bb4/b_3335_6527.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Термосумка Avent Красная</name>
+			<vendor>Avent</vendor>
+			<description>Можно хранить холодное грудное молоко или молочную 
+смесь, а так-же горячую кипяченую воду в течении 4 часов. Вмещает 2 
+бутылочки Авент, 4 контейнеры VIA, 2 поильника &quot;Волшебные чашка&quot;. Нельзя 
+стирать. Не оставлять на солнце.ТЕРМОСУМКА 
+НЕ ВЫПОЛНЯЕТ ФУНКЦИИ ТЕРМОСА.Производитель: 
+Avent (Англия).</description>
+		</offer>
+
+		<offer id="171001" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/molokootsos-avent-elektronnyi-quot-bpa-free-quot-elektronnyi-podarok-nabor-butylochek-quot-premium-quot/29464.171001.html</url>
+			<price>5730.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29461</categoryId>
+			
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Молокоотсос Avent электронный &quot;BPA-Free&quot; электронный + ПОДАРОК (набор бутылочек 
+&quot;Premium&quot;)</name>
+			<vendor>Avent</vendor>
+			<description></description>
+		</offer>
+
+		<offer id="53229" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/nabor-konteinerov-avent-quot-via-quot-10-sht/29466.53229.html</url>
+			<price>335.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29461</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/f33/b_1484_6427.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Набор контейнеров Avent &quot;VIA&quot; (10 шт.)</name>
+			<vendor>Avent</vendor>
+			<description>- Контейнеры VIA в упаковке стерильны и готовы к применению. 
+- Контейнеры устойчивы, удобно ставятся один на другой, идеально подходят 
+для хранения молока в холодильнике или морозильной камере. 
+- Контейнеры лёгкие, компактные, надёжно закрываются, их удобно брать в 
+дорогу. Контейнеры можно использовать до 4-х раз, затем их выбрасывают. 
+- Требуют стерилизации после каждого последующего использования. 
+- Крышки для контейнеров в комплект не входят! 
+
+Производитель: Avent (Англия).</description>
+		</offer>
+
+		<offer id="53779" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/nabor-konteinerov-avent-via-10-sht-i-2-adaptera/29466.53779.html</url>
+			<price>727.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29461</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/c63/b_1946_6426.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Набор контейнеров Avent VIA (10 шт. и 2 адаптера)</name>
+			<vendor>Avent</vendor>
+			<description>Идеальны для хранения и транспортировки сцеженного 
+грудного молока. Удобно ставить один на другой. Дату 
+можно написать прямо на контейнере.В 
+комплект входят: 10 стерильных контейнера VIA, 10 крышек 
+для контейнеров, 2 адаптера для молокоотсоса и кормления.Производитель: 
+Avent (Англия).</description>
+		</offer>
+
+		<offer id="117917" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/molokootsos-avent-elektronnyi-quot-bpa-free-quot-elektronnyi/29464.117917.html</url>
+			<price>5715.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29461</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/4fe/av5.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Молокоотсос Avent электронный &quot;BPA-Free&quot; электронный</name>
+			<vendor>Avent</vendor>
+			<description>Молокоотсос Avent &quot;BPA-Free&quot; электронный 
+
+Электронный молокоотсос Avent разработан для обеспечения максимального 
+комфорта при сцеживании. 
+
+
+- Бережное сцеживание имитирует сосание ребенка для комфорта и эффективности. 
+- Уникальный лепестковый массажер, предназначенный для стимуляции естественного 
+выделения молока. 
+- Электронные молокоотсосы Philips AVENT имеют встроенную память, способную 
+запомнить ваш ритм сцеживания, что обеспечивает максимальный комфорт в использовании. 
+- При необходимости, можно использовать в качестве ручного молокоотсоса. 
+- Сцеживать молоко можно непосредственно в любую из бутылочек или контейнеров 
+для хранения грудного молока AVENT. 
+- В комплекте: электронный молокоотсос, сетевой шнур с адаптером, детали 
+для ручного сцеживания, отделение для бутылочки/крышка отверстия, запасные 
+детали, соска для новорожденного, дорожный контейнер для сосок, сменные 
+вкладыши для бюстгальтера, контейнер для грудного молока (125мл). 
+ Производитель: Avent (Англия).</description>
+		</offer>
+
+		<offer id="171028" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/sterilizator-avent-philips-dlya-mikrovolnovoi-pechi-282-02scf/29319.171028.html</url>
+			<price>1793.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29293</categoryId>
+			
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Стерилизатор Avent Philips Для микроволновой печи (282/02SCF)</name>
+			<vendor>Avent Philips</vendor>
+			<description></description>
+		</offer>
+
+		<offer id="55232" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/termometr-avent-philips-cifrovoi-dlya-vody-i-komnaty/28686.55232.html</url>
+			<price>1336.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>28682</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/ebb/b_3317_1886.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Термометр Avent Philips Цифровой для воды и комнаты.</name>
+			<vendor>Avent Philips</vendor>
+			<description>Термометр Philips Филипс цифровой для воды и комнаты (SBS 
+SC 550)Цифровой термометр для воды и 
+комнаты - измеряет температуру окружающей среды (вода, воздух). 
+Корпус термометра сделан из специальной резины, противоударный. Может 
+быть игрушкой и прорезывателем.Скорость измерения: 
+90 секунд. Цифровой дисплей с увеличительным стеклом. 
+Производитель: 
+Philips (Германия).Страна производства: 
+Китай.</description>
+		</offer>
+
+		<offer id="115620" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/molokootsos-avent-elektronnyi-quot-delovaya-mama-quot-elektronnyi-aksessuary/29464.115620.html</url>
+			<price>5797.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29461</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/033/av4.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Молокоотсос Avent электронный &quot;Деловая мама&quot; электронный + аксессуары</name>
+			<vendor>Avent</vendor>
+			<description>Молокоотсос Avent &quot;Деловая мама&quot; электронный + аксессуары 
+
+Электронный молокоотсос Avent разработан для обеспечения максимального 
+комфорта при сцеживании. 
+
+
+- Бережное сцеживание имитирует сосание ребенка для комфорта и эффективности. 
+- Уникальный лепестковый массажер, предназначенный для стимуляции естественного 
+выделения молока. 
+- Электронные молокоотсосы Philips AVENT имеют встроенную память, способную 
+запомнить ваш ритм сцеживания, что обеспечивает максимальный комфорт в использовании. 
+- При необходимости, можно использовать в качестве ручного молокоотсоса. 
+- Сцеживать молоко можно непосредственно в любую из бутылочек или контейнеров 
+для хранения грудного молока AVENT. 
+- В комплекте: электронный молокоотсос, сетевой шнур с адаптером, отделение 
+для бутылочки/крышка отверстия, детали для ручного сцеживания, запасные 
+детали, термоизолирующая сумка с плечевым ремнем, 2 контейнера для грудного 
+молока (125мл), соска для новорожденного, дорожный контейнер для сосок, 
+сменные вкладыши для бюстгальтера, 2 охлаждающих пакетика. 
+ Производитель: Avent (Англия).</description>
+		</offer>
+
+		<offer id="80555" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/podogrevatelj-avent-philips-elektricheskii-255-57scf/29309.80555.html</url>
+			<price>1820.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29293</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/125/untitled-12.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Подогреватель Avent Philips Электрический (255/57SCF)</name>
+			<vendor>Avent Philips</vendor>
+			<description>Подогреватель Avent Philips электрический (255/57SCF) 
+
+Подогреватель Avent - быстрый и безопасный способ подогреть сцеженное молоко, 
+молочную смесь или детское питание. Подогреватель чрезвычайно удобен для 
+приготовления питания ночью. 
+
+
+- Подогревает бутылочки AVENT или чашки примерно за 4 минуты. 
+- Совместим со всеми типами бутылочек AVENT и других производителей. 
+- Имеет литую вилку европейского стандарта. 
+- В процессе работы подогреватель содержит горячую воду, которая может 
+стать причиной ожогов. 
+- Во избежание перегрева питания извлекайте бутылочку из подогревателя, 
+как только питание нагрелось до нужной температуры. 
+- Подогреватель детского питания AVENT имеет целый ряд технических решений, 
+которые гарантируют, что он будет служить Вам долго и надёжно. 
+- Когда вода нагреется до нужной темпиратуры, индикатор будет периодически 
+включаться и выключаться. 
+- Всегда, перед тем как дать бутылочку ребёнку, убеждайтесь, что питание 
+имеет допустимую температуру. 
+- Внимание! При подогревании детского питания в микроволновой печи 
+неравномерный прогрев жидкости может привести к ожогу горла. 
+- Внутренняя поверхность подогревателя выполнена из пластмассы, что исключает 
+ожоги рук. 
+- Гарантия 1 год. Производитель: Avent (Англия).</description>
+		</offer>
+
+		<offer id="80554" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/podogrevatelj-avent-philips-cifrovoi-260-37scf/29309.80554.html</url>
+			<price>3066.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>29293</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/934/160.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Подогреватель Avent Philips Цифровой (260/37SCF)</name>
+			<vendor>Avent Philips</vendor>
+			<description>Подогреватель Avent Philips Цифровой (260/37SCF) 
+
+Новый цифровой подогреватель бутылочек и детского питания Philips Avent 
+&quot;IQ&quot; обеспечивает простое, быстрое и безопасное разогревание детского питания. 
+Усовершенствованная технология автоматически рассчитывает время подогрева. 
+Просто укажите некоторые исходные параметры — все остальное сделает 
+подогреватель бутылочек! 
+
+
+- Подогреватель детского питания Philips Avent Авент &quot;IQ&quot; - единственный 
+умный подогреватель, с передовой технологией iQ, конструкция которого позволяет 
+точно регулировать время подогрева детского питания в зависимости от его 
+количества и состава. 
+- Подогреваете ли Вы молоко или детское питание, были ли они заморожены, 
+охлаждены или имели комнатную температуру, подогреватель детского питания 
+подогревает его быстро и безопасно, без более горячих участков. 
+- Подогреватель универсален: можно подогревать все бутылочки Авент, контейнеры 
+VIA, а также стеклянные или металические баночки с детским питанием. Производитель: 
+Avent (Англия).</description>
+		</offer>
+
+		<offer id="152332" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/radionyanya-philips-avent-1-storonnyaya-analogovaya-scd-485/28623.152332.html</url>
+			<price>3150.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>28616</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/032/pn2.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Радионяня Philips Avent 1-сторонняя (аналоговая) SCD 485</name>
+			<vendor>Philips Avent</vendor>
+			<description>Аналоговая радионяня Philips Avent 1-сторонняя SCD 485 
+
+Аналоговая радионяня Philips Avent SCD 485 новой серии обеспечивает абсолютно 
+четкий звук, оснащена регулировкой громкости, световой индикацией звука, 
+индикаторами соединения и низкого заряда батареи, а значит вы всегда услышите, 
+что малыш нуждается в вас. 
+
+
+- Два канала для лучшего качества связи 
+- Аналоговая технология 40 МГц позволяет регулировать настройки канала 
+- Стильный, портативный блок с диапазоном до 150 м 
+- Световая индикация звука информирует о каждом шорохе в комнате малыша 
+- Световые и звуковые индикаторы информируют об устойчивости связи между 
+блоками 
+- Простое подключение дополнительных родительских блоков 
+ ХАРАКТЕРИСТИКИ: 
+
+Технические характеристики 
+
+
+- Диапазон температур для хранения: 10 - 40 °C 
+- Диапазон температур для работы: 10 - 40 °C 
+- Радиус действия: 150 м 
+ Функции управления 
+
+
+- Индикаторы громкости: да 
+- Настройка чувствительности: да 
+- Ночник: да 
+- Индикация низкого уровня заряда аккумулятора: да 
+- Автоматическое предупреждение выхода из диапазона: да 
+- Регулировка громкости: да 
+ Питание 
+
+
+- Электропитание: 100-240 В, 50/60 Гц 
+ Вес устройства, кг: 0.39 
+
+В комплекте:  шейный ремешок, зарядная база для родительского блока, инструкция, 
+краткое руководство, адаптор переменного/постоянного тока, батарейки. 
+
+Вес устройства, кг: 0.39 
+
+Производитель: Philips (Голландия).</description>
+		</offer>
+
+		<offer id="161127" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/videonyanya-avent-videonyanya-scd610-do-150-m-cifrovaya/30213.161127.html</url>
+			<price>9980.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>28592</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/e42/pn3.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Видеоняня Avent Видеоняня SCD610 до 150 м (цифровая)</name>
+			<vendor>Avent</vendor>
+			<description>Цифровая видеоняня Philips AVENT SCD610 дает вам возможность не только 
+слышать, но и видеть малыша. Благодаря 100% конфиденциальной связи, кристально 
+чистому звуку и четкому изображению, вы всегда видите, что происходит с 
+вашим малышом, даже если вы находитесь в другой комнате. 
+
+Основные характеристики: 
+
+
+- Цифровой видеомонитор. 
+- Радиус действия 150 м. 
+- ЖК-экран 2,4 дюйма с ночным и дневным режимами. 
+- Автоматический выбор канала, радионяня может одновременно переключаться 
+между 120 каналами, поэтому связь будет защищена от помех. 
+- Система инфракрасного ночного видения позволяет наблюдать за ребёнком 
+круглосуточно. 
+- Автоматическое включение экрана при возникновении шума в комнате ребенка.  
+- Регуляторы звука и яркости позволяют с легкостью увидеть ребенка.     
+- Возможность подключения до четырех камер. 
+- Индикаторы устойчивой связи между блоками и низкого заряда батарей 
+- Индикация уровня звука, включаются и указывают уровень громкости звука 
+в детской комнате, даже если на родительском блоке громкость отключена. 
+- Благодаря 2-кратному оптическому увеличению и панорамированию вы не упустите 
+ни одного движения малыша. 
+- Возможность крепления камеры на стене с помощью удобного настенного кронштейна. 
+ В комплекте: 
+
+
+- Клипса для крепления к поясу 
+- Инструкция/руководство пользователя. 
+- Адаптер питания 
+- Аккумулятор  
+- Настенное крепление детского блока (набор саморезов с дюпелями) 
+ Источник питания: 220—240 В. 
+
+Диапазон частот: 2,4 ГГц. 
+
+Производитель: Philips (Голландия).</description>
+		</offer>
+
+		<offer id="74411" available="true" bid="1">
+			<url>http://www.mladenec-shop.ru/product/videonyanya-avent-quot-day-night-quot-600scd-do-150-m-cifrovaya/30213.74411.html</url>
+			<price>9296.00</price>
+			<currencyId>RUR</currencyId>
+			<categoryId>28592</categoryId>
+			<picture>http://www.mladenec-shop.ru/upload/iblock/ff0/b_19430_13339.jpg</picture>
+			<delivery>true</delivery>
+			<local_delivery_cost>350</local_delivery_cost>
+			<name>Видеоняня Avent &quot;Day &amp;  Night&quot; 600scd до 150 м (цифровая)</name>
+			<vendor>Avent</vendor>
+			<description>Видеоняня Philips Avent &quot;Day &amp;  Night&quot; 600scd 
+до 150 м (цифровая) Современные технологии в области 
+родительского видео-контроля помогут вам видеть и слышать малыша 100-% 
+конфиденциальное соединение. Высокое разрешение, цветной 
+экран 61 мм. Радиус действия 150 м. Характеристики видеоняни 
+Philips Avent SCD-600: Цифровой 
+видеомонитор Автоматический 
+выбор канала Надежный и безопасный 
+способ наблюдения за малышом благодаря цифровой технологии видеонаблюдения 
+Система инфракрасного ночного 
+видения позволяет наблюдать за ребенком круглосуточно Родительский блок 
+на аккумуляторах позволяет свободно перемещаться по дому, не отвлекаясь 
+от ребенка Автоматическое включение 
+экрана при возникновении шума в комнате ребенка. Регуляторы 
+звука и яркости позволяют с легкостью увидеть ребенка Цифровое 
+подтверждение сигнала для дополнительной уверенности в том, что вы всегда 
+на связи с ребенком, и световая индикация уровня звука Удобное 
+наблюдение за ребенком благодаря цветному цифровому экрану с высоким разрешением 
+Колыбельные и ночник Простая 
+установка камеры позволяет выбрать оптимальный угол обзора В 
+комплекте: Адаптеры. Аккумулятор 
+для родительского блока. Клипса 
+для крепления к поясу. Руководство 
+пользователя.Питание: Источник 
+питания: 220 - 240 В. Диапазон частот: 2,4 ГГц. Производитель: 
+Philips (Голландия). </description>
+		</offer>
+</offers>
+</shop>
+	</yml_catalog>

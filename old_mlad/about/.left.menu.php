@@ -1,0 +1,60 @@
+<?
+$aMenuLinks = Array(
+	Array(
+		"Как купить?", 
+		"/about/how_to_buy.php", 
+		Array(), 
+		Array(), 
+		"" 
+	),
+	Array(
+		"Новинки", 
+		"/novelty/", 
+		Array(), 
+		Array(), 
+		"" 
+	),
+	Array(
+		"Cкидки", 
+		"/about/skidki/", 
+		Array(), 
+		Array(), 
+		"" 
+	),
+	Array(
+		"Распродажа", 
+		"/about/sale.php", 
+		Array(), 
+		Array(), 
+		"" 
+	),
+	Array(
+		"Поставщикам", 
+		"/about/partner.php", 
+		Array(), 
+		Array(), 
+		"" 
+	),
+	Array(
+		"Франчайзинг", 
+		"/about/franchise.php", 
+		Array(), 
+		Array(), 
+		"" 
+	),
+	Array(
+		"Вакансии", 
+		"/about/vakansii.php", 
+		Array(), 
+		Array(), 
+		"" 
+	),
+	Array(
+		"Контакты", 
+		"/contacts/", 
+		Array(), 
+		Array(), 
+		"" 
+	)
+);
+?>

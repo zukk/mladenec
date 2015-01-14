@@ -1,0 +1,62 @@
+#tinykbd_box {
+    border: 1px solid lightgray;
+    width: 100%;
+    min-width: 900px;
+    border-radius: 3px;
+    font-size: 18px;
+
+    background-color: #ffeeb3;
+    font-family: Verdana, Tahoma, Arial sans-serif;
+    color: #515151;
+    -moz-user-select: none;
+    -o-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 999;
+}
+
+#tinykbd_box .tinykbd_header {
+    background-color: #dee599;
+    overflow: hidden;
+    text-align: right;
+    font-size: 0.7em;
+}
+
+#tinykbd_box .tinykbd_header span {
+    text-align: right;
+    cursor: pointer;
+    color: #515151;
+
+}
+
+#tinykbd_box .tinykbd_header span:hover {
+    color: red;
+}
+
+.tinykbd_layout_row {
+    text-align: center;
+    overflow: hidden;
+}
+
+.tinykbd_key {
+}
+
+#tinykbd_box button {
+    color: #515151;
+    /* float:left; */
+    font-size: 1em;
+    min-width: 3em;
+    padding: 0.2em 0.6em;
+    margin: 0.2em;
+    text-align: center;
+    cursor: pointer;
+}
+
+#tinykbd_gap {
+    width: 100%;
+}

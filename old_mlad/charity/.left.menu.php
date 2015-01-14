@@ -1,0 +1,25 @@
+<?
+$aMenuLinks = Array(
+	Array(
+		"Сотрудничество", 
+		"cooperation.php", 
+		Array(), 
+		Array(), 
+		"" 
+	),
+	Array(
+		"Благодарности", 
+		"charity_letters.php", 
+		Array(), 
+		Array(), 
+		"" 
+	),
+	Array(
+		"Отчеты", 
+		"reports.php", 
+		Array(), 
+		Array(), 
+		"" 
+	)
+);
+?>

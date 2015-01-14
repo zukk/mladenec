@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<!DOCTYPE yml_catalog SYSTEM "shops.dtd"><yml_catalog date="2011-11-21 16:26">
+    <shop>
+		<name>maldenec.ru</name>
+			<company>ООО "младенец.ру"</company>
+			<url>http://www.mladenec-shop.ru/</url>
+			<platform>"1С-Битрикс: Управление сайтом"</platform>
+			<version>10.0.7</version>
+			<agency></agency>
+			<email>parfenov.a@mladenec.ru</email>
+
+			<currencies>
+				    <currency id="RUR" rate="1"/>
+					<currency id="USD" rate="CBRF" plus="1"/>
+					<currency id="EUR" rate="CBRF" plus="1"/>
+			</currencies>
+<categories></categories>
+<local_delivery_cost>350</local_delivery_cost>
+<offers><offer id="55341" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-moony-dlya-devochek-9-14-kg-42-sht-razmer-l/29865.55341.html</url>
+<price>999.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/0a1/9-14-42+2.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Moony для девочек 9-14 кг (42 шт.) Размер L</name>
+<vendor>Moony</vendor>
+<description>Трусики Moony Муни для девочек 9-14 кг. 42 шт. (L) Дышащий 
+материал отлично испаряет пот, а специальные рассеивающие ячейки эффективно 
+впитывают "детские неожиданности" и предохраняет кожу малыша от возникновения 
+опрелости. Попка Вашего малыша всегда будет сухой, 
+а его настроение - прекрасным. Ваш ребёнок стал более 
+подвижным, он уже вовсю ползает, пытается сидеть, вставать и ходить. Чтобы 
+сменить подгузник приходится затратить немало сил и времени. Теперь 
+подгузники мгновенно надеваются независимо 
+от того, как вертится ребёнок! В подгузниках-трусиках 
+имеется растягивающаяся в 2 раза складка, которая позволяет легко надевать 
+их в любых условиях. Для того, чтобы легко снять трусики, 
+можно разорвать их сбоку по шву. Сверните использованный 
+подгузник вдвое и закрепите специальной фиксирующей лентой. Теперь неприятные 
+запахи закрыты на замок! Производитель: 
+Unicharm (Япония).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55343" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-moony-dlya-devochek-12-17-kg-36-sht-razmer-big/29865.55343.html</url>
+<price>999.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/885/12-17-36.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Moony для девочек 12-17 кг (36 шт.) Размер BIG</name>
+<vendor>Moony</vendor>
+<description>Трусики Moony Муни для девочек 12-17 кг. 36 шт.Дышащий 
+материал отлично испаряет пот, а специальные рассеивающие ячейки эффективно 
+впитывают "детские неожиданности" и предохраняет кожу малыша от возникновения 
+опрелости. Попка Вашего малыша всегда будет сухой, 
+а его настроение - прекрасным. Ваш ребёнок стал более 
+подвижным, он уже вовсю ползает, пытается сидеть, вставать и ходить. Чтобы 
+сменить подгузник приходится затратить немало сил и времени. Теперь 
+подгузники мгновенно надеваются независимо 
+от того, как вертится ребёнок! В подгузниках-трусиках 
+имеется растягивающаяся в 2 раза складка, которая позволяет легко надевать 
+их в любых условиях. Для того, чтобы легко снять трусики, 
+можно разорвать их сбоку по шву. Сверните использованный 
+подгузник вдвое и закрепите специальной фиксирующей лентой. Теперь неприятные 
+запахи закрыты на замок! Производитель: 
+Unicharm (Япония).</description>
+<sales_notes></sales_notes>
+</offer>
+<offer id="55357" available="true" bid="1">
+<url>http://www.mladenec-shop.ru/product/trusiki-moony-dlya-maljchikov-13-25-kg-22-sht-razmer-spb-nochnye/29867.55357.html</url>
+<price>999.00</price>
+<currencyId>RUR</currencyId>
+<categoryId>29798</categoryId>
+<picture>http://www.mladenec-shop.ru/upload/iblock/736/moony.jpg</picture>
+<delivery>true</delivery>
+<local_delivery_cost>350</local_delivery_cost>
+<name>Трусики Moony для мальчиков 13-25 кг (22 шт.) Размер SPB ночные</name>
+<vendor>Moony</vendor>
+<description>Трусики Moony Муни ночные 13-25 кг 22 штСпокойный 
+сон ночью!Внутренний слой трусиков Moony 
+обладает повышенной впитываемостью. Предназначены для ночного сна, а также 
+для детей с патологией мочеполовой системы.100%-ная 
+воздухопроницаемость материла. Материал трусиков Moony 
+изготовлен из натурального хлопка, не вызывает аллергии и предохраняет нежную 
+кожу от опрелостей.Легко снимать, легко одевать.Фиксирующая 
+лента для утилизации, которая помогает легко и компактно свернуть использованные 
+трусики Муни.Легко разорвать 
+по шву при замене.Забавные картинки героев Диснея, 
+которые обрадуют ребенка. В одном пакете 4 вида рисунков.Производитель: 
+Unicharm (Япония).</description>
+<sales_notes></sales_notes>
+</offer>
+</offers>
+</shop>
+</yml_catalog>

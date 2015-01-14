@@ -1,0 +1,48 @@
+.mladenecradiotabs {
+	display: block;
+}
+
+.mladenecradiotabs > div {
+	display: block;
+	display: table;
+	height: 60px;
+	float: left;
+}
+
+.mladenecradiotabs > div > label {
+	display: block;
+	display: table-cell;
+	padding: 0 10px;
+	margin: 0;
+	text-align: center;
+	border-style: solid;
+	border-color: #eaeaea;
+	border-width: 1px 0;
+	cursor: pointer;
+	font-size: 1.2em;
+	height: 60px;
+	vertical-align: middle;
+}
+
+.mladenecradiotabs > div.checked > label {
+	background: #43dcf3 !important;
+	border-color: #43dcf3 !important;
+	color: white;
+	font-weight: bold;
+	cursor: auto;
+}
+
+.mladenecradiotabs > div:hover > label {
+	background-color: #a8f2ff;
+	border-color: #a8f2ff;
+}
+
+.mladenecradiotabs > div:nth-child(1) > label {
+	border-radius: 8px 0 0 8px;
+	border-width: 1px 0 1px 1px;
+}
+.mladenecradiotabs > div:nth-last-child(1) > label {
+	border-radius: 0 8px 8px 0;
+	border-width: 1px 1px 1px 0;
+}
+

@@ -1,0 +1,445 @@
+body {
+    background: #fff;
+}
+
+#all {
+    background: url(/i/kotdog/bg_up.png) 50% 0 no-repeat;
+    padding-top: 40px;
+}
+
+#head {
+    background: none;
+    height: 111px;
+    margin-bottom: 0;
+}
+
+.main #head {
+    width: 997px;
+    background: url(/i/kotdog/animals.jpg) no-repeat 50% 100%;
+}
+
+#topmenu {
+    height: 106px;
+    width: 782px;
+    margin: -30px auto 0 10px;
+}
+
+.main #topmenu {
+    margin: 0 auto;
+    background: #fff;
+}
+
+#topmenu a {
+    display: block;
+    width: 127px;
+    height: 106px;
+    float: left;
+    margin-left: 4px;
+    background: #fff url(/i/kotdog/icons.jpg) 0 100%;
+}
+
+#topmenu a:first-child {
+    margin-left: 0;
+}
+
+#topmenu a:hover, #topmenu a.a {
+    background-position: 0 0;
+}
+
+#topmenu a.cat {
+    background-position: -129px 100%;
+}
+
+#topmenu a.cat:hover, #topmenu a.cat.a {
+    background-position: -129px 0;
+}
+
+#topmenu a.rat {
+    background-position: -258px 100%;
+}
+
+#topmenu a.rat:hover, #topmenu a.rat.a {
+    background-position: -258px 0;
+}
+
+#topmenu a.fish {
+    background-position: -387px 100%;
+}
+
+#topmenu a.fish:hover, #topmenu a.fish.a {
+    background-position: -387px 0;
+}
+
+#topmenu a.bird {
+    background-position: -516px 100%;
+}
+
+#topmenu a.bird:hover, #topmenu a.bird.a {
+    background-position: -516px 0;
+}
+
+#topmenu a.more {
+    background-position: 100% 100%;
+}
+
+#topmenu a.more:hover, #topmenu a.more.a {
+    background-position: 100% 0;
+}
+
+#search {
+    right: 10px;
+    top: 10px;
+    width: 150px;
+    height: 50px;
+    background: #fff url(/i/kotdog/aport.gif) 50% 50%;
+    border: 3px double #bfbfbf;
+    position: absolute;
+    padding: 12px 20px;
+    left: auto;
+}
+
+#search input.q {
+    background: #fff;
+    border-radius: 1px;
+    border: 2px solid #7f7f7f;
+    color: #000;
+    padding: 1px;
+    height: 14px;
+    width: 140px;
+    line-height: 14px;
+    margin-right: 2px;
+}
+
+#search input.q + label.placeholder {
+    left: 25px;
+    top: 47px;
+}
+
+.main #search {
+    width: 211px;
+    height: 20px;
+    top: 148px;
+    right: 82px;
+}
+
+#xxfoot {
+    background: url(/i/kotdog/bg_foot.png) 50% 100% no-repeat;
+}
+
+input.aport {
+    background: #ff3434;
+    color: #fff;
+    display: block;
+    padding: 0 10px;
+    border: 1px solid #fff;
+    margin-left: 3px;
+    background: -moz-linear-gradient(90deg, #ff3434 0%, #7a1818 100%);
+    background: -webkit-linear-gradient(90deg, #ff3434 0%, #7a1818 100%);
+    background: -o-linear-gradient(90deg, #ff3434 0%, #7a1818 100%);
+    background: -ms-linear-gradient(90deg, #ff3434 0%, #7a1818 100%);
+    background: linear-gradient(180deg, #ff3434 0%, #7a1818 100%);
+    -webkit-box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.3);
+    box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.3);
+}
+
+#side {
+    background: url(/i/kotdog/line.png) repeat-y;
+}
+
+#menu {
+    background: url(/i/kotdog/footer.png) 0 100% no-repeat;
+    border: none;
+    border-radius: 0;
+}
+
+#pp {
+    background: url(/i/kotdog/line_s.png) 0 50px no-repeat;
+    padding-top: 60px;
+}
+
+#logo {
+    top: 0;
+    position: absolute;
+    left: 0;
+    height: 50px;
+}
+
+#logo img {
+    width: auto;
+    height: auto;
+}
+
+#top_brands {
+    height: 65px;
+    background: url(/i/kotdog/bbline.png) repeat-x;
+    width: 828px;
+    margin: 0 auto 42px;
+    position: relative;
+}
+
+#top_brands i {
+    background: url(/i/kotdog/rbat.png) no-repeat;
+    width: 50px;
+    height: 65px;
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+#top_brands i:first-child {
+    background: url(/i/kotdog/lbat.png) no-repeat;
+    left: 0;
+    right: auto;
+}
+
+#foot {
+    background: #fff url(/i/kotdog/f_top.png) no-repeat 50% 0;
+    width: 697px;
+    margin: 0 auto;
+    padding: 60px 0 0 180px;
+}
+
+#foot > div {
+    float: left;
+    width: 200px;
+    font-size: 9px;
+    padding-bottom: 30px;
+}
+
+#foot ul li {
+    padding: 0;
+}
+
+#foot strong a {
+    font-size: 9px;
+}
+
+#seofoot {
+    margin: 0;
+    padding: 0;
+    width: auto;
+}
+
+#foot2 > a:first-child {
+    background: url(/i/kotdog/logo_foot.png) no-repeat;
+    width: 690px;
+    height: 74px;
+    float: none;
+    margin: 0 auto;
+}
+
+#foot2 {
+    text-align: center;
+    color: #000;
+}
+
+#promotop {
+    position: relative;
+    top: auto;
+    left: auto;
+}
+
+#blocks div {
+    width: 216px;
+    height: 149px;
+    background: url(/i/kotdog/block.png);
+    position: relative;
+    float: left;
+    margin: 0 11px 30px 0;
+    padding-top: 60px;
+}
+
+#blocks div a {
+    display: block;
+    text-align: center;
+    line-height: 22px;
+}
+
+#blocks div i {
+    background: url(/i/kotdog/icons.png) 5px 0 no-repeat;
+    display: block;
+    position: absolute;
+    top: -40px;
+    left: 58px;
+    width: 120px;
+    height: 106px;
+}
+
+#blocks div.cat i {
+    background-position: -133px 0;
+    left: 64px;
+}
+
+#blocks div.rat i {
+    background-position: -258px 0;
+}
+
+#blocks div.fish i {
+    background-position: -388px 0;
+}
+
+#blocks div.bird i {
+    background-position: -516px 0;
+}
+
+#blocks div.more i {
+    background-position: -646px 0;
+}
+
+#head.main {
+    height: 511px;
+}
+
+/* styles */
+input.txt:active, input.txt:focus, input.txt.focus, textarea.txt:active, textarea.txt:focus, textarea.txt.focus {
+    border-color: #febb11;
+}
+
+form.small input.txt:active, form.small input.txt:focus, form.small input.txt.focus, form.small textarea.txt:active, form.small textarea.txt:focus, form.small textarea.txt.focus {
+    border-color: #febb11;
+}
+
+div.range span.range-ui .line {
+    background-color: #febb11;
+}
+
+#userpad > form, #reg_form .regpoll {
+    border-color: #febb11;
+}
+
+#userpad > a.open {
+    border-color: #febb11;
+}
+
+#selector .dropdown {
+    border-color: #febb11;
+}
+
+#view_mode a.a {
+    background-color: #febb11;
+}
+
+.butt {
+    font: normal 16px/25px Verdana, Tahoma, Geneva, sans-serif;
+    white-space: nowrap;
+    outline: none;
+    display: block;
+    border-radius: 1px;
+    cursor: pointer;
+    text-shadow: none;
+    color: #fff !important;
+    padding: 8px 27px;
+    box-shadow: none;
+
+    background: #d61919;
+    background: -moz-linear-gradient(90deg, #d61919 0%, #fe3333 100%);
+    background: -webkit-linear-gradient(90deg, #d61919 0%, #fe3333 100%);
+    background: -o-linear-gradient(90deg, #d61919 0%, #fe3333 100%);
+    background: -ms-linear-gradient(90deg, #d61919 0%, #fe3333 100%);
+    background: linear-gradient(180deg, #d61919 0%, #fe3333 100%);
+    border: 1px solid #7f7f7f;
+}
+
+.butt:hover, .butt:focus {
+    background: #993333;
+}
+
+.butt:active {
+    background: #ff3333;
+}
+
+.slider > i {
+    background-image: url(/i/ogurchik/nswe.png);
+}
+
+.buy > a.dec:hover, .buy > a.inc:hover {
+    color: #febb11;
+}
+
+h1, h1.yell {
+    font-family: Verdana, sans-serif;
+    text-transform: uppercase;
+    color: #660000;
+    width: 520px;
+    padding: 15px 0 35px 15px;
+    margin: 0;
+    background: none;
+}
+
+#breadcrumb {
+    padding-top: 80px;
+    padding-left: 15px;
+}
+
+li > label.label.checked {
+    background: #feec99;
+}
+
+label.label:hover i.check, label.label.hover i.check, label.label.checked i.check {
+    border-color: #febb11;
+}
+
+label.label:hover i.radio, label.label.hover i.check {
+    border-color: #febb11;
+}
+
+label.label.checked i.radio {
+    border-color: #febb11;
+}
+
+#list_props {
+    height: 40px;
+    background: #ffeeb3;
+    border-radius: 5px;
+    padding: 10px 15px 0;
+    margin-bottom: 15px;
+}
+
+#list_props > label.label {
+    right: 15px;
+}
+
+#view_mode {
+    background: #fff;
+    top: -82px;
+    border: 2px solid #7ad6f2;
+    border-radius: 7px;
+    padding: 2px 10px;
+}
+
+.tab-content.wide {
+    margin-left: 0;
+    width: 100%;
+}
+
+.tab-content.wide i {
+    display: none;
+}
+
+.tab-content.wide ul {
+    margin-left: 0;
+}
+
+.na {
+    margin-right: 25px;
+}
+
+.slider {
+    background: #fff;
+}
+
+#ff {
+    background: url(/i/kotdog/line_s.png) 0 50px no-repeat;
+    padding-top: 60px;
+    width: 174px;
+}
+
+#choice {
+    background: #fff;
+    border-top: 1px solid #333;
+    margin: 0 5px 0;
+    width: 154px;
+    border-bottom: 4px solid #ff3333;
+}
