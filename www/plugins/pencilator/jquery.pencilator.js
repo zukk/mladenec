@@ -9,7 +9,9 @@
                 $('#pencilator').remove();
 				
 				$('.pencilator-input').each(function(){
-					params[$(this).attr('name')] = $(this).val();
+					var v = $(this).val();
+                    params[$(this).attr('name')] = v;
+                    $(this).next().prop('title', v ? v : 'Укажите — для мальчика или девочки, цвет и другие пожелания по данному товару');
 				});
 				
 				$.post('/cart/comments.php', params );

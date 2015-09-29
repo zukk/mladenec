@@ -287,81 +287,72 @@ class Controller_Admin_Ajax extends Controller_Authorised {
             }
         }
 
-        if( ! empty( $fields ) )
-        {
-            foreach( $fields as $field )
-            {
-                $model->or_where($field, 'like', '' . $term  . '%' );
+        if ( ! empty($fields)) {
+            foreach ($fields as $field) {
+                $model->or_where($field, 'like', '%' . $term . '%');
             }
-            if ( ! empty($children)) {
+            if (!empty($children)) {
                 $model->and_where_close();
             }
             $data = $model->find_all()->as_array('id');
 
 //            echo $model->last_query();
-            
-            if( ! empty( $data ) )
-            {
-                echo $model;
-                
-                if (method_exists($this, 'action_'.$modelname.'_autocomplete'))
-                {
+
+            if ( ! empty($data)) {
+                //echo $model;
+
+                if (method_exists($this, 'action_' . $modelname . '_autocomplete')) {
                     $result = $this->{'action_' . $modelname . '_autocomplete'}($data);
-                }
-                else
-                {
+                } else {
                     $i = 1;
-                    foreach ($data as $id => &$item)
-                    {
-/*                            if ($i > 15) 
-                            {
-                                break;
-                            }
-*/                            
-                            $result[$id] = array(
-                                    'id' => $id,
-                                    'value' => $item->name,
-                                    'label' => $item->name,
-                                );
-                            
-                            $i++;
-                        }
+                    foreach ($data as $id => &$item) {
+                        $result[$id] = [
+                            'id' => $id,
+                            'value' => $item->name,
+                            'label' => $item->name,
+                        ];
+
+                        $i++;
                     }
                 }
             }
-            $this->tmpl['result'] = json_encode($result);
+        }
+
+        $this->tmpl['result'] = json_encode($result);
 	}
-	
-	protected function action_good_autocomplete($data = array()) {
-		
-		$result = array();
-		
+
+	protected function action_good_autocomplete($data = [])
+    {
+		$result = [];
+
 		$goodIds = array_keys($data);
 		$hits = DB::select('section_id', 'good_id')
-						->from('z_hit')
-						->where('good_id', 'in', $goodIds)
-						->execute()->as_array('good_id');
-		$i = 1;
-		foreach ($data as $id => &$good) {
+            ->from('z_hit')
+            ->where('good_id', 'in', $goodIds)
+            ->limit(15)
+            ->execute()
+            ->as_array('good_id');
 
-			/* if ($i > 15)
-				break;
-			*/
+		foreach ($data as $id => &$good) {
 			$result[$id] = array(
 				'id' => $id,
-				'value' => $good->code . ' ' . $good->group_name . ' ' . $good->name,
-				'code' => $good->code,
+				'value' => $good->id1c. ' ' . $good->group_name . ' ' . $good->name,
+				'id1c' => $good->id1c,
 				'group_name' => $good->group_name,
 				'name' => $good->name,
-				'hit' => !empty($hits[$id]) ? $hits[$id]['section_id'] : '0'
+				'hit' => ! empty($hits[$id]) ? $hits[$id]['section_id'] : '0'
 			);
-			$i++;
 		}
-		
+
 		return $result;
 	}
-	
-    public function action_filemanager_upload() {
+
+    /**
+     * Загрузка файлов в медиа
+     * @throws Exception
+     */
+    public function action_filemanager_upload()
+    {
         /* files saving */
         $mdir_id = $this->request->query('mdir_id');
         
@@ -396,7 +387,12 @@ class Controller_Admin_Ajax extends Controller_Authorised {
         }
     }
 
-	public function action_comment_answer(){
+    /**
+     * Ответ на коммент
+     * @throws Kohana_Exception
+     */
+    public function action_comment_answer()
+    {
 
 		$ins = DB::insert('z_comment_answer');
 		$ins->columns(array('q_id','answer','answer_by', 'active'));
@@ -551,7 +547,7 @@ class Controller_Admin_Ajax extends Controller_Authorised {
 		
 		die('ok');
 	}
-	
+
 	public function action_search_status()
     {
 		
@@ -596,4 +592,41 @@ class Controller_Admin_Ajax extends Controller_Authorised {
     public function action_filemanager_adddir() {
         
     }
+
+    public function action_card_call()
+    {
+        $id = $this->request->post('id');
+
+        $item = ORM::factory('order', $id);
+        $item->call_card = 1;
+        $item->save();
+
+        Model_History::log('order', $id, 'Отзвонили карту');
+        exit('ok');
+    }
+
+    public function action_card_cash()
+    {
+        $id = $this->request->post('id');
+
+        $item = ORM::factory('order', $id);
+        $item->pay_type = Model_Order::PAY_DEFAULT;
+        $item->save();
+
+        Model_History::log('order', $id, 'Перевели на НАЛ');
+        exit('ok');
+    }
+
+    public function action_card_can_pay()
+    {
+        $id = $this->request->post('id');
+
+        $item = ORM::factory('order', $id);
+        // $item->can_pay = 1;
+        $item->save();
+
+        Model_History::log('order', $id, 'Разрешили оплату');
+        exit('ok');
+    }
+
 }

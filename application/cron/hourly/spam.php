@@ -40,6 +40,7 @@ if ( ! empty($spam->id)) { // есть такая рассылка
             ->as_array('mail');
 
         foreach($tos as $to) {
+            $to['mail'] = trim($to['mail']);
             $mail->setHTML(Txt::spam($text, $to['mail']), FALSE, $img_dir); // разные ссылки на отписку
             $mail->send($to['mail'], $spam->name);
 

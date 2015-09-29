@@ -8,15 +8,16 @@ class Mail {
     const MAX_ATTACHMENT_SIZE = 2400000;
 
     protected $smtp = array(
-        'host' => 'ssl://smtp.gmail.com',
+        'host' => 'ssl://smtp.yandex.ru',
         'port' => 465,
         'login' => self::MAIL_FROM,
-        'password' => '******',
+        'password' => 'fg6gr84gh',
         'from' => self::MAIL_FROM
     );
 
-    protected $smtp_error = FALSE;
+    public $smtp_error = FALSE;
     private $smtp_conn = FALSE;
+    private $multipart = FALSE;
 
     var $boundary 	= ""; // разделитель
     var $message	= array(); // массив куда будем сообщение собирать
@@ -81,7 +82,13 @@ class Mail {
         $mail = new self();
         $mail->setHTML(View::factory('smarty:mail/'.$tmpl, $params + array('site' => self::site()))->render());
 
-        return $mail->send($to, 'Младенец.РУ: '.$subject, ($tmpl == 'order' ? 'Bcc: zakaz@mladenec-shop.ru, 1creport@mladenec-shop.ru' : NULL)); // по письмам о заказе шлётся слепая копия
+        if ($tmpl == 'order') { // шлём копии писем через smtp - а то яндекс нас забанил за слишком много писем
+            if ( ! $mail->send_smtp('zakaz@mladenec-shop.ru,1creport@mladenec-shop.ru', 'Младенец.РУ: '.$subject)) {
+                mail('m.zukk@ya.ru', 'SMTP ERROR sending copy', $mail->smtp_error);
+            }
+        }
+
+        return $mail->send($to, 'Младенец.РУ: '.$subject);
     }
 
     public function attachUploaded($file)
@@ -181,6 +188,7 @@ class Mail {
         }
 
         if (count($parts) > 1)  {
+            $this->multipart = TRUE;
             $this->header = "Content-type: multipart/related; boundary=".$this->boundary."\r\n";
             $msg = "This is a multipart message in MIME format.\r\n\r\n";
 
@@ -228,7 +236,7 @@ class Mail {
         if (Kohana::$environment === Kohana::DEVELOPMENT)
         {
             $subject = 'Test: ' . $subject . ', to: ' . $to;
-            $to = 'k.puchkov@mladenec.ru, zukker@gmail.com, alkich@yandex.ru, puchkovk@gmail.com, m.zukk@ya.ru, spirin1234@mail.ru, abrals@yandex.ru, elena-1104@yandex.ru, d.spirin@mladenec.ru, e.muradyanc@mladenec.ru';
+            $to = 'm.zukk@ya.ru, v.vinnikov@toogarin.ru';
         }
         
         return mail($to, $this->getSubject($subject), $message, $add_header, '-f'.self::MAIL_FROM.' -F'.self::MAIL_PREFIX);
@@ -249,58 +257,70 @@ class Mail {
     /* send via smtp server */
     public function send_smtp($to, $subject)
     {
+        $msg = $this->getMessage(); // to count multipart or not
+
         $header="Date: ".date("D, j M Y G:i:s")." +0700\r\n";
         $header.="From: <".$this->smtp['from'].">\r\n";
         $header.="X-Mailer: The Bat! (v3.99.3) Professional\r\n";
         $header.="Reply-To: <".$this->smtp['from'].">\r\n";
         $header.="X-Priority: 3 (Normal)\r\n";
-        $header.="Message-ID: <".mt_rand(1000000, 9999999).'.'.date("YmjHis")."@gmail.com>\r\n";
+        $header.="Message-Id: <".mt_rand(1000000, 9999999).'.'.date("YmjHis")."@gmail.com>\r\n";
         $header.="To: <".$to.">\r\n";
         $header.="Subject: ".$this->getSubject($subject)."\r\n";
         $header.="MIME-Version: 1.0\r\n";
+        if ($this->multipart) {
+            $header .= "Content-type: multipart/related; boundary=" . $this->boundary . "\r\n";
+        }
 
         $this->smtp_error = FALSE;
         $this->smtp_conn = fsockopen($this->smtp['host'], $this->smtp['port'], $errno, $errstr, 10);
         if ( ! $this->smtp_conn) { $this->smtp_error = "соединение с серверов не прошло "; goto err;}
-        $data = $this->get_smtp_response();
+        $resp = $this->get_smtp_response();
 
-        fputs($this->smtp_conn,"HELO\r\n");
-        $code = substr($this->get_smtp_response(),0,3);
-        if ($code != 250) { $this->smtp_error = "ошибка приветсвия HELO"; goto err;}
+        fputs($this->smtp_conn,"HELO ".(Kohana::$environment == Kohana::DEVELOPMENT ? 'test.mladenecshop.ru' : 'mladenec.ru')."\r\n");
+        $resp = $this->get_smtp_response();
+        $code = substr($resp,0,3);
+        if ($code != 250) { $this->smtp_error = "ошибка приветствия HELO\n".$resp; goto err;}
 
         fputs($this->smtp_conn,"AUTH LOGIN\r\n");
-        $code = substr($this->get_smtp_response(),0,3);
-        if ($code != 334) {$this->smtp_error = "сервер не разрешил начать авторизацию"; goto err;}
+        $resp = $this->get_smtp_response();
+        $code = substr($resp,0,3);
+        if ($code != 334) {$this->smtp_error = "сервер не разрешил начать авторизацию\n".$resp; goto err;}
 
         fputs($this->smtp_conn,base64_encode($this->smtp['login'])."\r\n");
-        $code = substr($this->get_smtp_response(),0,3);
-        if ($code != 334) {$this->smtp_error = "ошибка доступа к такому юзеру"; goto err;}
+        $resp = $this->get_smtp_response();
+        $code = substr($resp,0,3);
+        if ($code != 334) {$this->smtp_error = "ошибка доступа к такому юзеру\n".$resp; goto err;}
 
         fputs($this->smtp_conn,base64_encode($this->smtp['password'])."\r\n");
-        $code = substr($this->get_smtp_response(),0,3);
-        if ($code != 235) {$this->smtp_error = "не правильный пароль"; goto err;}
+        $resp = $this->get_smtp_response();
+        $code = substr($resp,0,3);
+        if ($code != 235) {$this->smtp_error = "не правильный пароль\n".$resp; goto err;}
 
         fputs($this->smtp_conn,"MAIL FROM: <".$this->smtp['from'].">\r\n");
-        $code = substr($this->get_smtp_response(),0,3);
-        if ($code != 250) {$this->smtp_error = "сервер отказал в команде MAIL FROM"; goto err;}
+        $resp = $this->get_smtp_response();
+        $code = substr($resp,0,3);
+        if ($code != 250) {$this->smtp_error = "сервер отказал в команде MAIL FROM\n".$resp; goto err;}
 
         $to_addr = explode(',', $to);
         foreach($to_addr as $a) {
             fputs($this->smtp_conn,"RCPT TO: <".trim($a).">\r\n");
-            $code = substr($this->get_smtp_response(),0,3);
-            if ($code != 250 AND $code != 251) {$this->smtp_error = "Сервер не принял команду RCPT TO"; goto err;}
+            $resp = $this->get_smtp_response();
+            $code = substr($resp,0,3);
+            if ($code != 250 AND $code != 251) {$this->smtp_error = "Сервер не принял команду RCPT TO\n".$resp; goto err;}
         }
 
         fputs($this->smtp_conn,"DATA\r\n");
-        $code = substr($this->get_smtp_response(),0,3);
-        if ($code != 354) { $this->smtp_error = "сервер не принял DATA"; goto err;}
+        $resp = $this->get_smtp_response();
+        $code = substr($resp,0,3);
+        if ($code != 354) { $this->smtp_error = "сервер не принял DATA\n".$resp; goto err;}
 
-        $msg = $this->getMessage();
-        $data = $header.$msg."\r\n.\r\n";
+        $data = $header.($this->multipart ? "This is a multipart message in MIME format.\r\n\r\n" : "").$msg."\r\n.\r\n";
         fputs($this->smtp_conn, $data);
 //		echo $data;
-        $code = substr($this->get_smtp_response(),0,3);
-        if ($code != 250) { $this->smtp_error = "ошибка отправки письма";  goto err;}
+        $resp = $this->get_smtp_response();
+        $code = substr($resp,0,3);
+        if ($code != 250) { $this->smtp_error = "ошибка отправки письма\n".$resp;  goto err;}
 
         fputs($this->smtp_conn,"QUIT\r\n");
 

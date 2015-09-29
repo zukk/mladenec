@@ -43,7 +43,7 @@ define('EXT', '.php');
  * When using a legacy application with PHP >= 5.3, it is recommended to disable
  * deprecated notices. Disable with: E_ALL & ~E_DEPRECATED
  */
-error_reporting(E_ALL & ~E_DEPRECATED);
+error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
 
 /**
  * End of standard configuration! Changing any of the code below should only be
@@ -89,19 +89,6 @@ if ( ! defined('KOHANA_START_TIME'))
 if ( ! defined('KOHANA_START_MEMORY'))
 {
     define('KOHANA_START_MEMORY', memory_get_usage());
-}
-
-/**
- * define vkapp name constant
- */
-if ( ! defined('VK_APP_SERVER_NAME'))
-{
-    define('VK_APP_SERVER_NAME', 'vkapp');
-}
-
-if ( ! defined('VK_EATMART_SERVER_NAME'))
-{
-    define('VK_EATMART_SERVER_NAME', 'eatmartvk');
 }
 
 // Bootstrap the application

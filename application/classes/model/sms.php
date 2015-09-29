@@ -17,10 +17,9 @@ class Model_Sms extends ORM  {
     
     public $qty = 0; // for qty in brand
 
-    protected static $curl      = null;
-    protected static $config    = null;
-    
-    
+    protected static $curl      = NULL;
+    protected static $config    = NULL;
+
     protected $_table_name = 'z_sms';
 
     protected $_table_columns = [
@@ -51,7 +50,7 @@ class Model_Sms extends ORM  {
     public static function to_queue($phone, $text, $user_id = 0, $order_id = 0)
     {
         $phone = Txt::phone_clear($phone);
-        if ($phone === '') {
+        if ( ! $phone) {
             Log::instance()->add(Log::INFO, 'Error when trying to add SMS to queue to user #' . $user_id . ' - wrong phone ' . $phone . ' format.');
             return FALSE;
         }
@@ -105,54 +104,91 @@ class Model_Sms extends ORM  {
     public function send()
     {
         if (is_null(self::$curl))   self::$curl     = new Curl();
-        if (is_null(self::$config)) self::$config   = Kohana::$config->load('sms')->as_array();
-        
-        if (Txt::phone_is_correct($this->phone) AND Txt::phone_is_mobile($this->phone))
-        {
+        if (is_null(self::$config)) {
+            $sms_config = Kohana::$config->load('sms')->as_array();
+            if (Conf::instance()->sms_method == Model_Config::SMS_MTS) {
+                self::$config = $sms_config['mts'];
+            } else {
+                self::$config = $sms_config['aquiropay'];
+            }
+        }
+
+        if (Txt::phone_is_correct($this->phone) AND Txt::phone_is_mobile($this->phone)) {
             $phone = substr($this->phone, 1); // no leading +
             $cf = $this->order_id;
-
+			
             if (Kohana::$environment == Kohana::PRODUCTION) { // по-настоящему шлём смс только на боевом
+				
+				if (Conf::instance()->sms_method == Model_Config::SMS_MTS ){
 
-                $response = self::$curl->get_url(self::$config['url'], array(
-                    'opcode' => 'send_message',
-                    'product_id' => self::$config['product_id'],
-                    'recipient' => $phone,
-                    'cf' => $cf,
-                    'text' => trim($this->text),
-                    'token' => md5(self::$config['merchant_id']
-                        . self::$config['product_id']
-                        . $phone
-                        . $cf
-                        . self::$config['secret_word']),
-                ));
+					$_request = "http://mcommunicator.ru/m2m/m2m_api.asmx/SendMessage?" . http_build_query([
+						'msid' => $phone,
+						'message' => trim($this->text),
+						'naming' => 'mladenec.ru',
+						'login' => self::$config['login'],
+						'password' => md5( self::$config['password'] )
+					]);
+					$response = self::$curl->get_url($_request);
+					
+					libxml_use_internal_errors(TRUE);
+					$data = simplexml_load_string($response);
+					libxml_use_internal_errors(FALSE);
 
-                libxml_use_internal_errors(TRUE);
-                $data = simplexml_load_string($response);
-                libxml_use_internal_errors(FALSE);
+					if ( ! empty($data) && ctype_digit($data) && intval($data) > 0) {
+						$this->gateway_answer = $data;
+						Log::instance()->add(Log::INFO, 'SMS ' . $this->text . ' to ' . $phone . ', gate response: ' . $data);
+                        $this->status = self::STATUS_SENT;
+					} else {
+						$this->gateway_answer = $response;
+						Log::instance()->add(Log::ERROR, 'Incorrect response from sms mts gate: ' . $response);
+                        $this->status = self::STATUS_ERROR;
+					}
 
-                if ( ! empty($data->status)) {
-                    $this->gateway_answer = $data->status;
-                    Log::instance()->add(Log::INFO, 'Send SMS about ' . $cf . ' to ' . $phone . ', gate response: ' . $response);
-                } else {
-                    $this->gateway_answer = $response;
-                    Log::instance()->add(Log::ERROR, 'Incorrect response from sms gate: ' . $response);
-                }
+				} else {
+
+					$response = self::$curl->get_url(self::$config['url'], array(
+						'opcode' => 'send_message',
+						'product_id' => self::$config['product_id'],
+						'recipient' => $phone,
+						'cf' => $cf,
+						'text' => trim($this->text),
+						'token' => md5(self::$config['merchant_id']
+							. self::$config['product_id']
+							. $phone
+							. $cf
+							. self::$config['secret_word']),
+					));
+
+					libxml_use_internal_errors(TRUE);
+					$data = simplexml_load_string($response);
+					libxml_use_internal_errors(FALSE);
+
+					if ( ! empty($data->status)) {
+						$this->gateway_answer = $data->status;
+						Log::instance()->add(Log::INFO, 'SMS ' . $this->text . ' to ' . $phone . ', gate response: ' . $response);
+                        $this->status = self::STATUS_SENT;
+					} else {
+						$this->gateway_answer = $response;
+						Log::instance()->add(Log::ERROR, 'Incorrect response from sms acquiropay gate: ' . $response);
+                        $this->status = self::STATUS_ERROR;
+					}
+				}
+				
             } else { // на тестовом - шлём письмо с данными об смс
                 $fake_sms = new Mail();
                 $fake_sms->setText($this->text);
-                $fake_sms->send($phone, 'sms '.$cf);
+                $fake_sms->send('m.zukk@ya.ru', $phone . ' sms ' . $cf);
                 $this->gateway_answer = 'SENT MAIL';
+                $this->status = self::STATUS_SENT;
             }
-        }
-        else
-        {
-            $this->gateway_answer = 'Робот: не мобильный или некорректный номер';
-        }
-        
 
-        $this->sent_ts = time();
+        } else {
+
+            $this->gateway_answer = 'Робот: не мобильный или некорректный номер '.$phone;
+            $this->status = self::STATUS_ERROR;
+        }
         
+        $this->sent_ts = time();
         $this->save();
         
         // Если закешилась ошибка отправки, при удачной отправке сбрасываем кеш

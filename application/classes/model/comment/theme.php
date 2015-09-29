@@ -67,7 +67,7 @@ class Model_Comment_Theme extends  ORM {
      */
     public function get_link($html = true)
     {
-        $link = sprintf('/about/review#!id%d', $this->id);
+        $link = sprintf('/about/review/%d', $this->id);
         return $html ? HTML::anchor($link, $this->name) : $link;
     }
 

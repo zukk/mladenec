@@ -15,7 +15,6 @@
 		</div>
 	</fieldset>
 </form>
-{$pager->html('Бренды')}
 <table id="list">
 <tr>
 	<th>#</th>
@@ -27,3 +26,4 @@
         <td><a href="/od-men/{$m}/{$i->id}">{$i->name}</a></td>
 	{/foreach}
 </table>
+{$pager->html('Бренды')}

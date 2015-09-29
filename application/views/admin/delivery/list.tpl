@@ -19,8 +19,8 @@ $(document).ready(function() {
 <div class="fl" style="margin-right:1em;">
 	<table id="list" >
 	<thead><tr><td></td><td>{$z->name}</td></tr></thead>
-	{foreach from=$z->allowed_date() key=date item=i}
-	{assign var=var value=$date|date_ru:1}
+	{foreach from=Cart::instance()->allowed_date($zone) key=date item=i}
+	{assign var=var value=$date|date_ru}
 	<tr {cycle values='class="odd",'}>
 	    <td>{$var}</td>
 	    <td><form action="" method="post">

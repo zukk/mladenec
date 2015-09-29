@@ -1,7 +1,7 @@
 <div id="foot">
 {if $vitrina eq 'kotdog'}
     {foreach from=$menu name=m item=m}
-        <div{if $smarty.foreach.m.iteration eq 4} class="cl"{/if}><strong><a href="/{$m.link}">{$m.name}</a></strong>
+        <div{if $smarty.foreach.m.iteration eq 4} class="cl"{/if}><span><a href="/{$m.link}">{$m.name}</a></span>
             {if not empty($m.children)}
                 <ul>
                     {foreach from=$m.children item=c}
@@ -22,7 +22,7 @@
     <table>
     <tr>
     {foreach from=$menu item=m}
-        <td><strong><a href="/{$m.link}">{$m.name}</a></strong>
+        <td><span><a href="/{$m.link}">{$m.name}</a></span>
         {if !empty($m.children)}
             <ul>
             {foreach from=$m.children item=c}

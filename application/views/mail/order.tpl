@@ -6,11 +6,17 @@
             <td><br><h3>Здравствуйте, {$od->name}!<br></h3>
 
                 <p>
-                {if $o->status == 'N'}
+
+                {if $canPay|default:0}
+                    Ваш заказ номер <font color="#0099cc"><b>{$o->id}</b></font> готов к&nbsp;оплате картой.
+                    Для&nbsp;оплаты пройдите по&nbsp;ссылке <a href="{$site}{Route::url('pay', ['id' => $o->id])}">http://mladenec.ru{Route::url('pay', ['id' => $o->id])}</a>.
+                    Вы можете также передать эту ссылку мужу или&nbsp;подруге, и&nbsp;они смогут оплатить Ваш заказ.
+
+                {elseif $o->status == 'N'}
 
                     Ваш заказ номер <font color="#0099cc"><b>{$o->id}</b></font> принят.
 
-                {elseif $o->status == 'D'}
+                {elseif $o->status == 'T'}
 
                     Ваш заказ номер <font color="#0099cc"><b>{$o->id}</b></font> сформирован и&nbsp;принят в&nbsp;курьерскую службу
 
@@ -38,9 +44,9 @@
                     {assign var=ship_date value=$od->ship_date|date_ru:1}
                     Подтверждение заказа и&nbsp;его комплектации происходит в{if substr($ship_date, 0, 2) eq 'вт'}о{/if}&nbsp;<b>{$ship_date|regex_replace:'~а$~':'у'}</b>
 
-                    {if ! empty($big_to_wait)}
-                    Мы ожидаем поступления на склад в течение 1-2 дней следующих товаров из Вашего заказа*:<br><br>
-                    {foreach from=$big_to_wait item=g}
+                    {if ! empty($to_wait)}
+                    Мы ожидаем поступления на&nbsp;склад в&nbsp;течение 1-2 дней следующих товаров из&nbsp;Вашего заказа*:<br><br>
+                    {foreach from=$to_wait item=g}
                         <a href="{$site}{$g->get_link(FALSE)}">{$g->group_name} {$g->name}</a><br>
                     {/foreach}
                     {/if}<br>
@@ -143,7 +149,7 @@
                     <b>Телефон:</b> {$od->phone}<br>
                     <b>Комментарий:</b> {$o->description|default:'нет'}<br>
                     <b>Способ оплаты:</b> {if $o->pay_type == Model_Order::PAY_CARD}Безналичный расчёт{else}Наличный расчёт{/if}<br>
-                    <b>Способ доставки:</b> {if $o->delivery_type == Model_Order::SHIP_COURIER}курьерская{elseif $o->delivery_type == Model_Order::SHIP_SERVICE}доставка в&nbsp;регион выбранной транспортной компанией{elseif $o->delivery_type == Model_Order::SHIP_SELF}самовывоз{/if}<br>
+                    <b>Способ доставки:</b> {if $o->delivery_type == Model_Order::SHIP_COURIER}курьерская{elseif $o->delivery_type == Model_Order::SHIP_SERVICE}доставка в&nbsp;регион выбранной транспортной компанией{elseif $o->delivery_type == Model_Order::SHIP_SELF || Model_Order::SHIP_OZON}самовывоз{/if}<br>
                     {if $o->delivery_type == Model_Order::SHIP_COURIER}
                         <b>Адрес:</b> {$od->city}, {$od->street}, {$od->house}, {$od->kv}<br>
                         <b>Дата доставки:</b> {$od->ship_date|date_ru:1}<br>
@@ -152,10 +158,12 @@
 
                     {elseif $o->delivery_type == Model_Order::SHIP_SERVICE}
                         <b>Адрес:</b> {$od->city}, {$od->street}, {$od->house}, {$od->kv}<br>
-                        <b>Транспортная компания:</b> {$od->comment|default:'не выбрана'}, примерная стоимость доставки: {$o->price_ship|price|default:'нет данных'}<br>
+                        <b>Cтоимость доставки:</b> {if $o->price_ship}{$o->price_ship|price}{else}?{/if}<br>
+                        <b>Код доставки:</b> {$od->comment}<br>
 
-                    {elseif $o->delivery_type == Model_Order::SHIP_SELF}
-                        <b>Адрес магазина:</b> {$od->address}<br>
+                    {elseif $o->delivery_type == Model_Order::SHIP_SELF || 
+                            $o->delivery_type == Model_Order::SHIP_OZON}
+                        <b>Адрес пункта выдачи:</b> {$od->address}<br>
                     {/if}
                 </p></td>
             <td></td>
@@ -223,7 +231,7 @@
                 <td width="84" align="right">{$rowtotal|price}</td>
             </tr>
             {/foreach}
-			{if !empty($coupon)}
+			{if ! empty($coupon)}
             <tr bgcolor="#{cycle values='ffffff,f3f3f3'}">
                 <td width="80" height="80" align="center">
 					<img width="70" src="{$site}/i/sale.png" style="display:block" border="0" alt="">
@@ -231,9 +239,18 @@
                 <td width="300">
                     Промо-акция {$coupon->name}
                 </td>
-                <td width="84" align="right">-{$coupon->sum|price}</td>
-                <td width="84" align="center">x 1 =</td>
-                <td width="84" align="right">-{$coupon->sum|price}</td>
+
+                {if $coupon->type eq Model_Coupon::TYPE_SUM}
+
+                    <td width="84" align="right">-{$coupon->sum|price}</td>
+                    <td width="84" align="center">x 1 =</td>
+                    <td width="84" align="right">-{$coupon->sum|price}</td>
+
+                {elseif $coupon->type eq Model_Coupon::TYPE_PERCENT}
+
+                    <td width="84" colspan="3">Вы получили скидку {$o->discount|price}</td>
+
+                {/if}
             </tr>
 			{/if}
         </table>
@@ -255,7 +272,7 @@
     </td>
 </tr>
 
-{if ! empty($big_to_wait)}
+{if ! empty($to_wait)}
 <tr align="center">
     <td>
         <table bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0" width="712">

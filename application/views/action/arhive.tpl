@@ -1,7 +1,13 @@
 <div id="breadcrumb">
-    <a href="/">Главная</a>  &rarr;
-    <a href="{Route::url('action_list')}">Акции</a>  &rarr;
-    <a href="{Route::url('action_current_list')}">{$config->actions_header|default:'Акции месяца'}</a>
+    <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb" itemref="breadcrumb-1">
+        <a href="/" itemprop="url"><span itemprop="title">Главная</span></a>
+    </span>
+    &rarr;
+    <span itemprop="child" itemscope itemtype="http://data-vocabulary.org/Breadcrumb" id="breadcrumb-1">
+        <a href="{Route::url('action_list')}"><span itemprop="title">Акции</span></a>
+    </span>
+    &rarr;
+    <span>Архив акций</span>
 </div>
 
 <div id="simple">
@@ -20,5 +26,5 @@
     {$pager->html('Акции')}
 </div>
 <div class="fr cr">
-    <a href="{Route::url('action_current_list')}">Все акции</a>
+    <a href="{Route::url('action_list')}">Все акции</a>
 </div>

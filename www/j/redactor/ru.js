@@ -69,6 +69,8 @@ $.Redactor.opts.langs['ru'] = {
 	underline: 'Подчеркнутый',
 	alignment: 'Выравнивание',
 	filename: 'Название (необязательно)',
-	edit: 'Ред.'
+	edit: 'Ред.',
+	center: 'По центру',
+	upload_label: 'Drop file here or '
 };
 })( jQuery );

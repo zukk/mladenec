@@ -8,3 +8,4 @@ require('../../../www/preload.php');
 
 $dpd = new DpdSoap();
 $dpd->fill_cities();
+$dpd->fill_terminals();

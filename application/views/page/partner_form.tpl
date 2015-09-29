@@ -40,13 +40,13 @@
         
     <label class="wl" for="text">Дополнительная информация: планы по&nbsp;продвижению товара, маркетинговый бюджет&nbsp;и&nbsp;т.п.:&nbsp;<sup>*</sup></label>
         <textarea id="text" name="text" class="wtxt {if ! empty($errors.text)}error" error="{$errors.text}{/if}" rows="10">{$smarty.post.text|default:''}</textarea>
-    {if empty($is_kiosk)}
+
     <label class="wl" for="price">Ценовое предложение (прайс-лист).<sup>*</sup></label>
         <div class="fl"><input type="file" name="price" /><br />
             {if ! empty($errors.price)}<b style="color:red">{$errors.price}</b>{/if}
             Mаксимальный размер файла &mdash;&nbsp;2.5&nbsp;мб.
         </div>
-    {/if}
+
     {if not $user}
         <label class="l" for="email">E-mail:&nbsp;<sup>*</sup></label>
             <input id="email" name="email" class="txt {if ! empty($errors.email)}error" error="{$errors.email}{/if}" value="{$smarty.post.email|default:''}" />

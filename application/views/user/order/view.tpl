@@ -77,9 +77,19 @@
     {if ! empty($coupon)}
         <td><img src="/i/sale.png" alt="Скидка по купону" width="70"/></td>
         <td class="name" >Промо-акция {$coupon->name}</td>
-        <td class="r nw">-{$coupon->sum|price}</td>
-        <td class="r nw">x 1 =</td>
-        <td class="r nw">-{$coupon->sum|price}</td>
+
+        {if $coupon->type eq Model_Coupon::TYPE_SUM}
+
+            <td class="r nw">-{$coupon->sum|price}</td>
+            <td class="r nw">x 1 =</td>
+            <td class="r nw">-{$coupon->sum|price}</td>
+
+        {elseif $coupon->type eq Model_Coupon::TYPE_PERCENT}
+
+            <td class="c nw" colspan="3">Вы получили скидку {$o->discount|price}</td>
+
+        {/if}
+
     {/if}
 
     </tbody>
@@ -94,7 +104,7 @@
     </tr>
     <tr>
         <td colspan="4" class="r">Стоимость доставки:</td>
-        <th class="r nw">{$o->price_ship|price}</th>
+        <th class="r nw">{if $o->delivery_type eq Model_Order::SHIP_COURIER or (($o->delivery_type eq Model_Order::SHIP_SERVICE or $o->delivery_type eq Model_Order::SHIP_OZON) and $o->price_ship gt 0)}{$o->price_ship|price}{else}?{/if}</th>
     </tr>
     <tr>
         <th colspan="4" class="r">Итого:</th>
@@ -143,31 +153,38 @@
     <dt>Улица:</dt><dd>{$od->street}</dd>
     <dt>Дом:</dt><dd>{$od->house}</dd>
     <dt>Номер квартиры/офиса:</dt><dd>{$od->kv|default:'не указан'}</dd>
-    <dt class="cl">Компания:</dt> <dd>{$od->comment|default:'не выбрана'}</dd>
-    <dt>Примерная стоимость доставки:</dt> <dd>{$o->price_ship|price|default:'нет данных'}</dd>
+
+    <dt class="cl">Cтоимость доставки:</dt> <dd>{if $o->price_ship != '0.00'}{$o->price_ship|price}{else}?{/if}</dd>
+    <dt>Код доставки:</dt> <dd>{$od->comment|default:'?'}</dd>
 </dl>
 
-{elseif $o->delivery_type == Model_Order::SHIP_SELF}
-
-<h3 class="cl">Самовывоз</h3>
+{elseif $o->delivery_type == Model_Order::SHIP_OZON}
+<h3 class="cl">Пункт выдачи</h3>
 <dl>
-    <dt>Адрес магазина:</dt> <dd>{Model_Order::is_shop($od->address_id)}</dd>
+    <dt>Адрес:</dt> <dd>{$od->address}</dd>
 </dl>
-
 {/if}
 
 {if empty($hide_pay_type)}
 <h3 class="cl">Способ оплаты</h3>
 <dl>
-    <dd>{if $o->pay_type == Model_Order::PAY_CARD}Оплата банковской картой
-
+    <dd>
+        {if $o->pay_type == Model_Order::PAY_CARD}
+            <img src="/i/cards.png" alt="Виза, Мастеркард" />
         {else}
             Оплата наличными курьеру
         {/if}
     </dd>
+    <dt>Сумма к&nbsp;оплате:</dt><dd>{if $o->pay8 == '0.00'}{$o->get_total()|price}{else}{$o->pay8|price}{/if}</dd>
+
     {if $o->pay_type == Model_Order::PAY_CARD}
-        <dt>Сумма:</dt><dd>{$o->card->sum/100|price}</dd>
-        <dt>Статус оплаты:</dt><dd>{$o->card->status_info()} ({$o->card->status_time})</dd>
+
+        {if $o->pay1 gt 0}
+            <dt>Доплата наличными:</dt><dd>{$o->pay1|price}</dd>
+        {/if}
+
+        <dd>{include file='user/order/payment.tpl'}</dd>
+
     {/if}
 </dl>
 {/if}

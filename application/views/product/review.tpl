@@ -1,7 +1,7 @@
 <script type="text/javascript">
 {literal}
 $(document).ready(function () {
-    $('#review a.inc').click(function() {
+    $('#review a.more_input').click(function() {
         $(this).prev('input').clone().val('').insertBefore(this);
     })
 });
@@ -39,7 +39,7 @@ $(document).ready(function () {
             </li>
         {/foreach}
         {/if}
-            <li><input type="text" class="txt misc" name="good_add[]" value="" /><a class="inc">+</a></li>
+            <li><input type="text" class="txt misc" name="good_add[]" value="" /><a class="more_input">+</a></li>
         </ul>
     </div>
     <div class="bad third">
@@ -52,7 +52,7 @@ $(document).ready(function () {
                 </li>
             {/foreach}
             {/if}
-            <li><input type="text" class="txt misc" name="bad_add[]" value=""/><a class="inc">+</a></li>
+            <li><input type="text" class="txt misc" name="bad_add[]" value=""/><a class="more_input">+</a></li>
         </ul>
     </div>
     <div class="neutral third">
@@ -65,7 +65,7 @@ $(document).ready(function () {
                 </li>
             {/foreach}
             {/if}
-            <li><input type="text" class="txt misc" name="neutral_add[]" value="" /><a class="inc">+</a></li>
+            <li><input type="text" class="txt misc" name="neutral_add[]" value="" /><a class="more_input">+</a></li>
         </ul>
     </div>
     <div class="neutral third cl">
@@ -78,7 +78,7 @@ $(document).ready(function () {
                 </li>
             {/foreach}
             {/if}
-            <li><input type="text" class="txt misc" name="me_add[]" value=""/><a class="inc">+</a></li>
+            <li><input type="text" class="txt misc" name="me_add[]" value=""/><a class="more_input">+</a></li>
         </ul>
     </div>
 
@@ -111,8 +111,9 @@ $(document).ready(function () {
 
 <div class="ok">
     Спасибо что уделили нам время!<br />
-    Ваше мнение о&nbsp;товаре принято, и&nbsp;будет опубликовано после проверки модератором.<br />
-    Мы публикуем любые мнения, не&nbsp;содержащие ненормативной лексики.
+    Ваше мнение о&nbsp;товаре принято и&nbsp;будет опубликовано после проверки модератором.<br />
+    Мы публикуем любые мнения, не&nbsp;содержащие ненормативной лексики.<br />
+    Отзыву присвоен номер {$sent}.<br />
 </div>
 
 {/if}

@@ -7,50 +7,69 @@ class Model_User extends ORM {
 
     const STATUS_CHANGE = 20000; // сумма заказа для присвоения любимых клиентов
 
+    const CHILD_DISCOUNT_NO = 0; // скидка за заполнение данных о детях - можно получить
+    const CHILD_DISCOUNT_ON = 1; // - получена, но не использована
+    const CHILD_DISCOUNT_USED = 2; // - использована
+
     protected $_table_name = 'z_user';
 
     protected static $current = NULL; // текущий залогиненный юзер
 
     protected $allow = FALSE; // кэш модулей, с которыми можно работать этому юзеру
     
-    protected $_table_columns = array(
+    protected $_table_columns = [
         'id' => '', 'status_id' => '', 'email' => '', 'login' => '', 'password' => '', 'checkword' => '', 'name' => '', 'second_name' => '', 'last_name' => '',
-        'phone' => '', 'phone2' => '', 'last_visit' => '', 'created' => '', 'sub' => '', 'in1c' => '', 'order_notify' => '', 'sum' => ''
-    );
+        'phone' => '', 'phone_active' => '', 'phone2' => '', 'last_visit' => '', 'created' => '', 'sub' => '', 'in1c' => '', 'order_notify' => '', 
+        'sum' => '', // сумма заказов
+        'segments_recount_ts' => 0, // timestamp последнего пересчета сегментов
+        'pregnant' => 0, 
+        'pregnant_terms' => '',
+        'child_discount' => '',
+    ];
 
-    protected $_has_many = array(
-        'kids' => array(
+    protected $_has_many = [
+        'phones' => ['model' => 'user_phone', 'foreign_key' => 'user_id'],
+        'ulogins'   => ['model' => 'ulogin', 'foreign_key' => 'user_id'],
+        'kids' => [
             'model' => 'user_child',
             'foreign_key' => 'user_id',
-        ),
-        'orders' => array(
+        ],
+        'orders' => [
             'model' => 'order',
             'foreign_key'   => 'user_id',
-        ),
-        'comments' => array(
+        ],
+        'comments' => [
             'model' => 'comment',
             'foreign_key'   => 'user_id',
-        ),
-        'good_reviews' => array(
+        ],
+        'good_reviews' => [
             'model' => 'good_review',
             'foreign_key'   => 'user_id',
-        ),
-        'returns' => array(
+        ],
+        'returns' => [
             'model' => 'return',
             'foreign_key'   => 'user_id',
-        ),
-    );
+        ],
+    ];
 
     public function filters() {
-        return array(
-            'phone' => array(
-                array('Txt::phone_clear', array(':value')),
-            ),
-            'phone2' => array(
-                array('Txt::phone_clear', array(':value')),
-            )
-        );
+        return [
+            'phone' => [
+                ['Txt::phone_clear', [':value']],
+            ],
+            'phone2' => [
+                ['Txt::phone_clear', [':value']],
+            ]
+        ];
     }
+	
+	public function get_goods()
+    {
+		
+		$goods = ORM::factory('user_good')->where('user_id', '=', $this->id )->select()->as_array('id');
+		
+		return $goods; 
+	}
   
     public function rules()
     {
@@ -61,12 +80,11 @@ class Model_User extends ORM {
             ),
 */
             'email' => array(
-                array('not_empty'),
+//                array('not_empty'),
                 array('email'),
 //                array(array($this, 'unique'), array('email', ':value')), - moved to register function due to duplicate mails in some users
             ),
             'phone' => array(
-                array('not_empty'),
                 array('phone', array(':value', 11)),
             ),
             'phone2' => array(
@@ -125,7 +143,7 @@ class Model_User extends ORM {
         }
         Session::instance()->set('user', serialize($user))->write();
 
-        $cart = Cart::instance()->recount();
+        Cart::instance()->recount(); // при логине всегда пересчитываем корзину
 
         return $user;
     }
@@ -238,6 +256,31 @@ class Model_User extends ORM {
     }
 
     /**
+     * Включить или выключить скидку за данные о детях для пользователя
+     * Включает только если юзер ещё её не использовал
+     * @param on bool - включить или выключить
+     */
+    function child_discount($on = TRUE)
+    {
+        $cart = Cart::instance();
+
+        if ($on && ($this->child_discount == Model_User::CHILD_DISCOUNT_NO)) {
+            $this->child_discount = Model_User::CHILD_DISCOUNT_ON;
+            $cart->load_coupon(Model_Coupon::CHILD_DISCOUNT);
+            $cart->recount();
+        } else {
+            if ($this->child_discount == Model_User::CHILD_DISCOUNT_ON) {
+                $this->child_discount = Model_User::CHILD_DISCOUNT_NO;
+            }
+
+            if ( ! empty($cart->coupon['name']) && $cart->coupon['name'] == Model_Coupon::CHILD_DISCOUNT) {
+                $cart->remove_coupon();
+            }
+        }
+        $this->save();
+    }
+
+    /**
      * Если имя модуля не задано - возвращает список модулей, к которым есть доступ
      * Если задано - возвращает bool - есть ли доступ к этому модулю
      * @param bool $module_name
@@ -275,19 +318,24 @@ class Model_User extends ORM {
      * @param $id int - Ид пользователя
      * @return Model_User|bool
      */
-    public static function reset_password($id)
+    public static function reset_password($id, $password = FALSE)
     {
         $user = ORM::factory('user', $id);
         if ( ! $user->loaded()) return false;
 
         $salt = Text::random();
-        $pass = Text::random();
+        $pass = $password == FALSE ? Text::random() : $password;
         $user->password = $salt.md5($salt.$pass);
         $user->save();
 
-        Mail::htmlsend('reset', array('user' => $user, 'passwd' => $pass), $user->email, 'Для Вас был создан новый пароль пользователя');
+        if ($user->validation()->check()) {
 
-        return $user;
+            $user->save();
+            Mail::htmlsend('reset', array('user' => $user, 'passwd' => $pass), $user->email, 'Для Вас был создан новый пароль пользователя');
+            return $user;
+        }
+
+        return $user->validation()->errors('user');
     }
 
     /**
@@ -302,75 +350,77 @@ class Model_User extends ORM {
             ->where('email', '=', $mail)
             ->execute();
 
+        self::_subscribe_api('member.delete', array('email' => $mail));
+
         return $return;
     }
 
     /**
-     * подсчёт суммы уже сделанных заказов конкретного товара
+     * подсчёт накоплений по накопительной акции
      * @param $action - Акция по которой считаем сумму
-     * @return float
+     * @return array ['sum' => x, 'qty' => x, 'from_order' => x]
      */
-    public function get_goods_sum(Model_Action $action)
+    public function get_funded(Model_Action $action)
     {
-        
-        $from_order = 0;
-        if ($action->count_from) { // накопительная
-            $from_order = DB::select('from_order')
-                ->from('z_action_user')
-                ->where('z_action_user.user_id', '=', $this->id)
-                ->where('z_action_user.action_id', '=', $action->id)    
-                ->execute()->get('from_order');
-            
-            $last_order_with_present = DB::select('order_id')
-                ->from('z_order_good')
-                    ->join('z_order')
-                    ->on('z_order_good.order_id','=','z_order.id')
-                ->where('action_id', '=', $action->id)
-                ->where('z_order.user_id', '=', $this->id)
-                ->order_by('order_id','DESC')
-                ->limit(1)
-                ->execute()->get('order_id');
-            
-            $from_order = ($from_order > $last_order_with_present) ? $from_order : $last_order_with_present;
-        }
-        
-        if ( ! $action->total) { // в акции участвуют не все товары
-            $good_idz = $action->good_idz();
-            if ( empty($good_idz)) return 0;
-        }
+        if (empty($action->count_from)) return 0;
 
-        $q = DB::select(DB::expr('SUM(og.price * og.quantity) as sum'))
-            ->from(array('z_order', 'o'))
+        $from_order = intval(DB::select('from_order')
+            ->from('z_action_user')
+            ->where('z_action_user.user_id', '=', $this->id)
+            ->where('z_action_user.action_id', '=', $action->id)
+            ->execute()->get('from_order'));
+
+        $last_order_with_present = DB::select('order_id') // учитывает возможность повторного накопления
+            ->from('z_order_good')
+                ->join('z_order')
+                ->on('z_order_good.order_id','=','z_order.id')
+            ->where('action_id', '=', $action->id)
+            ->where('z_order.user_id', '=', $this->id)
+            ->where('z_order.status', '!=', 'X')
+            ->order_by('order_id','DESC')
+            ->limit(1)
+            ->execute()->get('order_id');
+
+        $from_order = intval(($from_order > $last_order_with_present) ? $from_order : $last_order_with_present);
+
+        if ($action->total) { // все товары - считаем сумму заказов (без доставки)
+
+            $q = DB::select(DB::expr('SUM(o.price) as sum'), DB::expr('COUNT(*) as qty'))
+                ->from(['z_order', 'o'])
                 ->where('o.status', '=', 'F')
                 ->where('o.id', '>', $from_order)
                 ->where('o.created' , '>=', $action->count_from)
-                ->where('o.user_id', '=', $this->id)
                 ->where('o.created', '<', $action->count_to)
-            ->join(array('z_order_good', 'og'))
-                ->on('og.order_id', '=', 'o.id');
+                ->where('o.user_id', '=', $this->id);
 
-        if ( ! $action->total) $q->where('og.good_id', 'IN', $action->good_idz());
-/*
-        if ($from_order) {
-            $q->where('o.id', '>', $from_order);
-        } else {
-            $q->where('o.created' , '>=', $action->count_from);
+        } else { // считаем сумму по товарам акции
+
+            $good_idz = $action->good_idz();
+            if ( empty($good_idz)) return 0;
+
+            $q = DB::select(DB::expr('SUM(og.price * og.quantity) as sum'), DB::expr('SUM(og.quantity) as qty'))
+                ->from(['z_order', 'o'])
+                ->join(['z_order_good', 'og'])
+                    ->on('og.order_id', '=', 'o.id')
+                ->where('o.status', '=', 'F')
+                ->where('o.id', '>', $from_order)
+                ->where('o.created' , '>=', $action->count_from)
+                ->where('o.created', '<', $action->count_to)
+                ->where('o.user_id', '=', $this->id)
+                ->where('og.good_id', 'IN', $good_idz);
         }
-*/  
-        $result = $q->execute()->current();
-        return floatval($result['sum']);
+        $return = $q->execute()->as_array()[0];
+        return ['qty' => intval($return['qty']), 'sum' => floatval($return['sum']), 'from_order' => $from_order];
     }
     
     public function admin_save()
     {
-        $messages     = array('errors'=>array(), 'messages'=>array());
+        $messages     = ['errors' => [], 'messages' => []];
         $misc         = Request::current()->post('misc');
-        $modules      = array();
+        $modules      = [];
         $current_user = self::current();
         
-        if ( ! empty($misc['access'])) {
-            $modules = $misc['access'];
-        }
+        if ( ! empty($misc['access'])) $modules = $misc['access'];
 
         /* Настройками доступа могут управлять только админы с полным доступом */
         if ($current_user->allow('admin')) {
@@ -387,9 +437,8 @@ class Model_User extends ORM {
     
     private function set_module_access($modules = array())
     {
-        $current_user    = self::current();
         $allowed_modules = $this->allow();
-        $messages        = array();
+        $messages        = [];
         
         $changes = array_diff_key($modules, $allowed_modules);
         $changes_allowed = array_diff_key($allowed_modules, $modules);
@@ -474,27 +523,156 @@ class Model_User extends ORM {
         return $messages;
     }
 
-	/**
-	 * Checks whether a column value is unique.
-	 * NO!! Excludes itself if loaded.
-	 *
-	 * @param   string   $field  the field to check for uniqueness
-	 * @param   mixed    $value  the value to check for uniqueness
-	 * @return  bool     whteher the value is unique
-	 */
-	public function unique($field, $value)
-	{
-		$model = ORM::factory($this->object_name())
-			->where($field, '=', $value)
-			->find();
-		
-		return !$model->loaded();
-		
-		/* if ($model->loaded())
-		{	
-			return ( ! ($model->loaded() AND $model->pk() != $this->pk()));
-		}
+    /**
+     * Сделать попытку автологина, вернуть юзера или FALSE
+     * @param $hash
+     * @return bool|Model_User
+     */
+    public static function autologin($hash)
+    {
+        $id = DB::select('id')->from('z_user')->where('autologin', '=', $hash)->limit(1)->execute()->get('id');
+        if (empty($id)) return FALSE;
 
-		return ( ! $model->loaded()); */
+        $user = new self($id);
+        self::login($user);
+        return $user;
 	}
+
+    /**
+     * Получить все телефоны пользователя
+     * @return mixed
+     */
+    public function get_phones()
+    {
+		return $this->phones->order_by('id', 'desc')->find_all()->as_array('id');
+	}
+
+    /**
+     * Получить активный телефон юзера (последний)
+     * @return bool
+     */
+    public function get_phone_active()
+    {
+		if ( ! $this->loaded()) return FALSE;
+		
+		$phones = $this->get_phones();
+		
+		if ( ! empty($phones[$this->phone_active ])) return $phones[$this->phone_active ]->phone;
+
+		return FALSE;
+	}
+        
+     /**
+     * Получить количество недель беременности
+     * @return mixed
+     */
+    public function get_pregnant_weeks() {
+         $weeks = floor((time()-$this->pregnant_terms) / (7*24*60*60));
+         return $weeks = ($weeks<=41) ? $weeks : null;
+    }   
+
+    /**
+     * Определяет, может ли пользватель делать заказ в один клик
+     * @param null $good
+     * @return bool|void
+     */
+    public static function can_one_click($good = NULL)
+    {
+        // локалхост всегда может
+        if (in_array(Request::$client_ip, ['127.0.0.1'])) return TRUE;
+
+        $region = Session::instance()->get('region'); // регион пользователя
+        $return = in_array($region, ['RU-MOW', 'RU-MOS']);
+        if ($good) $return = $return && $good->big && $good->price > 4000;
+
+        return $return;
+    }
+
+    /**
+     * Получить адреса пользователя
+     * @return array
+     * @throws Kohana_Exception
+     */
+    function address()
+    {
+        return ORM::factory('user_address')
+            ->where('user_id', '=', $this->id)
+            ->where('active', '=', 1)
+            ->order_by('last_used', 'DESC')
+            ->order_by('id', 'DESC')
+            ->find_all()
+            ->as_array('id');
+    }
+
+    /**
+     * Создание нового пользователя - шлёт СМС-ки и письма, и подписывает на рассылку
+     * НЕ логинит!
+     * @param $v - данные пользователя
+     * @return Model_User
+     */
+    function create_new($v)
+    {
+        $salt = Text::random();
+
+        $phone = Txt::phone_clear( isset($v['phone']) ? $v['phone'] : '');
+        $this->values([
+            'name'      => $v['name'],
+            'login'     => $v['login'],
+            'email'     => $v['email'],
+            'password'  => $salt.md5($salt.$v['password']),
+            'phone'     => strval($phone),
+            'created'   => time(),
+            'sub'       => 1, // подписка на рассылку - по умолчанию
+        ])->create();
+
+        self::_subscribe_api('member.set', [
+            'email' => $v['email'],
+            'addr_type' => 'email',
+            'newbie.confirm' => '0',
+            'if_exists' => 'error',
+            'source' => Request::$client_ip
+        ]);
+
+        Mail::htmlsend('register', array('user' => $this, 'passwd' => $v['password']), $v['email'], 'Добро пожаловать!'); // письмо о регистрации
+
+        if ($phone && Txt::phone_is_mobile($v['phone'])) {
+            Model_Sms::to_queue($v['phone'], 'Добро пожаловать! Логин:'.$v['email']."\n".'Пароль: '.$v['password']);  // смс о регистрации
+        }
+
+        return $this;
+    }
+
+    /**
+     * API для работы с subscribe.ru
+     * @param $action
+     * @param array $params
+     * @param string $session
+     * @param int $request_id
+     * @return mixed
+     */
+    static function _subscribe_api($action, $params = array(), $session = '', $request_id = 0)
+    {
+        return TRUE; // не вызываем апи т.к. не работаем сейчас с subscribe.ru
+
+        $params['one_time_auth'] = [
+            'login'     => 'mladenec',
+            'sublogin'  => 'mladenec',
+            'passwd'    => 'voo3Gal'
+        ];
+
+        $curl = new Curl();
+
+        $returner = json_decode($curl->get_url('https://pro.subscribe.ru/api' . $session, [
+            'apiversion'    => 100,
+            'json'          => 1,
+            'request.id'    => rand(100, 1000000),
+            'request'       => json_encode(array_merge(['action' => $action], $params))
+        ]), TRUE);
+
+        if ( ! empty( $returner['REDIRECT'])) {
+            $returner = self::_subscribe_api($action, $params, $returner['REDIRECT']);
+        }
+
+        return $returner;
+    }
 }

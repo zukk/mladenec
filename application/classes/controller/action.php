@@ -38,6 +38,15 @@ class Controller_Action extends Controller_Frontend
             }
         }
         $this->layout->menu = $menu;
+
+        if ($this->request->post('goodajax') || $this->request->is_ajax()) { // возвращаем json c данными
+            $json = [
+                'title' => ! empty($this->layout->title) ? $this->layout->title : 'Младенец. РУ',
+                'data' => View::factory('smarty:section/ajax', ['menu' => $this->layout->menu, 'body' => View::factory('smarty:action/view', $this->tmpl)])->render(),
+            ];
+            $this->request->query();
+            $this->return_json($json);
+        }
     }
 
     /**
@@ -46,27 +55,27 @@ class Controller_Action extends Controller_Frontend
      public function action_list()
     {
         $q = ORM::factory('action')
-                ->where('show_actions', '=', 1)
-                ->where('active', '=', 1)
-                ->where('show', '=', 1)
-                ->where_open()
-                    ->where('vitrina_show', '=', 'all')
-                    ->or_where('vitrina_show', '=', Kohana::$server_name)
-                ->where_close()
-                ->reset(FALSE);
+            ->where('show_actions', '=', 1)
+            ->where('active', '=', 1)
+            ->where('show', '=', 1)
+            ->where_open()
+                ->where('vitrina_show', '=', 'all')
+                ->or_where('vitrina_show', '=', Kohana::$server_name)
+            ->where_close()
+            ->reset(FALSE);
 
-        $iPerPageQty = @Kohana::$hostnames[Kohana::$server_name]['per_page_elements'] ?: 10;
-        $this->tmpl['pager'] = $pager = Pager::factory($q->count_all(), $iPerPageQty);
+        $this->tmpl['pager'] = $pager = Pager::factory($q->count_all(), 10);
 
         $this->tmpl['actions'] = $q
             ->order_by('main', 'desc')
+            ->order_by('to', 'asc')
             ->order_by('id', 'desc')
             ->limit($pager->per_page)
             ->offset($pager->offset)
             ->find_all();
 
         $this->layout->title = 'Акции';
-        $this->layout->menu = Model_Menu::html();
+        $this->layout->menu = FALSE;
     }
     
     public function action_arhive()
@@ -80,8 +89,7 @@ class Controller_Action extends Controller_Frontend
                 ->where_close()
                 ->reset(FALSE);
 
-        $iPerPageQty = @Kohana::$hostnames[Kohana::$server_name]['per_page_elements'] ?: 10;
-        $this->tmpl['pager'] = $pager = Pager::factory($q->count_all(), $iPerPageQty);
+        $this->tmpl['pager'] = $pager = Pager::factory($q->count_all(), 10);
         
         $actions = $q
             ->order_by('id', 'desc')
@@ -147,6 +155,6 @@ class Controller_Action extends Controller_Frontend
 		}
 		
         $this->layout->title = 'Акции';
-        $this->layout->menu = Model_Menu::html();
+        $this->layout->menu = FALSE; // Model_Menu::html();
     }
 }

@@ -1,6 +1,13 @@
-<div id="breadcrumb">
-	<a href="/">Главная</a> &rarr;
-	<a href="{Route::url('map')}" title="Карта сайта">Карта сайта</a>
+<div id="breadcrumb">           
+    <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb" itemref="breadcrumb-1">
+        <a href="/" itemprop="url"><span itemprop="title">Главная</span></a>
+    </span>
+    &rarr;
+    <span itemprop="child" itemscope itemtype="http://data-vocabulary.org/Breadcrumb" id="breadcrumb-1">
+        <a href="{Route::url('map')}" title="Карта сайта" itemprop="url"><span itemprop="title">Карта сайта</span></a>
+    </span>
+    &rarr;
+    <span>Товары по категориям</span>
 </div>
 
 <h1>Товары по категориям</h1>

@@ -53,12 +53,12 @@ function newPart()
 	$i++;
 	
 	$file = fopen( $dir . $i . '.xml', 'w' );
-	fwrite($file, '<?xml version="1.0" encoding="UTF-8"?>'. "\n". '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n");
+	fwrite($file, '<?xml version="1.0" encoding="UTF-8"?>'. "\n". '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'."\n");
 	
 	$length = $c = 0;
 }
 
-function writeUrl($url)
+function writeUrl($url, $params = [], $images = [] )
 {
 	global $length, $file, $host, $c;
 	
@@ -67,7 +67,24 @@ function writeUrl($url)
 		newPart();
 	}
 	
-	$line = '<url><loc>http://' . $host . $url . '</loc></url>' . "\n";
+	$line = '<url><loc>http://' . $host . $url . '</loc>';
+	
+	foreach( $params as $key => &$param ){
+	
+		if( in_array( $key, ['changefreq', 'priority'] ) ){
+			$line .= '<' . $key . '>' . $param . '</' . $key . '>';
+		}
+	}
+	unset( $param );
+	
+	foreach( $images as &$image ){
+	
+		$line .= '<image:image><image:loc>' . $image . '</image:loc></image:image>';
+	}
+	unset( $image );
+	
+	$line .= '</url>' . "\n";
+	
 	fwrite($file, $line);
 	
 	$length += mb_strlen($line);
@@ -76,27 +93,116 @@ function writeUrl($url)
 
 clearDir($dir); // стираем старые кусочки
 
+// главная страница
+writeUrl('/',
+			[
+				'changefreq' => 'always',
+				'priority' => '1'
+			]
+);
+
 // категории каталога
 $sections = get_sections();
-foreach($sections as $section) writeUrl(Route::url('section', ['translit' => $section['translit']]));
+foreach($sections as &$section){
+	
+	writeUrl(
+			Route::url('section', ['translit' => $section['translit']]),
+			[
+				'changefreq' => 'daily',
+				'priority' => '0.8'
+			]
+		);
+	
+	$e = DB::select('b.id')
+		->from(['z_brand', 'b'])
+		->join(['z_section_brand', 'sb'])
+			->on('b.id', '=', 'sb.brand_id')
+		->where('b.active', '=', 1)
+		->where('sb.section_id', '=', $section['id'])
+		->execute()
+		->as_array();
+	
+	foreach( $e as &$b ){
+		writeUrl(
+				Route::url('section', ['translit' => $section['translit']]) . '?b=' . $b['id'],
+				[
+					'changefreq' => 'daily',
+					'priority' => '0.8'
+				]
+			);
+	}
+	unset( $b );
+} 
 unset($section);
 
 // товары
-$result = DB::select('id', 'name', 'translit', 'group_id')->from('z_good')->where('show', '=', 1)->execute()->as_array();
+$result = DB::select('g.id', 'g.name', 'g.translit', 'g.group_id')
+		->from(['z_good', 'g'])
+		->join(['z_group', 'gr'])
+			->on('g.group_id', '=', 'gr.id')
+		->where('g.show', '=', 1)
+		->where('gr.active', '=', 1)
+		->execute()
+		->as_array();
+
 foreach ($result as $row) {
-    writeUrl(Route::url('product', $row));
+	
+	$f = DB::select('file_id')->from('z_good_img')->where('good_id', '=', $row['id'])->where('size', '=', 1600)->execute()->as_array('file_id');
+
+	$images = [];
+	if( !empty( $f ) ){
+		
+		$files = DB::select('subdir', 'file_name')->from('b_file')->where('id', 'in', array_keys( $f ))->execute()->as_array();
+
+		foreach( $files as &$item ){
+
+			$images[] = 'http://' . $host . '/upload/' . $item['subdir'] . '/' . $item['file_name'];
+		}
+		unset( $item );
+	}
+	
+    writeUrl(
+			Route::url('product', $row),
+			[
+				'changefreq' => 'weekly',
+				'priority' => '0.6'
+			], $images );
+}
+
+// теговые
+$result = DB::select('code')->from('z_tag')->where('goods_count', '>', 0)/*->where('checked', '=', 1) */->execute();
+while( $tag = $result->current() ){
+	
+    writeUrl(
+			'/' . $tag['code'],
+			[
+				'changefreq' => 'weekly',
+				'priority' => '0.6'
+			] );
+	
+	$result->next();
 }
 	
 // статьи
 $result = DB::select('id')->from('z_article')->where('active', '=', 1)->execute()->as_array();
 foreach ($result as $row) {
-    writeUrl(Route::url('article', $row));
+    writeUrl(
+			Route::url('article', $row),
+			[
+				'changefreq' => 'weekly',
+				'priority' => '0.6'
+			]);
 }
 
 // новости
 $result = DB::select('id')->from('z_new')->where('active', '=', 1)->execute()->as_array();
 foreach ($result as $row) {
-    writeUrl(Route::url('new', $row));
+    writeUrl(
+			Route::url('new', $row),
+			[
+				'changefreq' => 'weekly',
+				'priority' => '0.6'
+			]);
 }
 
 fwrite($file, '</urlset>');

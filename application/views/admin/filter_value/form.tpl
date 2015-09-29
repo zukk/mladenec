@@ -13,7 +13,7 @@
         <input type="text" id="name" name="name" value="{$i->name|default:''|escape:'html'}" class="width-50" />
     </p>
     <p>
-        <label for="img">Картинка 225x120</label>
+        <label for="img">Картинка [225x120]</label>
         <input type="file" id="img" name="img" />
         {if ! empty($i->img)}{$i->image->get_img()}{/if}
     </p>

@@ -20,21 +20,38 @@
             </div>
         </div>
         <div class="units-row">
-            <div class="unit-33">
+            <div class="unit-25">
                 <b>Статус заказа:</b><br />
                 <select name="status">
                     <option value="">все</option>
                     {html_options options=Model_Order::get_status_list() selected=$smarty.get.status|default:''}
                 </select>
             </div>
-            <div class="unit-33 datepicker">
-                <nobr><b>С:</b><br />{html_select_date time=$from|default:null field_array=from field_order=DMY all_empty='' start_year="-2" end_year="+1"} <input type="text" name="from[Time_Hour]" value="{$smarty.get.from['Time_Hour']|default:'00'}" style="width: 20px; display: inline" /> : <input type="text" name="from[Time_Minute]" value="{$smarty.get.from['Time_Minute']|default:'00'}" style="width: 20px; display: inline" /></nobr>
+            <div class="unit-25">
+                <b>Тип оплаты:</b><br />
+                <select name="pay_type">
+                    <option value="">все</option>
+                    {html_options options=Model_Order::pay_types() selected=$smarty.get.pay_type|default:''}
+                </select>
+                <!--br />
+                <a href="{Route::url('admin_order_card')}">Проблемный безнал</a-->
             </div>
-            <div class="unit-33 datepicker">
-                <nobr><b>По:</b><br />{html_select_date time=$to|default:null field_array=to field_order=DMY all_empty='' end_year="+1"} <input type="text" name="to[Time_Hour]" value="{$smarty.get.to['Time_Hour']|default:'00'}" style="width: 20px; display: inline" /> : <input type="text" name="to[Time_Minute]" value="{$smarty.get.to['Time_Minute']|default:'00'}" style="width: 20px; display: inline" /></nobr>
+            <div class="unit-50 datepicker">
+                <b>Создан:</b><br />
+
+                <nobr><b>С:</b><br />{html_select_date time=$from|default:null field_array=from field_order=DMY all_empty='' start_year="-2" end_year="+1"}
+                    <input type="text" name="from[Time_Hour]" value="{$smarty.get.from['Time_Hour']|default:'00'}" style="width: 20px; display: inline" /> :
+                    <input type="text" name="from[Time_Minute]" value="{$smarty.get.from['Time_Minute']|default:'00'}" style="width: 20px; display: inline" /></nobr><br />
+
+                <nobr><b>По:</b><br />{html_select_date time=$to|default:null field_array=to field_order=DMY all_empty='' end_year="+1"}
+                    <input type="text" name="to[Time_Hour]" value="{$smarty.get.to['Time_Hour']|default:'00'}" style="width: 20px; display: inline" /> :
+                    <input type="text" name="to[Time_Minute]" value="{$smarty.get.to['Time_Minute']|default:'00'}" style="width: 20px; display: inline" /></nobr>
             </div>
         </div>
-        <input type="submit" name="search" value="Показать" />
+        <div class="units-row">
+            <div class="unit-80"><input type="submit" name="search" value="Показать" /></div>
+            <div class="unit-20"><a href="{Route::url('admin_order_excel')}?{$smarty.server.QUERY_STRING}">Скачать в Excel</a></div>
+        </div>
     </fieldset>
 </form>
 <div class="cb"></div>
@@ -43,37 +60,6 @@
 		Оформленных: {$oformlennikh}
 	</span>
 </div>
-{$pager->html('Заказы')}
 
-        <form action="" >
-            <table id="list">
-            <tr>
-                <th>#</th>
-                <th title="Если заказ не изменялся стоит только время создания">Создан<br />Изменен</th>
-                <th>Клиент</th>
-                <th>Сумма</th>
-                <th>Доставка</th>
-                <th>Всего</th>
-                <th>Статус</th>
-            </tr>
-            {foreach from=$list item=i}
-            <tr {cycle values='class="odd",'}>
-                <td><a href="{Route::url('admin_edit',['model'=>'order','id'=>$i->id])}"><small>{$i->id}</small></a></td>
-                <td>{$i->created}<br />{if $i->created neq $i->changed}{$i->changed}{/if}</td>
-                <td>{if $i->user_id}<b><a href="{Route::url('admin_edit',['model'=>'user','id'=>$i->user_id])}">{$i->data->name}</a></b> {$i->user->email}{/if}<br />
-                {$i->data->city},{$i->data->street}, {$i->data->house} {if $i->data->corp}, корп. {$i->data->corp}{/if} {if $i->data->kv}, кв./оф.{$i->data->kv}{/if}.
-
-                </td>
-                <td>{$i->price}</td>
-                <td>{$i->price_ship}<br /><small>{$i->data->ship_date}<br />{Model_Zone_Time::name($i->data->ship_time)}</small></td>
-                <td>{$i->price + $i->price_ship}</td>
-                <td>{$i->status()}<br /><small>{$i->status_time}</small></td>
-            </tr>
-            {/foreach}
-            </table>
-
-        </form>
-    </div>
-</div>
-{$pager->html('Заказы')}
+{include file='admin/order/_list.tpl'}
 

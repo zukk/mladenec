@@ -41,6 +41,26 @@ class Controller_Page extends Controller_Frontend {
         //header('Content-Type: text/html; charset=windows-1251');
         exit($body);       
     }
+    
+    /**
+     * Запросы от GetResponse
+     */
+    public function action_getresponse()
+    {
+        switch ($this->request->query('action')) {
+            
+            case 'unsubscribe':
+                $email = $this->request->query('contact_email');
+                Model_User::unsubscribe($email);
+                break;
+            
+            case 'open':
+                // открыл письмо
+                break;
+        }
+        
+        exit('ok');       
+    }
 	
     public function action_security_error()
     {
@@ -97,7 +117,7 @@ class Controller_Page extends Controller_Frontend {
 			
         $this->menu = FALSE;
 
-        $vitrina = Kohana::$server_name == VK_APP_SERVER_NAME ? key(Kohana::$hostnames) : Kohana::$server_name;
+        $vitrina = Kohana::$server_name;
 
         if (Kohana::$server_name == 'ogurchik') {
 
@@ -125,10 +145,6 @@ class Controller_Page extends Controller_Frontend {
                 ->limit(4)
                 ->find_all();
 
-        } elseif (defined('VK_EATMART_SERVER_NAME') && Kohana::$server_name == VK_EATMART_SERVER_NAME) {
-
-            $this->menu = FALSE;
-
         } elseif (Kohana::$server_name == 'kotdog') {
 
             $this->menu = TRUE;
@@ -151,34 +167,33 @@ class Controller_Page extends Controller_Frontend {
                 ->order_by('id', 'desc')
                 ->limit(3)
                 ->find_all();
-
-            // хиты продаж
-            $hitz = Model_Good::get_hitz();
-            $hitz_sections = Model_Section::id_name(array_keys($hitz));
-            $random_section = array_rand($hitz_sections);
-            $sections_count = count($hitz_sections); // сколько секций
-            $section_line = array_merge($hitz_sections, $hitz_sections, $hitz_sections); // 3 раза
+            
+            // hits {{{
+            $hitz_sections    = Model_Good::get_hitz_sections();
+            $random_section   = array_rand($hitz_sections);
+            $section_line     = array_merge($hitz_sections, $hitz_sections, $hitz_sections); // 3 раза
+            
             // ищем в середине нашу секцию
-            $i = $sections_count;
+            $i = $sections_count = count($hitz_sections);;
+            
             while ($section_line[$i]['id'] != $random_section) $i++;
-            $section_line = array_slice($section_line, $i - 2, $sections_count); // берём кусок со всеми категориями
-            $this->tmpl['hitz_sections'] = $section_line;
-            $this->tmpl['goods'] = $hitz[$random_section];
-            $goodidz = array_keys($hitz[$random_section]);
-            if ($goodidz) {
-                $this->tmpl['price'] = Model_Good::get_status_price(1, $goodidz);
-                $this->tmpl['imgs'] = Model_Good::many_images(array(255), $goodidz);
-            }
 
-            $this->layout->title = 'Младенец.ру| Детский интернет магазин, продажа товаров для ребенка, доставка на дом, онлайн заказ на сайте.';
+            $this->tmpl['hitz'] = View::factory('smarty:hitz/view', array(
+                'goods'    => Request::factory(Route::url('ajax_hitz_section', ['section_id' => $random_section]))->execute(),
+                'sections' => array_slice($section_line, $i - 2, $sections_count) // берём кусок со всеми категориями
+            ));
+            // hits }}}
+
+            $this->layout->title = 'Младенец.ру — интернет магазин детских товаров, питания, игрушек и других';
+            $this->layout->description = 'Товары для детей по выгодным ценам – интернет магазин Младенец.ру. Покупайте игрушки, детское питание, подгузники, детский транспорт и многое другое с доставкой по Москве, Санкт-Петербургу и другим городам России.';
+            $this->layout->keywords = 'детские товары, товары для детей, товары для ребенка, детский интернет магазин, младенец ру, магазин младенец, москва, купить товары для детей, продажа детских товаров';
         }
         
         // цены для любимых клиентов
         if ( ! empty($good_ids)) $this->tmpl['price']= Model_Good::get_status_price(1, $good_ids);
         // картинки для товаров - одним запросом
         if ( ! empty($img_ids)) {
-            $imgs = ORM::factory('file')->where('id', 'IN', $img_ids)->find_all()->as_array('ID');
-            $this->tmpl['imgs'] = $imgs;
+            $this->tmpl['images'] = $imgs = ORM::factory('file')->where('id', 'IN', $img_ids)->find_all()->as_array('ID');
         }
 
         // слайдер на главной
@@ -228,8 +243,6 @@ class Controller_Page extends Controller_Frontend {
         if ( ! $page->id) throw new HTTP_Exception_404;
         if ( ! $page->show) throw new HTTP_Exception_404;
 
-        if ((5 == $page->id) AND $this->is_kiosk) throw new HTTP_Exception_404;
-        
         $text = $page->text;
 
         // если на странице есть форма
@@ -267,7 +280,6 @@ class Controller_Page extends Controller_Frontend {
      */
     public function action_partner_form()
     {
-        if ($this->is_kiosk) throw new HTTP_Exception_404;
         if ($this->request->post('partner')) {
             
             $p = new Model_Partner();
@@ -329,9 +341,7 @@ class Controller_Page extends Controller_Frontend {
      */
     public function action_contest()
     {
-        if ($this->is_kiosk) throw new HTTP_Exception_404;
-
-        if ($this->request->post('contest')) 
+        if ($this->request->post('contest'))
         {
             $user_id = FALSE;
             $file_ok = NULL;
@@ -423,7 +433,7 @@ class Controller_Page extends Controller_Frontend {
 					$p->img = $image->ID;
 				}
 				$p->save();
-				Mail::htmlsend('return', array('r' => $p), Conf::instance()->mail_return, 'Претензия '.$p->id.': '.$p->name);
+                Mail::htmlsend('return', array('r' => $p), Conf::instance()->mail_return, 'Претензия '.$p->id.': '.$p->name);
 				$this->tmpl['p'] = $p;
 
 			} else {
@@ -524,39 +534,52 @@ class Controller_Page extends Controller_Frontend {
      */
     public function action_article()
     {
+        $old_link = $this->request->param('old_link');
         $id = $this->request->param('id');
+
+        if ($old_link) { // редирект со старых ссыло к на новые
+            if ($id) {
+                $this->request->redirect(Route::url('article', ['id' => $id]), 301);
+            } else {
+                $page = $this->request->query('page');
+                $this->request->redirect(Route::url('article').($page ? '?page='.$page : ''), 301);
+            }
+        }
+
         $q = ORM::factory('article')->where('active', '=', 1)->reset(FALSE);
 
-		$description = 'Читайте наши статьи по уходу за ребенком и о поддержании его здоровья.';
-		
+        $description = 'Читайте наши статьи по уходу за ребенком и о поддержании его здоровья.';
+        $title = 'Полезные статьи по уходу за детьми от Младенец.РУ';
+
         if (empty($id)) { // show list
 
-			$title = 'Полезные статьи по уходу за детьми от ' . ( empty($_SERVER['HTTP_HOST']) ? 'default' : $_SERVER['HTTP_HOST'] );
-			
-            $iPerPageQty = @Kohana::$hostnames[Kohana::$server_name]['per_page_elements'] ?: 10;
-            $this->tmpl['pager'] = $pager = Pager::factory($q->count_all(), $iPerPageQty);
+            $this->tmpl['pager'] = $pager = new Pager($q->count_all(), 10);
 
-			if( $pager->p > 1 ){
-				
-				$title = 'Страница ' . $pager->p . '. ' . $title;
-				$description = 'Страница ' . $pager->p . '. ' . $description;
-			}
-            $this->tmpl['articles'] = $q
+			$this->tmpl['articles'] = $q
                 ->order_by('id', 'desc')
                 ->limit($pager->per_page)
                 ->offset($pager->offset)
                 ->with('minimg')
                 ->find_all();
-        }
-		else{
+
+            if ($pager->p > 1) {
+                $title = 'Страница ' . $pager->p . '. ' . $title;
+                $description = 'Страница ' . $pager->p . '. ' . $description;
+            }
+
+        } else {
 			
 			$article = $q->with('image')->where('article.id', '=', $id)->find();
 			if ( ! $article->loaded()) throw new HTTP_Exception_404;
 
 			$this->tmpl['article'] = $article;
 
-			$title = !empty( $article->seo->title ) ? $article->seo->title : $article->name;
-			if ( !empty( $article->seo->description ) ) $description = $article->seo->description;
+            if ( ! empty($article->seo->title)) {
+                $title = $article->seo->title;
+                $description = $article->seo->description;
+            } else {
+                $title = $article->name;
+            }
 		}
 		
 		$this->layout->title = $title;
@@ -593,7 +616,11 @@ class Controller_Page extends Controller_Frontend {
             $ok = $poll->vote_handler($this->user->id);
 
             if ($ok) {
-                $this->return_html(View::factory('smarty:page/poll/ok', array('p' => $poll))->render());
+                $view = View::factory('smarty:page/poll/ok', array('p' => $poll));
+                if ($poll->type == Model_Poll::TYPE_COUPON) { // этот опрос даёт купон
+                    $view->coupon = Model_Coupon::generate($poll->coupon);
+                }
+                $this->return_html($view->render());
             } else {
                 throw new HTTP_Exception_403;
             }
@@ -739,6 +766,16 @@ class Controller_Page extends Controller_Frontend {
     {
         $this->menu = FALSE;
         $filename = APPPATH . 'cache/yml.xml';
+        $this->return_xml(file_get_contents($filename));
+    }
+    
+     /**
+     * YML для Findologic
+     */
+    public function action_findologic_yml()
+    {
+        $this->menu = FALSE;
+        $filename = APPPATH . 'cache/findologic_yml.xml';
         $this->return_xml(file_get_contents($filename));
     }
 

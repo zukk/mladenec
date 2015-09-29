@@ -9,6 +9,12 @@
 	<th>Оплата картами</th><td>{if $i->accept_cards}<a class="ok">{$i->accept_cards}</a>{else}<a class="no">откл</a>{/if}</td>
     </tr>
     <tr>
+        <th>Поиск по сайту</th><td>{if $i->instant_search eq 'in site'}Встроенный{else}Внешний Findologic{/if}</td>
+    </tr>
+    <tr>
+        <th>Рекомендательный сервис RetailRocket</th><td>{if $i->rr_enabled eq 1}Включен{else}Выключен{/if}</td>
+    </tr>    
+    <tr>
         <th>Телефон</th><td>{$i->phone}</td>
     </tr>
     <tr>
@@ -60,6 +66,9 @@
                 <dt>Об ошибках в СМС</dt>
                 <dd>{$i->mail_sms_warning|default:'нет'}</dd>
                 
+                <dt>О пустых разделах</dt>
+                <dd>{$i->mail_empty_section|default:'нет'}</dd>
+                
                 <dt>Об изменениях закупочных цен, для франшизы</dt>
                 <dd>{$i->mail_fransh|default:'нет'}</dd>
                 
@@ -70,6 +79,9 @@
     <tr>
         <th>Акции</th><td><b>{$i->actions_header}</b><br>{$i->actions_subheader|nl2br}</td>
     </tr>
+    <tr>
+        <th>Доставка от Озона</th><td>{if $i->use_ozon_delivery eq 1}Включена{else}Выключена{/if}</td>
+    </tr>    
 
         {/foreach}
 </table>

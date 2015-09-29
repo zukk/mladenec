@@ -3,24 +3,24 @@ class Model_Good_Prop extends ORM {
 
     protected $_table_name = 'z_good_prop';
 
-    protected $_belongs_to = array(
-        'image70' => array('model' => 'file', 'foreign_key' => 'img70'),
-        'image255' => array('model' => 'file', 'foreign_key' => 'img255'),
-        'image380' => array('model' => 'file', 'foreign_key' => 'img380'),
-        'image380x560' => array('model' => 'file', 'foreign_key' => 'img380x560'),
-        'image173x255' => array('model' => 'file', 'foreign_key' => 'img173x255'),
-        'image500' => array('model' => 'file', 'foreign_key' => 'img500'),
-        'image1600' => array('model' => 'file', 'foreign_key' => 'img1600'),
-    );
+    protected $_belongs_to = [
+        'image70' => ['model' => 'file', 'foreign_key' => 'img70'],
+        'image255' => ['model' => 'file', 'foreign_key' => 'img255'],
+        'image380' => ['model' => 'file', 'foreign_key' => 'img380'],
+        'image380x560' => ['model' => 'file', 'foreign_key' => 'img380x560'],
+        'image173x255' => ['model' => 'file', 'foreign_key' => 'img173x255'],
+        'image500' => ['model' => 'file', 'foreign_key' => 'img500'],
+        'image1600' => ['model' => 'file', 'foreign_key' => 'img1600'],
+    ];
 
-    protected $_has_one = array(
-        'good' => array('model' => 'good', 'foreign_key' => 'id'),
-    );
+    protected $_has_one = [
+        'good' => ['model' => 'good', 'foreign_key' => 'id'],
+    ];
 
-    protected $_table_columns = array(
+    protected $_table_columns = [
         'id' => '', 'brand_id' => '', 'superprice'=>'', 'new_till' => '', 'discount' => '',
         'best' => '', 'off' => '', 'recommended' => '', 'img1600' => '', 'img500' => '', 'img255' => '','img380' => '',
-        'img70' => '', 'img173x255' => '', 'img380x560' => '', 'title' => '', 'description' => '', 'desc' => '', 
+        'img70' => '', 'img173x255' => '', 'img380x560' => '', 'title' => '', 'description' => '', 'desc' => '',
         'spoiler_title'  => '', // Заголовок спойлера
         'spoiler'        => '', // Тело спойлера
         'spoiler2_title' => '', // Заголовок второго спойлера
@@ -32,8 +32,10 @@ class Model_Good_Prop extends ORM {
         'to_yandex' => 1, 'to_wikimart' => '','to_ozon'=>1, 'weight' => '',
         'size' => '', 'tags' => '', 'search' => '',
 		'last_seen' => '',
-		'view_type' => ''   // Тип карточки товара 0 = обычная, 3 = nestle, 4 = одежда
-    );
+		'view_type' => '',   // Тип карточки товара 0 = обычная, 3 = nestle, 4 = одежда
+		'tabs' => '',
+		'advantage' => ''
+    ];
 
     /**
      * Список чекбоксов
@@ -41,23 +43,28 @@ class Model_Good_Prop extends ORM {
      */
     public function flag()
     {
-        return array('new', 'superprice', 'to_yandex', 'to_wikimart', '_new_item', '_modify_item', '_desc', '_optim', '_graf', '_full_graf', '_supervisor','to_ozon');
+        return ['new', 'superprice', 'to_yandex', 'to_wikimart', '_new_item', '_modify_item', '_desc', '_optim', '_graf', '_full_graf', '_supervisor','to_ozon'];
     }
-    
+
     public function view_type_name()
     {
         return Kohana::message('good/view_type', $this->view_type, 'Ошибка');
     }
-	
-	public function desc(){
-		
+
+    /**
+     * Показ слайдеров с промо внутри текста
+     * @return mixed
+     * @throws View_Exception
+     */
+    public function desc()
+    {
 		$desc = $this->desc;
 		
-		if( preg_match_all('#\[promo=([0-9]+)\]#ius', $desc, $matches ) ){
-			foreach( $matches[0] as $key => $preg ){
+		if (preg_match_all('#\[promo=([0-9]+)\]#ius', $desc, $matches)) {
+			foreach($matches[0] as $key => $preg) {
 				$promoId = $matches[1][$key];
 				
-				$goods = ORM::factory('promo', $promoId)->get_goods(true);
+				$goods = ORM::factory('promo', $promoId)->get_goods(TRUE);
 				$total = count( $goods );
 				$goods = array_slice( $goods, 0, 5 );
 				$html = View::factory('smarty:common/goods_slider', ['goods' => $goods, 'total' => $total, 'rel' => '/slide/promo/' . $promoId, 'style' => 'margin: 0 -17px;'])->render();

@@ -4,8 +4,8 @@
 		<tr>
 			<td>
 
-            <p>Пользователь, {$r->name} оставил претензию №{$r->id}:<br /><br />
-                {$r->text|nl2br}</font>
+            <p>Пользователь, {$r->name} оставил претензию №{$r->id}{if not empty($r->order_num)} (номер заказа: {$r->order_num}){/if}:<br /><br />
+                {$r->text|nl2br}
             </p>
 
 			</td>

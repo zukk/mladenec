@@ -1,7 +1,7 @@
 .incdeced {
     white-space: nowrap;
     height: 32px;
-    width: 85px;
+    min-width: 85px;
     line-height: 26px;
 }
 
@@ -57,3 +57,8 @@
     border-radius: 3px 0 0 3px;
 }
 
+.incdeced > a.disabled {
+    color: #e1e1e1 !important;
+    background: #fcfcfc;
+    cursor:default;
+}

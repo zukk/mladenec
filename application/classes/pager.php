@@ -60,7 +60,7 @@ class Pager {
         {
 			$this->base = '/' . Request::current()->uri();
             $query = http_build_query($this->query_params);
-            $this->link .= '?'.($query ? $query.'&' : '');
+            $this->link = '?' . ($query ?  $query.'&' : '');
         }
         else
         {
@@ -68,6 +68,22 @@ class Pager {
             $this->link = '#!'.$hash;
         }
 
+		if( $this->p >= 2 ){
+			
+			if( $this->p == 2 ){
+				$prev_link = $this->base . mb_substr($this->link, 0, -1 );
+			}
+			else
+				$prev_link = $this->base . $this->link . Pager::PARAM . '=' . ( $this->p - 1 );
+			
+			View::bind_global('pager_prev', $prev_link );		
+		}
+		
+		if( $this->p <= ( $this->pages - 1 ) ){
+			$next_link = $this->base . $this->link . Pager::PARAM . '=' . ( $this->p + 1 );
+			View::bind_global('pager_next', $next_link );		
+		}
+		
         $this->html = View::factory('smarty:common/pager', array(
             'p'         => $this->p,
             'total'     => $this->total,

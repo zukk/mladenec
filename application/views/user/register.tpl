@@ -41,3 +41,5 @@
     </div>
 
 </form>
+
+{View::factory('user/ulogin')->render()}

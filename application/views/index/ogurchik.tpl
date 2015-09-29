@@ -1,4 +1,7 @@
+{include file='common/retag.tpl'}
+
 {include file="common/slider.tpl"}
+
 <div id="maina">
 
 	<div class="na"  style="width:200px">
@@ -38,7 +41,7 @@
 		<ul class="act">
 			<li>
 				<img class="fr" src="/i/action_star25.png" alt="Акция с подарками" width="25" />
-				<a href="{Route::url('action_current_list')}">{$config->actions_header|default:'Акции месяца'}</a>
+				<a href="{Route::url('action_list')}">{$config->actions_header|default:'Акции месяца'}</a>
 				{$config->actions_subheader|nl2br}
 			</li>
 			{foreach from=$actions item=n}

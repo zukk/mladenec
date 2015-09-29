@@ -44,7 +44,7 @@ class Model_Good_Warn extends ORM {
      */
     public function notify()
     {
-		$analogy = $this->good->analogy();
+		$analogy = array_values( $this->good->analogy(6) );
 		$return = false;
 		
 		if( !empty( $analogy ) ){

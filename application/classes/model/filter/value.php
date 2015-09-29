@@ -3,14 +3,15 @@ class Model_Filter_Value extends ORM {
 
     protected $_table_name = 'z_filter_value';
 
-    protected  $_belongs_to = array(
-        'filter' => array('model' => 'filter', 'foreign_key' => 'filter_id'),
-        'image' => array('model' => 'file', 'foreign_key' => 'img')
-    );
+    protected  $_belongs_to = [
+        'filter' => ['model' => 'filter', 'foreign_key' => 'filter_id'],
+        'image' => ['model' => 'file', 'foreign_key' => 'img']
+    ];
 
-    protected $_table_columns = array(
-        'id' => '', 'code' => '', 'name' => '', 'sort' => '', 'filter_id' => '', 'img' => ''
-    );
+    protected $_table_columns = [
+        'id' => '', 'code' => '', 'name' => '', 'sort' => '',
+        'filter_id' => '', 'img' => '', 'roditi' => ''
+    ];
 
     /**
      * @static Почистить все фильтры для товара
@@ -50,24 +51,25 @@ class Model_Filter_Value extends ORM {
 
     public static function filter_val($values_ids)
     {
-        $fvalues = DB::select('fv.id', 'fv.name', DB::expr('f.id as fid'), DB::expr('f.name as filter_name'))
+        $fvalues = DB::select('fv.id', 'fv.name', 'fv.roditi', DB::expr('f.id as fid'), DB::expr('f.name as filter_name'))
             ->from(array('z_filter_value', 'fv'))
             ->join(array('z_filter', 'f'))
                 ->on('f.id', '=', 'fv.filter_id')
             ->where('fv.id', 'IN', $values_ids)
-            ->order_by('f.sort', 'desc')
+            ->order_by('f.sort')
             ->order_by('fv.sort')
             ->order_by('fv.name')
             ->execute()
             ->as_array('id');
 
-		$filters = $values = array();
+		$filters = $values = $roditi = array();
         foreach($fvalues as $fvid => $data) {
             $filters[$data['fid']] = $data['filter_name'];
             $values[$data['fid']][$fvid] = $data['name'];
+            $roditi[$data['fid']][$fvid] = $data['roditi'];
         }
 		
-        return array($filters, $values);
+        return array($filters, $values, $roditi);
     }
 
     /**
@@ -80,7 +82,7 @@ class Model_Filter_Value extends ORM {
         // сохранение новой картинки
         if ( ! empty($_FILES['img']) AND Upload::not_empty($_FILES['img']) AND Upload::valid($_FILES['img'])) {
 
-            if ( ! Upload::image($_FILES['img'], 225, 120, TRUE)) {
+            if ( ! Upload::image($_FILES['img'])) {
                 $messages['errors'] = array(Kohana::message('admin/section', 'img.default'));
             } else { // пришла новая картинка
 
@@ -98,6 +100,46 @@ class Model_Filter_Value extends ORM {
             }
         }
 
+		$d = json_decode(file_get_contents('http://export.yandex.ru/inflect.xml?name=' . urlencode($this->name) . '&format=json'), TRUE);
+		
+		if ( ! empty($d[2])) {
+			$this->roditi = $d[2];
+			$this->save();
+		}
+		
         return $messages;
     }
+
+    /**
+     * получает по строке с весом список значений искусственного фильтра вес
+     * @param array $params
+     */
+    static function weight(array $params)
+    {
+        $weights = [];
+        for($i = $params[0]; $i <= $params[1]; $i++) $weights[] = $i;
+
+        $q = DB::select('id')
+            ->from('z_filter_value')
+            ->where('filter_id', '=', Model_Filter::WEIGHT)
+            ->where('name', 'IN', $weights)
+            ->execute();
+
+        return $q->as_array('id', 'id'); //;
+    }
+
+    /**
+     * Получить html для картинки значения фильтра
+     * @return string
+     */
+    public function get_img()
+    {
+        if ($this->img == 0) return Model_File::empty_image();
+
+        return $this->image->get_img([
+            'alt'   => $this->name,
+            'title' => $this->name,
+        ]);
+    }
+
 }

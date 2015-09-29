@@ -61,7 +61,7 @@
         </table>
     </fieldset>
 
-    <fieldset class="fl"><legend><a href="user">Регистрации</a></legend>
+    <fieldset class="fl"><legend><a href="{Route::url('admin_list', ['model' => 'user'])}">Регистрации</a></legend>
         <table>
         <thead>
         <tr>

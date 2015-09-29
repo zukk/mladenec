@@ -10,10 +10,10 @@ class Controller_Authorised extends Controller_Smarty {
      * Массив для хранения сообщений, которые позже будут переданы в View
      * @var array
      */
-    protected $messages = array(
-        'errors' => array(),
-        'messages' => array()
-    );
+    protected $messages = [
+        'errors' => [],
+        'messages' => []
+    ];
     
     protected $send_messages = TRUE;    // Позволить отправлять сообщения в вид
     protected $send_errors = TRUE;      // Позволить отправлять ошибки в вид
@@ -32,8 +32,10 @@ class Controller_Authorised extends Controller_Smarty {
      */
     protected $user;
     
-    public function before() {
-        $this->user = Model_User::current();
+    public function before()
+    {
+        parent::before();
+        
         if (empty($this->user)) throw new HTTP_Exception_403;
         
         $this->allow = $this->user->allow();
@@ -44,12 +46,11 @@ class Controller_Authorised extends Controller_Smarty {
         if ($model_name && ! $this->user->allow($model_name)) { // доступа к модулю нет
             $this->request->redirect(Route::url('admin')); // отправим обратно в корень админки
         }
-
-        View::bind_global('user', $this->user);
     }
     
-    public function after() {
-        if (Kohana::$environment !== Kohana::PRODUCTION) error_reporting(E_ALL && ~E_NOTICE); // show errors while rendering
+    public function after()
+    {
+        parent::after();
     }
     
     /**
@@ -65,8 +66,8 @@ class Controller_Authorised extends Controller_Smarty {
         $this->model = ORM::factory($name, $id);
     }
     
-    protected function save_form_images($model) {
-        
+    protected function save_form_images($model)
+    {
         $fields = $model->img();
         
         $sources = array();
@@ -129,7 +130,8 @@ class Controller_Authorised extends Controller_Smarty {
      * @return bool
      * @throws Exception
      */
-    protected function save_form($model, $form_data, $ignore_fields = array('_misc')) {
+    protected function save_form($model, $form_data, $ignore_fields = array('_misc'))
+    {
         $is_okey = FALSE;
         /* По умолчанию - обновление */
         $add = FALSE;
@@ -168,7 +170,7 @@ class Controller_Authorised extends Controller_Smarty {
         }
         
         $model->values($form_data, array_keys($form_data));
-        
+
         if ($model->validation()->check()) {
             
             $changed = $model->changed(); // это массив изменённых полей
@@ -190,6 +192,7 @@ class Controller_Authorised extends Controller_Smarty {
             } elseif ($changed) { // запишем новое в историю
                 Model_History::log($model->object_name(), $model->id, 'edit', $model->as_array());
             }
+
             if (method_exists($model, 'admin_save')) {
                 /* дополнительные действия над моделью 
                  * если надо что-то внутри добавлять в model_history - то это надо сделать внутри admin_save
@@ -203,7 +206,7 @@ class Controller_Authorised extends Controller_Smarty {
             }
         } else {
             $errors = $model->validation()->errors('admin/'.$model->object_name());
-            $this->messages_add(array('errors'=>$errors));
+            $this->messages_add(['errors' => $errors]);
         }
         
         return $is_okey;
@@ -214,7 +217,8 @@ class Controller_Authorised extends Controller_Smarty {
      * @param string $type
      * @return boolean
      */
-    protected function get_messages($type = 'messages') {
+    protected function get_messages($type = 'messages')
+    {
         if (is_array($this->messages[$type]) AND ! empty($this->messages[$type])) {
             return ($this->messages[$type]);
         } else return FALSE;
@@ -226,7 +230,8 @@ class Controller_Authorised extends Controller_Smarty {
      * @param $message 
      * @param string $type
      */
-    protected function msg($message, $type = 'messages') {
+    protected function msg($message, $type = 'messages')
+    {
         $message = trim($message);
         if ( ! empty($message)) {
             if (isset($this->messages[$type]) AND is_array($this->messages[$type])) {

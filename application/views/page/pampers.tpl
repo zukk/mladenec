@@ -23,7 +23,7 @@
         <textarea id="address" name="address" class="txt {if ! empty($errors.address)}error" error="{$errors.address}{/if}" rows="5">{$smarty.post.address|default:''}</textarea>
 
         <label class="l" for="phone">Телефон:&nbsp;<sup>*</sup></label>
-        <input id="phone" name="phone" class="txt {if ! empty($errors.phone)}error" error="{$errors.phone}{/if}" value="{$smarty.post.phone|default:''}" />
+        <input id="phone" type="tel" name="phone" class="txt {if ! empty($errors.phone)}error" error="{$errors.phone}{/if}" value="{$smarty.post.phone|default:''}" />
 
         <label class="l" for="email">E-mail:&nbsp;<sup>*</sup></label>
         <input id="email" name="email" class="txt {if ! empty($errors.email)}error" error="{$errors.email}{/if}" value="{$smarty.post.email|default:''}" />

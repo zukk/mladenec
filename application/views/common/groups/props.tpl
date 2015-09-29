@@ -26,7 +26,7 @@
 			<option value="{$field}"{if not empty($section) and $section->settings['orderByItems'][0] eq $field} selected='selected'{/if}>{$o[$field]}</option>
 			{/foreach}
 		</select>
-        {if not isset($per_page)}{assign var=per_page value=[12,24,48]}{/if}
+        {if not isset($per_page)}{assign var=per_page value=[20,40,80]}{/if}
 
         <label for="page">На странице:</label>
         <select id="page" name="pp">
@@ -34,12 +34,7 @@
             <option{if not empty($choice) and $p eq $choice} selected="selected"{/if}>{$p}</option>
             {/foreach}
         </select>
-
-        {if $params.x|default:0 eq 2}
-            <input type="hidden" id="has" name="x" value="1" />
-        {else}
-            <label class="label"><i class="check"></i><input type="checkbox" id="has" name="x" value="1" class="big" {if $x eq 1}checked="checked"{/if} /> В наличии</label>
-        {/if}
+        
 
 	    <div id="choice">
             {if not empty($params)}

@@ -1,8 +1,15 @@
 {if not  empty($section)}
 
-	<div id="breadcrumb">
-		<a href="/">Главная</a> &rarr;
-		<a href="{Route::url('map')}" title="Карта сайта">Карта сайта</a>
+	<div id="breadcrumb">                       
+            <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb" itemref="breadcrumb-1">
+                <a href="/" itemprop="url"><span itemprop="title">Главная</span></a>
+            </span>
+            &rarr;
+            <span itemprop="child" itemscope itemtype="http://data-vocabulary.org/Breadcrumb" id="breadcrumb-1">
+                <a href="{Route::url('map')}" itemprop="url" title="Карта сайта"><span itemprop="title">Карта сайта</span></a>
+            </span>
+            &rarr;
+            <span>Карта товарной категории &laquo;{$section->name}&raquo;</span>
 	</div>
 
 	<h1>Карта товарной категории &laquo;{$section->name}&raquo;</h1>

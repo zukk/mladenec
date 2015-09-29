@@ -1,26 +1,21 @@
 <h1>Личный кабинет</h1>
 
 <div class="tabs mt">
-    <div>
-        <a class="t" href="{Route::url('user')}">Мои данные</a>
-        <a class="t active" href="{Route::url('order_list')}">Мои заказы</a>
-        <a class="t" href="{Route::url('user_address')}">Мои адреса</a>
-        <a class="t" href="{Route::url('user_child')}">Мои дети</a>
-        <a class="t" href="{Route::url('user_action')}">Мои баллы по акции</a>
-        <a class="t" href="{Route::url('user_reviews')}">Мои отзывы</a>
-    </div>
+
+    {include file='user/personal.tpl' active='user_order'}
 
     <div class="tab-content active">
 
-        {if $orders}
+    {if $orders}
         <table id="orders" class="tt">
             <thead>
             <tr>
                 <th>Номер</th>
                 <th>Создан</th>
-                <th>Сумма</th>
-                <th>Доставка</th>
-                <th>Итого</th>
+                <th>Оплата</th>
+                <th class="r">Сумма</th>
+                <th class="r">Доставка</th>
+                <th class="r">К&nbsp;оплате</th>
                 <th>Состояние</th>
             </tr>
             </thead>
@@ -29,25 +24,31 @@
             <tr {cycle values='class="odd",'}>
                 <td>{$o->get_link()}</td>
                 <td>{$o->created}</td>
-                <td class="r">{$o->price|price}</td>
-                <td class="r">{$o->price_ship|price}</td>
-                <td class="r">{$o->get_total()|price}</td>
-                <td class="c">{$o->status()}
-                {if $o->status == 'C' and $o->card->status lt Model_Payment::STATUS_Authorized and $o->card->form_url}
-	                <a href="{$o->card->form_url}" class="butt small" style="width:80px; margin:0 auto;">оплатить</a>
-	            {/if}
+                <td class="c">{if $o->pay_type eq Model_Order::PAY_CARD}
+                        <img src="/i/cards.png" alt="Картой Visa, Mastercard" /><br />
+                        {include file='user/order/payment.tpl'}
+                    {else}
+                        наличными
+                    {/if}
                 </td>
+                <td class="r nw">{$o->price|price}</td>
+                <td class="r nw">{if $o->delivery_type eq Model_Order::SHIP_COURIER or (($o->delivery_type eq Model_Order::SHIP_SERVICE or $o->delivery_type eq Model_Order::SHIP_OZON) and $o->price_ship gt 0)}{$o->price_ship|price}{else}?{/if}</td>
+                <td class="r nw">{$o->get_total()|price}</td>
+                <td class="c">{$o->status()}</td>
             </tr>
             {/foreach}
             </tbody>
         </table>
         {$pager->html('Заказы')}
 
-        {else}
+    {else}
 
-            <p>Вы ещё не сделали ни одного заказа</p>
+        <p>Вы ещё не&nbsp;сделали ни&nbsp;одного заказа</p>
 
+        {if not empty($config->rr_enabled)}
+            <div class="cl rr_slider" title="Рекомендуем Вам:" data-func="PersonalRecommendation" data-param="{$smarty.cookies.rrpusid}"></div>
         {/if}
 
+    {/if}
     </div>
 </div>

@@ -51,3 +51,7 @@
 .mladenecbox-label.checked:hover .mladenecbox-face {
 	border-color: #dbdbdb;
 }
+
+.mladenecbox-label.error {
+        color: #C33636;
+}

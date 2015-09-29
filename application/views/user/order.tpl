@@ -1,137 +1,299 @@
-<div class="order_header">
-    <div class="order_step1 active">
-        <span>Оформление заказа</span>
-        Шаг 1 из 2
-    </div>
-    <div class="order_step2">
-        <span>Подтверждение заказа</span>
-        Шаг 2 из 2
-    </div>
+<div id="breadcrumb">
+    <a href="{Route::url('user')}">Личный кабинет</a> &rarr; <a href="{Route::url('user_order')}">Мои заказы</a>
 </div>
 
-<p>Ваш заказ на&nbsp;сумму <strong>{$cart->get_total()|price}</strong></p>
+{if empty($thanx)} {* старый заказ *}
 
-{if not $user}
-<div id="login_forma">
-    <h1>Для дальнейшей работы необходимо авторизоваться:</h1>
-    <form action="/user/login" method="post" class="ajax">
-        <div>
-            <input name="login" value="" type="text" class="txt" placeholder="Логин / E-mail"/>
-        </div>
-        <div>
-            <input name="password" value="" class="txt" type="password" placeholder="Пароль"/>
-        </div>
-        <div>
-            <label class="label fl"><i class="check"></i><input type="checkbox" name="remember" /> Оставаться в&nbsp;системе</label>
-        </div>
-        <div>
-            <input type="submit" value="Войти" class="butt fl" />
-        </div>
-        <p>Если Вы забыли Ваш пароль доступа, воспользуйтесь <a href="{Route::url('user_forgot')}">сервисом восстановления пароля</a></p>
+    <form action="{Route::url('product_add')}" method="post">
+
+    <input type="submit" value="Повторить заказ" class="butt fr" />
+    <h1>Заказ {$o->id}</h1>
+
+    <h2 class="order_status">{$o->status()}</h2>
+
+    {include file='user/order/payment.tpl'}
+
+    {include file='user/order/view.tpl' cart=$o repeat=1}
+
+    {if $o->description}
+        <h3 class="cl">Комментарий</h3>
+        <dl>
+            <dd>{$o->description}</dd>
+        </dl>
+    {/if}
     </form>
-</div>
-{/if}
 
-<form action="/personal/order_data.php" method="post" class="cb cols ajax" id="order_data">
-<div id="order_user">
-    {if not $user}
-        <h2>Если Вы ещё не регистрировались на нашем сайте, заполните Ваши контактные данные:</h2>
-    {else}
-        <h2>Контактные данные</h2>
-    {/if}
+{else} {* спасибо - страница*}
 
-    <div class="half">
-        <label class="l" for="last_name">Фамилия:</label> <input id="last_name" name="last_name" value="{$user->last_name}" class="txt" />
-        <label class="l" for="name">Имя:<sup>*</sup></label> <input id="name" name="name" value="{$user->name}" class="txt" />
-        <label class="l" for="name">Отчество:</label> <input name="second_name" value="{$user->second_name}" class="txt" />
-    </div>
+    <div style="font-size:1.2em; padding: 20px;">
+        <div class="fr"><img src="/i/averburg/cat/{rand(1,4)}.jpg" /></div>
 
-    <div class="half">
-        <label class="l" for="phone">Телефон:<sup>*</sup></label> <input id="phone" name="phone" value="{$user->phone}" class="txt" />
-        <label class="l" for="phone2">Доп.телефон:</label> <input id="phone2" name="phone2" value="{$user->phone2}" class="txt" />
-        <label class="l" for="mobile_phone">Телефон для СМС:</label> <input id="mobile_phone" name="mobile_phone" value="{if $user->order_notify < 2}{if Txt::phone_is_mobile($user->phone)}{Txt::phone_clear($user->phone)}{elseif Txt::phone_is_mobile($user->phone2)}{Txt::phone_clear($user->phone2)}{/if}{/if}" class="txt" />
-        <label class="l" for="email">E-mail:<sup>*</sup></label> <input id="email" name="email" value="{$user->email}" class="txt" />
-    </div>
-    {if not empty($user)}
-    <label class="label cl"><i class="check"></i>
-        <input type="checkbox" name="save_user" value="1" id="save_user"{if ! isset($smarty.get.save_user) OR $smarty.get.save_user} checked="checked"{/if} />
-        Сохранить данные в&nbsp;личном кабинете 
-    </label>
-    <abbr abbr="Не&nbsp;устанавливайте эту галочку, если вы&nbsp;сообщаете эти параметры только для&nbsp;данного заказа и&nbsp;не&nbsp;хотите сохранять их&nbsp;изменения в&nbsp;&quot;Личном кабинете&quot;.">Что это?</abbr>
-    {/if}
-    {if not $is_kiosk|default:false}
-        <script type="text/javascript">
-            {literal}
-                $(document).ready(function() {
-                    $('#order_user input[name=phone], #order_user input[name=phone2],#order_user input[name=mobile_phone]').mask('+7(999)999-99-99');
-                });
-            {/literal}
-        </script>
-    {/if}
-    
-</div>
+        <h1 class="b black">Заказ принят</h1>
 
-<div id="order_delivery" class="cb">
-    <h2 class="mt">Способ доставки</h2>
-
-    <div>
-        <label class="label"><i class="radio"></i><input type="radio" name="delivery_type" value="{Model_Order::SHIP_COURIER}" id="dt{Model_Order::SHIP_COURIER}"/> Доставка нашей курьерской службой (только Москва и МО)</label>
-
-        {if $cart->get_total() lt 2500}
-            <label class="label"> Доставка транспортной компанией возможна только для заказов <strong>от&nbsp;2500&nbsp;руб</strong> (кроме Москвы и&nbsp;МО)</label>
-        {else}
-            <label class="label"><i class="radio"></i><input type="radio" name="delivery_type" value="{Model_Order::SHIP_SERVICE}" id="dt{Model_Order::SHIP_SERVICE}" /> Доставка транспортной компанией (кроме Москвы и&nbsp;МО)</label>
+        {if $o->can_pay AND $o->pay_type == Model_Order::PAY_CARD}
+            <p>Для проведения платежа нажмите &laquo;ОПЛАТИТЬ ЗАКАЗ&raquo;</p>
         {/if}
 
-        {*<label class="label"><i class="radio"></i><input type="radio" name="delivery_type" value="{Model_Order::SHIP_SELF}" id="dt{Model_Order::SHIP_SELF}" /> Самовывоз</label>*}
-    </div>
-</div>
+        <div style="padding:40px;">
+            <p>Номер вашего заказа <b>{$o->id}</b></p>
+            <p>Итого <strong>{$o->get_total()|price}</strong>
+                {if $o->price_ship != '0.00' || $o->delivery_type eq Model_Order::SHIP_COURIER}
+                    (в том числе доставка {$o->price_ship|price})
+                {else}
+                    (без учёта стоимости доставки)
+                {/if}
+            </p>
 
-<div id="delivery"><i class="load"></i>Загружается меню доставки&hellip;</div>
-
-<div class="cl mt"></div>
-
-</form>
-
-<script type="text/javascript">
-var falled = false;
-{literal}
-$(document).ready(function() {
-    $('input[name="delivery_type"]').change(function() {
-        var type = $(this).val();
-		if (falled) {
-            var s = $('#street').val(), h = $('#house').val();
-        }
-
-        $('#delivery').html('<i class="load"></i>').load('/delivery/' + type, function() {
-
-            $('#delivery input:checkbox').checkbox();
-            $('#delivery input:radio').radio();
-
-	        if (falled) {
-                $('input[name="address_id"]').last().click(); // check last option
-                $('#city').val(falled); $('#street').val(s); $('#house').val(h);
-                fillReg(falled);
-                falled = false;
-            }
-
-            {/literal}
-            {if not $is_iframed}
-            {literal}
-                var scrollTo = $('#login_forma').length ? $("#login_forma") : $("#delivery");
-                $('html, body').animate({scrollTop: scrollTo.offset().top - 40}, 'fast');
-            {/literal}
+            {if $o->delivery_type eq Model_Order::SHIP_SERVICE and $o->price_ship eq '0.00'}
+                <small>Окончательную стоимость доставки уточнит менеджер по&nbsp;телефону</small>
             {/if}
-            {literal}
+
+            {if $o->can_pay AND $o->pay_type == Model_Order::PAY_CARD}
+
+                <p class="fl cl"><a href="{Route::url('pay', ['id' => $o->id])}" class="butt">Оплатить заказ</a></p>
+
+            {/if}
+
+            {if $o->type eq Model_Order::TYPE_ONECLICK}
+                <p class="cl">Менеджер перезвонит
+                    <span class="hide" id="oco_labor">в&nbsp;течение нескольких минут</span>
+                    <span class="hide" id="oco_weekend">с&nbsp;Вами свяжется в&nbsp;рабочее время с&nbsp;9:00 до&nbsp;18:00</span>
+                    <script>
+                        $(function(){
+                            var now = new Date(), day = now.getDay(), hour = now.getHours(), weekend = day == 0 || day == 6;
+
+                            if ((weekend && (hour >= 21 || hour < 10)) || ( ! weekend && (hour >= 22 || hour < 9))) {
+                                $('#oco_weekend').show();
+                            } else {
+                                $('#oco_labor').show();
+                            }
+                        });
+                    </script>
+                    на&nbsp;номер <span id="oco_phone">{$phone}</span>.
+                </p>
+                <p>
+                    Спасибо!
+                </p>
+            {/if}
+
+            {if $o->delivery_type eq Model_Order::SHIP_COURIER and not empty($o->data->ship_date)}
+                <p class="cl">Заказ будет доставлен <b>{Txt::ru_date($o->data->ship_date)}</b></p>
+            {/if}
+
+            <p class="cl">Чтобы увидеть состав заказа или повторить заказ, <br />войдите в&nbsp;<a class="b black u" href="{Route::url('order_detail', ['id' => $o->id])}">Личный кабинет</a></p>
+
+            {if $o->type eq Model_Order::TYPE_ONECLICK}
+			<p style="font-size: 0.9em; color: #999;">
+				В&nbsp;случае, если мы не&nbsp;сможем с&nbsp;Вами связаться в&nbsp;течение суток,
+				просим повторно оформить заказ или перезвонить нам по&nbsp;телефону: <nobr>8 (800) 555-699-4</nobr>
+			</p>
+		    {/if}
+
+            <p style="font-weight:bold; color: #02a7c5;">Будем рады видеть Вас снова!</p>
+
+        </div>
+    </div>
+
+    {*  тут все скрипты для всякой статистики *}
+    {*$is_new|var_dump*}
+    {if not empty($is_new) AND (Kohana::$environment eq Kohana::PRODUCTION)}
+        <script>
+
+            var ya_goods = [];
+            {foreach from=$order_goods item=g}
+            {if $g->price gt 0}
+            ya_goods.push({
+                id: {$g->id},
+                name: '{$g->group_name|escape:'javascript'} {$g->name|escape:'javascript'}',
+                category: '{$g->section->name|escape:'javascript'}',
+                price: {$g->price},
+                quantity: {$g->quantity}
+            });
+            {/if}
+            {/foreach}
+
+            var yaParams = {
+                order_id: {$o->id},
+                order_price: {$o->price},
+                currency: "RUR",
+                exchange_rate: 1,
+                goods: ya_goods
+            };
+
+            window.dataLayer = window.dataLayer || [];
+            dataLayer.push({
+                userId: {$o->user_id},
+                ecommerce: {
+                    purchase: {
+                        actionField: {
+                            id: '{$o->id}',
+                            affiliation: '{$vitrina}',
+                            revenue: '{$o->price}',
+                            shipping: '{$o->price_ship}'
+                        },
+                        products: [
+                            {foreach from=$order_goods item=g name=n}
+                            {if $g->price gt 0}
+                            {
+                                id: '{$o->id}',
+                                name: '{$g->group_name|escape:'javascript'} {$g->name|escape:'javascript'}',
+                                price: '{$g->price}',
+                                category: '{$g->section->name|escape:'javascript'}',
+                                brand: '{$g->brand->name|escape:'javascript'}',
+                                quantity: '{$g->quantity}'
+                            }{if ! $smarty.foreach.n.last},{/if}
+                            {/if}
+                            {/foreach}
+                        ]
+                    }
+                },
+                event: 'transsuccess'
+            });
+        </script>
+
+        {* P&G promo confirmation code *}
+        {if not empty($pg_goods)}
+            <script>
+                var CI_OrderID = '{$o->id}', CI_ItemIDs = [] , CI_ItemQtys = [], CI_ItemPrices = [];
+                {foreach $pg_goods as $i}
+                CI_ItemIDs.push('{$i->upc}');
+                CI_ItemQtys.push('{$i->quantity}');
+                CI_ItemPrices.push('{$i->price}');
+                {/foreach}
+            </script>
+            <script src="https://cts-secure.channelintelligence.com/321604975_confirmation.js"></script>
+        {/if}
+
+        <img src="http://cnv.plus1.wapstart.ru/921d46dcb6eece3408c14d7a1de5fc80eae3d950/" width="1" height="0" alt="" />
+
+        {* admitad retargeting *}
+        <script>
+            window.ad_order = "{$o->id}";    // required
+            window.ad_amount = "{$o->price}";
+            window.ad_products = [
+
+                {foreach from=$order_goods item=g name=n}
+                {
+                    "id": "{$g->id}",
+                    "number": "{$g->quantity}"
+                }{if !$smarty.foreach.n.last},{/if}
+                {/foreach}
+            ];
+        </script>
+
+        {include file='common/retag.tpl' level=4}
+
+        {* admitad counter *}
+        <script>
+            (function (d, w) {
+                w._admitadPixel = {
+                    response_type: 'img',
+                    action_code: '1',
+                    campaign_code: '773f9c05f3'
+                };
+                w._admitadPositions = w._admitadPositions || [];
+
+                {foreach from=$order_goods item=g name=n}
+                w._admitadPositions.push({
+                    uid: '{Cookie::get('admitad_uid')}',
+                    order_id: '{$o->id}',
+                    position_id: '{$smarty.foreach.n.iteration}',
+                    client_id: '{$o->user_id}',
+                    tariff_code: '1',
+                    currency_code: 'RUB',
+                    position_count: '{$smarty.foreach.n.total}',
+                    price: '{$g->price}',
+                    quantity: '{$g->quantity}',
+                    product_id: '{$g->id}',
+                    screen: '',
+                    tracking: '',
+                    old_customer: '{if $user->sum gt 0}1{else}0{/if}',
+                    coupon: '{if $o->coupon_id}1{else}0{/if}',
+                    payment_type: 'sale'
+                });
+                {/foreach}
+                var id = '_admitad-pixel';
+                if (d.getElementById(id)) { return; }
+                var s = d.createElement('script');
+                s.id = id;
+                var r = (new Date).getTime();
+                var protocol = (d.location.protocol === 'https:' ? 'https:' : 'http:');
+                s.src = protocol + '//cdn.asbmit.com/static/js/pixel.min.js?r=' + r;
+                d.head.appendChild(s);
+            })(document, window)
+        </script>
+        <noscript>
+            {foreach from=$order_goods item=g name=n}
+                <img src="//ad.admitad.com/r?campaign_code=773f9c05f3&action_code=1&response_type=img&uid={Cookie::get('admitad_uid')}&order_id={$o->id}&client_id={$o->user_id}&position_id={$smarty.foreach.n.iteration}&tariff_code=1&currency_code=RUB&position_count={$smarty.foreach.n.total}&price={$g->price}&quantity={$g->quantity}&product_id={$g->id}&coupon={if $o->coupon_id}1{else}0{/if}&payment_type=sale&old_customer={if $user->sum gt 0}1{else}0{/if}" width="1" height="1" alt="" />
+            {/foreach}
+        </noscript>
+
+        {* google adwords remarketing params *}
+        <script>
+            var google_tag_params = {
+                ecomm_pagetype: 'purchase',
+                ecomm_totalvalue: '{$o->price}'
+            };
+        </script>
+
+        {* RR *}
+        {if $config->rr_enabled}
+        <script>
+        rrApiOnReady.push(function() {
+            try {
+                {if $user->sub}
+                    rrApi.setEmail('{$user->email}');
+                {/if}
+
+                var items = [];
+                {foreach from=$order_goods item=g name=n}
+                {if $g->price gt 0}
+                items.push({
+                    id: '{$g->id}',
+                    price: '{$g->price}',
+                    qnt: {$g->quantity}
+                });
+                {/if}
+                {/foreach}
+                rrApi.order({
+                    transaction: {$o->id},
+                    items: items
+                });
+
+            } catch(e) { }
         });
-    });
-{/literal}
+        </script>
+        {/if}
 
-    $('#dt{$dt}').click(); {* choose default delivery type *}
-    $('#dt{$dt}').change(); 
+        {* findologic *}
+        {if $config->instant_search == 'findologic'}
+        <script>
+            {foreach from=$order_goods item=g name=n}
+            _paq.push(['addEcommerceItem',
+                "{$g->id}",
+                "{$g->group_name|escape:'javascript'} {$g->name|escape:'javascript'}",
+                ["{$g->section->name|escape:'javascript'}"],
+                {$g->price},
+                {$g->quantity}
+            ]);
+            {/foreach}
 
-{literal}
+            _paq.push(['trackEcommerceOrder',
+                "{$o->id}",
+                {$o->price}
+            ]);
 
-});
-{/literal}
-</script>
+           _paq.push(['trackPageView']);
+        </script>
+        {/if}
+    {/if}
+
+    {*if ! empty($can_poll)}
+    <p class="mt" style="font-size:17px; line-height:23px;">
+        <a href="/communication/oprosi" class="butt fr" id="endtest">Участвовать в&nbsp;опросе</a>
+        Ваше мнение очень важно для нас. Просим Вас принять участие в&nbsp;опросе:<br />
+        Это не&nbsp;займёт у&nbsp;Вас много времени, но&nbsp;очень нам поможет. Спасибо.
+    </p>
+    {/if*}
+
+{/if}

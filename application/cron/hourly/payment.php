@@ -19,28 +19,25 @@ $payment = ORM::factory('payment')
     ->where(DB::expr('UNIX_TIMESTAMP() - UNIX_TIMESTAMP(status_time)'), '>', 1200)
     // проверяем только заказы которые проверяли больше 20 минут назад
     ->find_all()
-    ->as_array('order_id'); // все новые сеансы оплаты
+    ->as_array('id'); // все новые сеансы оплаты
 foreach($payment as $k => $p) $p->status();
 
 // проверка снятия денег по доставленным заказам - этим заказам надо снять деньги всем!
 // рефунд можно сделать только вручную из личного кабинета - так что его не учитываем
-$payment = DB::query(Database::SELECT, "
-    SELECT order_id, payment FROM z_payment
-        JOIN z_order ON (z_order.id = order_id AND z_order.status = 'F')
-    WHERE order_id > 400000
-        AND session_id != ''
-        AND z_payment.status != ".Model_Payment::STATUS_ChargeApproved."
-        AND z_payment.status != ".Model_Payment::STATUS_Refunded
-)->execute()->as_array();
+$payment = ORM::factory('payment')
+    ->with('order')
+        ->where('order.status', '=', 'F')
+        ->where('order_id', '>', 400000)
+    ->where('payment.session_id', '!=', '')
+    ->where('payment.status', 'NOT IN', [Model_Payment::STATUS_Rejected, Model_Payment::STATUS_ChargeApproved, Model_Payment::STATUS_Refunded])
+    ->find_all()
+    ->as_array();
 
-foreach($payment as $order_id) {
-    $p = ORM::factory('payment', $order_id['order_id']);
+foreach($payment as $p) {
     $status = $p->status(); // проверяем статус - может сняли деньги вручную через шлюз
 
     if ($status != Model_Payment::STATUS_ChargeApproved) {
-        $topay = json_decode($order_id['payment'], 1);
-        $rouble = $topay['ОПЛАТА:8'];
-        if ($rouble > 0) $p->charge($rouble * 100);
+        if ($p->sum) $p->charge($p->sum);
     }
 }
 

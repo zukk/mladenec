@@ -1,7 +1,7 @@
 <h2>Заказать звонок</h2>
 
 {if empty($sent)}
-<form action="/callback" method="post" id="callback" class="ajax cols small">
+<form action="{Route::url('callback')}" method="post" id="callback" class="ajax cols small" style="position: relative;">
 
     <div>
         <label for="cname" class="l">Ваше имя <sup>*</sup></label>
@@ -9,7 +9,7 @@
     </div>
     <div>
         <label for="cphone" class="l">Ваш телефон <sup>*</sup></label>
-        <input type="text" id="cphone" name="phone" value="{$user->phone|default:''}" class="txt" />
+        <input type="tel" id="cphone" name="phone" value="{$user->phone|default:''}" class="txt" />
     </div>
 
     <div class="cl">
@@ -26,7 +26,52 @@
 <script type="text/javascript">
 {literal}
 $(document).ready(function() {
-    $('#callback input[name=phone]').mask('+7(999)999-99-99');
+    var cf = $('#callback');
+    $(cf, 'input[name=phone]').mask('+7(999)999-99-99');
+
+    var loader = $('<i class="load"></i>');
+
+    $('[name=save_callback]').click(function(){
+        var params = $('#callback').serialize()+"&ajax=1&save_callback=Отправить";
+        var timeout = setTimeout(function(){
+            $('#callback').parent().append(loader);
+            $(loader).css({
+                display: 'block',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                'margin-top': '-12px',
+                'margin-left': '-12px',
+                padding: '10px',
+                'border-radius': '5px',
+                'background-color': 'white'
+            });
+        }, 100);
+
+        $.post(
+            $('#callback').attr('action'),
+            params,
+            function(data) {
+
+                window.dataLayer = window.dataLayer || [];
+
+                clearTimeout(timeout);
+                $(loader).remove();
+
+                if( data.html ){
+
+                    dataLayer.push({ 'event': 'obrzvonok' });
+                    $('#callback').parent().html(data.html);
+                    $.fancybox.update();
+                }
+
+                if( data.error ){
+                    alert('Проверьте правильность заполнения полей');
+                }
+            }, 'json'
+        );
+        return false;
+    });
 });
 {/literal}
 </script>

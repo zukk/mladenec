@@ -4,8 +4,9 @@
         {$questions_count = count($questions)}
         {if $questions_count gt 1}
             <h2>{$p->name}</h2>
+            {if $p->text}<div>{$p->text}</div>{/if}
         {/if}
-        <form action="" method="post" class="ajax">
+        <form action="" method="post" class="ajax" id="poll_{$p->id}">
             {if $p->closed}
                 <p class="mt"><strong>Опрос завершён.</strong></p>
             {else}
@@ -26,15 +27,52 @@
 
                     {/if}
 
-                    {if $can_poll}<p class="mt"><input type="submit" class="butt" value="Отправить ответ" /></p>{/if}
+                    {if $can_poll}
+
+                        <p class="mt">
+                        {if $p->type == Model_Poll::TYPE_COUPON}
+                            <script>
+                                $(document).ready(function () {
+                                    $('#poll_{$p->id}').submit( function() {
+                                        var answered = true;
+                                        $('input', $(this)).each(function() {
+                                            var iname = $(this).attr('name');
+                                            if (iname) {
+                                                if (iname.search('poll_var') == 0) {
+                                                    if ($(this).attr('type') == 'checkbox') {
+                                                        if ($(this).closest('fieldset').find(':checked').length == 0)  answered = false;
+                                                    } else {
+                                                        if ($(this).val() == '') answered = false;
+                                                    }
+                                                } else if (iname.search('free') == 0) {
+                                                    if ( ! $(this).prop('disabled') && $(this).val() == '') answered = false;
+                                                }
+                                            }
+                                        });
+                                        if (answered) return true;
+                                        alert('Пожалуйста, ответьте на все вопросы');
+                                        return false;
+                                    });
+                                });
+                            </script>
+
+                        {/if}
+                            <input type="submit" class="butt fl" value="Отправить ответ" />
+                            {if  $p->type == Model_Poll::TYPE_COUPON}
+                            <span id="poll_coupon">
+                                и&nbsp;получить купон <span style="color:#ed1c24; white-space:nowrap;">на {$p->coupon} р.</span>
+                            </span>
+                            {/if}
+                        </p>
+                    {/if}
 
                 {/if}
             {/if}
 
         </form>
     {foreachelse}
-    <p>В&nbsp;данный момент нет активных опросов</p>
+    <p>В&nbsp;данный момент нет активных опросов, на&nbsp;которые вы&nbsp;ещё не&nbsp;отвечали</p>
     {/foreach}
 {else}
-    <p><a class="no toreg" href="#reg_form">Принимать участие в&nbsp;опросах могут только зарегистрированные пользователи</a></p>
+    <p><a class="no toreg" href="#">Принимать участие в&nbsp;опросах могут только зарегистрированные пользователи</a></p>
 {/if}

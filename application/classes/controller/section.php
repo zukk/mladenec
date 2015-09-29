@@ -4,9 +4,9 @@ class Controller_Section extends Controller_Frontend
 {
     private function query_to_hash($query = array())
     {
-        $hash   = array(); // параметры для хэша '#!';
-        $url    = array(); // параметры для урла '?';
-        $valid = array('s','pp','page','x','m','b','pr'); // параметры которые надо переметить в хэш
+        $hash   = []; // параметры для хэша '#!';
+        $url    = []; // параметры для урла '?';
+        $valid  = ['s','pp','page','m','b','pr']; // параметры которые надо переметить в хэш
 
         $skip = TRUE; // пропустить ли этот урл как есть?
 
@@ -96,25 +96,26 @@ class Controller_Section extends Controller_Frontend
             }
         }
         $id = $this->request->param('id');
-        $this->tmpl['section'] = $section = (empty($id)) ? new Model_Section(array('translit' => $this->request->param('translit'), 'active' => 1)) : new Model_Section($id); // новые урлы : старые урлы
+        $this->tmpl['section'] = $section = (empty($id)) ? new Model_Section(['translit' => $this->request->param('translit'), 'active' => 1]) : new Model_Section($id); // новые урлы : старые урлы
         if ( ! $section->loaded() || ! $section->active) throw new HTTP_Exception_404;
 
         if ($section->vitrina != Kohana::$server_name) { // редирект на правильную витрину!
             $this->request->redirect($section->get_link(0));
         }
 
-		if ( ! empty( $section->seo->title ) ){
+        $this->tmpl['seoname'] = $seoname = $section->h1;
+
+		if ( ! empty($section->seo->title)) {
 			$this->layout->title = $section->seo->title;
 			$this->layout->keywords = $section->seo->keywords;
-		} else {
-			$this->layout->title = $section->name;
-		}
-		
-		if ( ! empty( $section->seo->description ) ){
-			$this->layout->description = $section->seo->description;
-		}
-		
-        $this->layout->allbg = $section->id;
+            $this->layout->description = $section->seo->description;
+        } else {
+            $this->layout->title = $section->name;
+        }
+
+		$this->layout->allbg = $section->id; //картинка фона для eatmart
+
+		if (empty($section->roditi)) $section->roditi = $section->name;
 
         if ($section->parent_id > 0) {
 
@@ -122,58 +123,173 @@ class Controller_Section extends Controller_Frontend
                 ->where('active', '=', 1)
                 ->where('id', '=', $section->parent_id)
                 ->find();
-			
+
             $this->layout->allbg = $parent->id; // show parent image if has parent [eatmart]
 
             $fv_id = $this->request->param('fv_id');
 
-            if ( ! empty($fv_id)) { // это страница с товарами, третий уровень
+			$this->tmpl['roditi'] = $this->tmpl['third_level'] = '';
+
+            if ( ! empty($fv_id)) { // это страница с товарами, третий уровень, созданный из фильтра по большому типу, есть
 
                 $sphinx = new Sphinx('section_filter', $section->id.'_'.$fv_id);
-                $this->tmpl['hide_text'] = TRUE;
-                $this->tmpl['search_result'] = $sphinx->search();;
+
+                $this->tmpl['search_result'] = $sphinx->search();
                 $this->layout->menu = $sphinx->menu();
-                $this->tmpl['third_level'] = $third_level = $sphinx->stats()['vals'][Model_Filter::CLOTH_BIG_TYPE][$fv_id];
-                $this->layout->title = $third_level.' '.$this->layout->title;
+
+                $third_level = '';
+                foreach($sphinx->stats()['vals'] as $fid => $data) {
+                    if (Model_Filter::big($fid)) {
+                        $third_level = $sphinx->stats()['vals'][$fid][$fv_id]['name'];
+                        break;
+                    }
+                }
+                $this->tmpl['third_level'] = $third_level ;
+                $seoname = $third_level.' '.($section->parent_id == Model_Section::CLOTHS_ROOT ? mb_strtolower($section->name) : ''); // тут переставляем слова местами
+
+                $this->tmpl['hide_text'] = TRUE;
 
             } elseif ( $section->settings['list'] == Model_Section::LIST_FILTER) {  // это страница с меню по фильтру
 
-                $sphinx = new Sphinx('section', $section->id); // понадобится для меню
+                $sphinx = new Sphinx('section', $section->id, FALSE); // понадобится для меню
                 $stats = $sphinx->stats();
-                $this->layout->menu = $sphinx->menu();
-                $this->tmpl['search_result'] = $sphinx->search();;
 
-                $this->tmpl['filter_values'] = ORM::factory('filter_value')
-                    ->where('id', 'IN', array_keys($stats['vals'][$section->settings['list_filter']]))
+                $this->tmpl['filter_values'] = $values = ORM::factory('filter_value')
+                    ->where('id', 'IN', array_keys($stats['vals'][$section->settings['sub_filter']]))
+                    ->order_by('sort')
                     ->find_all()
                     ->as_array();
 
-            } elseif ($section->settings['list'] == Model_Section::LIST_TEXT) { // показываем только текст
+                $subs = [];
 
-                $sphinx = new Sphinx('section', $section->id);
+                $sf = [
+                    // коды фильтров для подменю во всё-для мам
+                    18030 => 2101, // хранение молока - вид
+                    20123 => 2100, // уход за грудью - вид
+                    20124 => FALSE, // подушки для мам - бренд
+                    20125 => 2260, // для роддома - вид
 
-                if ($section->is_cloth()) { // для одежды левое меню = большой фильтр
+                    20126 => 2267, // питание для мам - применение
+                    20127 => 2262, // косметика - тип
+                    18027 => 2264, // молокоотсосы - вид
+                    20128 => 2259, // белье - вид
 
-                    $this->layout->menu = View::factory('smarty:common/menu_filter', [
-                        'vals' => $sphinx->stats()['vals'][Model_Filter::CLOTH_BIG_TYPE],
-                        'section'   => $section,
-                    ]);
+                    // коды фильтров для подменю - косметика и ежедневный уход
+                    20422 => 2290, // для ванны и душа - вид
+                    20423 => 2292, // уход за волосами - вид
+                    20424 => 2294, // гигиена рта - вид
+                    20425 => 2296, // личная гигиена - вид
+                    20426 => 2301, // уход за руками - вид
+                    20427 => 2303, // уход за ногами - вид
+                    20428 => 2306, // уход за лицом - применение
+                ];
+                foreach($values as $val) {
+                    $s = new Sphinx('section_filter', $section->id.'_'.$val->id, FALSE);
+                    $sub = [
+                        'name'  => $val->name,
+                        'id'    => $val->id,
+                        'img'   => $val->get_img(),
+                    ];
 
-                } else { // для не одежды - обычное меню
+                    $stats = $s->stats();
+                    if ( ! empty($sf[$val->id]) && ! empty($stats['vals'][$sf[$val->id]])) {
+                        foreach($stats['vals'][$sf[$val->id]] as $vid => &$v) {
+                            $v['href'] = $s->href(['f' => [$sf[$val->id] => [$vid]]]);
+                        }
+                        $sub['sub'] = $stats['vals'][$sf[$val->id]];
 
-                    $this->layout->menu = $sphinx->menu();
+                    } elseif ( ! empty($stats['brands'])) {
+
+                        foreach($stats['brands'] as &$b) {
+                            $b['href'] = $s->href(['b' => [$b['id']]]);
+                        }
+                        $sub['sub'] = $stats['brands'];
+
+                    }
+                    $subs[] = $sub;
                 }
+                $this->tmpl['row'] = 2;
+                $this->tmpl['column'] = 0;
 
-            } else { // показываем обычные товары
+                $this->layout->menu = View::factory('smarty:common/menu_third', [
+                    'section'       => $section,
+                    'subs_filter'   => $subs,
+                    'column'        => 5,
+                ])->render();
+
+                $this->tmpl['subs_filter'] = $subs;
+                $this->tmpl['hide_text'] = TRUE;
+
+            } else { // показываем обычные товары - тут надо показать текст если не было запроса
 
                 $sphinx = new Sphinx('section', $section->id);
                 $this->layout->menu = $sphinx->menu();
                 $this->tmpl['search_result'] = $sphinx->search();
+				$params = $sphinx->params();
+				
+				if ( ! empty($params['b'])) { // есть бренды
+					
+					list(, $_v) = each($params['b']);
+					
+					$this->tmpl['third_level'] .= $sphinx->stats()['brands'][$_v]['name'] . ' ';
+					$this->tmpl['roditi'] .= $sphinx->stats()['brands'][$_v]['name'] . ' ';
+				}
+				
+				if ( ! empty($params['f'])) {  // есть фильтры
+
+					foreach( $params['f'] as $_f => $_v ) {
+						
+						list($_f, $_v) = each($params['f']);
+						
+						if ( is_array($_v)) {
+                            foreach ($_v as $_) {
+
+                                $tmp = &$sphinx->stats()['vals'][$_f][$_];
+
+                                $this->tmpl['third_level'] .= $tmp['name'] . ' ';
+                                $this->tmpl['roditi'] .= (!empty($tmp['roditi']) ? $tmp['roditi'] : $tmp['name']) . ' ';
+                            }
+                        }
+					}
+				}
+
+                if ($sphinx->qs) { // есть строка запроса - надо генерить СЕО
+                    $this->layout->set($sphinx->seo());
+                }
             }
 
+            if ( ! empty($query)) $this->tmpl['hide_text'] = TRUE;
+            
             $this->tmpl['tags'] = $section->get_tags();
 			
+			if (empty($seoname)) {
+                $seoname = $section->name.' '.mb_strtolower($this->tmpl['third_level']);
+            }
+
+            if ( ! empty($sphinx->qs)) {
+                $this->layout->title = $seoname . '. Купить ' . mb_strtolower($section->name) . ' Москве, Санкт-Петербурге — интернет магазин Младенец.ру';
+                $this->layout->description = 'Большой выбор ' . mb_strtolower($section->roditi) . ' ' . $this->tmpl['roditi'] . ' по доступным ценам. '
+                    .'У нас вы можете купить ' . mb_strtolower($seoname) . ' по тел: 8(800)555-699-4. Быстрая доставка по всей России';
+                $this->layout->keywords = $seoname  . ', купить ' . mb_strtolower($seoname) . ' в москве, заказать, продажа';
+            }
+			
         } elseif ($section->parent_id == 0) { // категория верхнего уровня
+
+            $this->tmpl['row'] = 4;
+
+            if (in_array($section->id, [29777])) {
+
+                $this->layout->menu = View::factory('smarty:common/menu_section', [ // подменю для подгузников
+                    'section' => $section,
+                    'top_menu' => Model_Section::get_catalog(),
+                ])->render();
+                $this->tmpl['row'] = 2;
+                $this->tmpl['hide_sub'] = 1;
+
+            } else {
+
+                $this->layout->menu = FALSE;
+            }
 
             $this->tmpl['subs'] = $subs = ORM::factory('section') // подкатегории
                 ->with('img')
@@ -185,76 +301,20 @@ class Controller_Section extends Controller_Frontend
                 ->as_array('id');
 
             if (empty($subs)) throw new HTTP_Exception_404;
+        }
 
-            $brandy = $filtry = $filters = $brand_ids = $brands = $by_section = array();
-            foreach($subs as $sub_section) {
-                if ($sub_section->settings['list'] == Model_Section::LIST_GOODS) {
-                    $brandy[] = $sub_section->id;
-                } elseif ($sub_section->settings['list_filter']) {
-                    $filtry[$sub_section->id] = $sub_section->settings['list_filter'];
-                }
-            }
-            if ( ! empty($brandy)) {
-                $section_brand = DB::select('brand_id', 'section_id', DB::expr('SUM(qty) as qty')) // брэнды в секции
-                    ->from('z_group')
-                    ->where('section_id', 'IN', $brandy)
-                    ->where('brand_id',  '>', 0)
-                    ->where('active', '=', 1)
-                    ->group_by('section_id')
-                    ->group_by('brand_id')
-                    ->execute()
-                    ->as_array();
+        $this->tmpl['seoname'] = $seoname;
+        if (($p = $this->request->query('page')) && $p > 1) { // если мы не на первой странице - добавим текст в title
+            $this->layout->title .= ' (страница каталога №'.$p.') - Младенец.ру';
+        }
 
-                foreach($section_brand as $sb) { // группируем по секциям и собираем бренды
-                    $brand_ids[$sb['brand_id']] = $sb['brand_id'];
-                    if (empty($by_section[$sb['section_id']])) $by_section[$sb['section_id']] = array();
-                    $by_section[$sb['section_id']][$sb['brand_id']] = $sb['qty'];
-                }
-
-                if ( ! empty($brand_ids)) // чтобы когда нет вообще брендов не давало красный экран
-                {
-                    $this->tmpl['brands'] = $brands = ORM::factory('brand')   // все подряд брэнды
-                        ->where('active', '=', 1)
-                        ->where('id', 'IN', array_keys($brand_ids))
-                        ->find_all()
-                        ->as_array('id');
-
-                    function brand_sorter($brands) {
-                        return function ($a, $b) use ($brands) {
-                            // Не должно выбрасывать ошибки на "лишних" брендах
-                            if ( ! empty($brands[$a]) AND ! empty($brands[$b]) AND ($brands[$a] instanceof Model_Brand) AND ($brands[$b] instanceof Model_Brand)) {
-                                return $brands[$a]->sort - $brands[$b]->sort ;
-                            } else return 0;
-                        };
-                    }
-                    foreach($by_section as &$section_brand) {
-                        uksort($section_brand, brand_sorter($brands));
-                    }
-                    $this->tmpl['by_section'] = $by_section; // бренды по категориям
-                }
-            }
-            if ( ! empty($filtry)) {
-                foreach($filtry as $sub_id => $filter_id) {
-                    $sphinx = new Sphinx('section', $sub_id);
-                    $params = $sphinx->menu();
-                    if ( ! empty($params['vals'][$filter_id])) {
-                        $filters[$sub_id] = $params['vals'][$filter_id];
-                    }
-                }
-                $this->tmpl['filters'] = $filters; // фильтры по категориям
-            }
-
-			$this->tmpl['text'] = $section->text;
-
-			$this->layout->menu = View::factory('smarty:common/menu_section', array(
-                'section' => $section,
-
-/*				'items' => $by_section,
-				'sections' => $subs,
-				'column' => 7,
-				'brands' => $brands,
-                'filters' => $filters
-*/			)); // меню c помеченными опциями поиска
+        if ($this->request->post('goodajax') || $this->request->is_ajax()) { // возвращаем json c данными
+            $json = [
+                'title' => ! empty($this->layout->title) ? $this->layout->title : 'Младенец. РУ',
+                'data' => View::factory('smarty:section/ajax', ['menu' => $this->layout->menu, 'body' => View::factory('smarty:section/view', $this->tmpl)])->render(),
+            ];
+            $this->request->query();
+            $this->return_json($json);
         }
     }
 
@@ -272,75 +332,91 @@ class Controller_Section extends Controller_Frontend
                 }
             }
         }
-        list($f, $v, $g) = Model_Good::get_pampers();
+
+        $g = Model_Good::get_pampers();
 
         /**
          * Специальные параметры отбора для памперса [HARDCODE]
          */
-        $age = array(
-            '0-5' => array(184435, 54684, 54037, 54038, 148036, 148037, 102705, 193248),
-            '6-12' => array(54060, 54062, 150178, 54061, 54063, 150179, 148030, 148032, 148119, 148120, 193758, 193760, 193759),
-            '1-2' =>  array(54064, 150177, 54065, 191785, 191784, 148038, 148121, 148039, 148041, 148040, 148042, 148033, 148034, 191783, 191782, 55367, 55370, 55368, 55371, 55369, 55372),
-        );
+        $this->tmpl['age'] = $age = [
+            '0-5' => [184435, 54684, 54037, 54038, 148036, 148037, 102705, 193248],
+            '6-12' => [54060, 54062, 150178, 54061, 54063, 150179, 148030, 148032, 148119, 148120, 193758, 193760, 193759],
+            '1-2' =>  [54064, 150177, 54065, 191785, 191784, 148038, 148121, 148039, 148041, 148040, 148042, 148033, 148034, 191783, 191782, 55367, 55370, 55368, 55371, 55369, 55372],
+        ];
 
-        $size = array(
-            1 => array('Размер 1 (2-5 кг)' => array(54036, 54051, 74550, 193258)),
-            2 => array('Размер 2 (3-6 кг)' => array(54037, 54038, 54052, 54053, 148036, 148037, 184435, 193248, 193254)),
-            3 => array('Размер 3 (4-9 кг)' => array(54039, 54040, 54054, 54055, 54060, 54061, 147994, 148030, 148031, 148119, 150178, 157491, 184434, 193255)),
-            4 => array('Размер 4 (7-18 кг)' => array(54041, 54042, 54043, 54056, 54057, 54062, 54063, 55367, 55370, 148032, 148038, 148120, 148121, 148826, 150179, 181635, 191783, 191785, 193247, 193256)),
-            '4+' => array('Размер 4+ (9-20 кг)' => array(54044, 54045, 54046, 148033, 181636, 193253)),
-            5 => array('Размер 5 (11-25 кг)' => array(54047, 54048, 54049, 54058, 54059, 54064, 54065, 55368, 55371, 109458, 148034, 148039, 148041, 150177, 181637, 184433, 191782, 191784, 193257)),
-            6 => array('Размер 6 (16+ кг)' => array(54050, 55369, 55372, 148035, 148040, 148042)),
-        );
+        $this->tmpl['size'] = $size = [
+            0 => ['Размер 0' => [188554]],
+            1 => ['Размер 1 (2-5 кг)' => [54036, 54051, 74550, 193258]],
+            2 => ['Размер 2 (3-6 кг)' => [54037, 54038, 54052, 54053, 148036, 148037, 184435, 193248, 193254]],
+            3 => ['Размер 3 (4-11 кг)' => [54039, 54040, 54054, 54055, 54060, 54061, 147994, 148030, 148031, 148119, 150178, 157491, 184434, 193255,214139,214142, 216123, 216122, 216121]],
+            4 => ['Размер 4 (7-14 кг)' => [54041, 54042, 54043, 54056, 54057, 54062, 54063, 55367, 55370, 148032, 148038, 148120, 148121, 148826, 150179, 181635, 191783, 191785, 193247, 193256, 214143, 214140, 216125, 216126]],
+            '4 ' => ['Размер 4+ (9-16 кг)' => [54044, 54045, 54046, 148033, 181636, 193253]],
+            5 => ['Размер 5 (11-25 кг)' => [54047, 54048, 54049, 54058, 54059, 54064, 54065, 55368, 55371, 109458, 148034, 148039, 148041, 150177, 181637, 184433, 191782, 191784, 193257,214141, 214144, 216129, 216127, 216128]],
+            6 => ['Размер 6 (15+ кг)' => [54050, 55369, 55372, 148035, 148040, 148042, 216130, 216131, 216132]],
+        ];
         
         $this->layout->title = 'Магазин Памперс';
-	    $this->tmpl['front'] = ! (bool)$this->request->query('ba');
-        $query_string = '';
+	    $this->tmpl['front'] = ! (bool)$this->request->query('ba'); // ba - значит баннер сверху
 
-    //    $params = Txt::read_params(TRUE);
-        if (empty($params)) {
-            $this->tmpl['view_params'] = Txt::view_params('');
-        } else {
-            $this->tmpl['front'] = FALSE;
-        }
-
-        $section = new Model_Section(Model_Good::PAMPERS_SECTION);
-
-        $params['b'] = array(Model_Good::PAMPERS_BRAND);
-        if (($s = $this->request->query('size')) && ! empty($size[$s])) {
-            $query_string = 'size'.$s;
+        $sphinx = new Sphinx('pampers');
+        $params = $sphinx->params();
+        
+        if ( ! empty($params['f'])) $this->tmpl['front'] = FALSE; // если есть хоть один фильтр - мы не на главной
+        $s = $this->request->query('size');
+        if ( $s !== '' && ! empty($size[$s])) {
+            $sphinx->param('g', current($size[$s]));
             $this->tmpl['front'] = FALSE;
         }
 
         if (($a = $this->request->query('age')) && ! empty($age[$a])) {
-            $query_string = 'age'.$a;
+            $sphinx->param('g', $age[$a]);
             $this->tmpl['front'] = FALSE;
         }
 
-        // тут надо отобрать только те фильтры и товары что для пампарса подходят
-        $filters = $vals = array();
-        list($filters, $vals) = Model_Filter_Value::filter_val($v);
- 
-        if ($this->tmpl['front']) {
-            $this->tmpl['best'] = ORM::factory('good')->where('id', 'IN', $g)->order_by('popularity', 'DESC')->limit(4)->find_all();
+        if ($this->tmpl['front']) { // на главной получаем 4 самых популярных товара
+            $this->tmpl['best'] = $best = ORM::factory('good')
+                ->where('id', 'IN', $g)
+                ->order_by('popularity', 'DESC')
+                ->limit(4)
+                ->find_all()
+                ->as_array('id');
+
+            $this->tmpl['images'] = Model_Good::many_images([255], array_keys($best));
+            $this->tmpl['price'] = Model_Good::get_status_price(1, array_keys($best));
+        
+            //цена на premium care 
+            $result = DB::select(DB::expr('MIN(price) as min_price'))
+                        ->from('z_good')
+                        ->join('z_good_filter')
+                        ->on('z_good.id','=','z_good_filter.good_id')
+                        ->where('filter_id', '=', 2199)
+                        ->where('value_id', '=', 18696)
+                        ->where('good_id', 'in', 
+                                DB::select('good_id')->from('z_good')
+                                    ->join('z_good_filter')
+                                    ->on('z_good.id','=','z_good_filter.good_id')
+                                    ->where('filter_id', '=', 2200)
+                                    ->where('value_id', '=', 18743)
+                               )->limit(1)->execute()->current();
+            $this->tmpl['price_premium_care'] = ($result['min_price'] ? $result['min_price'] : 540);
         }
 
-        $this->tmpl['line'] = $vals[1578]; // фильтр по коллекции HARDCODE
-        $this->tmpl['age'] = $age;
-        $this->tmpl['size'] = $size;
-		$this->tmpl['query'] = array_diff_key($this->request->query(), $params);
+        $this->layout->menu = $sphinx->menu();
+        $is_pampers = true;
+        View::bind_global('is_pampers', $is_pampers);
+        
+        if ( ! $this->tmpl['front']) {
+            $this->tmpl['search_result'] = $sphinx->search();
+        }
 
-        $this->layout->menu = View::factory('smarty:common/menu', array(
-            'vals' => $vals,
-            'filters' => $filters,
-            'params' => $params,
-            'max' => ceil($section->max_price),
-            'min' => floor($section->min_price),
-            'sections' => Model_Section::id_name(array(Model_Good::PAMPERS_SECTION, 28856)),
-
-            'search_mode' => 'pampers',
-            'search_query' => $query_string,
-        )); // меню
+        if ($this->request->post('goodajax') || $this->request->is_ajax()) { // возвращаем json c данными
+            $json = [
+                'title' => $this->layout->title,
+                'data' => View::factory('smarty:section/ajax', ['menu' => $this->layout->menu, 'body' => View::factory('smarty:section/pampers', $this->tmpl)])->render(),
+            ];
+            $this->request->query();
+            $this->return_json($json);
+        }
     }
 
     /**

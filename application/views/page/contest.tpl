@@ -28,13 +28,11 @@
                 <p>Укажите ваш email в <a href="/account">профиле</a></p>
             {/if}
         {/if}
-        {if empty($is_kiosk)}
-            <label class="wl" for="price">Приложите файл<sup>*</sup></label>
-            <div class="fl"><input type="file" name="price" /><br />
-                {if ! empty($errors.price)}<b style="color:red">{$errors.price}</b>{/if}
-                Принимаются картинки в формате .jpg. Mаксимальный размер файла &mdash;&nbsp;2.5&nbsp;мб.
-            </div>
-        {/if}
+        <label class="wl" for="price">Приложите файл<sup>*</sup></label>
+        <div class="fl"><input type="file" name="price" /><br />
+            {if ! empty($errors.price)}<b style="color:red">{$errors.price}</b>{/if}
+            Принимаются картинки в формате .jpg. Mаксимальный размер файла &mdash;&nbsp;2.5&nbsp;мб.
+        </div>
 
         <p class="cb"><br /><input type="submit" value="Отправить заявку" class="butt" name="contest"/></p>
     </form>

@@ -5,27 +5,27 @@ class Model_User_Child extends ORM
     const SEX_FEMALE = 0;
     const SEX_MALE   = 1;
 
-    public static $SEX  = array(self::SEX_FEMALE, self::SEX_MALE);
-    public static $SEX_CAPTION = array('Девочка', 'Мальчик');
+    public static $SEX  = [self::SEX_FEMALE, self::SEX_MALE];
+    public static $SEX_CAPTION = ['Девочка', 'Мальчик'];
 
     protected $_table_name = 'z_user_child';
 
-    protected $_belongs_to = array(
-        'user' => array( 'model' => 'user', 'foreign_key' => 'user_id' ),
-    );
+    protected $_belongs_to = [
+        'user' => ['model' => 'user', 'foreign_key' => 'user_id'],
+    ];
 
     public function rules()
     {
-        return array(
-            'name' => array(array('not_empty')),
-            'sex' => array(
-                array('Model_User_Child::sex_ok')
-            ),
-            'birth' => array(
-                array('not_empty'),
-                array('Model_User_Child::birth_ok'),
-            )
-        );
+        return [
+            'name' => [['not_empty']],
+            'sex' => [
+                ['Model_User_Child::sex_ok']
+            ],
+            'birth' => [
+                ['not_empty'],
+                ['Model_User_Child::birth_ok'],
+            ],
+        ];
     }
 
     public static function sex_ok($value)

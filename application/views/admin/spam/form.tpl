@@ -3,7 +3,7 @@
     <h1>Рассылка #{$i->id} <span class="{if $i->status == Model_Spam::STATUS_PROCEED}red{elseif $i->status == Model_Spam::STATUS_READY}}green{/if}">[{$i->status()}]</span></h1>
     <p>
         <label for="name">Название<br />(тема письма)</label>
-        <input type="text" id="name" name="name" value="{$i->name|default:''}" class="width-50" />
+        <input type="text" id="name" name="name" value="{$i->name|escape:html|default:''}" class="width-50" />
     </p>
     <p class="forms-inline">
         <label class="unit-40">Рассылать после</label>

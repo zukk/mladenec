@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 $(document).ready(function() {
     $('.area').click(function(e) {
         if (e.target.className == 'no') {
@@ -54,7 +54,8 @@ $(document).ready(function() {
                     </td>
                 </tr>
                 <tr><td><b>Бренд:</b></td><td><a href='/od-men/brand/{$i->brand->id}'>{$i->brand->name}</a></td><td>{if $i->brand->active}<span class="green">акт</span>{else}<span class="red">скрыт</span>{/if}</td></tr>
-                <tr><td><b>Отображение:</b></td><td>{$i->prop->view_type_name()}</td><td></td></tr>
+                <tr><td><b>Страна:</b></td><td>{$i->country->name}</td><td></td></tr>
+                <tr><td><b>Вес / Габариты:</b></td><td>{$i->prop->weight} кг / {$i->prop->size} мм </td><td></td></tr>
             </table>
         </div>
         <div class="unit-25">
@@ -204,15 +205,25 @@ $(document).ready(function() {
         <label for="upc">UPC</label>
         <input name="upc" id="upc" value="{$i->upc|escape:'html'}" size="50" />
     </p>
+    {if $i->big}
     <p>
-        <label>Описание</label>
-        <textarea class="html" name="prop[desc]" rows="15" cols="50">{$i->prop->desc}</textarea>
+        <label>Преимущества (для КГТ)</label>
+        <textarea class="html" name="prop[advantage]" rows="15" cols="50">{$i->prop->advantage}</textarea>
     </p>
+    {/if}
+    {foreach from=$sectionTabs item=tabName key=k}
+		{if $tabName != "Отзывы"}
+			<p id="p-tab-{$k}">
+				<label>{$tabName}</label>
+				<textarea id="tab-{$k}" class="html tabText" name="good_text[{$tabName}]" rows="15" cols="50">{$goodTabs[$tabName]|default:''}</textarea>
+			</p>
+		{/if}
+	{/foreach}
     <p>
         <label for="search">Поисковые слова</label>
         <textarea name="prop[search]" rows="15" cols="50" style="height:100px;">{$i->prop->search}</textarea>
     </p>
-    <p>
+    {*<p>
         <label>Заголовок спойлера</label>
         <input id="price" name="prop[spoiler_title]" value="{$i->prop->spoiler_title}" size="40" />
     </p>
@@ -235,7 +246,7 @@ $(document).ready(function() {
     <p>
         <label>Спойлер 3</label>
         <textarea class="html" name="prop[spoiler3]" rows="15" cols="50">{$i->prop->spoiler3}</textarea>
-    </p>
+    </p> *}
     <p>
         <label>Картинка 500 (no&nbsp;watermark)</label>
         {if $i->prop->img500}
@@ -375,7 +386,7 @@ $(document).ready(function() {
         <label for="to_wikimart">Выгружать в&nbsp;Wikimart</label>
         <input type="checkbox" id="to_wikimart" name="prop[to_wikimart]" value="1" {if $i->prop->to_wikimart}checked="checked"{/if} />
     </p>
-    <p>
+    <p {if $i->big}style='opacity: 0.5'{/if}>
         <label>Вид карточки:</label>
 		<select name="prop[view_type]">
 			<option value="1"{if $i->prop->view_type eq 1} selected{/if}>Общая карточка</option>
@@ -388,6 +399,24 @@ $(document).ready(function() {
         <div class="unit-80">
             <input name="edit" value="Сохранить" type="submit" class="btn btn-green" />
             {if $i->id}<input name="edit" value="Сохранить и вернуться к списку" type="submit" class="btn  btn-green ok" alt="list" />{/if}
+			<script>
+				$('[name=edit]').click(function(){
+					var empty = false;
+					$('.tabText').each(function(){
+						if( $(this).redactor('code.get').match(/^\s*$/i) ){
+							var t = $('#p-'+$(this).attr('id'));
+							t.find('label').css({
+								color: 'red'
+							});
+							$('html, body').animate({ scrollTop: t.offset().top}, 'fast');
+							empty = true;
+						}
+					});
+					
+					if( empty )
+						return false;
+				});
+			</script>
         </div>
     </div>
 </form>

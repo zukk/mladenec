@@ -27,7 +27,7 @@
             
             <p>
                 <label for="name">Название</label>
-                <input type="text" id="name" name="name" value="{$i->name}" class="width-50" />
+                <input type="text" id="name" name="name" value="{$i->name|escape:html}" class="width-50" />
             </p>
 			{include file='admin/seo/widget.tpl'}
             <p>
@@ -134,10 +134,12 @@
     </p>
     <p class="input-groups">
         <label for="banner">Плашка</label>
-        <span class="btn-group">
+
+        <span class="input-groups">
             <input type="text" size="40" name="banner" class="input-search" id="banner" value="{$i->banner}" />
-            <span class="btn btn-round" data-filemanager="#banner">Выбрать</span>
-	</span>
+            <span class="btn-append"><button class="btn" data-filemanager="#banner">Выбрать</button></span>
+	    </span>
+
         {if ! empty($i->banner)}
             <span class="forms-desc"><img src="{$i->banner}" /></span>
         {/if}
@@ -151,19 +153,23 @@
 	</p>
     {if $i->id}
         <p class="forms-inline">
-            <label>Товары, участвующие в акции</label>
+            <label>
+                Товары, участвующие в&nbsp;акции<br />
+                <a onclick="$('tr.del').click()" class="no">удалить все</a>
+            </label>
+
             <div class="area">
                 {include file='admin/good/chosen.tpl' goods=$i->goods->with('action_good')->find_all()}
             </div>
         </p>
-        {*if $i->is_ab_type()}
+        {if $i->is_ab_type()}
             <p class="forms-inline">
                 <label>Товары Б</label>
                 <div class="area">
-                    {include file='admin/good/chosen.tpl' goods=$i->get_b_goods()}
+                    {include file='admin/good/chosen.tpl' goods=$i->get_b_goods() mode=b}
                 </div>
             </p>
-        {/if*}
+        {/if}
     {/if}
     <div class="units-row">
             <div class="unit-30">
@@ -318,16 +324,6 @@
         <input name="edit" value="Сохранить" type="submit" class="btn btn-green"/>
         <input name="edit" value="Сохранить и вернуться к списку" type="submit" class="btn btn-green" alt="list" />
     </p>
-    {if $i->id}
-        {if $i->is_ab_type()}
-            <p>
-                <label>товары Б</label>
-                <div class="area">
-                    {include file='admin/good/simple_list.tpl' goods=$i->get_b_goods()}
-                </div>
-            </p>
-        {/if}
-    {/if}
 </form>
     {$subactions = ORM::factory('action')->where('parent_id','=',$i->id)->find_all()->as_array()}
     {if ! empty($subactions)}

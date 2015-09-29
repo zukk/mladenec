@@ -2,13 +2,15 @@
 
 class Controller_Smarty extends Controller {
 
-    protected $layout; // common layout for all the pages
+    protected $layout = FALSE; // common layout for all the pages
 
     protected $user; // сurrent (logged in) user
     
     protected $config; // configuration
 
     protected $tmpl = array(); // array for template variables
+    
+    protected $force_profiling = FALSE;
 
     public function before()
     {
@@ -25,35 +27,33 @@ class Controller_Smarty extends Controller {
         // Fetch user.
         $this->user = Model_User::current();
 
-		$this->tmpl['host'] = $_SERVER['HTTP_HOST'];
+        View::bind_global('host',$_SERVER['HTTP_HOST']);
 		
-		$layout_name = 'layout';
-		
-		if( !empty( Kohana::$hostnames[Kohana::$server_name]['is_mobile'] ) ){
-
-			$layout_name = 'layout_mobile';
-		}
-		
-        $this->layout = View::factory('smarty:' . $layout_name, $this->tmpl);
-        $this->layout->body = FALSE;
+        if ( ! ( $this->layout instanceof Smarty_View )) {
+            $this->layout = $this->layout = View::factory('smarty:empty', $this->tmpl);
+            $this->layout->body = FALSE;
+        }
         
         $this->config = Conf::instance();
         
-        View::bind_global('user',             $this->user);
-        View::bind_global('config',           $this->config);
-        View::bind_global('vitrina',          Kohana::$server_name);
+        View::bind_global('user',    $this->user);
+        View::bind_global('config',  $this->config);
     }
 
     public function after()
     {
         if (FALSE === $this->layout->body) {
-            $this->layout->body = View::factory('smarty:'.$this->request->controller().'/'.$this->request->action(), $this->tmpl); // inside
+            $controller = $this->request->controller();
+            if ($controller == 'admin_ajax') $controller = 'admin/ajax';
+            if ($controller != 'admin_json') $this->layout->body = View::factory('smarty:'.$controller.'/'.$this->request->action(), $this->tmpl); // inside
         }
-
+        
         // Profiler:
-        if (Kohana::$environment === Kohana::DEVELOPMENT ||
-            ( ! empty($this->user->login) && in_array($this->user->login, array('puchkovk@gmail.com', 'zukk')))
+        if ( Request::initial() === Request::current() // No profiling in a subqueries
+                AND ! empty($this->user->login)
+                AND  in_array($this->user->login, ['puchkovk@gmail.com', 'zukk'])
         ) {
+            $this->layout->force_profiling = $this->force_profiling;
             $this->layout->profile = View::factory('profiler/stats');
         }
 
@@ -89,7 +89,7 @@ class Controller_Smarty extends Controller {
     /* возврат от формы - перегрузка страницы */
     public function return_reload()
     {
-        if ($this->request->post('ajax')) {
+        if ($this->request->post('ajax') || $this->request->is_ajax()) {
             $this->return_json(array('reload' => true));
         } else {
             $this->request->redirect();
@@ -99,7 +99,7 @@ class Controller_Smarty extends Controller {
     /* возврат от формы - ошибки */
     public function return_error($e)
     {
-        if ($this->request->post('ajax')) {
+        if ($this->request->post('ajax') || $this->request->is_ajax()) {
             $this->return_json(array('error' => $e));
         } else {
             $this->layout->error = $e;
@@ -109,7 +109,7 @@ class Controller_Smarty extends Controller {
     /* возврат от формы - ok */
     public function return_ok()
     {
-        if ($this->request->post('ajax')) {
+        if ($this->request->post('ajax') || $this->request->is_ajax()) {
             $this->return_json(array('ok' => true));
         } else {
             $this->request->redirect();
@@ -119,7 +119,7 @@ class Controller_Smarty extends Controller {
     /* возврат от формы - редирект */
     public function return_redirect($url)
     {
-        if ($this->request->post('ajax')) {
+        if ($this->request->post('ajax') || $this->request->is_ajax()) {
             $this->return_json(array('redirect' => $url));
         } else {
             $this->request->redirect($url);
@@ -129,7 +129,7 @@ class Controller_Smarty extends Controller {
     /* возврат от формы - html-код */
     public function return_html($html)
     {
-        if ($this->request->post('ajax')) {
+        if ($this->request->post('ajax') || $this->request->is_ajax()) {
             $this->return_json(array('html' => $html));
         } else {
             $this->layout->html = $html;

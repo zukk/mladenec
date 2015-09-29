@@ -1,33 +1,36 @@
 <?php
+
 class Model_Zone extends ORM { // зоны доставки
 
-    const ZAMKAD = 1; // id зоны замкадья, для точек не попавших ни в одну зону
+    const ZAMKAD = 1; // id зоны замкадья (к цене нужно расстояние от мкад)
+    const MYTISHI = 3; // id зоны МЫТИЩИ (технической?)
     const MKAD = 10; // id зоны мкад (технической)
     const DEFAULT_ZONE = 2; // id зоны поумолчанию (центральная зона)
+    const NAME_REGION = 'Региональная доставка'; // название зоны вне зоны
 
     protected $_table_name = 'z_zone';
 
-    protected $_has_many = array(
+    protected $_has_many = [
         'times' => array('model' => 'zone_time', 'foreign_key' => 'zone_id'),
-    );
+    ];
 
-    protected $_table_columns = array(
+    protected $_table_columns = [
         'id' => '', 'name' => '', 'short' => '', 'text' => '', 'poly' => '', 'priority' => '', 'color' => '', 'active' => '',
-    );
+    ];
 
     /**
      * @return array
      */
     public function rules()
     {
-        return array(
-            'name' => array(
-                array('not_empty'),
-            ),
-            'poly' => array(
-                array('not_empty'),
-            ),
-        );
+        return [
+            'name' => [
+                ['not_empty'],
+            ],
+            'poly' => [
+                ['not_empty'],
+            ],
+        ];
     }
 
     public function flag()
@@ -35,31 +38,56 @@ class Model_Zone extends ORM { // зоны доставки
         return array('active');
     }
 
+    public function __toString()
+    {
+        return strval($this->id);
+    }
+
     /**
-     * Определить зону доставки по координатам
+     * Определить зону доставки по координатам, если один параметр,
+     * если 2 - проверка что координаты в зоне (не учитывая активности зоны)
      * @param string $latlong - координаты зоны через пробел, запятую или запятую+пробел
+     * @param int $zone_id - ид зоны
      * @return Model_Zone
      */
-    static public function locate($latlong)
+    static public function locate($latlong, $zone_id = FALSE)
     {
         $latlong = str_replace(',', ' ', $latlong); // координаты через пробел
 
-        $zone = DB::query(Database::SELECT,
-            "SELECT * FROM z_zone
-            WHERE active = 1 AND GISWithin(GeomFromText('Point(".$latlong.")'), polygon)
-            ORDER BY priority DESC
-            LIMIT 1")
-            ->as_object('Model_Zone')
-            ->execute()
-            ->current();
+        $z = ORM::factory('zone')
+            ->where(DB::expr('GISWithin(GeomFromText(\'Point('), $latlong, Db::expr(')\'), polygon)'))
+            ->order_by('priority', 'DESC')
+            ->limit(1);
 
-        if (empty($zone)) return false; // никуда не попали - замкадье
+        if (empty($zone_id)) {
+            $z->where('active', '=', '1');
+        } else {
+            $z->where('id', '=', $zone_id);
+        }
+        $zone = $z->find();
 
+        if ( ! $zone->loaded()) return FALSE; // никуда не попали
+        if ( ! empty($zone_id)) return TRUE; // проверяли попадание в конкретную зону - и попали
         return $zone; // вернём зону куда попали
     }
 
     /**
-     * поиск ближайшей точки на мкаде, для расчёта маршрута от мкад
+     * расстояние в километрах между двумя точками
+     */
+    static function distance($latlon1, $latlon2)
+    {
+        list($lat1, $lon1) = preg_split('~(, ?| )~', $latlon1);
+        list($lat2, $lon2) = preg_split('~(, ?| )~', $latlon2);
+
+        $R = 6371;
+        $a = 0.5 - cos(($lat2 - $lat1) * pi() / 180) / 2 + cos($lat1 * pi() / 180) * cos($lat2 * pi() / 180) * (1 - cos(($lon2 - $lon1) * pi() / 180)) / 2;
+
+        return $R * 2 * asin(sqrt($a));
+
+    }
+
+    /**
+     * поиск ближайшей точки на мкаде, для расчёта маршрута от мкад ( актуально только для зоны ZAMKAD)
      * @param $latlong
      * @return array
      */
@@ -91,106 +119,6 @@ class Model_Zone extends ORM { // зоны доставки
         return $zone->name;
     }
 
-
-    /**
-     * Получить возможные даты доставки для зоны
-     * @param Cart $cart Если не передана - то возвращает 10 дат(с учётом сдвига для возможной крупногб.)
-     * @return array ts => morning
-     */
-    public function allowed_date(Cart $cart = NULL)
-    {
-        $add = 0;
-        if ($cart instanceof Cart && $cart->get_total() > 0) {
-            if ($cart->big_to_wait(FALSE)) {
-                $add = 3;   // + 3 дня если нет на складе
-            } elseif ($cart->big) {
-                $add = 1;   // + 1 день если просто крупногабаритка
-            }
-        }
-
-        // получение списка возможных дат доставки
-        $exclude_dates = DB::select('id', 'morning')
-            ->from('z_no_delivery')
-            ->where('id', '>=', strftime('%Y-%m-%d'))
-            ->where('zone_id', '=', $this->id)
-            ->execute()
-            ->as_array('id', 'morning'); // эти даты надо исключить
-
-        $hm = intval(date('Gi')); // часыминуты
-        $i =  $hm >= 1200 ? 1 : 0; // c 1200 часов доставка на сегодня вырубается
-        $dates = is_null($cart) ? 10 : 7; // число выдаваемых дат
-        $return = array();
-
-        do { // набиваем $dates дат, кроме исключённых
-            $d = strtotime('+ '.($i).' days midnight');
-            $i++;
-            if ($i < $add) continue;
-            $key = strftime('%Y-%m-%d', $d);
-            if ( ! isset($exclude_dates[$key]) || $exclude_dates[$key] == 1) {
-                $return[$key] = ! empty($exclude_dates[$key]); // TRUE for morning
-                $dates--;
-            }
-        } while($dates > 0);
-
-        return $return;
-    }
-
-    /**
-     * Получить возможные интервалы доставки для даты в формате (Y-m-d)
-     * @param string $date - дата
-     * @param float $sum - сумма заказа, если передана - будет расчёт стоимости доставки
-     * @return array
-     */
-    public function allowed_time($date, $sum = NULL)
-    {
-        $no_time = array(0 => 'Нет доступных интервалов на эту дату');
-
-		if (strtotime($date) < strtotime('today midnight')) return $no_time;
-
-        $excluded = DB::select('morning')
-            ->from('z_no_delivery')
-            ->where('zone_id', '=', $this->id)
-            ->where('id', '=', $date)
-            ->execute()
-            ->current();
-
-        // c 1800 часов доставка на завта утро - вырубается
-        if (
-			strtotime( $date ) == strtotime('+1 days midnight')
-            && intval(date('Gi')) >= 1800
-            && !isset($excluded))
-        {
-            $excluded = 1;
-        }
-
-        if ($excluded === 0) return $no_time;
-
-        $q = $this->times
-            ->order_by('morning')
-            ->order_by('sort')
-            ->where('active', '=', 1)
-            ->where('week_day', '&', 1 << (date('N', strtotime($date)) - 1)); // учёт дня недели
-
-        if ($excluded == 1) { // утреннее время исключено
-            $q->where('morning', '=', 0);
-        }
-
-        $times = $q->find_all();
-        if (empty($times)) return $no_time;
-
-        $return = array();
-        $price = ($date == '2014-12-31') ? 500 : 0; // +500 рублей 31.12
-
-        foreach($times as $time) {
-            if ($sum) {
-                $return[$time->id] = $time->name.' ['.($time->get_price($sum) + $price).' руб.] ';
-            } else {
-                $return[$time->id] = $time->name;
-            }
-        }
-        return $return;
-    }
-
     /**
      * Если изменился полигон - меням его в GEO поле
      * @param null|\Validation $validation
@@ -206,5 +134,27 @@ class Model_Zone extends ORM { // зоны доставки
                 ->where('id', '=', $this->id)
                 ->execute();
         }
+    }
+
+    /**
+     * Минимальная цена доставки в зоне, не работает для регионов, не учитывает мкад
+     * @param $zone_id
+     * @param $price
+     * @return bool
+     */
+    static function min_price($zone_id, $price)
+    {
+        $z = new Model_Zone($zone_id);
+        if ( ! $z->loaded() && ! $z->active) return FALSE;
+
+        $zt = $z->times->where('active', '=', 1)
+            ->order_by('price')
+            ->order_by('sort')
+            ->limit(1)
+            ->find();  // cамое дешевое время
+
+        if ( ! $zt->loaded()) return FALSE;
+
+        return $zt->get_price($price);
     }
 }

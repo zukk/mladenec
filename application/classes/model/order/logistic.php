@@ -55,7 +55,7 @@ class Model_Order_Logistic extends ORM  {
     public static function to_queue($phone, $text, $user_id = 0, $order_id = 0) {
         
         $phone = Txt::phone_clear($phone);
-        if ($phone === '') {
+        if ( ! $phone) {
             Log::instance()->add(Log::INFO, 'Error when trying to add SMS to queue to user #' . $user_id . ' - wrong phone ' . $phone . ' format.');
             return FALSE;
         }

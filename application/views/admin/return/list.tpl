@@ -19,6 +19,7 @@
     <tr>
         <th>#</th>
         <th>дата</th>
+        <th>номер заказа</th>
         <th>название</th>
         <th>заявка</th>
         <th>обработана</th>
@@ -29,6 +30,7 @@
     <tr {cycle values='class="odd",'}>
         <td><small>{$i->id}</small></td>
         <td>{$i->created}</td>
+        <td>{if $i->order_num|intval neq 0}<a href="/od-men/order/{$i->order_num|intval}">{/if}{$i->order_num}{if $i->order_num|intval neq 0}</a>{/if}</td>
         <td><a href="/od-men/{$m}/{$i->id}">{$i->name}</a></td>
         <td>{$i->text|truncate:100}</td>
         <td>

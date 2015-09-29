@@ -26,7 +26,7 @@
 				
 				o.data('settings', settings);
 
-				if( o.hasClass('mladenecdateslider') || !settings.target ){
+				if( o.hasClass('mladenecdateslider') || ! settings.target ){
 					return;
 				}
 

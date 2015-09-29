@@ -39,7 +39,25 @@ class Conf {
 
         foreach($config as $k => $v) $this->{$k} = $v;
     }
+    
+    public function regional_shipping_allowed($section_ids)
+    {
+        $allowed = TRUE;
+        
+        foreach($section_ids as $item)
+        {
+			$sid = $item['section_id'];
 
+            // мы не доставляем детское питание ?
+            if (in_array($sid, [29051,70569,70062,64478,70063])) {
+                $allowed = FALSE;
+                break;
+            }
+        }
+		
+        return $allowed;
+    }
+    
     /**
      * Чистим кэш конфига
      */

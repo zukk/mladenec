@@ -10,14 +10,16 @@
 
     <label class="l" for="email">Email<sup>*</sup></label>
     <input id="email" name="email" class="txt {if ! empty($errors.email)}error" error="{$errors.email}{/if}" value="{$smarty.post.email|default:$user->email|default:''}" />
+    
+    <label class="l" for="order-num">Номер заказа</label>
+    <input id="order-num" name="order_num" class="txt" value="{$smarty.post.order_num|default:''}" />     
 
     <label class="l" for="text">Сообщение<sup>*</sup></label>
     <textarea id="text" name="text" class="txt {if ! empty($errors.txt)}error" error="{$errors.text}{/if}" rows="10">{$smarty.post.text|default:''}</textarea>
 
-    {if empty($is_kiosk)}
-	<label class="l" for="img">Прикрепить фото<br /> <small>до 10Мб</small></label>
+    <label class="l" for="img">Прикрепить фото<br /> <small>до 10Мб</small></label>
 	<div class="fl"><input type="file" name="img" /></div>
-    {/if}
+
     {if not $user}
         <label for="captcha" class="l"><img src="/captcha" alt="" /></label>
         <div class="fl">

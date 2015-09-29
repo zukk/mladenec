@@ -5,6 +5,7 @@ class Model_Brand extends ORM {
 	use Seo;
 	
     public $qty = 0; // for qty in brand
+    public $hit = FALSE; // флаг хита
 
     protected $_table_name = 'z_brand';
 

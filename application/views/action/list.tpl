@@ -1,5 +1,9 @@
 <div id="breadcrumb">
-    <a href="/">Главная</a> |
+    <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+        <a href="/" itemprop="url"><span itemprop="title">Главная</span></a>
+    </span>
+    &rarr; 
+    <span>Акции</span>
 </div>
 
 <div id="simple">
@@ -7,8 +11,8 @@
 
     <ul id="action_list" class="na">
         <li>
-            <a href="{Route::url('action_current_list')}" class="fl"><img src="/i/action_star50.png" alt="{$config->actions_header|default:'Акции месяца'}" width="50" /></a>
-            <a href="{Route::url('action_current_list')}">{$config->actions_header|default:'Акции месяца'}</a>
+            <a href="{Route::url('action_list')}" class="fl"><img src="/i/action_star50.png" alt="{$config->actions_header|default:'Акции месяца'}" width="50" /></a>
+            <a href="{Route::url('action_list')}">{$config->actions_header|default:'Акции месяца'}</a>
             {$config->actions_subheader|nl2br}
         </li>
     {foreach from=$actions item=n}

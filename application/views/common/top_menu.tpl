@@ -15,21 +15,13 @@
                     <li><a href="{$sublink}">{$ch->name}</a>
                     {if not empty($ch->sub)}
 	                    <ul>
-		                    <li><a href="{$sublink}"><strong>{$ch->name}</strong></a></li>
-                        {assign var=subs value=$ch->sub|count}
-                        {foreach from=$ch->sub item=n key=k name=n}
-                            {if $smarty.foreach.n.iteration lt 7}
-                            {if $ch->settings.sub eq Model_Section::SUB_BRAND}
-                                <li><a href="{$sublink}?b={$k}">{$n}</a></li>
-                            {elseif $ch->settings.sub eq Model_Section::SUB_FILTER}
-                                {if $item->id eq Model_Section::CLOTHS_ROOT or $ch->settings.list neq Model_Section::LIST_GOODS}
-                                    <li><a href="{$ch->get_link(0, $k)}">{$n}</a></li>
-                                {else}
-                                    <li><a href="{$sublink}?f{$ch->settings.sub_filter}={$k}">{$n}</a></li>
-                                {/if}
+		                    <li><a href="{$sublink}">{$ch->name}</a></li>
+                            {assign var=subs value=$ch->sub|count}
+                            {foreach from=$ch->sub item=n key=k name=n}
+                            {if $smarty.foreach.n.iteration lte 7}
+                                <li><a href="{$n.href}">{$n.name}</a></li>
                             {/if}
-                            {/if}
-                        {/foreach}
+                            {/foreach}
 		                    <li>{if $subs gt 7}<a href="{$sublink}">+ Показать все</a>{/if}
 							{if $ch->img_menu}<a href="{$sublink}">{$ch->menu_img->get_img()}</a>{/if}</li>
                         </ul>

@@ -2,10 +2,17 @@
 // скидочные купоны
 class Model_Coupon extends ORM {
 
+    const TYPE_SUM = 0; // купон со скидкой на сумму от суммы
+    const TYPE_PERCENT = 1; // купон со скдкой на процент на часть товаров
+    const TYPE_LK = 2; // купон даёт ЛК
+
+    const CHILD_DISCOUNT = 'kidz'; // скрытый купон со скидкой за данные о детях/беременности
+
     protected $_table_name = 'z_coupon';
 
-    protected $_table_columns = array(
+    protected $_table_columns = [
         'id' => '',
+        'type' => '', // тип купона - 0 = купон со скидкой на сумму от суммы, 1 = купон со скдкой на процент на часть товаров
         'name' => '',  //  код купона, до 16 знаков, большие и малые буквы - одно и тоже
         'sum' => '',  // номинал купона (сумма скидки)
         'min_sum' => '',  // минимальная сумма заказа, когда можно применять купон
@@ -16,23 +23,82 @@ class Model_Coupon extends ORM {
         'to' => '', // начало активности купона (или null)
         'uses' => '', // максимальное число использований купона
         'used' => '', // число использований купона
-    );
+    ];
+
+    protected $_has_many = [
+        'goods' => [
+            'model' => 'good',
+            'through'    => 'z_coupon_good',
+            'foreign_key'   => 'coupon_id',
+            'far_key'   => 'good_id',
+        ],
+    ];
+
+    /**
+     * Правила валидации для купона
+     *
+     */
+    public function rules()
+    {
+        return [
+            'name' => [
+                ['not_empty'],
+                ['max_length', [':value', 16]],
+                [[$this, 'unique'], ['name', ':value']],
+            ],
+    /*        'sum' => [
+                ['not_empty'],
+            ],
+    */        
+            'per_user' => [
+                ['not_empty'],
+            ],
+            'uses' => [
+                ['not_empty'],
+            ],
+            'min_sum' => [
+                ['not_empty'],
+            ],
+        ];
+    }
+
+    /**
+     * Возвращает строку с расшифровкой типа купона или массив всех типов
+     */
+    public static function type($type = FALSE)
+    {
+        $types = [
+            0 => 'Купон со скидкой на сумму',
+            1 => 'Купон со скидкой на процент на товары',
+            2 => 'Купон дающий статус Любимый Клиент навсегда',
+        ];
+
+        if ($type === FALSE) return $types;
+        return ! empty($types[$type]) ? $types[$type] : FALSE;
+    }
+
 
     /**
      * Сгенерировать новый купон
      */
-    public static function generate($code)
+    public static function generate($sum, $min_sum = 0, $per_user = 1, $uses = 1)
     {
         $c = new self;
+        if ($min_sum == 0) $min_sum = $sum + 1;
+        do {
+            $code = Text::random('distinct');
 
-        $c->values(array(
-            'name' => $code,
-            'per_user' => 1,
-            'uses' => 1,
-            'sum' => 100,
-            'min_sum' => 2000
-        ))->save();
+            $c->values(array(
+                'name'      => $code,
+                'per_user'  => $per_user,
+                'uses'      => $uses,
+                'sum'       => $sum,
+                'min_sum'   => $min_sum,
+                'active'    => 1
+            ));
+        } while ( ! $c->validation()->check());
 
+        $c->save();
         return $c;
     }
 
@@ -68,15 +134,20 @@ class Model_Coupon extends ORM {
             if ($uses >= $this->per_user) return FALSE;
         }
 
-        return $this->in1c && $this->active && $this->is_begun() && ( ! $this->is_expired()) && $this->used < $this->uses && (is_null($sum) || $sum >= $this->min_sum);
+        return $this->active && $this->is_begun() && ( ! $this->is_expired()) && $this->used < $this->uses && (is_null($sum) || $sum >= $this->min_sum);
     }
 
     /**
      * Добавить использование купону
      */
-    public function used()
+    public function used($user_id = FALSE)
     {
         $this->used = $this->used + 1;
+        Model_History::log('coupon', $this->id, 'использование', [], $user_id);
+        if (($user = Model_User::current()) && ($this->name == Model_Coupon::CHILD_DISCOUNT)) {
+            $user->child_discount = Model_User::CHILD_DISCOUNT_USED;
+            $user->save();
+        }
         $this->save();
     }
 
@@ -108,6 +179,33 @@ class Model_Coupon extends ORM {
             ->set(array('in1c' => 1))
             ->where('id', '=', $this->id)
             ->execute();
+    }
+
+    /**
+     * Получить товары купона, сгруппировать по скидкам
+     */
+    function get_goods()
+    {
+        $return = [];
+
+        $good_discount = DB::select('good_id', 'discount')
+            ->from('z_coupon_good')
+            ->where('coupon_id', '=', $this->id)
+            ->order_by('discount', 'DESC')
+            ->execute()
+            ->as_array('good_id', 'discount');
+
+        if (empty($good_discount)) return $return;
+
+        $goods = ORM::factory('good')
+            ->where('id', 'IN', array_keys($good_discount))
+            ->find_all()
+            ->as_array('id');
+
+        foreach($good_discount as $id => $discount) {
+            $return[$discount][$id] = $goods[$id];
+        }
+        return $return;
     }
 
 }

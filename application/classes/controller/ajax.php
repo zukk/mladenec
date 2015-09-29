@@ -2,16 +2,30 @@
 
 class Controller_Ajax extends Controller_Frontend {
 
+    public function before()
+    {
+        parent::before();
+        $this->layout = View::factory('smarty:ajax');
+    }
+
+    public function after()
+    {
+        $this->response->body($this->layout->render());
+    }
+
     public function action_cart()
     {
         $cart = Cart::instance();
-        $vars = array();
-        
         $goods = $cart->recount();
-        $vars['comments'] = $cart->get_comments();
-        $vars['cart'] = $cart->save();
-        $vars['presents'] = array();
+
         // подарки по акциям - пересчитываем всегда на этой странице
+        $vars = [
+            'comments'  => $cart->get_comments(),
+            'presents'  => [],
+            'cart'      => $cart,
+            'goods'     => $goods,
+        ];
+
         if ( ! empty($goods)) {
             $presents = $cart->check_actions($goods);
             if ( ! empty($presents)) {
@@ -20,11 +34,10 @@ class Controller_Ajax extends Controller_Frontend {
             if ( ! empty($cart->promo)) {
                 $vars['promo'] = $cart->promo;
             }
+            $vars['presents'] = $presents;
         }
-        $vars['presents'] = $presents;
-        $vars['goods'] = $goods;
-        $v = View::factory('smarty:product/view/cart',$vars);
-        exit($v->render());
+
+        $this->return_html(View::factory('smarty:product/view/cart', $vars)->render());
     }
     
     public function action_cart_update()
@@ -39,7 +52,7 @@ class Controller_Ajax extends Controller_Frontend {
 			$cart->set_good_qty($change, $this->request->post('value'));
 		}
 				
-		exit(View::factory('smarty:cart/cart', $this->cartParams())->render());
+		$this->return_html(View::factory('smarty:cart/goods', $this->cartParams())->render());
 	}
     
     /**
@@ -65,112 +78,111 @@ class Controller_Ajax extends Controller_Frontend {
      */
     public function action_delivery()
     {
-        /*if ( empty($this->user->id)) {
-            throw new HTTP_Exception_403;
-        }*/
-
-        if ( ! in_array($type = $this->request->param('type'), Model_Order::delivery_types())) {
-            throw new HTTP_Exception_404;
-        }
-
-        $v = View::factory('smarty:user/order/' . $type);
-        $v->set('o', new Model_Order_Data());
-
-        if ( ! empty($this->user->id) && $type == Model_Order::SHIP_COURIER)
-        {
-            // вычисляем адреса доставки
-            $v->set('address', ORM::factory('user_address')
-                ->where('latlong', '!=', 'TRANSPORT')
-                ->where('latlong', '>', '')
-                ->where('user_id', '=', $this->user->id)
-                ->where('active', '=', 1)
-                ->limit(5)
-                ->order_by('id', 'DESC')
-                ->find_all()
-                ->as_array()
-            );
-
-        }
-        else if ( ! empty($this->user->id) && $type == Model_Order::SHIP_SERVICE)
-        {
-            $v->set('address', ORM::factory('user_address')
-                ->where('latlong', '=', 'TRANSPORT')
-                ->where('user_id', '=', $this->user->id)
-                ->where('active', '=', 1)
-                ->limit(5)
-                ->order_by('id', 'DESC')
-                ->find_all()
-                ->as_array()
-            );
-        }
-        else if (empty($this->user->id))
-        {
-            $v->set('address', array());
-        }
-
-        $v->set('big', Cart::instance()->big_to_wait(TRUE)); // большие товары из корзины для предупреждения
-        exit($v->render());
     }
 
     /**
      * вычисление зоны доставки
-     * Тут же вычисляем для неё даты и время
+     * Тут же вычисляем для неё даты и время и цену
      */
     public function action_zone()
     {
         $latlong = $this->request->query('latlong');
-        if (empty($latlong)) throw new HTTP_Exception_404;
+        if (empty($latlong)) exit('no latlong');
 
-        $zone = Model_Zone::locate($latlong);
-		
-		if( $zone !== false ){
-			
-			$dates = $zone->allowed_date(Cart::instance());
+        $zone = Model_Zone::locate($latlong); // определяем зону доставки
 
-			$months = array( //
-				'01' => 'января',
-				'02' => 'февраля',
-				'03' => 'марта',
-				'04' => 'апреля',
-				'05' => 'мая',
-				'06' => 'июня',
-				'07' => 'июля',
-				'08' => 'августа',
-				'09' => 'сентября',
-				'10' => 'октября',
-				'11' => 'ноября',
-				'12' => 'декабря',
-			);
+        $cart = Cart::instance();
+        $cart->recount();
 
-			$weekdays = array(
-			  1 => 'понедельник',
-			  2 => 'вторник',
-			  3 => 'среда',
-			  4 => 'четверг',
-			  5 => 'пятница',
-			  6 => 'суббота',
-			  7 => 'воскресенье',
-			);
+        $return = ['zone_id' => strval($zone)];
 
-			foreach( $dates as $d => &$_ ){
-				list( $year, $month, $day, $weekday ) = explode( '-', date( 'Y-m-d-N', strtotime( $d ) ) );
-				$_ = '<span>' . $day . ' ' . $months[$month] . '</span>, ' . $weekdays[$weekday];
-			}
-			unset( $_ );
+        if ($zone !== FALSE) { // доставка в наши зоны доставки
 
-			$this->return_json(array(
-				'zone' => $zone->name,
-				'date' => Form::select('ship_date', $dates, NULL, array('id' => 'date')),
-				'dates' => $dates,
-				'closest' => $zone->id == Model_Zone::ZAMKAD ? Model_Zone::closest_mkad($latlong) : FALSE,
-				'zone_id' => $zone->id,
-			));
-		}
-		else {
-			$this->return_json(array(
-				'zone_id' => false
-			));
-		}
+            $dates = $cart->allowed_date($zone, $latlong);
+            $return['ship_date'] = View::factory('smarty:cart/ship_date', ['dates' => $dates])->render();
+            $return['ship_time'] = View::factory('smarty:cart/ship_time', $cart->allowed_time($zone, key($dates), $latlong))->render();
+            $return['price']    = $cart->ship_price($latlong, strval($zone)); // цена доставки
+
+            $return['zone']     = $zone->name;
+            $return['closest']  = $zone->id == Model_Zone::ZAMKAD ? Model_Zone::closest_mkad($latlong) : FALSE;
+         
+	    } else { // региональная доставка
+
+            $city_id = $this->request->query('dpd_city_id');
+            $city_name = $this->request->query('city');
+
+            $door = $closest_term = $terminal = $min_param = []; // нет вариантов доставки
+
+            try {
+                $weight = $cart->weight();
+                $volume = $cart->volume();
+
+                if ( ! $cart->ship_wrong && empty($cart->big) && ! empty($city_name)) { // в заказе кгт или кривые данные о размере-весе или нет города - не надо считать доставку
+
+                    $dpd = new DpdSoap(); // запрос цены доставки в dpd
+
+                    $city = new Model_Dpd_City($city_id);
+                    if ( ! $city->loaded()) { // не нашли город по id, поищем по названию
+                        $parts = array_filter(array_map('trim', explode(',', $city_name))); // название города может быть составным, с областью или районом
+                        $city = ORM::factory('dpd_city')->where('name', 'IN', $parts)->find();
+                    }
+                    if ($city->loaded()) { // есть город - запрос по id
+                        $door = $dpd->ship_price($city->id, $cart->total, $weight, $volume);
+                    } elseif ( ! empty($city_name)) {  // нет города - запрос по последней части, типа Республика Крым, Керчь
+                        $door = $dpd->ship_price($parts[count($parts) - 1], $cart->total, $weight, $volume);
+                    }
+
+                    if ( ! empty($door)) {
+                        foreach ($door as $v) {
+                            $v->cost = ceil(floatval($v->cost));
+                            if ( ! isset($min_param['cost']) || ($v->cost < $min_param['cost'] || ($v->cost == $min_param['cost'] && $v->days < $min_param['days']))) { // лучшая цена или время
+                                $min_param = ['days' => $v->days, 'cost' => $v->cost, 'dt' => 'D'];
+                            }
+                        }
+                    }
+
+                    // ищем ближайший терминал
+                    $reverse_latlong = implode(' ', array_reverse(explode(',', $latlong)));
+
+                    $closest_term = DB::select()
+                        ->from('dpd_terminal')
+                        ->where('latlong', 'LIKE', '%,%')
+                        ->order_by(DB::expr("geodist_pt(GeomFromText('Point(" . $reverse_latlong . ")'), point)"))
+                        ->limit(1)
+                        ->execute()
+                        ->as_array();
+
+                    $closest_term = $closest_term[0];
+
+                    $terminal = $dpd->ship_price($closest_term['city_id'], $cart->total, $cart->weight(), $cart->volume(), FALSE);
+
+                    if ( ! empty($terminal)) {
+                        foreach ($terminal as &$v) {
+                            $v->cost = ceil(floatval($v->cost));
+                            if ( ! isset($min_param['cost'])) { // лучшая цена или время только если нет до двери
+                                $min_param = ['days' => $v->days, 'cost' => $v->cost, 'dt' => 'T'];
+                            }
+                        }
+                    }
+                    if (empty($min_param['cost'])) { // не определили цену
+                        $min_param = ['cost' => 0, 'dt' => ''];
+                    }
+                }
+
+            } catch (DPDException $e) {
+
+                Log::instance()->add(Log::WARNING, $e->getMessage());
+            }
+
+            $return['zone'] = Model_Zone::NAME_REGION;;
+            $return['price'] = empty($min_param['cost']) ? FALSE : $min_param['cost'];
+
+            $data = ['door' => $door, 'terminal' => $terminal, 'closest' => $closest_term, 'min_param' => $min_param];
+            $return['ship_date'] = View::factory('smarty:cart/ship_date', $data)->render();
+            $return['ship_time'] = View::factory('smarty:cart/ship_time', $data)->render();
+        }
+
+        $this->return_json($return);
     }
 
     /**
@@ -178,17 +190,38 @@ class Controller_Ajax extends Controller_Frontend {
      */
     public function action_time()
     {
-        $zone = $this->request->post('zone');
+        $zone = $this->request->query('zone');
         if ( ! $zone) $this->return_error('Zone required');
         $zone = new Model_Zone($zone);
         if ( ! $zone->loaded() || ! $zone->active) $this->return_error('Zone required');
 
-        $date = $this->request->post('date');
+        $date = $this->request->query('date');
         if ( ! $date || ! strtotime($date)) $this->return_error('Date required');
 
-        $this->return_json(array(
-            'time' => Form::select('ship_time', $zone->allowed_time($date, Cart::instance()->get_total()), NULL, array('id' => 'time')),
-        ));
+        $cart = Cart::instance();
+        $cart->recount();
+
+        exit(View::factory('smarty:cart/ship_time', $cart->allowed_time($zone, $date, $this->request->query('latlong')))->render());
+    }
+    
+    /**
+     * вічисление стоимости доставки Озон
+     */
+    public function action_ozon_price()
+    {
+        $deliveryId = $this->request->post('delivery_id');
+        $cart = Cart::instance();
+        $ozon = new OzonDelivery();
+        $return['settings'] = $ozon->calculate_price($deliveryId, $cart->weight());
+        $data = [];
+        if(isset($return['settings']['price'])) {
+            $data = ['ozon_delivery_price' => $return['settings']['price']];
+            $return['html'] = View::factory('smarty:cart/ship_date', $data)->render();
+        } else {
+            $return['html'] = $return['settings']['warning'];
+        }
+        
+        exit(json_encode($return));        
     }
 
     /* оставить мнение о пользе отзыва */
@@ -261,118 +294,154 @@ class Controller_Ajax extends Controller_Frontend {
         foreach($f as $good) {
             $ids[] = $good->id;
         }
-        
+
         exit(View::factory('smarty:common/goods', array(
             'goods' => $f,
             'price' => Model_Good::get_status_price(1, $ids),
-            'imgs'  => Model_Good::many_images(array(255), $ids),
-            'short' => 1
+            'images'  => Model_Good::many_images([255], $ids),
+            'short' => 1,
+			'ga_ajax' => TRUE,
+			'ga_list' => 'homepage'
         ))->render());
     }
-
+    
     /**
-     * Показ слайдера с новыми или распродажными товарами
+     * Показ слайда от слайдера товарами, принимает тип слайдера, номер страницы, число товаров на странице
      */
     public function action_slide()
     {
-        $page = $this->request->query('page');
+        $page = intval($this->request->query('page'));
+        $type = $this->request->param('type');
+        $param = $this->request->param('param');
 
-        switch($this->request->param('type')) {
+        $q = ORM::factory('good')               // готовим запрос - только товары возможные к покупке
+            ->where('good.show', '=', 1)
+            ->where('good.active', '=', 1)
+            ->where('good.price', '>', 1)
+            ->where('good.qty', '!=', 0)
+            ->join('z_section')
+                ->on('good.section_id', '=', 'z_section.id')
+                ->where('z_section.active', '=', 1)
+                ->where('z_section.vitrina', '=', Kohana::$server_name)
+            ->join('z_group')
+                ->on('good.group_id', '=', 'z_group.id')
+                ->where('z_group.active', '=', '1')
+            ->join('z_brand')
+                ->on('good.brand_id', '=', 'z_brand.id')
+                ->where('z_brand.active', '=', '1')
+            ->order_by('good.popularity', 'DESC')
+            ->limit(100);
+
+        switch ($type) {
+
             case 'new':
-                $items = Model_Good::get_new($total, $page, 4);
+                $q->where('good.new', '=', '1');
                 break;
-            
+
             case 'superprice':
-                $items = Model_Good::get_superprice($total, $page, 4);
+                $q->join('z_good_prop')
+                    ->on('good.id', '=', 'z_good_prop.id')
+                    ->where('z_good_prop.superprice', '=', '1');
                 break;
-            
+
             case 'cart_set':
-                $slider_id = $this->request->param('set_id');
-                $items = Model_Good::get_set_slider($slider_id, $total, $page, 5, TRUE, Cart::instance()->recount());
+                $slider_id = intval($this->request->param('param'));
+                $q->join('z_set_good')
+                    ->on('z_set_good.good_id', '=', 'good.id')
+                    ->where('z_set_good.set_id', '=', $slider_id);
+                break;
+
+            case 'cart2_set':
+                $promos = [];
+                $goods = Cart::instance()->recount();
+
+                foreach ($goods as $g) $promos = array_merge($promos, $g->get_promos());
+                if (empty($promos)) exit();
+
+                $q->join('z_promo_good')
+                    ->on('z_promo_good.good_id', '=', 'good.id')
+                    ->where('z_promo_good.promo_id', 'IN', $promos);
                 break;
 
             case 'promo':
-				
-				$prmkey = $this->request->param('set_id');
-				$promo = ORM::factory('promo', $prmkey);
-				$items = $promo->get_goods();
-
-				$perPage = 5;
-				$pageNum = $page - 1;
-				$pages = ceil( count( $items ) / $perPage );
-				if( $pageNum * $perPage >= ( count( $items ) - $perPage ) ){
-					$pageNum = $pageNum % $pages;
-				}
-				
-				$items = array_slice($items, $pageNum * $perPage, $perPage);
-				
-				
-				break;
-            case 'cart2_set':
-				
-				$prmkey = $this->request->param('set_id');
-
-				$goods = Cart::instance()->recount();
-				
-				$promos = [];
-				foreach( $goods as &$g ){
-
-					$promos = array_merge( $promos, $g->get_promos() );
-				}
-				unset( $g );
-
-				$promo = &$promos[$prmkey];
-				
-				$items = $promo->get_goods();
-				
-				$cartIds = array_keys( $goods );
-				foreach( $items as $y => &$sg ){
-					if( in_array( $sg->id, $cartIds ) )
-						unset( $items[$y] );
-				}
-				unset( $sg );
-				
-				$perPage = 5;
-				$pageNum = $page - 1;
-				$pages = ceil( count( $items ) / $perPage );
-				if( $pageNum * $perPage >= ( count( $items ) - $perPage ) ){
-					$pageNum = $pageNum % $pages;
-				}
-				
-				$items = array_slice($items, $pageNum * $perPage, $perPage);
-				
+                $promo_id = intval($this->request->param('set_id'));
+                $q->join('z_promo_good')
+                    ->on('z_promo_good.good_id', '=', 'good.id')
+                    ->where('z_promo_good.promo_id', '=', $promo_id);
                 break;
 
             case 'sale':
-                $items = Model_Good::get_sale($total, $page, 4);
+                $q->where('good.old_price', '>', 0);
                 break;
 
             case 'pampers':
-                $g = Model_Good::get_pampers(FALSE);
-                $offset = ((abs(intval($page)) + 1) % 2) * 4; // только из первых 8
-                $items = ORM::factory('good')
-                    ->where('id', 'IN', $g)
-                    ->order_by('popularity', 'DESC')
-                    ->offset($offset)
-                    ->limit(4)
-                    ->find_all()
-                    ->as_array('id');
+                $q  ->where('good.brand_id', '=', Model_Good::PAMPERS_BRAND)
+                    ->where('good.section_id', '=', Model_Good::PAMPERS_SECTION);
                 break;
 
-            default:
-                throw new HTTP_Exception_404;
+            default: // rr- слайдеры тут
+
+                if (strpos($type, 'rr-') !== 0) throw new HTTP_Exception_404;
+                $rr = substr($type, 3);
+                if ( ! method_exists('rrapi', $rr)) throw new HTTP_Exception_404;
+
+                if (in_array($rr, ['CrossSellItemToItems', 'RelatedItems'])) {
+                    $param = explode('_', $param);
+                }
+                $goods = rrapi::$rr($param);
+                if ( ! $goods) exit();
+
+                $q->where('good.id', 'IN', $goods);
+
+                break;
         }
-        $item_keys = array();
-        foreach($items as $item) {
-            $item_keys[$item->id] = $item->id;
+        $incart = Cart::instance()->goods;
+        if ( ! empty($incart)) {
+            $q->where('good.id', 'NOT IN', array_keys($incart));
         }
-        exit(View::factory('smarty:common/goods', array(
+        if ( ! empty($rr)) {
+            $order = $goods; // массив ид товаров в исходном порядке
+        }
+
+        $goods = $q->find_all()->as_array('id');
+
+        if (empty($goods)) exit();
+
+        if ( ! empty($rr)) { // собираем результат в том же порядке, в каком был результат запроса
+            $ordered = [];
+            foreach($order as $id) {
+                if ( ! empty($goods[$id])) {
+                    $ordered[$id] = $goods[$id];
+                }
+            }
+            $goods = $ordered;
+        }
+
+        $page_ids = Txt::cycle_page($page, 5, array_keys($goods));
+
+        $title = $this->request->query('t');
+
+        $data = [
             'short' => 1,
             'style' => $this->request->param('type'),
-            'goods' => $items,
-            'price' => Model_Good::get_status_price(1, $item_keys),
-            'imgs'  => Model_Good::many_images(array(255), $item_keys)
-        ))->render());
+            'goods' => Arr::extract($goods, $page_ids),
+            'price' => Model_Good::get_status_price(1, $page_ids),
+            'images'    => Model_Good::many_images([255], $page_ids),
+            'ga_ajax'   => TRUE,
+            'total'     => count($goods),
+            'rel'       => '/slide/'.$type.($param ? '/'.implode('_', is_array($param) ? $param : [$param]) : ''),
+            'ga_list'   => 'homepage'
+        ];
+
+        if ($title) { // rr slider - first query
+            $view = 'retail_rocket/slider';
+            $data['name'] = $title;
+        } else {
+            $view = 'common/goods';
+        }
+        Cookie::get('rrpusid');
+
+        exit(View::factory('smarty:'.$view, $data)->render());
     }
 
     /**
@@ -387,18 +456,16 @@ class Controller_Ajax extends Controller_Frontend {
 
         if (empty($visible_good_ids)) throw new HTTP_Exception_404;
 
-        exit(View::factory('smarty:product/view/tiles', array(
-
+        exit(View::factory('smarty:product/view/tiles', [
             'goods' => ORM::factory('good')
                 ->where('id', 'IN', $visible_good_ids)
-                ->limit(8)
+                ->limit(10)
                 ->offset(0)
                 ->find_all()
                 ->as_array(),
-
+            'images'  => Model_Good::many_images([255], $visible_good_ids),
             'price' => Model_Good::get_status_price(1, $visible_good_ids),
-            'row' => 4
-        ))->render());
+        ])->render());
         
     }
     
@@ -459,7 +526,7 @@ class Controller_Ajax extends Controller_Frontend {
                 }
 
                 foreach($data as $k => $v) {
-                    $txt .= '<p><strong>'.$k.'</strong><br />'.$v.'</p>';
+                    $txt .= '<p><strong>'.$k.'</strong><br />'.( is_array($v)? var_export($v,true) : $v ).'</p>';
                 }
                 $letter->setHTML($txt);
                 if ( ! ($to = Conf::instance()->mail_error)) $to = 'm.zukk@ya.ru';
@@ -478,22 +545,31 @@ class Controller_Ajax extends Controller_Frontend {
     }
 
     /**
-     * Получить хиты продаж по категории
+     * Получить 5 хитов продаж по категории
+     * Если хита нет в наличии, он заменяется на подменный или на другой реальный хит из этой категории
      */
     public function action_hitz()
     {
         if ( ! ($section_id = $this->request->param('section_id'))) throw new HTTP_Exception_404;
-        $hitz = Model_Good::get_hitz($section_id);
-        if (empty($hitz)) throw new HTTP_Exception_404;
 
-        $view = View::factory('smarty:common/goods', array('goods' => $hitz, 'short' => 1));
-        $goodidz = array_keys($hitz);
+        $hitz = Model_Good::get_hitz($section_id); // получаем все проставленные хиты
+
+        $goodidz = [];
+        foreach($hitz as $k => $good) $goodidz[] = $good->id;
+
+        $view = View::factory('smarty:common/goods', array(
+			'goods' => $hitz, 
+			'short' => 1,
+			'ga_ajax' => TRUE,
+			'ga_list' => 'homepage'
+		));
+
         if ($goodidz) {
             $view->price = Model_Good::get_status_price(1, $goodidz);
-            $view->imgs = Model_Good::many_images(array(255), $goodidz);
+            $view->images = Model_Good::many_images([255], $goodidz);
         }
 
-        exit($view->render());
+        $this->return_html($view->render());
     }
 
 
@@ -507,6 +583,8 @@ class Controller_Ajax extends Controller_Frontend {
 
         $page = intval($this->request->post('page'));
         $offset = $page * 5;
+                
+        $is_quickview = $this->request->post('is_quickview');
 
         switch ($this->request->param('type')) {
 
@@ -524,7 +602,7 @@ class Controller_Ajax extends Controller_Frontend {
                     ->as_array('id');
 
                 $params = Model_Section_Param::for_reviews(array_keys($reviews), $good->section_id);
-
+                
                 $view = View::factory('smarty:product/view/reviews', array(
                     'group' =>  $good->group,
                     'goods' =>  array($good->id => $good)
@@ -534,7 +612,7 @@ class Controller_Ajax extends Controller_Frontend {
             case 'group':
                 $group = new Model_Group($this->request->param('id'));
                 if ( ! $group->loaded()) throw new HTTP_Exception_404;
-                $goods = $group->goods->where('show', '=', 1)->find_all()->as_array('id');
+                $goods = $group->goods->find_all()->as_array('id');
                 $reviews = ORM::factory('good_review')
                     ->where('good_id', 'IN', array_keys($goods))
                     ->where('active', '=', 1)
@@ -558,10 +636,13 @@ class Controller_Ajax extends Controller_Frontend {
                 break;
         }
 
-        $view->set('page', $page);
-        $view->set('params', $params);
-        $view->set('comments', $reviews);
-        $view->set('votes', Session::instance()->get('votes'));
+        $view->set([
+            'page'      => $page,
+            'params'    => $params,
+            'comments'  => $reviews,
+            'is_quickview' => $is_quickview,
+            'votes'     =>  Session::instance()->get('votes')
+        ]);
 
         exit($view->render());
     }
@@ -596,7 +677,7 @@ class Controller_Ajax extends Controller_Frontend {
 					$hash = $init_hash = $_POST['hash'] = 's=rating;pp=12;x=0;m=0;';
 					$query = $_POST['query'] = $sectionId;
 
-					$sphinx = new Sphinx('section', $query);
+					$sphinx = new Sphinx('section', $query, FALSE);
 					$d = $sphinx->menu($query . '_' . $bFilterValue, 'section_filter');
 
 					$brands = &$d['brands'];
@@ -625,7 +706,7 @@ class Controller_Ajax extends Controller_Frontend {
 								$hash = 'b=' . $brandId . ';' . $hash;
 								$hash .= 'f' . $filterId . '=' . $valId . ';';
 
-								$_sphinx = new Sphinx('section', $sectionId);
+								$_sphinx = new Sphinx('section', $sectionId, FALSE);
 								$_sphinx->param('b', [$brandId] );
 								$_sphinx->param('f', [$filterId => [$valId]]);
 								$goods = $_sphinx->search();
@@ -644,7 +725,7 @@ class Controller_Ajax extends Controller_Frontend {
 					$hash = $init_hash = $_POST['hash'] = 's=rating;pp=12;x=0;m=0;';
 					$query = $_POST['query'] = $sectionId;
 
-					$sphinx = new Sphinx('section', $query);
+					$sphinx = new Sphinx('section', $query, FALSE);
     				$d = $sphinx->menu();
 
 					$brands = &$d['brands'];
@@ -673,7 +754,7 @@ class Controller_Ajax extends Controller_Frontend {
 								$hash = 'b=' . $brandId . ';' . $hash;
 								$hash .= 'f' . $filterId . '=' . $valId . ';';
 
-								$_sphinx = new Sphinx('section', $sectionId);
+								$_sphinx = new Sphinx('section', $sectionId, FALSE);
 								$_sphinx->param('b', [$brandId] );
 								$_sphinx->param('f', [$filterId => [$valId]]);
 								$_sphinx->param('pp', 48);
@@ -747,41 +828,190 @@ class Controller_Ajax extends Controller_Frontend {
 
         exit($view->render());
     }
-	
-	public function action_cart_merge(){
+
+    /**
+     * Cлияние корзин
+     * @throws Kohana_Exception
+     */
+    public function action_cart_merge()
+    {
 		
 		$old_ids = $this->request->post('old_session');
+
+		$Session = Session::instance();
+		$sessId = $Session->id();
 		
-		if( !empty( $old_ids ) && is_array( $old_ids ) ){
+		if ( ! empty($old_ids) && is_array($old_ids)) {
 			
-			foreach( $old_ids as $old_id ){
+			foreach($old_ids as $old_id ){
 				
-				if( empty( $old_id ) ){
-					continue;
-				}
-				
+				if (empty($old_id)) continue;
+
 				$old_session = ORM::factory('session', $old_id);
 
-				if( empty( $old_session->id ) ){
-					continue;
-				}
-				
-				$old_data = unserialize( $old_session->data );
-				$old_goods = $old_data['cart']->goods;
+				if (empty($old_session->id)) continue;
 
+				$odata = unserialize($old_session->data);
 				$Cart = Cart::instance();
-				$Cart->add($old_goods);
+				$Cart->add($odata['cart']->goods);
 				$Cart->save();
 
-				$old_data['cart']->clean(); // Чистим старую корзину
-				// $old_data['cart']->qty = 0;
-				// $old_data['cart']->blago = array();
-				// $old_data['cart']->total = 0;
-				DB::update('z_session')->value('data', serialize( $old_data))->where('id', '=', $old_id)->execute();
+				$old_session->delete();
+				
+				// $OldCart->clean(); // Чистим старую корзину
 			}
-			
-			echo 'ok';
-			exit;
+
+            exit('ok');
 		}
 	}
+
+    /**
+     * выдать список вариантов товаров на вводимое слово
+     */
+    public function action_search_suggestion()
+    {
+	$q = Txt::words($this->request->post('q')); // все слова
+	if (empty($q)) exit('Нет вариантов');
+
+        // последнее слово ищем лайком
+        $last_word = $q[count($q) - 1];
+        $ru_en = Txt::en_ru($last_word);
+
+        $like = DB::select('keyword')
+            ->from('z_suggest')
+            ->where_open()
+                ->where('keyword', 'LIKE', $ru_en[0].'%');
+
+        if ( ! empty($ru_en[1])) {
+            $like
+                ->or_where('keyword', 'LIKE', $ru_en[1] . '%');
+        }
+        $like = $like->where_close()
+            ->order_by('freq', 'DESC')
+            ->limit(1)
+            ->execute()
+            ->get('keyword', 0);
+
+        if ( ! empty($like)) { // слово есть
+
+            $q[count($q) - 1] = $like;
+
+        } else { // слова нет - пробуем править в нём опечатку
+
+            $correct = Sphinx::correct($last_word);
+            if ($correct) $q[count($q) - 1] = $correct;
+
+        }
+
+        // теперь ищем все слова обычным поиском по товарам
+        $_sphinx = new Sphinx('suggest', implode(' ', $q));
+		$goods = $_sphinx->suggestion();
+
+        exit($goods);
+	}
+
+    /* изменить город (по нему считаем и показываем доставку) */
+    public function action_city()
+    {
+        $view = View::factory('smarty:user/city');
+
+        if ($this->request->post('save_city')) {
+            Session::instance()->set('city', $this->request->post('city'));
+            $this->return_reload();
+        }
+
+        exit($view->render());
+    }
+
+    /**
+     * Очистка корзины
+     * @throws View_Exception
+     */
+    public function action_cart_clear()
+    {
+        Cart::instance()->clean();
+        // $this->tmpl['sync'] = 'cart';
+
+        $this->return_reload();
+    }
+
+    /**
+     * Форма уведомления о поставке
+     * @throws HTTP_Exception_404
+     */
+    public function action_warn()
+    {
+        $good = ORM::factory('good', $this->request->param('id'));
+        if ( ! $good->loaded()) throw new HTTP_Exception_404;
+
+        $m = new Model_Good_Warn();
+        $m->good_id = $good->id;
+        if ($this->user) $m->user_id = $this->user->id;
+
+        $view = View::factory('smarty:product/warn')->bind('i', $m)->set('good', $good);
+
+        if ($this->request->post('send')) {
+
+            $m->values($this->request->post());
+
+            $captcha = $this->user ? TRUE : Captcha::check($this->request->post('captcha'));
+
+            if ($m->validation()->check() AND $captcha) {
+
+                $m->save();
+                $view->sent = TRUE;
+                $this->return_html($view->render());
+
+            } else {
+
+                $errors = $m->validation()->errors('product/warn');
+                if ( ! $captcha) $errors['captcha'] = Kohana::message('captcha', 'captcha.default');
+                $this->return_error($errors);
+
+            }
+        }
+        exit($view->render());
+    }
+
+    /**
+     * сохранение состояния меню в категориях в сессию
+     */
+    public function action_toggle()
+    {
+        $mode = $this->request->post('mode');
+        $query = $this->request->post('query');
+        $rel = $this->request->post('rel');
+        $section = $this->request->post('section');
+
+        $state_json = Session::instance()->get('toggle_state');
+        $state = json_decode($state_json, TRUE);
+        if (empty($state)) $state = [];
+
+        if ( ! empty($section) && ! empty($rel)) { // состояние для раздела категории - общее (для нескольких mode)
+            if ( ! empty($state[$section][$rel])) {
+                unset($state[$section][$rel]);
+            } else {
+                $state[$section][$rel] = TRUE;
+            }
+        } elseif ( ! empty($mode) && ! empty($query) && ! empty($rel)) {
+            if ( ! empty($state[$mode][$query][$rel])) {
+                unset($state[$mode][$query][$rel]);
+            } else {
+                $state[$mode][$query][$rel] = TRUE;
+            }
+        }
+        Session::instance()->set('toggle_state', json_encode($state));
+        exit('ok');
+    }
+
+    public function action_arbuz()
+    {
+        if ($this->request->post('name') && $this->request->post('email') && $this->request->post('telephone')) {
+            $mail = new Mail();
+            $mail->setHTML(sprintf('<dl><dt>Имя</dt><dd>%s</dd><dt>Email</dt><dd>%s</dd><dt>Телефон</dt><dd>%s</dd></dl>',
+                $this->request->post('name'), $this->request->post('email'), $this->request->post('telephone')), FALSE);
+            $mail->send('0099060msk@gmail.com, a.melnikov@mladenec.ru, m.zukk@ya.ru, zakaz@mladenec.ru, request@mladenec.ru, a.sergeev@mladenec.ru', 'Арбузная форма!');
+        }
+        exit('ok');
+    }
 }

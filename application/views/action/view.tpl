@@ -1,15 +1,26 @@
-<div id="breadcrumb">
-    <a href="/">Главная</a> &rarr;
-    <a href="{Route::url('action_list')}" title="Все акции">Акции</a>
-    {if $action->show_goods eq 1}  &rarr; <a href="{Route::url('action_current_list')}" title="{$config->actions_header|default:'Акции месяца'}">{$config->actions_header|default:'Акции месяца'}</a>{/if}
+<div id="breadcrumb">   
+    <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb" itemref="breadcrumb-1">
+        <a href="/" itemprop="url"><span itemprop="title">Главная</span></a>
+    </span>
+    &rarr;
+    <span itemprop="child" itemscope itemtype="http://data-vocabulary.org/Breadcrumb" id="breadcrumb-1">
+        <a href="{Route::url('action_list')}"><span itemprop="title">Акции</span></a>
+    </span>
+    &rarr;
+    <span>Акция: &laquo;{$action->name}&raquo;</span>
 </div>
 
-<div id="onew">
+<div id="onew" class="yell">
     {if $action->active && $action->total}
         <h1>Акция: &laquo;{$action->name}&raquo;</h1>
     {/if}
 
-	{if not $action->active}<div class="closed_action">АКЦИЯ ЗАКОНЧИЛАСЬ!!!</div>{/if}
+	{if not $action->active}
+        {if $action->from}
+        <div class="closed_action">АКЦИЯ ЗАКОНЧИЛАСЬ!!!</div>
+        {/if}
+        <div class="closed_action">АКЦИЯ ЕЩЁ НЕ НАЧАЛАСЬ!!!</div>
+    {/if}
 
     <div class="cb action_header {if not $action->active}o50{/if}">
         {if $action->banner}
@@ -18,11 +29,11 @@
 		{$action->text}
     </div>
     {if $action->active && not $action->total && $action->show_goods}
-	    <h1 class="yell">Акция: &laquo;{$action->name}&raquo;</h1>
+	    <h1>Акция: &laquo;{$action->name}&raquo;</h1>
 
         <script>
         $(window).load(function() {
-            $('#menu').css('marginTop', Math.max(0, $('h1.yell').position().top - $('#menu').position().top) + 25);
+            $('#menu').css('marginTop', Math.max(0, $('.yell h1').position().top - $('#menu').position().top) + 25);
         });
         </script>
 

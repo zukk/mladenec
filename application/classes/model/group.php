@@ -119,12 +119,15 @@ class Model_Group extends ORM {
      * Пересчет количества активных отзывов
      * @return int
      */
-    public function review_count() {
+    public function review_count()
+    {
         
         $this->review_qty = DB::select(DB::expr('count(`z_good_review`.`id`) as `cnt`'))
             ->from('z_good_review')
-            ->join('z_good') ->on('z_good_review.good_id','=','z_good.id')
-            ->join('z_group')->on('z_group.id','=','z_good.group_id')
+            ->join('z_good')
+                ->on('z_good_review.good_id','=','z_good.id')
+            ->join('z_group')
+                ->on('z_group.id','=','z_good.group_id')
             ->where('z_good.group_id', '=', $this->id)
             ->where('z_good_review.active', '=', 1)
             ->execute()->get('cnt');

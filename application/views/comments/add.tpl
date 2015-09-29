@@ -42,7 +42,7 @@
         <label for="email" class="l">Ваш Email <sup>*</sup></label>
         <input type="text" id="email" name="email" value="" class="txt"/>
         <label for="user_name" class="l">Ваш Телефон <sup>*</sup></label>
-        <input type="text" id="phone" name="phone" value="" class="txt"/>
+        <input type="tel" id="phone" name="phone" value="" class="txt"/>
 		{/if}
     {/if}
 

@@ -66,7 +66,7 @@
         </td>
         <td><img src="{$i->banner}" width="300" /></td>
         <td>
-            {$i->visible_goods_cnt} отображаемых,
+            {$i->visible_goods_cnt} товаров,
         </td>
         <td>
             {if $i->main}на главной{/if}<br />

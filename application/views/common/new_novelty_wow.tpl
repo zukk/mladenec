@@ -1,8 +1,8 @@
 <div id="ann">
 	<a href="{Route::url('action_list')}" class="ih2">Акции</a>
 	<div>
-		<a href="{Route::url('action_current_list')}"><img src="/i/action_star25.png" alt="WOW-акции" width="25" /></a>
-		<p><a href="{Route::url('action_current_list')}">WOW-акции</a><br />Скидки и подарки</p>
+		<a href="{Route::url('action_list')}"><img src="/i/action_star25.png" alt="WOW-акции" width="25" /></a>
+		<p><a href="{Route::url('action_list')}">WOW-акции</a><br />Скидки и подарки</p>
 	</div>
 
 	<a href="{Route::url('news')}" class="ih2">Новости</a>

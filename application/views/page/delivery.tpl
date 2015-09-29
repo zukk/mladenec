@@ -138,6 +138,7 @@ function get_zone(coords) {
 }
 
 $(document).ready( function() {
+    ymaps.ready(map_init);
 
     $('#check_addr').click(function() {
 
@@ -225,8 +226,8 @@ $(document).ready( function() {
 
 });
 
-ymaps.ready(function() {
-    if (!for_route) {
+function map_init() {
+    if ( ! for_route) {
         var zones = [], min = [180, 180], max = [0, 0], colors = [];
 
         {foreach from=$zones item=z name=z}
@@ -324,7 +325,7 @@ ymaps.ready(function() {
                     }
                 });
     }
-});
+}
 </script>
 
 

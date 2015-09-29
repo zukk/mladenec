@@ -5,38 +5,44 @@ class Model_Section extends ORM {
 	use Seo;
 
     const CLOTHS_ROOT = 29690; // ид родительской категории для всей одежды
+    const DIAPERS_ID = 29798; // ид категории подгузников
+    const LINEN_ID = 29781; // ид пелёнок
+    const MILK_ID = 29051; // ид категории молочной продукции (холодильник)
 
     protected $_table_name = 'z_section';
 
-    protected $_belongs_to = array(
-        'img' => array('model' => 'file', 'foreign_key' => 'image'),
-        'img93' => array('model' => 'file', 'foreign_key' => 'image93'),
-        'parent' => array('model' => 'section', 'foreign_key' => 'parent_id'),
-        'menu_img' => array('model' => 'file', 'foreign_key' => 'img_menu'),
-    );
+    protected $_belongs_to = [
+        'img' => ['model' => 'file', 'foreign_key' => 'image'],
+        'img93' => ['model' => 'file', 'foreign_key' => 'image93'],
+        'parent' => ['model' => 'section', 'foreign_key' => 'parent_id'],
+        'menu_img' => ['model' => 'file', 'foreign_key' => 'img_menu'],
+    ];
 
-    protected $_has_many = array(
-        'filters' => array('model' => 'filter', 'foreign_key'   => 'section_id'),
-        'brands'  => array('model' => 'brand', 'through'    => 'z_section_brand', 'foreign_key'   => 'section_id', 'far_key'   => 'brand_id'),
-        'hits'  => array('model' => 'good', 'through'    => 'z_hit', 'foreign_key'   => 'section_id', 'far_key' => 'good_id'),
-        'params'  => array('model' => 'section_param', 'foreign_key' => 'section_id'),
-        'serts'   => array(
+    protected $_has_many = [
+        'filters' => ['model' => 'filter', 'foreign_key'   => 'section_id'],
+        'brands'  => ['model' => 'brand', 'through'    => 'z_section_brand', 'foreign_key'   => 'section_id', 'far_key'   => 'brand_id'],
+        'hits'  => ['model' => 'good', 'through'    => 'z_hit', 'foreign_key'   => 'section_id', 'far_key' => 'good_id'],
+        'params'  => ['model' => 'section_param', 'foreign_key' => 'section_id'],
+        'serts'   => [
            'foreign_key' => 'section_id',
            'model' => 'sert',
            'through' => 'z_sert_rel',
            'far_key' => 'sert_id'
-        )
-    );
+        ],
+        'childs' => ['model' => 'section', 'foreign_key' => 'parent_id']
+    ];
     
-    protected $_table_columns = array(
+    protected $_table_columns = [
         'id' => '', 'code' => '', 'name' => '', 'vitrina' => '', 'translit' => '', 'parent_id' => '', 'active' => '', 'sort' => '',
         'image' => '', 'image93' => '', 'img_menu' => '', 'max_price' => '', 'min_price' => '',
         'text' => '',
         'qty' => '',                           // Общее количество товаров в разделе
         'settings' => '',
-		'export_type' => '',
-        'title' => '', 'keywords' => '', 'description' => ''
-    );
+		'h1' => '', 'title' => '', 'keywords' => '', 'description' => '',
+        'empty_date' => '',
+        'market_category' => '',
+        'roditi' => '',
+    ];
 
     const SHOW_OUT_OF_STOCK 	     = 0;
     const HIDE_OUT_OF_STOCK 	     = 1;
@@ -55,16 +61,14 @@ class Model_Section extends ORM {
 
     const EXPORTYML_CLOTHERS = 1;
 	
-	public static $exportyml_types = array(
-		self::EXPORTYML_CLOTHERS => 'как одежда'
-	);
-
-    const CACHE_KEY_CATALOG = 'catalog'; // ключ кэша каталога
+	const CACHE_KEY_CATALOG = 'catalog'; // ключ кэша каталога
     protected $_reload_on_wakeup = FALSE;
 
     public $children = array(); // подкатегории падают сюда
     public $sub = array(); // контейнер для меню 3го уровня
+
     private $_settings = array();
+    private $_tags = array(); // теговые из этой секции, для прямых ссылок на них
 
     public function clear()
     {
@@ -99,14 +103,12 @@ class Model_Section extends ORM {
             'm' => 1,
             's' => 'rating',
             'per_page' => [20,40,80],
-            'x' => 1,
-            'buy' => 0,
-            'new' => 0,
+            'row' => 4,
             'sub' => 0,
             'list' => 0,
             'orderByItems' => ["rating","name","price", "pricedesc","new"],
-			'brands' => array(),
-            'view_type' => 0
+			'brands' => [],
+            'goodTabs' => []
         );
         return $this->_settings;
     }
@@ -117,37 +119,34 @@ class Model_Section extends ORM {
      */
     public function getSortedBrands()
     {
-		
 		$sb = $this->brands->find_all()->as_array('id');
 		
 		$br = array();
 		
-		if( !empty( $this->settings['brands'] ) ){
-			foreach( $this->settings['brands'] as $bId ){
-		
-				if( !empty( $sb[$bId] ) ){
+		if( ! empty($this->settings['brands'])) {
+			foreach($this->settings['brands'] as $bId) {
+				if( ! empty($sb[$bId])) {
 					$br[] = $sb[$bId];
-					unset( $sb[$bId] );
+					unset($sb[$bId]);
 				}
 			}
 			
-			usort($sb, function($a, $b){
-				return strcmp($a->name, $b->name);
-			});
+			usort($sb, function($a, $b) { return strcmp($a->name, $b->name); });
 
-			if( !empty( $sb ) ){
-				foreach( $sb as $item )
-					$br[] = $item;
+			if( ! empty( $sb ) ) {
+				foreach( $sb as $item ) $br[] = $item;
 			}
-		}
-		else{
+		} else {
 			
-			usort($sb, function($a, $b){
-				return strcmp($a->name, $b->name);
-			});
-
+			usort($sb, function($a, $b) { return strcmp($a->name, $b->name); });
 			$br = $sb;
 		}
+
+        foreach($br as &$b) {
+            if( ! empty($this->settings['b_hit'][$b->id])) {
+                $b->hit = TRUE;
+            }
+        }
 		
 		return $br;
 	}
@@ -186,15 +185,13 @@ class Model_Section extends ORM {
      */
     public static function get_catalog($show_inactive = FALSE, $sVitrina = null)
     {
-        $catalog = array();
+        $catalog = [];
 
-        // Fix vitrina name.
-        $sVitrina = (is_null($sVitrina) ? (VK_APP_SERVER_NAME === Kohana::$server_name ? key(Kohana::$hostnames) : Kohana::$server_name) : $sVitrina);
-
-        $cache_key = self::CACHE_KEY_CATALOG.$sVitrina.intval($show_inactive);
-        $catalog_cache = Cache::instance()->get($cache_key);
+        $sVitrina = (is_null($sVitrina) ? Kohana::$server_name : $sVitrina);
+        $cache_key = self::CACHE_KEY_CATALOG.md5(DOCROOT).$sVitrina.intval($show_inactive);
+        $catalog_cache = Cache::instance()->get($cache_key);  
         if ( ! empty($catalog_cache)) $catalog = unserialize($catalog_cache);
-
+        //$catalog = FALSE;
         if (empty($catalog))
         {
             $return = ORM::factory('section')
@@ -213,14 +210,14 @@ class Model_Section extends ORM {
                     if( ! empty($catalog[$item->parent_id])) {
                         $catalog[$item->parent_id]->children[$item->id] = $item;
                         if ($item->settings['sub'] != Model_Section::SUB_NO) {
-                            $s = new Sphinx('section', $item->id);
+                            $s = new Sphinx('section', $item->id, FALSE);
                             $params = $s->stats();
-                            $item->sub = array();
+                            $item->sub = []; // массив данных подкатегорий
 
                             if ($item->settings['sub'] == Model_Section::SUB_BRAND) { // третий уровень - бренды
-                                $item->sub = $params['brands'];
+
                                 foreach($params['brands'] as $b) {
-                                    $item->sub[$b['id']] = $b['name'];
+                                    $item->sub[$b['id']] = ['href' => $s->href(['b' => [$b['id']]])] + $b;
                                 }
                             }
                             if ($item->settings['sub'] == Model_Section::SUB_FILTER // третий уровень - фильтр
@@ -228,7 +225,12 @@ class Model_Section extends ORM {
                                 && ! empty($params['vals'][$item->settings['sub_filter']])) {
 
                                 foreach($params['vals'][$item->settings['sub_filter']] as $k => $v) {
-                                    $item->sub[$k] = $v;
+                                    if (Model_Filter::big($item->settings['sub_filter'])) { // для одежды по большому типу, для категорий всё для мам - свои ссылки (третий уровень)
+                                        $href = $item->get_link(0, $k);
+                                    } else {
+                                        $href = $s->href(['f' => [$item->settings['sub_filter'] => [$k]]]);
+                                    }
+                                    $item->sub[$k] = ['href' => $href] + $v;
                                 }
                             }
                         }
@@ -268,32 +270,97 @@ class Model_Section extends ORM {
     }
 
     /**
+     * Получить все теги секции в формате query => tag
+     * @return Model_Tag[]
+     */
+    public function tags()
+    {
+        return $this->_tags = ORM::factory('tag')
+            ->where('section_id', '=', $this->id)
+            ->order_by('query')
+            ->find_all()
+            ->as_array('query');
+    }
+
+    /**
+     * Получить url теговой если есть под неё условия, а в массиве оставить параметры для query_string
+     * @param [] $arr массив данных
+     * @return mixed
+     */
+    public function tag(&$arr, $filter)
+    {
+        ksort($arr);
+        $href = http_build_query($arr); // полный запрос - по нему будем искать теговую
+
+        $arr2 = $arr; // соберём запрос без фильтров - по нему тоже будем искать, если полный не найдём
+        foreach($arr2 as $k => $v) {
+            if (preg_match('~f(\d+)~', $k)) {
+                unset($arr2[$k]);
+            }
+        }
+        $href2 = http_build_query($arr2);
+
+        $tag_found = FALSE;
+        if ($href != 'c='.$this->id) { // пытаемся подобрать теговую только если условие не только на категорию
+            if ( ! empty($this->_tags[$href])) {
+                $href = '/' . $this->_tags[$href]->code;
+                $tag_found = TRUE;
+                foreach ($arr as $k => $a) { // убираем все параметры категория, бренд, фильтр
+                    if ($k == 'c' || $k == 'b' || preg_match('~f(\d+)~', $k)) {
+                        unset($arr[$k]);
+                    }
+                }
+            } elseif ( ! empty($this->_tags[$href2])) {
+                $href = '/' . $this->_tags[$href2]->code;
+                $tag_found = TRUE;
+                foreach ($arr as $k => $a) { // убираем все параметры категория, бренд
+                    if ($k == 'c' || $k == 'b') {
+                        unset($arr[$k]);
+                    }
+                }
+            }
+        }
+
+        if ( ! $tag_found) {
+
+            $href = $this->get_link(0, $filter); // у запроса надо стереть условие на категорию, остальное оставляем
+            foreach($arr as $k => $a) {
+                if ($k == 'c' || (preg_match('~f(\d+)~', $k) && $a == $filter)) {
+                    unset($arr[$k]);
+                }
+            }
+            unset($arr['c']);
+        }
+        return $href;
+    }
+
+    /**
      * Получить ссылку на категорию
      * @param bool $html
-     * @param bool $with_filter - c учетом фильтра
+     * @param bool $with_filter - c учетом фильтра id значения фильтра по большому типу для одежды
      * @return string
      */
     public function get_link($html = true, $with_filter = FALSE)
     {
-        if (empty($with_filter)) {
-            $href = sprintf('/catalog/%s', $this->translit, $this->id);
-        } else {
+        $third_level = FALSE;
+
+        if ( ! empty($with_filter)) {
+            $sphinx = new Sphinx('section', $this->id, FALSE);
+            foreach($sphinx->stats()['vals'] as $fid => $values) {
+                if ( ! empty($values[$with_filter]) && Model_Filter::big($fid)) {
+                    $third_level = TRUE;
+                    break;
+                }
+            }
+        }
+        if ($third_level) {
             $href = sprintf('/catalog/%s/%d_%d.html', $this->translit, $this->id, $with_filter);
+        } else {
+            $href = sprintf('/catalog/%s', $this->translit, $this->id);
         }
 
-        if ( ! empty(Kohana::$hostnames[$this->vitrina]['host'])) {
+        if ( ! empty(Kohana::$hostnames[$this->vitrina]['host'])) { // ссылка всегда содержит витрину!
             $href = Route::$default_protocol . Kohana::$hostnames[$this->vitrina]['host'] . $href;
-        }
-
-        if ($with_filter) { // хэш надо || ($this->parent_id && $this->settings['list'] == Model_Section::LIST_GOODS)
-            $s = array();
-            $per_page = $this->settings['per_page'];
-            $s['pp'] = current($per_page);
-            $s['x'] = $this->settings['x'];
-            $s['m'] = $this->settings['m'];
-            $s['s'] = $this->settings['s'];
-
-			$href = Txt::view_params($href, $s);
         }
 
         return $html ? HTML::anchor($href, $this->name) : $href;
@@ -334,11 +401,6 @@ class Model_Section extends ORM {
         return $this->with('parent')->order_by('sort', 'ASC');
     }
 
-    public function flag()
-    {
-        return array('active');
-    }
-
     /**
      * После сохранения товара в админке - сохранить его пропы
      */
@@ -358,7 +420,7 @@ class Model_Section extends ORM {
         // сохранение новой картинки
         if ( ! empty($_FILES['img']) AND Upload::not_empty($_FILES['img']) AND Upload::valid($_FILES['img'])) {
 
-            if ( ! Upload::image($_FILES['img'], 225, 120, TRUE)) {
+            if ( ! Upload::image($_FILES['img'])) {
                 $errors[] = Kohana::message('admin/section', 'img.default');
             } else { // пришла новая картинка
 
@@ -417,7 +479,15 @@ class Model_Section extends ORM {
             }
         }
 		
-        return array('errors' => $errors);
+		$d = json_decode(file_get_contents('http://export.yandex.ru/inflect.xml?name=' . urlencode($this->name) . '&format=json'), TRUE);
+
+        if ( ! empty($d[2])) {
+			
+			$this->roditi = $d[2];
+			$this->save();
+		}
+		
+        return ['errors' => $errors];
     }
 
     /**

@@ -57,10 +57,7 @@ I18n::lang('en-us');
  * Note: If you supply an invalid environment name, a PHP warning will be thrown
  * saying "Couldn't find constant Kohana::<INVALID_ENV_NAME>"
  */
-if (isset($_SERVER['KOHANA_ENV'])) {
-    Kohana::$environment = constant('Kohana::' . strtoupper($_SERVER['KOHANA_ENV']));
-}
-
+Kohana::$environment = Kohana::PRODUCTION; // БОЕВОЙ САЙТ!!!
 /**
  * Initialize Kohana, setting the default options.
  *
@@ -77,6 +74,7 @@ if (isset($_SERVER['KOHANA_ENV'])) {
 Kohana::init(array(
     'base_url' => '/',
     'index_file' => '',
+    'errors'	=> FALSE,
 ));
 
 /**
@@ -104,12 +102,40 @@ Kohana::modules(array(
     // 'userguide'  => MODPATH.'userguide',  // User guide and API documentation
 ));
 
+$to_id = DB::select('to_id')
+        ->from('tag_redirect')
+        ->where('to_id', '>', 0)
+        ->where('url', '=', Request::detect_uri())
+        ->execute()->get('to_id');
+
+if ( ! empty($to_id)) {
+
+    $to_url = DB::select('url')
+            ->from('tag_redirect')
+            ->where('id', '=', $to_id)
+            ->execute()->get('url');
+    
+    if ( ! empty($to_url)) {
+        header("HTTP/1.1 301 Moved Permanently");
+        header ('Location: http://' . $_SERVER['HTTP_HOST'] . '/' . $to_url);
+        exit();
+    }
+}
+
 /**
  * Set the routes. Each route must have a minimum of a name, a URI and a set of
  * defaults for the URI.
  */
 
 if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST'] ) ){
+
+	// арбузы
+	Route::set('arbuz', 'arbuz.php')
+		->defaults(array('controller' => 'ajax', 'action' => 'arbuz'));
+
+	// проброс вызовов из GetResponse
+	Route::set('getresponse', 'user/getresponse_q9w8E7r6.php')
+		->defaults(array('controller' => 'page', 'action' => 'getresponse'));
 	
 	// проброс отписки из subscribe
 	Route::set('unsubscribe_pro', 'unsubscribe_q6jknPvOLDF8_<email>', array(
@@ -136,6 +162,9 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('user_error', 'user/error')
 		->defaults(array('controller' => 'ajax', 'action' => 'error'));
 
+    Route::set('toggle_state', 'toggle_state')
+        ->defaults(array('controller' => 'ajax', 'action' => 'toggle'));
+
 	Route::set('register', 'registration')
 		->defaults(array('controller' => 'user', 'action' => 'register'));
 
@@ -148,6 +177,9 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('user_password', 'account/password')
 		->defaults(array('controller' => 'user', 'action' => 'password'));
 
+    Route::set('pay', '<id>', array('id' => '\d{6,}'))
+        ->defaults(array('controller' => 'user', 'action' => 'pay'));
+
 	Route::set('login', 'user/login')
 		->defaults(array('controller' => 'user', 'action' => 'login'));
 
@@ -157,14 +189,17 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('external_clean', 'user/external/clean')
 		->defaults(array('controller' => 'user', 'action' => 'external_clean'));
 
-	Route::set('order', 'personal/order_data.php')
-		->defaults(array('controller' => 'user', 'action' => 'order'));
-
 	Route::set('order2', 'personal/order_data2.php')
 		->defaults(array('controller' => 'user', 'action' => 'order2'));
 
+	Route::set('google_goods', 'get-goods')
+		->defaults(array('controller' => 'product', 'action' => 'google_goods'));
+
+    Route::set('add_deferred', 'add_deferred')
+        ->defaults(array('controller' => 'product', 'action' => 'add_deferred'));
+
 	Route::set('cart_clear', 'personal/cart_clear.php')
-		->defaults(array('controller' => 'product', 'action' => 'cart_clear'));
+		->defaults(array('controller' => 'ajax', 'action' => 'cart_clear'));
 
 	Route::set('cart_remove_good', 'personal/cart_remove_good.php')
 		->defaults(array('controller' => 'product', 'action' => 'cart_remove_good'));
@@ -172,8 +207,8 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('cart_recount', 'personal/cart_recount.php')
 		->defaults(array('controller' => 'product', 'action' => 'cart_recount'));
 
-	Route::set('cart_sync', 'personal/cart_sync.php')
-		->defaults(array('controller' => 'product', 'action' => 'cart_sync'));
+	Route::set('cart_presents', 'ajax/cart_presents.php')
+		->defaults(array('controller' => 'product', 'action' => 'cart_presents'));
 
 	Route::set('order_back', 'order/back')
 		->defaults(array('controller' => 'user', 'action' => 'back'));
@@ -184,14 +219,17 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('order_valid', 'personal/order.php')
 		->defaults(array('controller' => 'user', 'action' => 'order_valid'));
 
-	Route::set('payment', 'payment(/<todo>.php)', array('todo' => 'pay_success'))
-		->defaults(array('controller' => 'user', 'action' => 'payment', 'todo' => 'payment'));
+	Route::set('payment', 'payment/pay_success.php')
+		->defaults(array('controller' => 'user', 'action' => 'pay_success'));
 
 	Route::set('payment_back', 'payment/back')
 		->defaults(array('controller' => 'user', 'action' => 'payment_back'));
 
-	Route::set('order_list', 'account/order')
+	Route::set('user_order', 'account/order')
 		->defaults(array('controller' => 'user', 'action' => 'orders'));
+
+    Route::set('user_deferred', 'account/deferred')
+        ->defaults(array('controller' => 'user', 'action' => 'deferred'));
 
 	Route::set('user_address', 'account/address')
 		->defaults(array('controller' => 'user', 'action' => 'address'));
@@ -199,31 +237,40 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('user_child', 'account/children')
 		->defaults(array('controller' => 'user', 'action' => 'children'));
 
+    Route::set('user_city', 'user/city')
+        ->defaults(array('controller' => 'ajax', 'action' => 'city'));
+
 	Route::set('user_action', 'account/action')
 		->defaults(array('controller' => 'user', 'action' => 'action'));
 
 	Route::set('user_reviews', 'account/reviews')
 		->defaults(array('controller' => 'user', 'action' => 'reviews'));
 
+	Route::set('user_goods', 'account/goods')
+		->defaults(array('controller' => 'user', 'action' => 'goods'));
+
 	Route::set('user_child_delete', 'account/child/delete/<id>', array('id' => '\d+'))
 		->defaults(array('controller' => 'user', 'action' => 'child_delete'));
 
-	Route::set('order_detail_thanx', 'account/order/<id>/<thanx>', array('id' => '\d+', 'thanx' => 'thanx'))
-		->defaults(array('controller' => 'product', 'action' => 'thank_you2'));
-
-	Route::set('order_detail', 'account/order/<id>', array('id' => '\d+', 'thanx' => 'thanx'))
-		->defaults(array('controller' => 'product', 'action' => 'thank_you'));
+	Route::set('order_detail', 'account/order/<id>(/<thanx>)', array('id' => '\d+', 'thanx' => 'thanx'))
+		->defaults(array('controller' => 'user', 'action' => 'order'));
 
 	Route::set('one_click', 'one_click')
 		->defaults(array('controller' => 'product', 'action' => 'one_click'));
 
+	Route::set('ajax_user_phone', 'user/phone')
+		->defaults(array('controller' => 'user', 'action' => 'phone'));
+
 	Route::set('ajax_zone', 'user/zone')
 		->defaults(array('controller' => 'user', 'action' => 'zone'));
 
+	Route::set('ajax_user_goods', 'user/goods_ajax')
+		->defaults(array('controller' => 'user', 'action' => 'goods_ajax'));
+
 	Route::set('ajax_frequent', 'frequent/<id>', array('id' => '\d+'))
 		->defaults(array('controller' => 'ajax', 'action' => 'frequent'));
-
-	Route::set('ajax_cart_merge', 'cart_merge', array())
+        
+    Route::set('ajax_cart_merge', 'cart_merge', array())
 		->defaults(array('controller' => 'ajax', 'action' => 'cart_merge'));
 
 	Route::set('callback', 'callback')
@@ -239,12 +286,16 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('pampers', 'pampers')
 		->defaults(array('controller' => 'section', 'action' => 'pampers'));
 
-	Route::set('section', 'catalog/<translit>(/<id>(_<fv_id>).html(&<query>))', array(
-		'translit' => '[a-z0-9_-]+',
-		'id' => '\d+',
-		'fv_id' => '\d+',
-		'query' => '.*',
-	))->defaults(array('controller' => 'section', 'action' => 'view',));
+    Route::set('section', 'catalog/<translit>(/<id>(_<fv_id>).html(&<query>))', array(
+        'translit' => '[a-z0-9_-]+',
+        'id' => '\d+',
+        'fv_id' => '\d+',
+        'query' => '.*',
+    ))->defaults(array('controller' => 'section', 'action' => 'view',));
+
+    // после секции проверим таг
+    Route::set('tag', '<code>', array('code' => '(tag/[/0-9a-z_-]+\.html|catalog/[0-9a-z_-]+/[0-9a-z_-]+)(\.html)?')) // сначала проверим на теговую, потом на каталог
+        ->defaults(array('controller' => 'product', 'action' => 'tag'));
 
 	// product
 	Route::set('product_1c', 'product/1c/<code>', array(
@@ -261,13 +312,13 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 		'id' => '\d+',
 	))->defaults(array('controller' => 'product', 'action' => 'view_ajax'));
 
-	Route::set('ajax_hitz', 'ajax/hitz/<section_id>', array(
-		'section_id' => '\d+',
-	))->defaults(array('controller' => 'ajax', 'action' => 'hitz'));
+    Route::set('ajax_hitz_section', 'ajax/hitz/<section_id>', array(
+		'section_id' => '\d+'
+    ))->defaults(array('controller' => 'ajax', 'action' => 'hitz'));
 
 	// контекстная подсказка.
 	Route::set('search_suggest', 'suggest/search')
-		->defaults(array('controller' => 'search', 'action' => 'do'));
+		->defaults(array('controller' => 'ajax', 'action' => 'search_suggestion'));
 
 	Route::set('search_suggest_help', 'suggest/example')
 		->defaults(array('controller' => 'search', 'action' => 'example'));
@@ -276,7 +327,7 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 		->defaults(array('controller' => 'product', 'action' => 'search'));
 
 	Route::set('cart', 'personal/basket.php')
-		->defaults(array('controller' => 'product', 'action' => 'cart2'));
+		->defaults(array('controller' => 'product', 'action' => 'cart'));
 
 	Route::set('cart_delivery', 'cart/delivery.php')
 		->defaults(array('controller' => 'product', 'action' => 'cart_delivery'));
@@ -284,13 +335,16 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('cart_coupon', 'cart/coupon.php')
 		->defaults(array('controller' => 'product', 'action' => 'cart_coupon'));
 
+    Route::set('delivery_open', 'cart/delivery_open.php')
+        ->defaults(array('controller' => 'product', 'action' => 'delivery_open'));
+
 	Route::set('cart_comments', 'cart/comments.php')
 		->defaults(array('controller' => 'product', 'action' => 'cart_comments'));
 
 	Route::set('cart_ajax', 'personal/basket_ajax')
 		->defaults(array('controller' => 'ajax', 'action' => 'cart'));
 
-	Route::set('add', 'product/add')
+	Route::set('product_add', 'product/add')
 		->defaults(array('controller' => 'product', 'action' => 'add'));
 
 	Route::set('review', 'review/add/<id>', array('id' => '[0-9]+'))
@@ -300,7 +354,7 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 		->defaults(array('controller' => 'ajax', 'action' => 'review'));
 
 	Route::set('warn', 'product/warn/<id>', array('id' => '[0-9]+'))
-		->defaults(array('controller' => 'product', 'action' => 'warn'));
+		->defaults(array('controller' => 'ajax', 'action' => 'warn'));
 
 	Route::set('novelty', 'novelty')
 		->defaults(array('controller' => 'product', 'action' => 'new'));
@@ -314,10 +368,7 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('discount', 'about/sale.php')
 		->defaults(array('controller' => 'product', 'action' => 'discount'));
 
-	Route::set('slide', 'slide/<type>', array('type' => '(new|superprice|cart_set|cart2_set|sale|pampers|promo)'))
-		->defaults(array('controller' => 'ajax', 'action' => 'slide'));
-
-	Route::set('slide_set', 'slide/<type>/<set_id>', array('type' => '(new|superprice|cart_set|cart2_set|sale|pampers|promo)', 'set_id' => '[0-9]+'))
+	Route::set('slide', 'slide/<type>(/<param>)')
 		->defaults(array('controller' => 'ajax', 'action' => 'slide'));
 
 	Route::set('stats', 'rate/<type>/<id>', array('type' => '(product|group)', 'id' => '[0-9]+'))
@@ -335,13 +386,9 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 		'id' => '\d+'
 	))->defaults(array('controller' => 'page', 'action' => 'map'));
 
-
-	// теговые страницы
+	// дерево теговых (@deprecated?)
 	Route::set('tag_tree', 'tag')
 		->defaults(array('controller' => 'page', 'action' => 'tag'));
-
-	Route::set('tag', '<code>', array('code' => '(tag/[/0-9a-z_-]+\.html|catalog/[0-9a-z_-]+/[0-9a-z_-]+)'))
-		->defaults(array('controller' => 'product', 'action' => 'tag'));
 
 	// новости
 	Route::set('new', 'about/news/<id>', array('id' => '\d+'))
@@ -354,12 +401,9 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('brands', 'about/brands')
 		->defaults(array('controller' => 'brands', 'action' => 'list'));
 
-	// отзывы
-	Route::set('comment', 'about/review/!id<id>', array('id' => '\d+'))
-		->defaults(array('controller' => 'comments', 'action' => 'view'));
-
-	Route::set('comment_old', 'about/review/<id>', array('id' => '\d+'))
-		->defaults(array('controller' => 'comments', 'action' => 'old_view'));
+	// отзывы                
+	Route::set('comment', 'about/review/<id>', array('id' => '\d+'))
+		->defaults(array('controller' => 'comments', 'action' => 'view')); 
 
 	Route::set('comment_add', 'about/review/add')
 		->defaults(array('controller' => 'comments', 'action' => 'add'));
@@ -371,14 +415,14 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 		->defaults(array('controller' => 'comments', 'action' => 'list'));
 
 	// статьи
-	Route::set('article', 'about/article(/<id>)', array('id' => '\d+'))
+	Route::set('article', '(<old_link>)article(/<id>)', array('id' => '\d+', 'old_link' => 'about/'))
 		->defaults(array('controller' => 'page', 'action' => 'article'));
 
 	// акции
-	Route::set('action_list', 'actions')
-		->defaults(array('controller' => 'action', 'action' => 'list'));
+	//Route::set('action_list', 'actions')
+	//	->defaults(array('controller' => 'action', 'action' => 'list'));
 
-	Route::set('action_current_list', 'actions/current')
+	Route::set('action_list', 'actions(/current)')
 		->defaults(array('controller' => 'action', 'action' => 'current_list'));
 
 	Route::set('action_arhive', 'actions/arhive')
@@ -399,10 +443,19 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('admin', 'od-men')
 		->defaults(array('controller' => 'admin', 'action' => 'index'));
 
+    Route::set('admin_ajax_call', 'od-men/ajax/card_call')
+        ->defaults(array('controller' => 'admin_ajax', 'action' => 'card_call'));
+
+    Route::set('admin_ajax_cash', 'od-men/ajax/card_cash')
+        ->defaults(array('controller' => 'admin_ajax', 'action' => 'card_cash'));
+
+	Route::set('admin_ajax_can_pay', 'od-men/ajax/card_can_pay')
+		->defaults(array('controller' => 'admin_ajax', 'action' => 'card_can_pay'));
+
 	Route::set('admin_ajax_add', 'od-men/ajax/<model>/form', array('model' => '[a-z_]+'))
 		->defaults(array('controller' => 'admin_ajax', 'action' => 'form'));
 
-	Route::set('admin_ajax_form', 'od-men/ajax/<model>/<id>', array('model' => '[a-z_]+', 'id' => '\d+'))
+    Route::set('admin_ajax_form', 'od-men/ajax/<model>/<id>', array('model' => '[a-z_]+', 'id' => '\d+'))
 		->defaults(array('controller' => 'admin_ajax', 'action' => 'form'));
 
 	Route::set('admin_ajax_list', 'od-men/ajax/<model>', array('model' => '[a-z_]+'))
@@ -413,6 +466,19 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 
 	Route::set('admin_pricelab', 'od-men/pricelab(/<ymd>)', array('ymd' => '20\d\d/\d\d/\d\d'))
 		->defaults(array('controller' => 'admin', 'action' => 'pricelab'));
+
+	Route::set('admin_tag_excel', 'od-men/tag/excel')
+		->defaults(array('controller' => 'admin', 'action' => 'tag_excel'));        
+        
+	Route::set('admin_order_excel', 'od-men/order_excel')
+		->defaults(array('controller' => 'admin', 'action' => 'order_excel'));
+        
+        Route::set('admin_user_excel', 'od-men/user_excel')
+		->defaults(array('controller' => 'admin', 'action' => 'user_excel'));
+
+
+    Route::set('admin_order_card', 'od-men/order_card')
+        ->defaults(array('controller' => 'admin', 'action' => 'order_card'));
 
 	Route::set('admin_filemanager_dir', 'od-men/filemanager/<mdir_id>', array('mdir_id' => '\d+'))
 		->defaults(array('controller' => 'admin', 'action' => 'filemanager'));
@@ -425,6 +491,9 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 
 	Route::set('admin_tagbylink', 'od-men/tagbylink')
 		->defaults(array('controller' => 'admin', 'action' => 'tagbylink'));
+
+	Route::set('admin_tag_excel', 'od-men/tag_excel')
+		->defaults(array('controller' => 'admin', 'action' => 'tag_excel'));
 
 	Route::set('admin_json_mdir_list', 'od-men/json/mdir/list')
 		->defaults(array('controller' => 'admin_json', 'action' => 'mdir_list'));
@@ -518,10 +587,10 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 		->defaults(array('controller' => 'ajax', 'action' => 'zone')); // загрузка данных зоны доставки (интервалы, адреса, настройки)
 
 	Route::set('delivery_time', 'delivery/time')
-		->defaults(array('controller' => 'ajax', 'action' => 'time')); // загрузка данных зоны доставки (интервалы, адреса, настройки)
-
-	Route::set('delivery', 'delivery/<type>', array('type' => '\d+'))// загрузка меню способа доставки (зависит от выбора пользователя)
-	->defaults(array('controller' => 'ajax', 'action' => 'delivery'));
+		->defaults(array('controller' => 'ajax', 'action' => 'time')); // загрузка данных времени доставки по дате
+        
+        Route::set('delivery_ozon', 'delivery/ozon')
+		->defaults(array('controller' => 'ajax', 'action' => 'ozon_price')); // загрузка данных времени доставки по дате
 
 	// ажакс загрузки вариантов голосования
 	Route::set('poll_variants', 'poll/variants/<id>', array('id' => '\d+',))
@@ -530,6 +599,9 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	// статика
 	Route::set('yml', 'export/yml.xml')
 		->defaults(array('controller' => 'page', 'action' => 'yml'));
+        
+	Route::set('findologic_yml', 'export/findologic_yml.xml')
+		->defaults(array('controller' => 'page', 'action' => 'findologic_yml'));
 
 	Route::set('google', 'export/google.xml')
 		->defaults(array('controller' => 'page', 'action' => 'yml', 'google' => TRUE));
@@ -555,7 +627,7 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('test', 'test')
 		->defaults(array('controller' => 'page', 'action' => 'test'));
 
-	Route::set('index', '<index>', array('index' => '(index\.php|)'))
+	Route::set('index', '(<index>)', array('index' => '(index\.php|)'))
 		->defaults(array('controller' => 'page', 'action' => 'index'));
 
 	// для Астры
@@ -565,7 +637,7 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('astra_routes_ready', 'astra/routes_ready.php')
 		->defaults(array('controller' => 'page', 'action' => 'astra_routes_ready'));
 
-	// тест 1с
+    // тест 1с
 	Route::set('astra_1ctest', 'od-test/test1c.php')
 		->defaults(array('controller' => 'page', 'action' => 'test1c'));
 
@@ -575,8 +647,9 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 
 	Route::set('page', '<static>', array('static' => '.*'))
 		->defaults(array('controller' => 'page', 'action' => 'view'));
-}
-else{
+
+} else {
+
 	Route::set('index', '<index>', array('index' => '(index\.php|)'))
 		->defaults(array('controller' => 'mobile', 'action' => 'index'));
 	
@@ -603,22 +676,16 @@ if ( ! empty($_SERVER['REQUEST_URI'])) {
     // Cookie across domains.
     header('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
 
+    header("Access-Control-Allow-Origin: *");
+    header("Access-Control-Allow-Credentials: true");
+
+    $domains = Kohana::$config->load('domains')->as_array(); // = Kohana::$config->load('domains')->as_array();
+
+    header("Access-Control-Allow-Origin: http://" . current($domains)['host']);
+    header("Access-Control-Allow-Credentials: true");
+
     if (parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) == '/sync') { // синзронизация
 
-        $domains = Kohana::$config->load('domains')->as_array(); // = Kohana::$config->load('domains')->as_array();
-
-		$d = $_POST['domain'];
-		$found = false;
-		foreach( $domains as $i ){
-			
-			if( $i['host'] == $d ){
-				$found = TRUE;
-				header("Access-Control-Allow-Origin: http://" . $i['host']);
-				header("Access-Control-Allow-Credentials: true");
-				break;
-			}
-		}
-		
         if ( ! empty($_GET['clear'])) { // удаление куки
 
             Cookie::delete($_GET['clear']);
@@ -638,38 +705,84 @@ if ( ! empty($_SERVER['REQUEST_URI'])) {
         $hosts = Kohana::$config->load('domains')->as_array();
 
         $hh = [];
-        foreach ($hosts as $h) $hh[] = '*.' . $h['host'];
+        foreach ($hosts as $h) $hh[] = (strpos($h['host'], '.') !== FALSE) ? '*.' . $h['host'] : 'http://'.$h['host'];
 		
 		$hh[] = "*.mladenec-shop.ru"; // mladenec main
 		$hh[] = "*.mladenec.ru"; // mladenec static
 
-		$hh[] = "*.livetex.ru"; // livetex + counter
-		$hh[] = "livetex.kavanga.ru";
+		$hh[] = "*.jivosite.com"; // jivosite
+		$hh[] = "*.amazonaws.com";
+        $hh[] = "wss://*.jivosite.com";
 
-		$hh[] = "call-tracking.by"; // counters & trackers
-		$hh[] = "*.wapstart.ru";
-		$hh[] = "*.doubleclick.net";
+		$hh[] = "*.retailrocket.ru"; // retailrocket
+
+        $hh[] = "*.wapstart.ru"; // counters & trackers
+        $hh[] = "https://*.doubleclick.net";
+        $hh[] = "*.doubleclick.net";
 		$hh[] = "*.adfox.ru";
 		$hh[] = "*.yadro.ru";
-		$hh[] = "cts-secure.channelintelligence.com"; // pampers + nutricia
+		$hh[] = "top-fwz1.mail.ru";
+		$hh[] = "https://cts-secure.channelintelligence.com"; // pampers + nutricia
 
-		$hh[] = "*.vk.com". // socials and youtube
+		$hh[] = "*.vk.com"; // socials and youtube
+		$hh[] = "https://*.vk.com";
+		$hh[] = "*.facebook.net";
 		$hh[] = "*.facebook.com";
+		$hh[] = "https://*.facebook.com";
 		$hh[] = "*.youtube.com";
 
 		$hh[] = "*.google.ru";  // google & services
+		$hh[] = "https://*.google.ru";
+		$hh[] = "*.google.com";
+		$hh[] = "https://*.google.com";
 		$hh[] = "*.gstatic.com";
 		$hh[] = "*.googleadservices.com";
 		$hh[] = "*.google-analytics.com";
 		$hh[] = "*.googletagmanager.com";
 		$hh[] = "*.googleapis.com";
+        $hh[] = "*.trmit.com"; // retag cdn
 
-		$hh[] = "*.yandex.ru"; // yandex
+        $hh[] = "*.yandex.ru"; // yandex
 		$hh[] = "*.yandex.net";
+		$hh[] = "https://*.yandex.ru";
+		$hh[] = "https://*.yandex.net";
 
-        $contentPolicy =
-			"Content-Security-Policy-Report-Only: default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data: ".implode(' ', $hh)
-			." report-uri /security-error";
+		$hh[] = "*.asbmit.com"; // admitad
+		$hh[] = "ad.admitad.com";
+        $hh[] = "*.veinteractive.com";
+		$hh[] = "a.marketgid.com";
+		$hh[] = "ad.adriver.ru";
+		$hh[] = "cdn.dumedia.ru";
+		$hh[] = "ads.heias.com";
+		$hh[] = "*.audiencemanager.de";
+		$hh[] = "https://adsclever.ru";
+		$hh[] = "cdn.admail.am";
+		$hh[] = "track.dumedia.ru";
+		$hh[] = "display.intencysrv.com";
+		$hh[] = "content.adriver.ru";
+
+		$hh[] = "https://ulogin.ru"; // ulogin
+        $hh[] = "ulogin.ru";
+        $hh[] = "x.ulogix.ru";
+
+        $hh[] = "static-trackers.adtarget.me"; // google remarketing
+        $hh[] = "https://trackers.adtarget.me";
+        $hh[] = "https://engine.adclick.lt:8081";
+        $hh[] = "https://engine.adclick.lv:8081";
+        $hh[] = "https://ib.adnxs.com";
+        $hh[] = "https://adsearch.adkontekst.pl";
+        $hh[] = "https://r3.c8.net.ua";
+
+        $hh[] = "https://cdn.findologic.com"; // поиск от findologic
+        $hh[] = "http://service.findologic.com";
+        $hh[] = "https://secure.findologic.com";
+        $hh[] = "http://tracking.findologic.com";
+
+		$hh[] = "http://code.directadvert.ru"; // пиксель
+
+		$contentPolicy =
+			"Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data: ".implode(' ', $hh)
+			.";report-uri /security-error";
 
         $contentPolicy = preg_replace('#(//.*?)?\n#ius', '', $contentPolicy);
 

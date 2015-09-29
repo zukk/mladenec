@@ -30,27 +30,34 @@ class Model_Spam extends ORM {
     }
 
     /**
-     * Расставляем хвосты гугла всем ссылкам
+     * Расставляем хвосты всем ссылкам
+     * расставляет если нету параметры в урл типа utm_source
+     * а также готовит место для RR_SETEMAIL если включен RR
      * http://www.mladenec-shop.ru/?utm_source=Mspam60&utm_medium=cpc&utm_content=1&utm_campaign=23February
      */
-    private function _tail($url)
+    private function _tail($matches)
     {
+        $url = $matches[1];
         $this->_url_counter++;
         $parsed = parse_url($url);
         $qs = [];
         if ( ! empty($parsed['query'])) {
             parse_str($parsed['query'], $qs);
         }
-        if ( empty($qs['utm_source'])) $qs['utm_source'] = 'Mspam'.$this->id;
+        if ( empty($qs['utm_source'])) $qs['utm_source'] = 'letter'.$this->id;
         if ( empty($qs['utm_medium'])) $qs['utm_medium'] = 'email';
         if ( empty($qs['utm_content'])) $qs['utm_content'] = $this->_url_counter;
         if ( empty($qs['utm_campaign'])) $qs['utm_campaign'] = '';
+        $qs = array_filter($qs);
+        if (Conf::instance()->rr_enabled) $qs['rr_setemail'] = 'RR_SETEMAIL';
 
-        return ($parsed['scheme'] ? $parsed['scheme'] .'://' : '')
-            . ($parsed['host'] ? $parsed['host'] : '')
-            . ($parsed['port'] ? ':'.$parsed['port'] : '')
-            . ($parsed['path'] ? ':'.$parsed['path'] : '')
-            . ( '?' . http_build_query($qs));
+        return 'href="'.
+              ( ! empty($parsed['scheme']) ? $parsed['scheme'] .'://' : '')
+            . ( ! empty($parsed['host']) ? $parsed['host'] : '')
+            . ( ! empty($parsed['port']) ? ':'.$parsed['port'] : '')
+            . ( ! empty($parsed['path']) ? $parsed['path'] : '/')
+            . ( '?' . http_build_query($qs))
+            . '"';
     }
 
     /**
@@ -92,9 +99,9 @@ class Model_Spam extends ORM {
 
                 $this->save();
 
-                $txt = file_get_contents($mail_dir.'index.html');
-                $tailed = preg_replace_callback('~href="([^"]+)"~isu', $this->_tail('$1'), $txt);
-                file_put_contents($mail_dir.'index.html', $tailed);
+                $txt = file_get_contents($mail_dir.'/index.html');
+                $tailed = preg_replace_callback('~href="([^"]+)"~isu', [$this, '_tail'], $txt);
+                file_put_contents($mail_dir.'/index.html', $tailed);
 
                 Model_History::log('spam', $this->id, 'zip uploaded');
             }
@@ -105,6 +112,7 @@ class Model_Spam extends ORM {
             $text = file_get_contents($mail_dir.'index.html');
             $tos = explode(',', $request->post('mail')); // кому
             foreach($tos as $to) {
+                $to = trim($to);
                 $mail->setHTML(Txt::spam($text, $to), FALSE, $mail_dir); // разные ссылки на отписку
                 $mail->send($to, $this->name);
                 $messages['messages'][] = 'Тестовое письмо выслано на адрес '.$to;

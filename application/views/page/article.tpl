@@ -1,6 +1,10 @@
 {if not $article}
-<div id="breadcrumb">
-    <a href="/">Главная</a> |
+<div id="breadcrumb">       
+    <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+        <a href="/" itemprop="url"><span itemprop="title">Главная</span></a>
+    </span>
+    &rarr;
+    <span>Статьи</span> 
 </div>
 
 <div id="simple">
@@ -20,9 +24,16 @@
 
 {else}
 
-<div id="breadcrumb">
-    <a href="/">Главная</a> &rarr;
-    <a href="{$article->get_list_link()}" title="Статьи">Статьи</a>
+<div id="breadcrumb">           
+    <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb" itemref="breadcrumb-1">
+        <a href="/" itemprop="url"><span itemprop="title">Главная</span></a>
+    </span>
+    &rarr;
+    <span itemprop="child" itemscope itemtype="http://data-vocabulary.org/Breadcrumb" id="breadcrumb-1">
+        <a href="{$article->get_list_link()}" title="Статьи" itemprop="url"><span itemprop="title">Статьи</span></a>
+    </span>
+    &rarr;
+    <span>{$article->name}</span>
 </div>
 
 <h1>{$article->name}</h1>
@@ -32,8 +43,9 @@
         {$article->text}
     </div>
 
+    {include file='common/social_comment.tpl' link=$article->get_link(0)}
+
     <a href="{$article->get_list_link()}" class="back cb">Вернуться к списку статей</a>
 </div>
-
 
 {/if}

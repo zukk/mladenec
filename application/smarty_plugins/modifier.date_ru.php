@@ -36,13 +36,13 @@ function smarty_modifier_date_ru($date, $for_order = FALSE)
     );
 
     if (is_int($date)) {
-        $date = date('y-m-d-N', $date);
+        $date = date('y-m-j-N', $date);
     } else {
-        $date = date('y-m-d-N', strtotime($date));
+        $date = date('y-m-j-N', strtotime($date));
     }
     list($y, $m, $d, $n) = explode('-', trim($date, '-'));
 
     return $for_order ?
         sprintf('%s %s/%s/%s', $weekday[$n], $d, $m, $y) :
-        sprintf('%s %s 20%s', $d, $month[$m], $y);
+        sprintf('%s, %s %s 20%s', $weekday[$n], $d, $month[$m], $y);
 }

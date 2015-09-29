@@ -23,9 +23,18 @@ class Model_History extends ORM {
      * @throws HTTP_Exception_403
      * @return int
      */
-    public static function log($module, $item_id, $action, $changes = array())
+    public static function log($module, $item_id, $action, $changes = [], $user_id = FALSE)
     {
-        $user = Model_User::current();
+        if ($user_id === FALSE) {
+            $user = Model_User::current();
+            if (empty($user->id)) {
+                $user_id = 0;
+            } else {
+                $user_id = $user->id;
+            }
+        } else {
+            $user_id = intval($user_id);
+        }
 
         $h = new self();
 
@@ -36,7 +45,7 @@ class Model_History extends ORM {
         }
         $h->values(array(
             'ip' => $ip,
-            'user_id' => ! empty($user) ? $user->id : 0,
+            'user_id' => $user_id,
             'module' => $module,
             'item_id' => $item_id,
             'action' => $action,

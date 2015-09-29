@@ -1,7 +1,11 @@
-<div id="breadcrumb">
-	<a href="/">Главная</a> |
+<div id="breadcrumb">       
+    <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+        <a href="/" itemprop="url"><span itemprop="title">Главная</span></a>
+    </span>
+    &rarr;
+    <span>Хиты продаж</span> 
 </div>
-
-<h1 class="yell">Хиты продаж</h1>
-
+<div class="yell">
+    <h1>Хиты продаж</h1>
+</div>
 {$search_result}

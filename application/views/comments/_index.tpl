@@ -3,18 +3,12 @@ $(document).ready(function() {
     var comments_container = $('#comments-container');
 
     commentLink = function(el){
-        var url = el.href, p = url.indexOf( '#'), hash = '', base = url;
-
-        if( p == -1 ) {
-            hash = '/list';
-        } else{
-            base = url.substring(0,p)+'/';
-            hash = url.substring(p+1);
-			
-			if( location.href.indexOf('#') == -1 )
-				location.href += '#'+hash;
-        }
-        url = base + hash;
+        var url_length = el.pathname.split('/').length, 
+            url = el.href;
+        
+        if( url_length < 4 && el.href.indexOf('?id') == -1 ) {
+            url += '/list';
+        }         
         commentLoad(url);
         return false;
     }
@@ -27,9 +21,7 @@ $(document).ready(function() {
             updateLinks();
         });
     }
-	$(window).on('hashchange', function() {
-		commentLink(location);
-	});
+    
     commentLink(location);
 });
 </script>

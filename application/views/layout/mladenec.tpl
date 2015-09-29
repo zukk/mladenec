@@ -1,17 +1,42 @@
+{* google adwords remarketing params *}
+<script>
+    var google_tag_params = {
+        ecomm_pagetype: 'other'
+    };
+</script>
+
+{* findologic search *}
+{if $config->instant_search == 'findologic'}
+<script>
+    (function() {
+        var flDataMain = "https://cdn.findologic.com/autocomplete/009E9CF70F589A977CAC2A17D2A33351/autocomplete.js";
+        var flAutocomplete = document.createElement('script'); 
+        flAutocomplete.type = 'text/javascript'; 
+        flAutocomplete.async = true;
+        flAutocomplete.src = "https://cdn.findologic.com/autocomplete/require.js";
+        var s = document.getElementsByTagName('script')[0];
+        flAutocomplete.setAttribute('data-main', flDataMain);
+        s.parentNode.insertBefore(flAutocomplete, s);
+    })();
+</script>    
+<script>
+    var _paq = _paq || [];
+    (function(){ var u=(("https:" == document.location.protocol) ? "https://tracking.findologic.com/" : "http://tracking.findologic.com/");
+    _paq.push(['setSiteId', '009E9CF70F589A977CAC2A17D2A33351']);
+    _paq.push(['setTrackerUrl', u+'tracking.php']);
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0]; g.type='text/javascript'; g.defer=true; g.async=true; g.src=u+'tracking.js';
+    s.parentNode.insertBefore(g,s); })();
+</script>    
+{/if}
+
 <div id="all">
     <div id="head">
-        {if empty($is_kiosk)}
-            {$ad->html('banner_top')}
 
-            <div id="promotop">
-                <a href="http://www.facebook.com/mladenec.ru" class="fb" title="Мы в facebook" target="_blank">Мы в facebook</a>
-                <a href="http://vk.com/mladenecshop" class="vk" title="Мы в контакте" target="_blank">Мы в контакте</a>
-                <a href="http://twitter.com/mladenecshop" class="tw" title="Наш твиттер" target="_blank">Наш твиттер</a>
-                <a href="http://www.odnoklassniki.ru/group/55719798046774" class="ok" title="Мы в одноклассниках" target="_blank">Мы в одноклассниках</a>
-            </div>
-        {/if}
+        {$ad->html('banner_top')}
 
-<a href="/" id="logo"><img src="/i/mladenec/logo.png" alt="" /></a>
+        <a href="{Route::url('index')}" id="logo"><img src="/i/mladenec/logo.png" alt="" /></a>
 
         <div id="simple_menu">
             <a href="/about">О магазине<i class="i_shop"></i></a>
@@ -20,19 +45,15 @@
         </div>
 
         {include file='common/top_menu.tpl'}
-
-        <form action="/search{Txt::view_params('')}" method="get" id="search">
-            <input type="text" name="q" value="{$smarty.get.q|default:''|escape:html}" class="q txt" placeholder="Поиск по каталогу" />
-            <button type="submit" value=" " class="search_submit" style="display:inline;"><img src="/i/lupa-white.png" alt="искать" /></button>
-        </form>
+		{include file='common/searchform.tpl'}
     </div>
 
-{if empty($is_kiosk) and empty($main)}
+{if empty($main) AND empty($is_pampers)}
     {$ad->html('banner_950X60_1')}
 {/if}
 
-    <div id="body"{if not empty($main)} class="index"{/if}>
-
+    <div id="body"{if not empty($main)} class="index"{elseif not empty($is_pampers)} class="pampers-page"{/if}>
+        {if not empty($is_pampers)}{$ad->html('banner_950X60_1')}{/if}
         {if not empty($menu)}
             <div id="side">
                 {$menu|default:''}
@@ -41,20 +62,17 @@
                 {if not empty($main)}
                     <div id="last_comment">
                         <a class="big" href="{Model_Comment::get_list_link()}">Отзывы</a>
-                        {if not $is_kiosk}
-                            {foreach from=Model_Comment::last(2) item=c}
-                                <p class="comment">
-                                    <a href="{$c->get_link(0)}">{$c->user_name}</a><i></i>
-                                    <strong>{$c->name}</strong>
-                                    {$c->text|truncate:100}
-                                    <a href="{$c->get_link(0)}" class="l">Ответ магазина<i></i></a>
-                                </p>
-                                <small>{$c->get_answer_by($c->answer_by)}</small>
-                            {/foreach}
-                        {/if}
+                        {foreach from=Model_Comment::last(2) item=c}
+                            <p class="comment">
+                                <a href="{$c->get_link(0)}">{$c->user_name}</a><i></i>
+                                <strong>{$c->name}</strong>
+                                {$c->text|truncate:100}
+                                <a href="{$c->get_link(0)}" class="l">Ответ магазина<i></i></a>
+                            </p>
+                            <small>{$c->get_answer_by($c->answer_by)}</small>
+                        {/foreach}
                     </div>
                 {/if}
-
             </div>
         {/if}
 
@@ -62,15 +80,15 @@
             {$body|default:''}
         </div>
 
+        {$after_body|default:''}
+
     </div>
 
-{if empty($is_kiosk)}
     <div id="bo">
         {$ad->html('banner_300X210_4')}
         {$ad->html('banner_300X210_5')}
         {$ad->html('banner_300X210_6')}
     </div>
-{/if}
 
     <div id="xxfoot">
         {$foot_menu|default:''|strip}
@@ -102,46 +120,63 @@
         {/if}
 
         <div id="foot2">
-            <a href="/"></a>
-            &copy;&nbsp;&laquo;Младенец.РУ&raquo;. Все права защищены. <a href="/user/error" id="error_button" rel="ajax" data-fancybox-type="ajax">Сообщить об ошибке</a><br />
-            Использование материалов сайта разрешено только при наличии активной ссылки на&nbsp;источник.
+            <div class="fr txt-rht">
+                <a href="{Route::url('user_error')}" id="error_button" rel="ajax" data-fancybox-type="ajax">Сообщить об ошибке</a><br />
+                <img title="Принимаем к оплате Visa и Mastercard" src="/i/cards.png" alt="Принимаем к оплате Visa и Mastercard" />
+                <!--noindex-->
+                <a href="http://clck.yandex.ru/redir/dtype=stred/pid=47/cid=2508/*http://market.yandex.ru/shop/3812/reviews" id="ya_rating" rel="nofollow"><img src="http://clck.yandex.ru/redir/dtype=stred/pid=47/cid=2505/*http://grade.market.yandex.ru/?id=3812&action=image&size=0" border="0" width="88" height="31" alt="Читайте отзывы покупателей и оценивайте качество магазина на Яндекс.Маркете" /></a>
+                <!--/noindex-->
+            </div>
 
-{if Kohana::$environment == Kohana::PRODUCTION}
-{literal}
+            <div class="fl">
+                &copy;&nbsp;&laquo;Младенец.РУ&raquo;. Все права защищены.
+                <a href="{Route::url('map')}" id="sitemap">Карта сайта</a><br />
+                Использование материалов сайта разрешено только при наличии активной ссылки на&nbsp;источник.<br />
+                <div id="promotop">
+                    {if empty($main)}<!--noindex-->{/if}
+                    <a href="http://www.facebook.com/mladenec.ru" class="fb" title="Мы в facebook" target="_blank"{if empty($main)} rel="nofollow"{/if}>Мы в facebook</a>
+                    <a href="http://vk.com/mladenecshop" class="vk" title="Мы в контакте" target="_blank"{if empty($main)} rel="nofollow"{/if}>Мы в контакте</a>
+                    <a href="http://twitter.com/mladenecshop" class="tw" title="Наш твиттер" target="_blank"{if empty($main)} rel="nofollow"{/if}>Наш твиттер</a>
+                    <a href="http://www.odnoklassniki.ru/group/55719798046774" class="ok" title="Мы в одноклассниках" target="_blank"{if empty($main)} rel="nofollow"{/if}>Мы в одноклассниках</a>
+                    {if empty($main)}<!--/noindex-->{/if}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<a href="#" class="to-top-page" title="К началу страницы">Вверх</a>
+<div id="loader" style="display:none;"></div>
+
+{if Kohana::$environment eq Kohana::PRODUCTION}
+
+{if ! empty($main)}<!-- verify-admitad: "b37b432df3" -->{/if}
+
+{include file="common/mc.yandex.ru.tpl"}
+
 <div id="li">
-<!--LiveInternet counter--><script type="text/javascript"><!--
+<!--LiveInternet counter--><script><!--
 document.write("<a href='http://www.liveinternet.ru/click' target=_blank><img src='//counter.yadro.ru/hit?t44.3;r"+
 escape(document.referrer)+((typeof(screen)=="undefined")?"":";s"+screen.width+"*"+screen.height+"*"+(screen.colorDepth?screen.colorDepth:screen.pixelDepth))
 +";u"+escape(document.URL)+";h"+escape(document.title.substring(0,80))+";"+Math.random()+ "' alt='' title='LiveInternet' border='0' width='31' height='31'><\/a>")
 //--></script><!--/LiveInternet-->
 </div>
-{/literal}
-{/if}
-            <a href="/site_map/list.php" id="sitemap">Карта сайта</a>
 
-            <a href="http://clck.yandex.ru/redir/dtype=stred/pid=47/cid=2508/*http://market.yandex.ru/shop/3812/reviews" id="ya_rating"><img src="http://clck.yandex.ru/redir/dtype=stred/pid=47/cid=2505/*http://grade.market.yandex.ru/?id=3812&action=image&size=0" border="0" width="88" height="31" alt="Читайте отзывы покупателей и оценивайте качество магазина на Яндекс.Маркете" /></a>
-
-        </div>
+{* google adwords remarketing *}
+<script>
+    /* <![CDATA[ */
+    var google_conversion_id = 961630544;
+    var google_custom_params = window.google_tag_params;
+    var google_remarketing_only = true;
+    /* ]]> */
+</script>
+<script src="//www.googleadservices.com/pagead/conversion.js"></script>
+<noscript>
+    <div style="display:inline;">
+        <img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/961630544/?value=0&amp;guid=ON&amp;script=0"/>
     </div>
-</div>
+</noscript>
+{* /google remarketing *}
 
-{*$ad->html('banner_bg')*}
-
-{if empty($is_kiosk) and Kohana::$environment eq Kohana::PRODUCTION}
-{literal}
-<!-- Yandex.Metrika counter -->
-<div style="display:none;"><script type="text/javascript">
-(function(w, c) {
-    (w[c] = w[c] || []).push(function() {
-        try {
-            w.yaCounter11895307 = new Ya.Metrika({id:11895307, enableAll: true, ut:"noindex", webvisor:true});
-        }
-        catch(e) { }
-    });
-})(window, "yandex_metrika_callbacks");
-</script></div>
-<script src="//mc.yandex.ru/metrika/watch.js" type="text/javascript" defer="defer"></script>
-<noscript><div><img src="//mc.yandex.ru/watch/11895307?ut=noindex" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->
-{/literal}
+{* контрольный пиксель *}
+<img src="//code.directadvert.ru/track/240598.gif" width="1" height="1" />
 {/if}

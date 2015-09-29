@@ -8,7 +8,7 @@ class Model_Dpd_City extends ORM
     ];
 
     protected $_table_columns = [
-        'id' => '', 'name' => '', 'region_id' => '',
+        'id' => '', 'name' => '', 'region_id' => '', 'zone' => '', 'tariff' => ''
     ];
 }
 

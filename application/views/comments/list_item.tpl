@@ -2,7 +2,7 @@
 	{if !empty( $comments['questions'][$c->id][0] )}
     <div class="livecomment_box">
         <div class="livecomment">
-            <a onclick='return commentLink(this)' href="/about/review#!id{$c->id}">{$c->user_name}</a>
+            <a href="/about/review/{$c->id}">{$c->user_name}</a>
             <small>{$comments['questions'][$c->id][0]->date|date_format:'%d-%m-%y %H:%M'}</small>
             <strong>{$c->name}</strong>
             {$comments['questions'][$c->id][0]->text|nl2br}

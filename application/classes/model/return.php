@@ -4,7 +4,7 @@ class Model_Return extends ORM {
     protected $_table_name = 'z_return';
 
     protected $_table_columns = array(
-        'id' => '', 'user_id' => '', 'name' => '', 'email' => '', 'text' => '','img' => '',
+        'id' => '', 'user_id' => '', 'name' => '', 'email' => '', 'order_num' => '',  'text' => '','img' => '',
         'answer' => '', 'answer_sent'=>'', 'created' => '', 'fixed' => ''
     );
 

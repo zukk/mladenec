@@ -1,4 +1,4 @@
-<div class="slider" rel="{$rel}"{if !empty( $style)} style="{$style}"{/if}>
+<div class="slider" data-url="{$rel}" data-page="0" {if not empty($style)} style="{$style}"{/if}>
 	{if $total gt 5}
 	<i></i>
 	{/if}

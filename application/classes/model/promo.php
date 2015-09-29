@@ -4,60 +4,63 @@ class Model_Promo extends ORM {
 
     protected $_table_name = 'z_promo';
 
-    protected $_table_columns = array(
-        'id' => '', 'name' => '', 'slider_header'=>'', 'active' => '','total' => ''
-    );
+    protected $_table_columns = [
+        'id' => '', 'name' => '', 'slider_header'=>'', 'active' => '', 'total' => ''
+    ];
 
-    protected $_has_many = array(
-        'goods' => array(
+    protected $_has_many = [
+        'goods' => [
             'model' => 'good',
             'through'    => 'z_promo_good',
             'foreign_key'   => 'promo_id',
             'far_key'   => 'good_id',
-        ),
-        'brands' => array(
+        ],
+        'brands' => [
             'model' => 'brand',
             'through'    => 'z_promo_brand',
             'foreign_key'   => 'promo_id',
             'far_key'   => 'brand_id'
-        ),
-        'showningoods' => array(
+        ],
+        'showningoods' => [
             'model' => 'good',
             'foreign_key' => 'promo_id'
-        )
-    );
+        ]
+    ];
+
     /**
      * 
      * @param int $active
      * @return Model_Good
      * @throws Exception
      */
-    public function get_goods($active = NULL) {
+    public function get_goods($active = NULL)
+    {
         if ( ! $this->loaded()) throw new Exception('Cannot get bundle for no object');
         
-        $goods = $this->goods;
+        $q = $this->goods;
         if ( ! is_null($active)) {
-            $goods = $goods->where('show', '=','1')->where('qty','>',0);
-
+            $q->where('show', '=', '1')->where('qty', '!=', 0);
         }
-        $goods_arr = $goods->find_all()->as_array();
         
-        return $goods_arr;
+        return $q->find_all()->as_array();
     }
     
     /**
      * При удалении модели надо удалить связи и отцепить товары
      * 
      */
-    function delete() {
+    function delete()
+    {
         if ($this->id) {
+
             DB::update('z_good')
-                ->set(array('promo_id'=>0))
+                ->set(['promo_id' => 0])
                 ->where('id', '=', $this->id)
                 ->execute();
+
             DB::delete('z_promo_good')
-                    ->where('promo_id', '=', $this->id)
-                    ->execute();
+                ->where('promo_id', '=', $this->id)
+                ->execute();
         }
         parent::delete();
     }

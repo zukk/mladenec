@@ -80,7 +80,7 @@
         <td>{$i->preview|truncate:100}</td>
         <td>{if $i->incoming_link}да{else}нет{/if}</td>
         <td>
-            {$i->visible_goods} отображаемых,<br />
+            {$i->visible_goods} товаров,<br />
             {if $i->is_gift_type() AND $i->presents_instock eq 1}<span class="green">подарки на складе</span>
             {elseif $i->is_gift_type() AND $i->presents_instock eq 0}<span class="red">подарки кончились</span>
             {/if}

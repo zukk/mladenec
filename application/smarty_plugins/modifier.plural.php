@@ -17,6 +17,7 @@ function smarty_modifier_plural($word, $number, $with_number = TRUE)
         'товар' => array('товара', 'товаров'),
         'найден' => array('найдено', 'найдено'),
         'штуке' => array('штуки', 'штук'),
+        'день' => array('дня', 'дней'),
     );
 
     $mod10 = $number % 10;

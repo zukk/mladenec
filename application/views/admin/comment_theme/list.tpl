@@ -62,7 +62,8 @@
     </fieldset>
 </form>
 <form action="">
-    <table id="list">
+
+	<table id="list">
     <tr>
 		{foreach from=$fields key=field item=fieldname}
 	        {if $sort==$field}
@@ -114,7 +115,6 @@
     </tr>
     {/foreach}
     </table>
-
 </form>
 
 {$pager->html('Отзывы')}

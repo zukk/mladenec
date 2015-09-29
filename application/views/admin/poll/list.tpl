@@ -4,16 +4,19 @@
             Выберите опрос:
             <select name="current_poll_id" class="width-70">
                 {foreach from=$list item=i}
-                    <option value="{$i->id}" {if $current_poll_id eq $i->id}selected="selected"{/if}>#{$i->id} {$i->name}</option>
+                    <option value="{$i->id}" {if $current_poll_id|default:0 eq $i->id}selected="selected"{/if}>#{$i->id} {$i->name}</option>
                 {/foreach}
             </select>
         </label>
-        <label class="cb unit-20">
+        <label class="unit-20">
             <input type="submit" class="btn" value="Показать результаты">
+        </label>
+        <label class="unit-30">
+            <input type="submit" class="btn" name="excel" value="Получить Excel c результатами">
         </label>
     </fieldset>
 </form>
-{if $current_poll}
+{if not empty($current_poll)}
     <h2>Результаты опроса «{$current_poll->name}»</h2>
     <table>
         <tr>
@@ -77,7 +80,7 @@
     <tr {cycle values='class="odd",'}>
         <td><small>{$i->id}</small></td>
         <td><a href="/od-men/{$m}/{$i->id}">{$i->name}</a></td>
-        <td>{$i->get_type_name()}</td>
+        <td>{$i->type({$i->type})}</td>
         <td><input name="active[{$i->id}]" type="checkbox" value="1" {if $i->active}checked="checked"{/if} disabled="disabled" /></td>
     </tr>
     {/foreach}

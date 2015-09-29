@@ -24,8 +24,7 @@ class Controller_Brands extends Controller_Frontend {
         
         $q = ORM::factory('brand')->where('active', '=', 1)->reset(FALSE);
 
-        $iPerPageQty = @Kohana::$hostnames[Kohana::$server_name]['per_page_elements'] ?: 50;
-        $this->tmpl['pager'] = $pager = Pager::factory($q->count_all(), $iPerPageQty);
+        $this->tmpl['pager'] = $pager = Pager::factory($q->count_all(), 50);
 
         $this->tmpl['brands'] = $q
             ->order_by('name', 'asc')

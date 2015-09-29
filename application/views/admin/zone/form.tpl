@@ -1,6 +1,6 @@
 {if $i->poly or not $i->id}
 <script src="//api-maps.yandex.ru/2.1/?lang=ru_RU"></script>
-<script type="text/javascript">
+<script>
     function map_init() {
         var poly = [{if not $i->id}[55.78756095,37.40649414],[55.85559523,37.64819336],[55.70545185,37.66467285],[55.78756095,37.40649414]{else}{$i->poly|for_map}{/if}], min = [180, 180], max = [0, 0];
 

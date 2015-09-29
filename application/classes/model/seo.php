@@ -7,6 +7,14 @@ class Model_Seo extends ORM {
      * @property item_id
      * @property type
      */
+    const SEO_TYPE_ARTICLE = 1;
+    const SEO_TYPE_TAG     = 2;
+    const SEO_TYPE_SECTION = 3;
+    const SEO_TYPE_GOOD    = 4;
+    const SEO_TYPE_BRAND   = 5;
+    const SEO_TYPE_NEW     = 6;
+    const SEO_TYPE_ACTION  = 7;
+    
     protected $_table_name = 'z_seo';
 
     protected $_table_columns = array(
@@ -20,7 +28,15 @@ class Model_Seo extends ORM {
      */
     public static function types($type = NULL)
     {
-        $types = array('article' => 1, 'tag' => 2, 'section' => 3, 'good' => 4, 'brand' => 5, 'new' => 6, 'action' => 7);
+        $types = array(
+            'article' => self::SEO_TYPE_ARTICLE,
+            'tag'     => self::SEO_TYPE_TAG,
+            'section' => self::SEO_TYPE_SECTION,
+            'good'    => self::SEO_TYPE_GOOD,
+            'brand'   => self::SEO_TYPE_BRAND,
+            'new'     => self::SEO_TYPE_NEW,
+            'action'  => self::SEO_TYPE_ACTION
+            );
 
         if (is_null($type)) return $types;
 

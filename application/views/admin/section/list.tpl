@@ -1,19 +1,14 @@
 <h1>Порядок и видимость категорий определяется из 1C</h1>
-<script type="text/javascript">
-{literal}
+<script>
 $(document).ready(function() {
     var resort = function(event, ui) {
         var ul = $(ui.item).parent();
         $('> li > input[name^=sort]', ul).each(function(index, item) { $(this).val(index)});
     };
-    $(function() {
-        $(".sortable").sortable({stop: resort});
-        $(".sortable").disableSelection();
-        $(".sortable ul").sortable({stop: resort});
-        $(".sortable ul").disableSelection();
-    });
+    var sortme = $(".sortable, .sortable ul");
+    sortme.sortable({ stop: resort});
+    sortme.disableSelection();
 });
-{/literal}
 </script>
 <form action="" id="form">
     Выберите витрину:

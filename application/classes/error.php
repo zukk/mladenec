@@ -74,8 +74,6 @@ class Error {
             $layout->cart   = Cart::instance();
             $layout->config = Conf::instance();
             $layout->vitrina = Kohana::$server_name;
-            $layout->is_kiosk = strpos(Request::$user_agent, 'Kioska');
-
             $layout->top_menu = Model_Section::get_catalog(); // вывод меню каталога товаров - есть на всех страницах
         }
 

@@ -1,54 +1,57 @@
-{literal}
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('.area').click(function(e) {
-                if (e.target.className == 'no') {
-                    $(e.target).closest('tr').remove();
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.area').click(function(e) {
+            if (e.target.className == 'no') {
+                $(e.target).closest('tr').remove();
+                $('#poll_changed').val(1);
+            }
+            if (e.target.className == 'ok') {
+                var name = $('#new_var').val();
+                if (name > '') {
+                    $('#all_body').append(
+                        '<tr>'
+                        + '<td><input name="new_sort[]" value="' + $('#new_sort').val() + '" size="2" /></td>'
+                        + '<td><input name="new_var[]" value="' + name + '" size="50 "/></td>'
+                        + '<td><input name="new_free[]" type="checkbox" value="1" ' + ($('#new_free').prop('checked') ? 'checked="checked"' : '') + '" size="50 "/></td>'
+                        + '<td><a class="no">del</a>'
+                        + '</tr>');
+                    $('tfoot input').val('').prop('checked', false);
+
                     $('#poll_changed').val(1);
+                } else {
+                    alert('Текст варианта обязателен');
                 }
-                if (e.target.className == 'ok') {
-                    var name = $('#new_var').val();
-                    if (name > '') {
-                        $('#all_body').append(
-                            '<tr>'
-                            + '<td><input name="new_sort[]" value="' + $('#new_sort').val() + '" size="2" /></td>'
-                            + '<td><input name="new_var[]" value="' + name + '" size="50 "/></td>'
-                            + '<td><input name="new_free[]" type="checkbox" value="1" ' + ($('#new_free').prop('checked') ? 'checked="checked"' : '') + '" size="50 "/></td>'
-                            + '<td><a class="no">del</a>'
-                            + '</tr>');
-                        $('tfoot input').val('').prop('checked', false);
-
-                        $('#poll_changed').val(1);
-                    } else {
-                        alert('Текст варианта обязателен');
-                    }
-                }
-            });
-            $('#new_question').click(function(){
-                var template = $('.new_question').eq(0).clone(false);
-                $(template).append('<label for="new_q_delete" class="unit-20"><input type="button" class="new_question_delete btn" name="new_q_delete" value="Удалить" class="btn"/></label>');
-                $(template).insertAfter('.new_question:last');
-                $('.new_question:last input:text').val('');
-
-                $('.new_question_delete').unbind('click');
-                $('.new_question_delete').click(function(){$(this).parents('.new_question').detach();});
-            });
+            }
         });
-    </script>
-{/literal}
+        $('#new_question').click(function() {
+            var template = $('.new_question').eq(0).clone(false);
+            $(template).append('<label for="new_q_delete" class="unit-20"><input type="button" class="new_question_delete btn" name="new_q_delete" value="Удалить" class="btn"/></label>');
+            $(template).insertAfter('.new_question:last');
+            $('.new_question:last input:text').val('');
+
+            $('.new_question_delete').unbind('click');
+            $('.new_question_delete').click(function() { $(this).parents('.new_question').detach();});
+        });
+        $('select[name=type]').change(function() {
+            $(this).parent().next().toggle($(this).val() == {Model_Poll::TYPE_COUPON});
+        }).trigger('change');
+    });
+</script>
 
 <form action="" method="post" class="forms forms-inline" enctype="multipart/form-data">
     <fieldset class="units-row">
         <legend>#{$i->id}:</legend>
-        <label class="unit-100" for="name">Название:
+        <label class="unit-50" for="name">Название:
             <input type="text" id="name" name="name" value="{$i->name|default:''}" class="width-100" />
         </label>
+        <label class="unit-50" for="text">Текст:
+            <textarea id="text" name="text">{$i->text|default:''}</textarea>
+        </label>
         <label for="type" class="unit-40">Тип:
-            <select name="type">
-                <option {if $i->type eq 0}selected="selected"{/if} value="0">Обычный</option>
-                <option {if $i->type eq 1}selected="selected"{/if} value="1">После оформления заказа</option>
-                <option {if $i->type eq 2}selected="selected"{/if} value="2">При регистрации</option>
-            </select>
+            {Form::select('type', $i->type(TRUE), $i->type)}
+        </label>
+        <label class="hide unit-20" for="coupon">
+        на <input id="coupon" name="coupon" value="{$i->coupon|default:0}" />
         </label>
         <label class="unit-20" for="active">Активность:
             <input type="checkbox" id="active" name="active" value="1" {if $i->active}checked="checked"{/if}  />

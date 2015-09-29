@@ -8,8 +8,29 @@
         </select>
     </p>
     <p>
+        <label for="sms_method">Метод отправки SMS</label>
+        <select id="sms_method" name="sms_method">
+			<option value='{Model_Config::SMS_ACQUIROPAY}'>ACQUIROPAY</option>
+			<option{if $i->sms_method == Model_Config::SMS_MTS} selected{/if} value='{Model_Config::SMS_MTS}'>MTS</option>
+        </select>
+    </p>
+    <p>
+        <label for="instant_search">Поиск по сайту</label>
+        <select id="instant_search" name="instant_search">
+            <option value="in site" {if $i->instant_search eq 'in site'} selected{/if}>Встроенный</option>
+            <option value="findologic" {if $i->instant_search eq 'findologic'} selected{/if}>Внешний Findologic</option>
+        </select>
+    </p>
+    <p>
+        <label for="rr">Рекомендательный сервис RetailRocket:</label>
+        <div class="indent">  
+            <label><input type="radio" name="rr_enabled" value="0" {if $i->rr_enabled eq 0} checked{/if}> Выключен</label>
+            <label><input type="radio" name="rr_enabled" value="1" {if $i->rr_enabled eq 1} checked{/if}> Включен</label>
+        </div>
+    </p>
+    <p>
         <label for="phone">Телефон</label>
-        <textarea type="text" id="phone" name="phone" class="width-50">{$i->phone}</textarea>
+        <textarea id="phone" name="phone" class="width-50">{$i->phone}</textarea>
     </p>
     {*<p>
         <label for="menu">Верхнее меню</label>
@@ -63,6 +84,9 @@
                 <dt>Об ошибках в СМС</dt>
                 <dd><input type="text" id="mail_sms_warning" name="mail_sms_warning" value="{$i->mail_sms_warning}" class="width-50" /></dd>
                 
+                <dt>О пустых категориях</dt>
+                <dd><input type="text" id="mail_empty_section" name="mail_empty_section" value="{$i->mail_empty_section}" class="width-50" /></dd>
+                
                 <dt>Об изменениях закупочных цен, для франшизы</dt>
                 <dd><input type="text" id="mail_fransh" name="mail_fransh" value="{$i->mail_fransh}" class="width-50" /></dd>
                 
@@ -84,6 +108,13 @@
     <p>
         <label for="logo_id">Подзаголовок акций месяца</label>
         <textarea name="actions_subheader" class="width-50">{$i->actions_subheader}</textarea>
+    </p>
+    
+    
+    <p>
+        <label for="ozon_delivery">Доставка от Озона</label>
+        <label><input type="radio" name="use_ozon_delivery" value="0" {if $i->use_ozon_delivery eq 0} checked{/if}> Выключена</label>
+        <label><input type="radio" name="use_ozon_delivery" value="1" {if $i->use_ozon_delivery eq 1} checked{/if}> Включена</label>
     </p>
     <p class="do">
         <input name="edit" value="Сохранить" type="submit" class="btn ok"/>

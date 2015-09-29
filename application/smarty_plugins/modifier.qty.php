@@ -13,7 +13,7 @@
  * @param bool $text
  * @return string
  */
-function smarty_modifier_qty($data, $text = TRUE)
+function smarty_modifier_qty($data, $text = TRUE, $only_data = FALSE)
 {
     if ($data instanceof Model_Good) { // можно передать товар
         $big = $data->big;
@@ -52,6 +52,8 @@ function smarty_modifier_qty($data, $text = TRUE)
 
     if ($text) {
         return sprintf('<small class="%s"><i></i> %s</small>', $class, $txt);
+    } elseif($only_data) {
+        return ['class' => $class, 'txt' => strip_tags($txt)];
     } else {
         return sprintf('<i class="%s" title="%s"></i>', $class, strip_tags($txt));
     }

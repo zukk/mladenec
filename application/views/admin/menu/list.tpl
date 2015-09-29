@@ -1,18 +1,15 @@
-<script type="text/javascript">
-    {literal}
-    $(document).ready(function() {
-        var resort = function(event, ui) {
-            var ul = $(ui.item).parent();
-            $('> li > input[name^=sort]', ul).each(function(index, item) { $(this).val(index)});
-        };
-        $(function() {
-            $(".sortable").sortable({stop: resort});
-            $(".sortable").disableSelection();
-            $(".sortable ul").sortable({stop: resort});
-            $(".sortable ul").disableSelection();
-        });
+<script>
+$(document).ready(function() {
+    var resort = function(event, ui) {
+        var ul = $(ui.item).parent();
+        $('> li > input[name^=sort]', ul).each(function(index, item) { $(this).val(index)});
+    };
+    $(function() {
+        var sortme = $(".sortable, .sortable ul");
+        sortme.sortable({ stop: resort});
+        sortme.disableSelection();
     });
-    {/literal}
+});
 </script>
 
 <a href="/od-men/menu/add">+ Добавить страницу</a>

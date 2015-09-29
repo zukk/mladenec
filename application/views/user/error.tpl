@@ -6,7 +6,7 @@
     Эта&nbsp;информация очень поможет нам поскорее их&nbsp;исправить.
 </p>
 
-<form action="/user/error" method="post" class="ajax cols small" style="width:420px">
+<form action="{Route::url('user_error')}" method="post" class="ajax cols small" style="width:420px">
 
     <label for="problem" class="l" style="white-space:nowrap;">Подробно опишите проблему:</label>
     <textarea class="txt" name="problem" id="problem" style="height:200px; width:380px;"></textarea>

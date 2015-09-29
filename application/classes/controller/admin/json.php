@@ -54,7 +54,8 @@ class Controller_Admin_Json extends Controller_Authorised {
          $this->_result = Model_Mdir::list_array();
     }
     
-    public function action_mediafiles() {
+    public function action_mediafiles()
+    {
         
         $cat = Model_Mfile::STORAGE_ALIAS.'/';
         $dir = DOCROOT . $cat;
@@ -94,7 +95,7 @@ class Controller_Admin_Json extends Controller_Authorised {
 
         Cache::instance()->set('mediafiles_list', $result_files);
         
-        // Не отдаем ошибки и сообщения, т.к. это собьет с толку radactor.js
+        // Не отдаем ошибки и сообщения, т.к. это собьет с толку redactor.js
         $this->send_messages = FALSE;
         $this->send_errors = FALSE;
         

@@ -305,6 +305,41 @@ class Controller_Odinc extends Controller {
     }
 
     /**
+     * Выкладка заказов в 1с - короткий протокол, отказы и оплаты
+     */
+    public function action_orders_light()
+    {
+        $this->view->orders = ORM::factory('order')
+            ->with('card')
+            ->where('in1c', '=', 0)
+            ->order_by('id', 'ASC')
+            ->find_all();
+    }
+
+    /**
+     * Подтверждение лайта со стороны 1с
+     */
+    public function action_orders_light_ok()
+    {
+        $strings = explode("\n", $this->body);
+        $saved = array();
+        foreach($strings as $s) {
+            $s = trim($s);
+            if (empty($s)) continue;
+
+            $order = new Model_Order($s);
+            if ( ! $order->loaded()) {
+                $saved[$s] = 'NOT_FOUND';
+            } else {
+                $order->in1c = 1;
+                $order->save();
+                $saved[$s] = 'OK';
+            }
+        }
+        $this->view->saved = $saved;
+    }
+
+    /**
      * Список новых пользователей для 1с
      */
     public function action_users()
@@ -354,6 +389,7 @@ class Controller_Odinc extends Controller {
     {
         $strings = explode("\n", $this->body);
         $saved = array();
+        $segments_recount_user_ids = []; // ID пользователей, которым надо пересчитать сегменты
 
         $data = FALSE;
         foreach($strings as $s) {
@@ -365,8 +401,8 @@ class Controller_Odinc extends Controller {
                 if ($s == 'ЗАКАЗ')  // new order start
                 {
                     $data = TRUE;
-                    $ship_price = $price = $total = $discount = $coupon = 0;
-                    $payment = $goods = array();
+                    $pay1 = $pay8 = $ship_price = $price = $total = $discount = $coupon = 0;
+                    $changes = $goods = [];
 
                 } 
                 elseif ($data === TRUE) // строка данных заказа
@@ -406,8 +442,9 @@ class Controller_Odinc extends Controller {
                         $domofon, // 6
                         $kv,      // 7
                         $mkad,    // 8
-                        $comment  // 9
-                        ) = Txt::parse_explode('|', mb_substr($s, $addr_pos + 1), 9);
+                        $comment,  // 9
+                        $approved  // 10
+                        ) = Txt::parse_explode('|', mb_substr($s, $addr_pos + 1), 10);
 
                     list(
                         $house,
@@ -434,6 +471,8 @@ class Controller_Odinc extends Controller {
                     $address->kv           = $kv;    // Квартира/офис
                     $address->mkad         = $mkad;
                     $address->comment      = $comment;
+                    $address->approved     = $approved == 'Y' ? 1 : 0;
+
                     try {
                         $address->save();
                         $new_address = $address->id;
@@ -444,21 +483,32 @@ class Controller_Odinc extends Controller {
                 } 
                 elseif (mb_strpos($s, 'ОПЛАТА:') === 0) // часть оплаты за заказ
                 {
-                    list($pay_type, $pay_amount) = Txt::parse_explode('©', $s, 2);
-                    $payment[$pay_type] = $pay_amount;
-                
+                    list($pay_type, $pay_amount, $canpay) = Txt::parse_explode('©', mb_substr($s, 7), 3);
+                    if ($pay_type == Model_Order::PAY_CARD) {
+                        $pay8 = $pay_amount;
+                        $can_pay = $canpay == 'Y' ? 1 : 0;
+                    }
+                    if ($pay_type == Model_Order::PAY_DEFAULT) {
+                        $pay1 = $pay_amount;
+                    }
+                }
+                elseif (mb_strpos($s, 'ИЗМЕНЕНИЕ:') === 0) { // изменения
+                    list($date, $time, $message) = Txt::parse_explode('|', mb_substr($s, 10), 3);
+                    $changes[] = [
+                        'date' => $date,
+                        'time' => $time,
+                        'message' => $message,
+                    ];
+                    Model_History::log('order', $id, $message . ' '. $date .' '.$time);
                 }
                 elseif ($s != 'КОНЕЦЗАКАЗА') // товар
                 {
-                    list(
-                            $code,
-                            $qty,
-                            $price
-                            ) = Txt::parse_explode('©', $s, 3);
+                    list($code, $qty, $price) = Txt::parse_explode('©', $s, 3);
                     
                     switch ($code)
                     {
-                        case 'systDOST': $ship_price += $price;
+                        case 'systDOST':
+                        case 'systDOSTTR': $ship_price += $price;
                             break;
 
                         case 'systMKAD': $ship_price += $price * $qty;
@@ -500,7 +550,16 @@ class Controller_Odinc extends Controller {
                     $order->price = $total - $ship_price;
                     $order->price_ship = $ship_price;
                     $order->manager = $manager;
-                    $order->payment = json_encode($payment);
+                    $order->pay8 = $pay8;
+                    $order->pay1 = $pay1;
+                    //$order->payment = $pay_amount;
+                    $order->pay_type = ! empty($pay8) ? Model_Order::PAY_CARD : Model_Order::PAY_DEFAULT;
+
+                    if ($order->can_pay == 0 && ! empty($can_pay)) {
+                        $order->can_pay = 1;
+                        $payment_changed = TRUE;
+                    }
+
                     $order->delivery_type = $ship_type;
 
                     if ( ! empty($coupon) && $coupon->loaded())
@@ -513,17 +572,41 @@ class Controller_Odinc extends Controller {
                     // смена статуса у заказа с карточной оплатой
                     if ($status_changed && $order->pay_type == Model_Order::PAY_CARD) {
 
+                        if (in_array($order->status, ['F', 'X'])) {
+                            $authz = $order->payments->where('status', '=', Model_Payment::STATUS_Authorized)->find_all()->as_array('id');
+                        }
+
                         if ($order->status == 'F') { // order delivered - charge money
 
-                            $card = new Model_Payment($order->id);
-                            if ( ! $card->loaded()) throw new ErrorException('Payment lost for '.$order->id);
-                            if ( ! empty($payment['ОПЛАТА:8'])) $card->charge($payment['ОПЛАТА:8'] * 100);
+                            $charged = 0;
+                            $to_charge = intval($order->pay8 * 100); // в копейках!
+                            foreach($authz as $card) {
+                                if ($charged < $to_charge) { // ещё надо снимать деньги
+                                    $sum = min($card->sum, $to_charge);
+                                    if ($card->charge($sum)) {
+                                        $charged += $sum;
+                                    }
+                                }
+                            }
+                            if ($charged != $to_charge) {
+                                mail('m.zukk@ya.ru', 'Снятая сумма не совпадает с запрошенной '.$order->id, "$charged != $to_charge");
+                            }
 
                         } elseif ($order->status == 'X') { // order cancelled - unblock money
 
-                            $card = new Model_Payment($order->id);
-                            if ( ! $card->loaded()) throw new ErrorException('Payment lost for '.$order->id);
-                            $card->unblock();
+                            $voided = 0;
+                            $to_void = intval($order->pay8 * 100); // в копейках!
+                            foreach($authz as $card) {
+                                if ($voided < $to_void) { // ещё надо снимать деньги
+                                    $sum = min($card->sum, $to_void);
+                                    if ($card->unblock($sum)) {
+                                        $voided += $sum;
+                                    }
+                                }
+                            }
+                            if ($voided != $to_void) {
+                                mail('m.zukk@ya.ru', 'Разблокированная сумма не совпадает с запрошенной '.$order->id, "$voided != $to_void");
+                            }
                         }
                     }
 
@@ -563,14 +646,26 @@ class Controller_Odinc extends Controller {
 
                         // Отправляем письмо о новом статусе заказа и обновляем сумму заказов пользователя, в т.ч. по акциям
                         if ($status_changed) $order->on_status_change();
+                        // письмо о смене типа оплаты
+                        if ( ! empty($payment_changed)) $order->on_payment_change();
 
                         $saved[] = $order->id;
+
+                        if ( ! empty($changes)) {
+                            foreach($changes as $event) {
+                                Model_History::log('order', $order->id, $event['date'].' '.$event['time'].' '.$event['message']);
+                            }
+                        }
 
                     } catch (ORM_Validation_Exception $e) {
                         $this->error('Cannot save order for '.$s.' '.$e->getMessage());
                     }
 
-                    $payment = $goods = array(); // чистим оплату и список товаров
+                    if ($status_changed AND $order->status == 'F') { // order delivered - need to recount segments
+                        $segments_recount_user_ids[] = $user_id;
+                    }
+                    
+                    $goods = []; // чистим список товаров
                 }
             } 
             catch (Txt_Exception $ex)
@@ -578,6 +673,20 @@ class Controller_Odinc extends Controller {
                 $this->error($ex->getMessage());
             }
         }
+        
+        if ( ! empty($segments_recount_user_ids)) {
+
+            DB::update('z_user')
+                ->set(['segments_recount_ts' => 0])
+                ->where('id', 'IN', $segments_recount_user_ids)
+                ->execute();
+
+            DB::update('user_segment')
+                ->set(['upload_ts' => 0])
+                ->where('user_id', 'IN', $segments_recount_user_ids)
+                ->execute();
+        }
+        
         $this->view->saved = $saved;
     }
 
@@ -656,7 +765,7 @@ class Controller_Odinc extends Controller {
             case 'catalog':
                 $section = ORM::factory('section');
                 $group = ORM::factory('group');
-                $parent_id = 0;
+                $parent_id = $section_id = 0;
                 foreach($strings as $s) {
                     $s = trim($s);
                     if (empty($s)) continue;
@@ -664,15 +773,15 @@ class Controller_Odinc extends Controller {
                     try {
                     
                         list(
-                                $code,    // 1
-                                $level,   // 2
-                                $name,    // 3
-                                $vitrina, // 4
-                                $sort,    // 5
-                                $active,  // 6
-                                $filters, // 7
-                                $brands   // 8
-                                ) = Txt::parse_explode('©', $s, 8);
+                            $code,    // 1
+                            $level,   // 2
+                            $name,    // 3
+                            $vitrina, // 4
+                            $sort,    // 5
+                            $active,  // 6
+                            $filters, // 7
+                            $brands   // 8
+                            ) = Txt::parse_explode('©', $s, 8);
 
                         switch($level) {
                             case 1:
@@ -787,11 +896,39 @@ class Controller_Odinc extends Controller {
                 }
                 break;
 
+            case 'country':
+                $country = ORM::factory('country');
+                foreach($strings as $s) {
+                    try
+                    {
+                        $s = trim($s);
+                        if (empty($s)) continue;
+                        list(
+                            $code,   // 1
+                            $name,   // 2
+                            $active, // 3
+                            $sort    // 4
+                            ) = $this->parse('©', $s, 4,array(0,1,2));
+                        $b = $country->clear()->where('code', '=', intval($code))->find();
+                        $b->code = $code;
+                        $b->name = $name;
+                        $b->sort = $sort;
+                        $b->active = ($active == 'Y') ? '1' : '0';
+                        $b->save();
+                    }
+                    catch (Txt_Exception $ex)
+                    {
+                        $this->error($ex->getMessage());
+                    }
+                }
+                break;
+
             case 'product':
                 $good = ORM::factory('good');
                 $group = ORM::factory('group');
                 $prop = ORM::factory('good_prop');
                 $brand = ORM::factory('brand');
+                $country = ORM::factory('country');
                 $good_ids = array();
 
                 Log::instance()->add(Log::INFO, $this->request->action() . ($this->action ? ', action '.$this->action : '').', strings parsing started timer: ' . $this->timer());
@@ -813,7 +950,7 @@ class Controller_Odinc extends Controller {
                             $best,        // 10
                             $off,         // 11
                             $recommended, // 12
-                            $tmp,         // 13
+                            $ccode,       // 13
                             $pack,        // 14
                             $weight,      // 15
                             $active,      // 16
@@ -821,23 +958,44 @@ class Controller_Odinc extends Controller {
                             $move,        // 18
                             $code1c,      // 19
                             $size,        // 20 - пока не используется, но передается из 1С
-                            $id1c         // 21 - Уникальный код в 1C
-                            ) = $this->parse('©', $s, 21);
+                            $id1c,        // 21 - Уникальный код в 1C
+                            $nds          // 22 - НДС товара
+                            ) = $this->parse('©', $s, 22);
 
-                    $gr = $group->clear()->where('code', '=', $gcode)->find();
-                    if ( ! $gr->loaded()) {
-                        $this->error('No group found with code ' . $gcode);
-                        continue;
+                    $grid = 0;
+                    if ($gcode != '30006296') { // это услуги - не искать группу
+                        $gr = $group->clear()->where('code', '=', $gcode)->find(); // группа
+                        if ( ! $gr->loaded()) {
+                            $this->error('No group found with code ' . $gcode);
+                            continue;
+                        }
+                        $grid = $gr->id;
                     }
 
-                    if ($gcode != '30007742') { // это подарок - не искать бренд
+                    $cid = 0;
+                    if (empty($ccode)) {
+                        $this->error('Empty country code: ' . $s);
+                    } else {
+                        $c = $country->clear()->where('code', '=', $ccode)->find();
+
+                        if ( ! $c->loaded()) {
+                            $this->error('No country found with code ' . $ccode);
+                            continue;
+                        }
+                        $cid = $c->id;
+                    }
+
+                    $bid = 0;
+                    if ($bcode != '30007742') { // это подарок - не искать бренд
 
                         $b = $brand->clear()->where('code', '=', $bcode)->find();
-                        if (!$b->loaded()) {
+                        if ( ! $b->loaded()) {
                             $this->error('No brand found with code ' . $bcode);
                             continue;
                         }
+                        $bid = $b->id;
                     }
+
                     $g = $good->clear()->where('code', '=', $code)->find();
 
                     $g->code        = $code;
@@ -847,12 +1005,14 @@ class Controller_Odinc extends Controller {
                     $g->name        = $name;
                     $g->big         = $big;
                     $g->pack        = $pack;
-                    $g->brand_id    = $b->id;
+                    $g->brand_id    = $bid;
+                    $g->country_id  = $cid;
                     $g->barcode     = $barcode;
-                    $g->group_name  = $gr->name;
-                    $g->section_id  = $gr->section_id;
-                    $g->group_id    = $gr->id;
+                    $g->group_name  = ! empty($grid) ? $gr->name : '';
+                    $g->section_id  = ! empty($grid) ? $gr->section_id : 0;
+                    $g->group_id    = $grid;
                     $g->translit    = Txt::translit($g->group_name.' '.$g->name);
+                    $g->nds         = $nds;
 
                     $new_item = NULL;
                     if ( ! $g->id) { // новый товар - включим активность
@@ -1007,6 +1167,7 @@ class Controller_Odinc extends Controller {
 
                             if ( ! empty($cur_v[$code])) { // has this code - update
                                 $cur_v[$code]->name      = $name;
+                                //$cur_v[$code]->sort      = $sort;
                                 $cur_v[$code]->filter_id = $f->id;
                                 $cur_v[$code]->save();
                                 unset($cur_v[$code]); // exclude code from current
@@ -1319,6 +1480,49 @@ class Controller_Odinc extends Controller {
             
         }
     }
+    
+    /**
+     * Выгрузка терминалов озона для 1С 
+     */
+    public function action_ozon_terminals()            
+    {
+        $this->view->terminals = ORM::factory('ozon_terminal')->where('is_active', '=', 1)->find_all();
+    }    
+    
+    /**
+     * Просчет стоимости доставки
+     */
+    public function action_calculate_delivery() {
+        $strings = explode("\n", $this->body);
+        foreach($strings as $s) {
+            $s = trim($s);
+            if (empty($s)) continue;
+            if (mb_strpos($s, 'ДОСТАВКА:') === 0)
+            {                
+                $delivery_pos = mb_strpos($s, ':');
+                list(
+                    $delivery_id,    // 1
+                    $params          // 2
+                ) = Txt::parse_explode('©', mb_substr($s, $delivery_pos + 1), 2);
+                switch ($delivery_id) {
+                    case Model_Order::SHIP_OZON:
+                        list(
+                            $delivery_variant_id,    // 1
+                            $weight                  // 2 - вес в кг
+                        ) = explode('|', $params);
+                        $ozon = new OzonDelivery();
+                        $price = $ozon->get_price($delivery_variant_id, $weight);
+                        if($price) $this->view->delivery_cost = $price;
+                        break;
+
+                    default:
+                        break;
+                }
+                break;
+            }
+        } 
+    }
+    
 }
 
 

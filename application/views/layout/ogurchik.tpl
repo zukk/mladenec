@@ -1,16 +1,8 @@
 <div id="all" {if not empty($allbg)}style="background-image:url(/i/ogurchik/section/{$allbg}.jpg);"{/if}>
     <div id="head">
 
-        {if not empty($main) and empty($is_kiosk)}{$ad->html('banner_top')}{/if}
+        {if not empty($main)}{$ad->html('banner_top')}{/if}
 
-        {if empty($is_kiosk)}
-            <div id="promotop">
-                <a href="http://www.facebook.com/mladenec.ru" class="fb" title="Мы в facebook" target="_blank">Мы в facebook</a>
-                <a href="http://vk.com/mladenecshop" class="vk" title="Мы в контакте" target="_blank">Мы в контакте</a>
-                <a href="http://twitter.com/mladenecshop" class="tw" title="Наш твиттер" target="_blank">Наш твиттер</a>
-                <a href="http://www.odnoklassniki.ru/group/55719798046774" class="ok" title="Мы в одноклассниках" target="_blank">Мы в одноклассниках</a>
-            </div>
-        {/if}
         <a href="/" id="logo"><img src="/i/ogurchik/logo.png" /></a>
 
         <div id="simple_menu">
@@ -42,7 +34,7 @@
             {assign var=body value=$body|replace:$h1:''}
         {/if}
 
-        {if empty($main) and empty($is_kiosk)}{$ad->html('banner_eatmart')}{/if}
+        {if empty($main)}{$ad->html('banner_eatmart')}{/if}
 
         {$bread}
         {$h1}
@@ -64,13 +56,11 @@
         {/if}
     </div>
 
-    {if empty($is_kiosk)}
     <div id="bo">
         {$ad->html('eatmart2')}
         {$ad->html('eatmart3')}
         {$ad->html('eatmart4')}
     </div>
-    {/if}
 
     <div id="xxfoot">
         {$foot_menu|default:''}
@@ -96,21 +86,4 @@
     </div>
 </div>
 
-{if empty($is_kiosk) and Kohana::$environment eq Kohana::PRODUCTION}
-{literal}
-    <!-- Yandex.Metrika counter -->
-    <div style="display:none;"><script type="text/javascript">
-    (function(w, c) {
-        (w[c] = w[c] || []).push(function() {
-            try {
-                w.yaCounter21930301 = new Ya.Metrika({id:21930301, enableAll: true, ut:"noindex", webvisor:true});
-            }
-            catch(e) { }
-        });
-    })(window, "yandex_metrika_callbacks");
-    </script></div>
-    <script src="//mc.yandex.ru/metrika/watch.js" type="text/javascript" defer="defer"></script>
-    <noscript><div><img src="//mc.yandex.ru/watch/21930301?ut=noindex" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-    <!-- /Yandex.Metrika counter -->
-{/literal}
-{/if}
+{include file="common/mc.yandex.ru.tpl"}

@@ -47,15 +47,17 @@ class Session_Db extends Session {
             $this->_data = $data;
         }
 
-        #заполним код региона, если нет в сессии
-        if ( ! isset($this->_data['region']) || (time() - $this->_session->last_active) > 3600*24) { // если нет региона или прошёл день - определим регион
+        #заполним горд и регион, если нет в сессии
+        if (empty($this->_data['city'])) { // если нет региона - определим регион
             $SxGeo = new SxGeo(APPPATH.'config/SxGeoCity.dat');
-
             if ($city = $SxGeo->getCityFull($_SERVER['REMOTE_ADDR'])) {
+                $this->_data['city'] = $city['city']['name_ru'];
                 $this->_data['region'] = $city['region']['iso'];
             } else {
+                $this->_data['city'] = 'Москва'; // если не определили город
                 $this->_data['region'] = FALSE;
             }
+            $this->_write(); // запишем их в сесиию
         }
 
         return NULL;

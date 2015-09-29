@@ -1,126 +1,135 @@
-{assign var=column value=11}
+<script>
+window.ad_category = "{$section->id}";   // required
+allowGoodsTopBar = false;
+</script>
+
+{include file='common/retag.tpl' level=1}
+
+{if not isset($column)}{assign var=column value=11}{/if}
 
 <div id="breadcrumb">
-    <a href="/">Главная</a>
-    {if ! empty($parent)} &rarr; {$parent->get_link()}
-	    {if ! empty($third_level)}
-		    &rarr; <a href="{$section->get_link(0)}">{$section->name}</a>
-		{/if}
-    {else} |
+    <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb"{if ! empty($parent)} itemref="breadcrumb-1"{/if}>
+        <a href="/" itemprop="url"><span itemprop="title">Главная</span></a>
+    </span>
+    {if ! empty($parent)} 
+        &rarr;        
+        <span itemprop="child" itemscope itemtype="http://data-vocabulary.org/Breadcrumb" id="breadcrumb-1"{if ! empty($third_level)} itemref="breadcrumb-2"{/if}>
+            <a href="{$parent->get_link(false)}" itemprop="url"><span itemprop="title">{$parent->name}</span></a>
+        </span>
+        {if ! empty($third_level)}
+            &rarr;
+             <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb" id="breadcrumb-2">
+                <a href="{$section->get_link(false)}" itemprop="url"><span itemprop="title">{$section->name}</span></a>
+            </span>
+        {/if}
     {/if}
+    &rarr;
+    <span>{if ! $section->is_cloth() and ! $third_level}{$section->h1}{/if} {if $third_level}{$third_level}{/if}</span>
     <i></i>
 </div>
-<h1 {if empty($subs)}class="yell"{/if}>{if $third_level}{$third_level}{else}{$section->name}{/if}
-{if $section->id eq 29051}<abbr abbr="Вся продукция при&nbsp;доставке перевозится в&nbsp;специальных авто-холодильниках<br /><strong>(от +3 до +5 градусов)</strong>"><img src="/i/ice.png" alt="***" /></abbr>{/if}
-</h1>
 
-{if $section->settings.list eq Model_Section::LIST_GOODS && ! empty($subs)}{* есть подкатегориии - показываем их *}
+<div {if empty($subs)}class="yell"{/if}>
+    <h1>{$seoname}
+        {if $section->id eq Model_Section::MILK_ID}<abbr abbr="Вся продукция при&nbsp;доставке перевозится в&nbsp;специальных авто-холодильниках<br /><strong>(от +3 до +5 градусов)</strong>"><img src="/i/ice.png" alt="***" /></abbr>{/if}
+    </h1>
+</div>
 
-    <table id="subs">
-        <tr>
-        {foreach from=$subs item=s name=s}
-            <td>
-                {assign var=link value=$s->get_link(0)}
-                <a href="{$link}" class="big">{$s->name}</a><a href="{$link}">{$s->img->get_img()}</a>
-                {if ! empty($by_section[$s->id])}
-                <ul>
-                    {foreach from=$by_section[$s->id] key=brand_id item=qty name=m}
-                    {assign var=b value=$brands[$brand_id]}
-                    {if $b}
-                        {if ! strpos($link, '#!')}
-                            {capture assign=link2}{$link}#!b={$b->id};{/capture}
-                        {else}
-                            {capture assign=link2}{$link}b={$b->id};{/capture}
-                        {/if}
-                        <li {if $smarty.foreach.m.iteration gt $column
-                            or ($smarty.foreach.m.iteration eq $column and $smarty.foreach.m.total gt $column)}class="hide"{/if}>
-                            <a href="{$link2}" title="{$b->name}">{$b->name}</a>
-                            <abbr abbr="Ассортимент товаров">{$qty}</abbr>
-                        </li>
-                    {/if}
-                    {/foreach}
-                    {if $smarty.foreach.m.total gt $column}
-                        <li><a class="toggler">+ Показать все</a></li>
-                    {/if}
-                </ul>
+{if ! empty($subs)}{* есть подкатегориии - показываем их *}
+
+    {assign var=item value=$top_menu[$section->id]}
+    <table id="subs" class="subs{$row}">
+    <tr>
+    {foreach from=$item->children item=s name=s}
+        <td>
+            {assign var=link value=$s->get_link(0)}
+            <a href="{$link}" class="big">{$s->name}</a><a href="{$link}">{$s->img->get_img()}</a>
+
+            {if $s->sub && empty($hide_sub)}
+            <ul>
+                {assign var=subs value=$s->sub|count}
+                {foreach from=$s->sub item=sub key=k name=n}
+                    <li {if $smarty.foreach.n.iteration gt $column}class="hide"{/if}>
+                        <a href="{$sub.href}">{$sub.name}</a><abbr abbr="Ассортимент товаров">{$sub.qty}</abbr>
+                    </li>
+                {/foreach}
+                {if $smarty.foreach.n.total gt $column}
+                    <li><a class="toggler">+ Показать все</a></li>
                 {/if}
-
-            </td>
-            {if $smarty.foreach.s.iteration % 3 eq 0}
-        </tr>
-        <tr>
+            </ul>
             {/if}
-        {/foreach}
-        </tr>
-    </table>
 
+        </td>
+        {if $smarty.foreach.s.iteration % $row eq 0}
+    </tr>
+    <tr>
+        {/if}
+    {/foreach}
+    </tr>
+</table>
 {/if}
 
-{if $section->settings.list eq Model_Section::LIST_FILTER and empty($third_level)}{* показываем меню из значений фильтра*}
-    <div id="product_list">
-        <table id="subs">
-            <tr>
-                {foreach from=$filter_values item=s name=s}
-                <td>
-                    {assign var=link value=$section->get_link(0, $s->id)}
+{if ! empty($subs_filter)}{* значения фильтра как подкатегории *}
 
-                    <a href="{$link}" class="big">{$s->name}</a><a href="{$link}">{$s->image->get_img()}</a>
-                    {if ! empty($by_section[$s->id])}
-                        <ul>
-                            {foreach from=$by_section[$s->id] key=brand_id item=qty name=m}
-                                {assign var=b value=$brands[$brand_id]}
-                                {if $b}
-                                    {if ! strpos($link, '#!')}
-                                        {capture assign=link2}{$link}#!b={$b->id};{/capture}
-                                    {else}
-                                        {capture assign=link2}{$link}b={$b->id};{/capture}
-                                    {/if}
-                                    <li {if $smarty.foreach.m.iteration gt $column
-                                    or ($smarty.foreach.m.iteration eq $column and $smarty.foreach.m.total gt $column)}class="hide"{/if}>
-                                        <a href="{$link2}" title="{$b->name}">{$b->name}</a>
-                                        <abbr abbr="Ассортимент товаров">{$qty}</abbr>
-                                    </li>
-                                {/if}
-                            {/foreach}
-                            {if $smarty.foreach.m.total gt $column}
-                                <li><a class="toggler">+ Показать все</a></li>
-                            {/if}
-                        </ul>
-                    {/if}
+    <table id="subs" class="subs{$row}">
+    <tr>
+        {foreach from=$subs_filter item=f name=f}
+        <td>
+            {assign var=link value=$section->get_link(0, $f.id)}
+            <a href="{$link}" class="big">{$f.name}</a><a href="{$link}">{$f.img}</a>
 
-                </td>
-                {if $smarty.foreach.s.iteration % 3 eq 0}
-            </tr>
-            <tr>
-                {/if}
+            {if $f.sub && $column}
+                <ul>
+                {foreach from=$f.sub item=sub key=k name=n}
+                    <li {if $smarty.foreach.n.iteration gt $column}class="hide"{/if}>
+                        <a href="{$sub.href}">{$sub.name}</a><abbr abbr="Ассортимент товаров">{$sub.qty}</abbr>
+                    </li>
                 {/foreach}
-            </tr>
-        </table>
-    </div>
-
+                {if $smarty.foreach.n.total gt $column}
+                    <li><a class="toggler">+ Показать все</a></li>
+                {/if}
+                </ul>
+            {/if}
+        </td>
+        {if $smarty.foreach.f.iteration % $row eq 0}
+    </tr>
+    <tr>
+        {/if}
+        {/foreach}
+    </tr>
+    </table>
 {/if}
 
 {$search_result|default:''} {* товары *}
 
-{if empty($hide_text) and ($section->settings.list eq Model_Section::LIST_TEXT or empty($search_result))}
-<div class="txt">
-{$section->text}
-</div>
+{if empty($hide_text) && not $section->is_cloth()}
+    <div {if not empty($search_result)}id="tag_text"{/if}>{$section->text}</div>
 {/if}
 
-{if ! empty($tags)}
-    <div id="tags">
-        {foreach from=$tags item=name key=code name=t}
-        <a href="/{$code}">✔ {$name}</a>
+{* google adwords remarketing params *}
+<script>
+    var google_tag_params = {
+        ecomm_pagetype: 'category',
+        ecomm_category: '{$section->name}'
+    };
+</script>
 
-        {if $smarty.foreach.t.iteration eq 33}
-        <div class="hide" id="hidden_tags">
-            {/if}
+{* RR *}
+{if $config->rr_enabled}
+<script>
+    rrApiOnReady.push(function() {
+        try { rrApi.categoryView({$section->id}); } catch(e) { }
+    })
+</script>
+{/if}
 
-            {/foreach}
-            {if $smarty.foreach.t.total gt 33}
-        </div>
-        <a class="toggler abbr" rel="hidden_tags" style="display:block; clear:both; float:left; padding:20px 0 0;">показать все</a>
-        {/if}
-    </div>
+{* findologic category tracking *}
+{if $config->instant_search == 'findologic'}
+<script>
+    _paq.push(['setEcommerceView',
+        productSku = false,  
+        productName = false,          
+        category = ["{$section->name}"] 
+    ]);
+    _paq.push(['trackPageView']);
+</script>
 {/if}

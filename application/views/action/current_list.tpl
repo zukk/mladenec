@@ -1,4 +1,14 @@
-<div id="breadcrumb"><a href="/">Главная</a> | <a href="{Route::url('action_list')}">Акции</a></div>
+<div id="breadcrumb">    
+    <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb" itemref="breadcrumb-1">
+        <a href="/" itemprop="url"><span itemprop="title">Главная</span></a>
+    </span>
+    &rarr; 
+    <span itemprop="child" itemscope itemtype="http://data-vocabulary.org/Breadcrumb" id="breadcrumb-1">
+        <a href="{Route::url('action_list')}"><span itemprop="title">Акции</span></a>
+    </span>
+    &rarr; 
+    <span>{$config->actions_header|default:'Акции месяца'}</span>
+</div>
 <div id="simple">
     <h1>{$config->actions_header|default:'Акции месяца'}</h1>
     <ul id="action_banner_list">
@@ -7,7 +17,7 @@
 	<a class='more'></a>
 	<script>
 		$(document).ready(function() {
-			var $loading = $("<div class='loading'><p>Загрузка&hellip;</p></div>"),
+			var $loading = $("<i class='load'></i>"),
 			$footer = $('.more'),
 			opts = {
 				offset: '100%'
@@ -31,7 +41,7 @@
 					return false;
 				$footer.after($loading);
 				
-				$.get('/actions/current?offset=' + offset, function(data) {
+				$.get('{Route::url('action_list')}?offset=' + offset, function(data) {
 					$loading.remove();
 					working = false;
 					var d = $(data);
@@ -48,9 +58,9 @@
 			});
 		});		
 	</script>
-    {if ( !empty($smarty.get.all))}
+    {if ( not empty($smarty.get.all))}
         <div class="fl cl">
-            <a href="{Route::url('action_current_list')}?all=1">Все акции</a>
+            <a href="{Route::url('action_list')}?all=1">Все акции</a>
         </div>
     {/if}
     <div class="fr cr">

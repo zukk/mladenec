@@ -27,23 +27,25 @@ class Controller_Admin extends Controller_Authorised {
      */
     protected $layout;
     
-    public static function ignore_fields() {
-        return array(
-                'misc',             // Массив дополнительных полей, игнорируемых по умолчанию
-                'ajax',
-                'edit',             // кнопка submit
-                'search_query',     // адрес возврата
-                'goods',            // except goods list ( for actions)
-                'prop',             // except good prop ( for goods)
-                'f', 'img', 'tag', 'tag_changed',
-                'var',              // for polls
-                'sort', 'free', 'new_var', 'new_sort', 'new_free', 'poll_changed',
-                'choose_good', 'choose_good_param', 'choose_goods_all',
-                'ids',              // Товары, отображаемые в акции
-                'goods_show',       // Товары, отображаемые в акции
-                'mail', 'spamit',   // for spam
-                'week_day', 'prices', 'new_price', 'new_min_sum'// for zones
-            );
+    public static function ignore_fields()
+    {
+        return [
+            'misc',             // Массив дополнительных полей, игнорируемых по умолчанию
+            'ajax',
+            'edit',             // кнопка submit
+            'search_query',     // адрес возврата
+            'goods', 'goods_b',           // except goods list ( for actions)
+            'prop',             // except good prop ( for goods)
+            'good_text',        // тексты для товаров
+            'f', 'img', 'tag', 'tag_changed',
+            'var',              // for polls
+            'sort', 'free', 'new_var', 'new_sort', 'new_free', 'poll_changed',
+            'choose_good', 'choose_good_param', 'choose_goods_all',
+            'ids',              // Товары, отображаемые в акции
+            'goods_show',       // Товары, отображаемые в акции
+            'mail', 'spamit',   // for spam
+            'week_day', 'prices', 'new_price', 'new_min_sum'// for zones
+        ];
     }
     
     /**
@@ -54,9 +56,10 @@ class Controller_Admin extends Controller_Authorised {
      */
     public function before()
     {
+        $this->layout = View::factory('smarty:admin', $this->tmpl);
+        
         parent::before();
         
-        $this->layout = View::factory('smarty:admin', $this->tmpl);
         $this->layout->vitrina = $this->tmpl['vitrina'] = 'admin';
         $this->search_query = Session::instance()->get('search_query');
         Kohana::$hostnames = Kohana::$config->load('domains')->as_array();
@@ -84,8 +87,8 @@ class Controller_Admin extends Controller_Authorised {
             $this->layout->model_name = Kohana::message('admin', $this->layout->m);
         }
 
-        $this->layout->messages = $this->messages;
-        
+        $this->layout->messages = array_filter(array_map('array_filter', $this->messages));
+
         parent::after();
         
         $this->response->body($this->layout->render());
@@ -261,7 +264,7 @@ class Controller_Admin extends Controller_Authorised {
         ")->execute();
 
         $vals['goods'] = DB::query(Database::SELECT, "
-            SELECT count(*) as total, sum(new) as new FROM `z_good` WHERE active = 1 AND price > 0 AND qty > 0
+            SELECT count(*) as total, sum(new) as new FROM `z_good` WHERE `show` = 1 AND price > 0 AND qty != 0
         ")->execute()->current();
 
         $vals['comments'] = DB::query(Database::SELECT, "SELECT count(*) as total, sum(IF(answer_by = 0, 1, 0)) as new FROM  `z_comment`")->execute()->current();
@@ -487,9 +490,6 @@ class Controller_Admin extends Controller_Authorised {
         
         $form_vars['i'] = $this->model;
         
-        // Оно вроде не используется нигде
-		//$form_vars['out_of_stock_variant'] = Model_Section::settings('x');
-
         $this->layout->body = View::factory('smarty:admin/add', array(
             'form' => View::factory('smarty:admin/'.$m.'/form', $form_vars)->render(),
             'name' => Kohana::message('admin', $m),
@@ -498,6 +498,28 @@ class Controller_Admin extends Controller_Authorised {
 
         $this->messages_add(array('errors' => $errors));
     }
+	
+	/**
+	 * @param Model_Good $good
+	 * @return array
+	 */
+	public function action_good_edit(Model_Good $good)
+	{
+		$returner = [];
+		$returner['sectionTabs'] = empty($good->section->settings['goodTabs']) ? ['Полное описание'] : $good->section->settings['goodTabs'];
+
+/*
+        if (empty($good->prop->tabs)) {
+			$good->prop->tabs = json_encode(
+					['Полное описание' => $good->prop->desc]
+				);
+		}
+*/
+
+		$returner['goodTabs'] = $good->text->find_all()->as_array('name', 'content');
+		
+		return $returner;
+	}
 
     /**
      * Редактирование сущности
@@ -505,7 +527,6 @@ class Controller_Admin extends Controller_Authorised {
      */
     public function action_edit()
     {
-
         $this->model($m = $this->request->param('model'), $this->request->param('id')); // пытаемся получить объект
         if ( ! $this->model->loaded()) throw new HTTP_Exception_404;
 
@@ -520,27 +541,22 @@ class Controller_Admin extends Controller_Authorised {
             
 			$is_okey = $this->save_form($this->model, $form_data, self::ignore_fields());
 
-			if( $is_okey && method_exists($this->model, 'seo_save' ) ){
+			if ($is_okey && method_exists($this->model, 'seo_save')) $this->messages_add($this->model->seo_save($form_data['seo']));
 
-				$this->messages_add($this->model->seo_save($form_data['seo']));
-			}
-            
             $view->ok = $is_okey;
+
             if ($is_okey) {
                 $search_query = $this->request->post('search_query'); // адрес возврата если есть
                 if ( ! empty($search_query)) $this->request->redirect($search_query); // редирект на поиск, если просили и всё сохранилось ок
             } 
-
         }
 
         // собственный метод edit есть?
         $f = 'action_'.$m.'_edit'; 
         if (method_exists($this, $f)) {
-
             $form_vars = $this->{$f}($this->model);
         }
         $form_vars['i'] = $this->model;
-		//$form_vars['out_of_stock_variant'] = Model_Section::settings('x');
 
         $view->form = View::factory('smarty:admin/'.$m.'/form', $form_vars)->render();
         if ( empty($form_vars['name'])) {
@@ -831,19 +847,17 @@ class Controller_Admin extends Controller_Authorised {
     }
 
     /**
-     * Тест отправки отзыва
+     * Тест писем
      */
     public function action_mail()
     {
 
-        $to = 'zutest@mail.ru'; /*', elena-1104@yandex.ru, k.kurnikov@mladenec.ru, a.sergeev@mladenec.ru, v.nikiforova@mladenec.ru'
-            .', o.osipova@mladenec.ru, spirin1234@mail.ru, mrabral@gmail.com, executive@mladenec.ru';*/
-
+        $to = 'zutest@mail.ru';
         // письма о заказах
         $o = ORM::factory('order')->where('status', '=', 'F')->where('delivery_type', '=', Model_Order::SHIP_COURIER)->order_by('id', 'DESC')->find(); // доставленный заказ
         Mail::htmlsend('order', array('o' => $o, 'od' => $o->data, 'got_status' => 1), $to, 'Заказ доставлен');
         $o->status = 'N';
-        Mail::htmlsend('order', array('o' => $o, 'od' => $o->data), $to, 'Заказ оформлен');
+        Mail::htmlsend('order', array('o' => $o, 'od' => $o->data), $to, 'Заказ принят');
         $o->status = 'D';
         Mail::htmlsend('order', array('o' => $o, 'od' => $o->data), $to, 'Заказ сформирован');
         $o->status = 'X';
@@ -994,71 +1008,57 @@ class Controller_Admin extends Controller_Authorised {
      */
 	public function action_section_edit(\Model_Section $section)
     {
-		
-		$return = array();
-		
-		// $brands = $this->request->post('brands');
-		
-		$misc = $this->request->post('misc');
-        
-		if( ! empty( $misc['hits'] ) )
+        $return = [];
+
+        $misc = $this->request->post('misc');
+        if ( ! empty($misc['hits'])) // хиты продаж для категорий уровня 0
         {
-			$hits = $misc['hits'];
+            DB::delete('z_hit')->where('section_id', '=', $section->id)->execute();
 
-			$oldHits = DB::select('good_id')->from('z_hit')->where('section_id', '=', $section->id)->execute()->as_array('good_id');
+            $query = DB::insert('z_hit', ['section_id', 'good_id', 'sort']);
 
-			foreach( $hits as $key => $goodId ){
+            $he = FALSE;
+            foreach ($misc['hits'] as $k => $id) {
+                if ( ! empty($id)) {
+                    $he = TRUE;
+                    $query->values([$section->id, $id, $k]);
+                }
+            }
 
-				if( isset( $oldHits[$goodId] ) ){
-					unset( $oldHits[$goodId] );
-					unset( $hits[$key] );
-				}
-			}
+            if ($he) $query->execute();
+        }
 
-			if( ! empty( $oldHits ) ){
-				DB::delete('z_hit')->where('good_id', 'in', array_keys( $oldHits ) )->execute();
-			}
+        $sorts = $this->request->post('sort');
+        if ( ! empty($sorts['filter'])) { // сортировки фильтров
+            $upd = DB::insert('z_filter')->columns(['id', 'sort']);
+            foreach($sorts['filter'] as $id => $sort) {
+                $upd->values([$id, $sort]);
+            }
+            DB::query(Database::UPDATE, $upd.' ON DUPLICATE KEY UPDATE sort = VALUES(sort)')->execute();
+        }
+        if ( ! empty($sorts['value'])) { // сортировки значений
+            $upd = DB::insert('z_filter_value')->columns(['id', 'sort']);
+            foreach($sorts['value'] as $id => $sort) {
+                $upd->values([$id, $sort]);
+            }
+            DB::query(Database::UPDATE, $upd.' ON DUPLICATE KEY UPDATE sort = VALUES(sort)')->execute();
+        }
 
-			if( ! empty( $hits ) ){
-				$query = DB::insert('z_hit', array(
-					'section_id', 'good_id'
-				));
-
-				$he = true;
-				foreach( $hits as $id ){
-					
-					if( !empty( $id ) ){
-						
-						$he = false;
-						$query->values(array(
-							$section->id, $id
-						));
-					}
-				}
-
-				if( !$he )
-					$query->execute();
-			}
-		}
+		$ds = ! empty($section->settings['orderByItems']) ? $section->settings['orderByItems'] : ['rating', 'name', 'price', 'new'];
 		
-		$ds = !empty( $section->settings['orderByItems'] ) ? $section->settings['orderByItems']: array('rating', 'name', 'price', 'new');
-		
-		$d = array(
-			'rating' => 'По популярности',
-			'name' => 'По названию',
-			'price' => 'По цене (по возрастанию)',
-			'pricedesc' => 'По цене (по убыванию)',
-			'new' => 'По новизне',
-		);
-		
-		foreach( $ds as $f ){
-			$return['sortableOrderItems'][$f] = $d[$f];
-		}
+		foreach ($ds as $f) $return['sortableOrderItems'][$f] = Kohana::message('sorts', $f);
 
 		$br = $section->getSortedBrands();
 		
 		$return['sBrands'] = &$br;
-		$return['exporttypes'] = Model_Section::$exportyml_types;
+
+        $sphinx = new Sphinx('section', $section->id, FALSE);
+        $sphinx->clear_stats_cache(); // нужно на слуяай смены сортировки
+        $return['subs'] = $subs = $sphinx->stats();
+
+        $defaultGoodTabs = ['Полное описание', 'Отзывы'];
+		$return['defaultGoodTabs'] = $defaultGoodTabs;
+		$return['goodTabs'] = ! empty($section->settings['goodTabs']) ? $section->settings['goodTabs'] : $defaultGoodTabs;
 		
 		return $return;
 	}
@@ -1375,26 +1375,18 @@ class Controller_Admin extends Controller_Authorised {
     */
     function action_comment_theme_list()
     {
-        $return = array();
+        $return = [];
+        $return['count'] = $this->model->count_all();
 
-        $query = $this->model;
+		$this->breadcrumbs = array(Route::url('admin_list', array('model' => 'comment_theme')) => 'Отзывы о сайте');
 
-		$list_url = Route::url('admin_list', array('model' => 'comment_theme'));
-		$this->breadcrumbs = array(
-			 $list_url => 'Отзывы о сайте'
-		);
-		
-		$return['count'] = $query->count_all();
-		
-		$c = DB::select(DB::expr('COUNT(*) as c'), 'internal_rating')->from('z_comment_theme')->group_by('internal_rating')->execute()->as_array();
-		
-		$counts = array();
-		
-		foreach( $c as $v ){
-			$counts[$v['internal_rating']] = $v['c'];
-		}
-		
-		$return['fields'] = array(
+        $return['counts'] = DB::select(DB::expr('COUNT(*) as c'), 'internal_rating')
+            ->from('z_comment_theme')
+            ->group_by('internal_rating')
+            ->execute()
+            ->as_array('internal_rating', 'c');
+
+		$return['fields'] = [
 			'id' => '#',
 			'date' => 'дата',
 			'active' => 'активность',
@@ -1403,39 +1395,29 @@ class Controller_Admin extends Controller_Authorised {
 			'to' => 'кому',
 			'name' => 'название',
 			'internal_rating' => 'рейтинг'
-		);
+		];
 		
-		$orderField = Request::current()->query("order");
-		
-		if( empty( $orderField) ){
-			$orderField = 'id';
-		}
-		
-		$desc = Request::current()->query("desc");
-		
-		if( empty( $desc ) ){
-			$desc = 'desc';
-		}
-		
-		$date_from = Request::current()->query("date_from");
-		$date_to = Request::current()->query("date_to");
+        $orderField = $this->request->query("order");
+		if (empty($orderField)) $orderField = 'id';
+
+		$desc = $this->request->query("desc");
+		if (empty($desc)) $desc = 'desc';
 		
 		$return['desc'] = $desc;
 		$return['sort'] = $orderField;
-		
-		$return['counts'] = $counts;
-		
+
 		$range_rating = $this->request->query('rating_range');
-		
         $user_id = $this->request->query('user_id');
         
-		$query
-				->join('z_comment')->on('z_comment.theme_id', '=', 'comment_theme.id')
-				->join('z_comment_answer', 'LEFT')->on('z_comment_answer.q_id', '=', 'z_comment.id')
-				->where('comment_theme.name', '!=', '')->group_by('comment_theme.id');
-		
+		$query = $this->model
+            ->join('z_comment')
+                ->on('z_comment.theme_id', '=', 'comment_theme.id')
+			->join('z_comment_answer', 'LEFT')
+                ->on('z_comment_answer.q_id', '=', 'z_comment.id')
+			->where('comment_theme.name', '!=', '');
+
 		$q = array();
-		if( !empty( $range_rating ) ){
+		if ( ! empty($range_rating)) {
 			
 			list($range_min, $range_max ) = explode('-', $range_rating );
 			
@@ -1446,8 +1428,7 @@ class Controller_Admin extends Controller_Authorised {
             $query->where('comment_theme.internal_rating', '<=', $range_max);
 		
 			$q['rating_range'] = $range_rating;
-		}
-		else{
+		} else {
 			$range_min = 0;
 			$range_max = 5;
 		}
@@ -1456,39 +1437,45 @@ class Controller_Admin extends Controller_Authorised {
 			'min' => $range_min,
 			'max' => $range_max
 		);
-		
-		if( !empty( $date_from ) ){
+
+        $return['date_from'] = $date_from = $this->request->query("date_from");
+		if ( ! empty($date_from)) {
             $query->where('z_comment.date', '>=', $date_from);
 			$q['date_from'] = $date_from;
 		}
-		$return['date_from'] = $date_from;
 
-		if( !empty( $date_to ) ){
+        $return['date_to'] = $date_to = $this->request->query("date_to");
+		if ( ! empty($date_to)){
             $query->where('z_comment.date', '<=', $date_to);
 			$q['date_to'] = $date_to;
 		}
-		$return['date_to'] = $date_to;
-			
+
         if ( ! empty($user_id)) {
             $return['user_id'] = $user_id;
             $query->where('comment_theme.user_id', '=', $user_id);
 			$q['user_id'] = $user_id;
         }
-        if (($answered = $this->request->query('answered')) != "") {
+        if (($answered = $this->request->query('answered')) != '') {
             $query->where('z_comment_answer.email_sent', $answered == 0 ? '=' : '!=', 0);
 			$q['answered'] = $answered;
         }
-        if (($active = $this->request->query('active')) != "") {
+        if (($active = $this->request->query('active')) != '') {
             $query->where('comment_theme.active', $active == 0 ? '=' : '!=', 0);
 			$q['active'] = $active;
         }
 
 		$return['filterquery'] = http_build_query($q);
 
-		$query->reset(FALSE);
+        $query->reset(FALSE);
         $return['pager'] = $pager = new Pager($query->count_all(), 50);
-		
-        $return['list'] = $query->select('comment_theme.id', 'z_comment.date', 'z_comment_answer.email_sent')->order_by($orderField, $desc)->offset($pager->offset)->limit($pager->per_page)->find_all();
+
+        $return['list'] = $query
+            ->select('comment_theme.id', 'z_comment.date', 'z_comment_answer.email_sent')
+            ->order_by($orderField, $desc)
+            ->offset($pager->offset)
+            ->limit($pager->per_page)
+            ->group_by('comment_theme.id')
+            ->find_all();
 		
         return $return;
     }
@@ -1498,7 +1485,8 @@ class Controller_Admin extends Controller_Authorised {
      * @param Model_Comment_Theme $theme
      * @return array
      */
-    function action_comment_theme_edit($theme) {
+    function action_comment_theme_edit($theme)
+    {
 
 		$list_url = Route::url('admin_list', array('model' => 'comment_theme'));
 		
@@ -1525,7 +1513,8 @@ class Controller_Admin extends Controller_Authorised {
 		return $return;
 	}
     
-    function action_brand_list(){
+    function action_brand_list()
+    {
 		
         $query = $this->model;
 		
@@ -1541,7 +1530,8 @@ class Controller_Admin extends Controller_Authorised {
 		return $return;
 	}
 	
-    function action_stat_list(){
+    function action_stat_list()
+    {
 		
         $query = $this->model;
 
@@ -1688,7 +1678,7 @@ class Controller_Admin extends Controller_Authorised {
         //$query = $this->model->join('z_order_data')->on('order.id','=','z_order_data.id');
         $query = $this->model->with('data');
 
-		$query->reset(false);
+        $query->reset(false);
 		
         if ($order_id = $this->request->query('order_id')) {
             $query->where('order.id', '=' , $order_id);
@@ -1698,6 +1688,9 @@ class Controller_Admin extends Controller_Authorised {
         }
         if ($status = $this->request->query('status')) {
             $query->where('status', '=' , $status);
+        }
+        if ($pay_type = $this->request->query('pay_type')) {
+            $query->where('pay_type', '=' , $pay_type);
         }
         if ($name = $this->request->query('name')) {
             $query->where('data.name', 'LIKE', $name.'%');
@@ -1745,23 +1738,8 @@ class Controller_Admin extends Controller_Authorised {
             $query->where('created', '<=' , $to_date);
         }
 
-        /*
-        if ($admin = $this->request->query('admin')) {
-            $query->distinct('id')->join('z_user_admin')->on('z_user_admin.user_id','=','user.id');
-            
-            $access_res = DB::select()->from('z_user_admin')->execute()->as_array();
-            $return['access'] = array();
-            foreach ($access_res as $a_res) {
-                $return['access'][$a_res['user_id']][$a_res['module']] = $a_res['module'];
-            }
-        }
-         * 
-         */
-
         $query->reset(FALSE);
-        // $total = $query->count_all();
         $return['pager'] = $pager = new Pager($query->count_all(), 50);
-        //$query->with('data');
         $query->reset(FALSE);
         $return['list'] = $query->order_by('order.id', 'desc')->offset($pager->offset)->limit($pager->per_page)->find_all();
 
@@ -1771,8 +1749,119 @@ class Controller_Admin extends Controller_Authorised {
 		
         return $return;
     }
-    
-    function action_poll_list() {
+
+    /**
+     * Проблемный безнал
+     * @return array
+     */
+    function action_order_card()
+    {
+        $return = array();
+
+        //$query = $this->model->join('z_order_data')->on('order.id','=','z_order_data.id');
+        $query = ORM::factory('order')->with('data')->with('card')
+            ->where('order.id', '>', '500000')
+            ->where('pay_type', '=', Model_Order::PAY_CARD)
+            ->where('order.status', '=', 'N')
+            ->where('order.call_card', '=', '0')
+            ->and_where_open()
+                ->where('card.status', 'NOT IN', [Model_Payment::STATUS_Authorized, Model_Payment::STATUS_ChargeApproved])
+                ->or_where('card.status', 'IS', DB::expr('NULL'))
+            ->where_close()
+        ;
+
+        $query->reset(FALSE);
+        $return['pager'] = $pager = new Pager($query->count_all(), 50);
+        $query->reset(FALSE);
+        $return['list'] = $query->order_by('order.id')->offset($pager->offset)->limit($pager->per_page)->find_all();
+
+        $this->layout->body = View::factory('smarty:admin/order/card', $return)->render();;
+    }
+
+    /*
+     * Экспорт списка заказов в Excel
+     */
+    function action_order_excel() {
+        header('Content-Description: File Transfer');
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename=orders.csv');
+        $content = '';
+        
+        $this->model = ORM::factory('order');
+        $query = $this->model->with('data');
+
+        $query->reset(false);
+
+        if ($order_id = $this->request->query('order_id')) {
+            $query->where('order.id', '=', $order_id);
+        }
+        if ($user_id = $this->request->query('user_id')) {
+            $query->where('user_id', '=', $user_id);
+        }
+        if ($status = $this->request->query('status')) {
+            $query->where('status', '=', $status);
+        }
+        if ($name = $this->request->query('name')) {
+            $query->where('data.name', 'LIKE', $name . '%');
+        }
+        if ($email = $this->request->query('email')) {
+            $query->where('data.email', 'LIKE', $email . '%');
+        }
+
+        $from = $this->request->query('from');
+
+        if (is_array($from) AND !(empty($from['Date_Day']) AND empty($from['Date_Month']) AND empty($from['Date_Year']))) {
+
+            if (empty($from['Date_Year'])) {
+                $from['Date_Year'] = date('Y');
+            } elseif (empty($from['Date_Day']) AND empty($from['Date_Month'])) {
+                $from['Date_Month'] = 1;
+            }
+            if (empty($from['Date_Month']))
+                $from['Date_Month'] = date('n');
+            if (empty($from['Date_Day']))
+                $from['Date_Day'] = 1;
+
+            $from_date = $this->read_date($from);
+            $query->where('created', '>=', $from_date);
+        }
+        $to = $this->request->query('to');
+
+        if (is_array($from) AND !(empty($to['Date_Day']) AND empty($to['Date_Month']) AND empty($to['Date_Year']))) {
+
+            if (empty($to['Date_Year'])) {
+                $to['Date_Year'] = date('Y');
+            } elseif (empty($to['Date_Month']) AND empty($to['Date_Day'])) {
+                $to['Date_Month'] = 12;
+                $to['Date_Day'] = 31;
+            }
+
+            if (empty($to['Date_Month']))
+                $to['Date_Month'] = date('n');
+            if (empty($to['Date_Day']))
+                $to['Date_Day'] = date('t');
+
+            $to_date = $this->read_date($to);
+            $query->where('created', '<=', $to_date);
+        }
+        $orders = $query->find_all();
+
+        $content .= '"№ заказа";' . '"Сумма";' . '"Статус";' . "\n";        
+        foreach($orders  as $order) {
+            $content .= $order->id . '; ' . $order->price . '; ' . $order->status() . ';' . "\n";
+        }
+
+        echo iconv("utf-8", "windows-1251//TRANSLIT", $content);
+        exit;
+    }
+
+    /**
+     * Список опросов, может возращать также результаты опроса
+     * @return array
+     * @throws Kohana_Exception
+     */
+    function action_poll_list()
+    {
         $return = array();
         
         $query = $this->model;
@@ -1789,61 +1878,132 @@ class Controller_Admin extends Controller_Authorised {
             $current_poll = $return['list'][0];
         }
         
-        
         if (($current_poll instanceof Model_Poll) AND $current_poll->loaded()) {
-            
-            $votes_begin = DB::select(DB::expr('MIN(`ts`) as `min_ts`'))
-                ->from('z_poll_vote')
-                ->where('poll_id', '=', $current_poll->id)
-                ->execute()
-                ->get('min_ts');
 
-            $questions  = $current_poll->questions->order_by('sort', 'ASC')->find_all()->as_array();
-            $variants   = array(); // Запросим позже из вопросов
-            $min_year   = date('Y', strtotime($votes_begin));
-            $min_month  = date('m', strtotime($votes_begin));
-            $max_year   = date('Y');
-            $max_month  = date('m');
-            $votes      = array();
-            $months     = array();
-            
-            foreach($questions as $qstn) {
-                $variants[$qstn->id]    = $qstn->variants->order_by('sort', 'ASC')->find_all()->as_array();
-                foreach($variants[$qstn->id] as $var) {
-                    $var_votes = $var->get_votes_by_months();
-                    // Заполняем отсутствующие значения по месяцам
-                    for($i = $min_year; $i <= $max_year; $i++) {
-                        // В промежуточных годах заполняем все месяцы
-                        if ($i > $min_year) $mm = 1;    else $mm = $min_month; // в первый год считаем С указанного месяца
-                        if ($i < $max_year) $mam = 12;  else $mam = $max_month; // в последний год считаем ДО указанного месяца
+            $questions = $current_poll->questions->order_by('sort', 'ASC')->find_all()->as_array('id'); // все вопросы
+            $variants = []; // Запросим позже из вопросов
 
-                        for($y=$mm; ($y <= $mam); $y++) {
-                            $month_str = $i . ' ' . str_pad($y,2,'0');
-                            $time_key = $i . str_pad($y,2,'0');
-                            if ( ! empty($var_votes[$month_str])) {
-                                $votes[$qstn->id][$var->id][$time_key] = $var_votes[$month_str];
-                            } else {
-                                $votes[$qstn->id][$var->id][$time_key]['cnt'] = '&mdash;';
-                            }
-                            // Попутно заполняем массив месяцев
-                            if (empty($months[$time_key])) {
-                                $months[$time_key] = Txt::ru_month($y) . ' ' . $i;
+            if ($this->request->post('excel')) { // получить ответы в excel
+
+                include(APPPATH.'classes/PHPExcel.php');
+                $excel = new PHPExcel();
+                $sheet = $excel->getActiveSheet();
+                $i = 0;
+                $sheet->setCellValueByColumnAndRow($i++, 1, 'Пользователь');
+
+                $map = []; // запишем связь ответ => ячейка
+                foreach($questions as $q) { // заполняем первую строку - вопросы и вторую - варианты ответов
+                    $variants[$q->id] = $q->variants->order_by('sort', 'ASC')->find_all()->as_array('id'); // варианты ответов
+                    $sheet->setCellValueByColumnAndRow($i, 1, $q->name);
+
+                    if ($q->type == Model_Poll_Question::TYPE_MULTI || $q->type == Model_Poll_Question::TYPE_PRIORITY) { // надо склеить колонку по числу вариантов
+                        $count = count($variants[$q->id]);
+                        $j = $i;
+                        foreach($variants[$q->id] as $v) { // заполнить вторую строку вариантами
+                            $map[$q->id][$v->id] = $j;
+                            $sheet->setCellValueByColumnAndRow($j++, 2, $v->name);
+                        }
+                        $i += $count;
+                    } else {
+                        $map[$q->id] = $i;
+                        $i++;
+                    }
+                }
+
+                $votes = DB::select(DB::expr('v.*'))
+                    ->from(['z_poll_vote', 'v'])
+                    ->join(['z_poll_question', 'q'])
+                        ->on('q.id', '=', 'v.question_id')
+                    ->where('v.poll_id', '=', $current_poll->id)
+                    ->order_by('v.user_id', 'ASC')
+                    ->order_by('q.sort', 'ASC')
+                    ->execute()
+                    ->as_array();
+
+                $user_id = 0;
+                $row = 2;
+                foreach($votes as $v) { // заполняем ответы по пользователям
+                    if ($v['user_id'] != $user_id) {
+                        $row++;
+                        $user_id = $v['user_id'];
+                        $sheet->setCellValueByColumnAndRow(0, $row, $v['user_id']);
+                    }
+                    if (in_array($questions[$v['question_id']]->type, [Model_Poll_Question::TYPE_MULTI, Model_Poll_Question::TYPE_PRIORITY])) { // в ответе галочки
+                        if ($questions[$v['question_id']]->type == Model_Poll_Question::TYPE_MULTI) {
+                            $value = empty($v['var_text']) ? 'да' : $v['var_text'];
+                        } else {
+                            $value = $v['value'];
+                        }
+                        $sheet->setCellValueByColumnAndRow($map[$v['question_id']][$v['var_id']], $row, $value);
+                    } else {
+                        $value = $v['var_id'] == 0 ? $v['var_text'] : (empty($v['value']) ? $variants[$v['question_id']][$v['var_id']]->name : $v['value']);
+                        $sheet->setCellValueByColumnAndRow($map[$v['question_id']], $row, $value);
+                    }
+                }
+
+                $fname = 'poll_result'.$current_poll->id.'.xlsx';
+                $io = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+                $io->save('/tmp/'.$fname);
+
+                header('Content-Description: File Transfer');
+                header('Content-Type: application/excel');
+                header('Content-Disposition: attachment; filename='.$fname);
+                echo file_get_contents('/tmp/'.$fname);
+                exit;
+
+            } else { // вывести ответы на экран
+
+                $votes_begin = DB::select(DB::expr('MIN(`ts`) as `min_ts`'))
+                    ->from('z_poll_vote')
+                    ->where('poll_id', '=', $current_poll->id)
+                    ->execute()
+                    ->get('min_ts');
+
+                $min_year = date('Y', strtotime($votes_begin));
+                $min_month = date('m', strtotime($votes_begin));
+                $max_year = date('Y');
+                $max_month = date('m');
+                $votes = array();
+                $months = array();
+
+                foreach ($questions as $qstn) {
+                    $variants[$qstn->id] = $qstn->variants->order_by('sort', 'ASC')->find_all()->as_array();
+                    foreach ($variants[$qstn->id] as $var) {
+                        $var_votes = $var->get_votes_by_months();
+                        // Заполняем отсутствующие значения по месяцам
+                        for ($i = $min_year; $i <= $max_year; $i++) {
+                            // В промежуточных годах заполняем все месяцы
+                            if ($i > $min_year) $mm = 1; else $mm = $min_month; // в первый год считаем С указанного месяца
+                            if ($i < $max_year) $mam = 12; else $mam = $max_month; // в последний год считаем ДО указанного месяца
+
+                            for ($y = $mm; ($y <= $mam); $y++) {
+                                $month_str = $i . ' ' . str_pad($y, 2, '0');
+                                $time_key = $i . str_pad($y, 2, '0');
+                                if ( ! empty($var_votes[$month_str])) {
+                                    $votes[$qstn->id][$var->id][$time_key] = $var_votes[$month_str];
+                                } else {
+                                    $votes[$qstn->id][$var->id][$time_key]['cnt'] = '&mdash;';
+                                }
+                                // Попутно заполняем массив месяцев
+                                if (empty($months[$time_key])) {
+                                    $months[$time_key] = Txt::ru_month($y) . ' ' . $i;
+                                }
                             }
                         }
                     }
+                    if (isset($month_str)) unset($month_str);
+                    if (isset($var)) unset($var);
+                    if (isset($i)) unset($i);
+                    if (isset($y)) unset($y);
                 }
-                if (isset($month_str))  unset($month_str);
-                if (isset($var))        unset($var);
-                if (isset($i))          unset($i);
-                if (isset($y))          unset($y);
-            }
 
-            $return['current_poll_id']  = $current_poll->id;
-            $return['current_poll']     = $current_poll;
-            $return['questions']        = $questions;
-            $return['variants']         = $variants;
-            $return['votes']            = $votes;
-            $return['variant_months']   = $months;
+                $return['current_poll_id'] = $current_poll->id;
+                $return['current_poll'] = $current_poll;
+                $return['questions'] = $questions;
+                $return['variants'] = $variants;
+                $return['votes'] = $votes;
+                $return['variant_months'] = $months;
+            }
             
         } else {
             $return['current_poll_id']  = FALSE;
@@ -1860,10 +2020,14 @@ class Controller_Admin extends Controller_Authorised {
     {
         $return = array();
 
-        if ($this->request->post('reset_password')) {
-            if ($user = Model_User::reset_password($this->request->post('password'))) {
-                $this->layout->errors = array('password' => 'Пароль пользователя  '.$user->email.' изменён');
-            };
+        if ($id = $this->request->post('reset_password')) {
+            $new_pass = $this->request->post('password');
+            $user = Model_User::reset_password($id, $new_pass);
+            if ($user instanceof Model_User) {
+                $this->layout->errors = ['password' => 'Пароль пользователя  '.$user->email.' изменён '.($new_pass ? $new_pass : '')];
+            } else {
+                $this->layout->errors = $user;
+            }
         }
 
         $query = $this->model;
@@ -1877,9 +2041,25 @@ class Controller_Admin extends Controller_Authorised {
         if ($email = $this->request->query('email')) {
             $query->where('email', 'LIKE', $email.'%');
         }
+        if ($phone = $this->request->query('phone')) {
+            
+            $first_digit = substr($phone, 0,1);
+            if ($first_digit != 8 AND $first_digit != 7) $phone = '+7' . $phone;
+            if (0 !== strpos($phone,'+'))  $phone = '+' . $phone;
+            if (0 !== strpos($phone,'+7')) $phone = str_replace ('+8', '+7', $phone);
+            
+            $query->where_open()
+                    ->where('phone',     'LIKE', $phone.'%')
+                    ->or_where('phone2', 'LIKE', $phone.'%')
+                   ->where_close();
+        }
         if (($sub = $this->request->query('sub')) != "") {
             $query->where('sub', $sub == 0 ? '=' : '!=', 0);
         }
+        if (($lk = $this->request->query('lk')) != "") {
+            $query->where('status_id', '=', $lk);
+        }
+        
         if ($admin = $this->request->query('admin')) {
             $query->distinct('id')->join('z_user_admin')->on('z_user_admin.user_id','=','user.id');
             
@@ -1889,12 +2069,200 @@ class Controller_Admin extends Controller_Authorised {
                 $return['access'][$a_res['user_id']][$a_res['module']] = $a_res['module'];
             }
         }
+        
+        $from = $this->request->query('from');
 
+        if (is_array($from) AND !(empty($from['Date_Day']) AND empty($from['Date_Month']) AND empty($from['Date_Year']))) {
+
+            if (empty($from['Date_Year'])) {
+                $from['Date_Year'] = date('Y');
+            } elseif (empty($from['Date_Day']) AND empty($from['Date_Month'])) {
+                $from['Date_Month'] = 1;
+            }
+            if (empty($from['Date_Month']))
+                $from['Date_Month'] = date('n');
+            if (empty($from['Date_Day']))
+                $from['Date_Day'] = 1;
+
+            $return['from'] = $from_date = strtotime($this->read_date($from));
+            $query->where('created', '>=', $from_date);
+        }
+        $to = $this->request->query('to');
+
+        if (is_array($from) AND !(empty($to['Date_Day']) AND empty($to['Date_Month']) AND empty($to['Date_Year']))) {
+
+            if (empty($to['Date_Year'])) {
+                $to['Date_Year'] = date('Y');
+            } elseif (empty($to['Date_Month']) AND empty($to['Date_Day'])) {
+                $to['Date_Month'] = 12;
+                $to['Date_Day'] = 31;
+            }
+
+            if (empty($to['Date_Month']))
+                $to['Date_Month'] = date('n');
+            if (empty($to['Date_Day']))
+                $to['Date_Day'] = date('t');
+
+            $to_timestamp = strtotime($this->read_date($to));
+            
+            $return['to'] = $to_date = date("Y-m-d H:i:s", $to_timestamp);
+            $query->where('created', '<=', $to_timestamp);
+        }
+        if (($childs = $this->request->query('childs')) != "") {
+            if($childs == 1) {
+                $query->join('z_user_child')
+                    ->on('z_user_child.user_id', '=', 'user.id')
+                    ->group_by('user.id');
+            } else {
+                $query->join('z_user_child','left')
+                    ->on('z_user_child.user_id', '=', 'user.id')
+                    ->where('z_user_child.user_id', '=', NULL)
+                    ->group_by('user.id');
+            }
+        }
+        
         $query->reset(FALSE);
-        $return['pager'] = $pager = new Pager($query->count_all(), 50);
-        $return['list'] = $query->order_by('id', 'desc')->offset($pager->offset)->limit($pager->per_page)->find_all();
+        
+        $return['pager'] = $pager = new Pager($query->find_all()->count(), 50);
+        $return['list'] = $query->order_by('user.id', 'desc')->offset($pager->offset)->limit($pager->per_page)->find_all();
 
         return $return;
+    }
+    
+    /*
+     * Экспорт списка пользователей в Excel
+     */
+    function action_user_excel() {
+        header('Content-Description: File Transfer');
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename=users.csv');
+        $content = '';
+        
+        $this->model = ORM::factory('user');
+        $query = $this->model->with('data');
+
+        $query->reset(false);
+
+        if ($id = $this->request->query('id')) {
+            $query->where('id', '=', $id);
+        }
+        if ($name = $this->request->query('name')) {
+            $query->where('name', 'LIKE', '%'.$name.'%');
+        }
+        if ($email = $this->request->query('email')) {
+            $query->where('email', 'LIKE', $email.'%');
+        }
+        if ($phone = $this->request->query('phone')) {
+            
+            $first_digit = substr($phone, 0,1);
+            if ($first_digit != 8 AND $first_digit != 7) $phone = '+7' . $phone;
+            if (0 !== strpos($phone,'+'))  $phone = '+' . $phone;
+            if (0 !== strpos($phone,'+7')) $phone = str_replace ('+8', '+7', $phone);
+            
+            $query->where_open()
+                    ->where('phone',     'LIKE', $phone.'%')
+                    ->or_where('phone2', 'LIKE', $phone.'%')
+                   ->where_close();
+        }
+        if (($sub = $this->request->query('sub')) != "") {
+            $query->where('sub', $sub == 0 ? '=' : '!=', 0);
+        }
+        if (($lk = $this->request->query('lk')) != "") {
+            $query->where('status_id', '=', $lk);
+        }
+        if ($admin = $this->request->query('admin')) {
+            $query->distinct('id')->join('z_user_admin')->on('z_user_admin.user_id','=','user.id');
+        }
+        
+        $from = $this->request->query('from');
+
+        if (is_array($from) AND !(empty($from['Date_Day']) AND empty($from['Date_Month']) AND empty($from['Date_Year']))) {
+
+            if (empty($from['Date_Year'])) {
+                $from['Date_Year'] = date('Y');
+            } elseif (empty($from['Date_Day']) AND empty($from['Date_Month'])) {
+                $from['Date_Month'] = 1;
+            }
+            if (empty($from['Date_Month']))
+                $from['Date_Month'] = date('n');
+            if (empty($from['Date_Day']))
+                $from['Date_Day'] = 1;
+
+            $from_date = strtotime($this->read_date($from));
+            $query->where('created', '>=', $from_date);
+        }
+        $to = $this->request->query('to');
+
+        if (is_array($from) AND !(empty($to['Date_Day']) AND empty($to['Date_Month']) AND empty($to['Date_Year']))) {
+
+            if (empty($to['Date_Year'])) {
+                $to['Date_Year'] = date('Y');
+            } elseif (empty($to['Date_Month']) AND empty($to['Date_Day'])) {
+                $to['Date_Month'] = 12;
+                $to['Date_Day'] = 31;
+            }
+
+            if (empty($to['Date_Month']))
+                $to['Date_Month'] = date('n');
+            if (empty($to['Date_Day']))
+                $to['Date_Day'] = date('t');
+
+            $to_timestamp = strtotime($this->read_date($to));            
+            $query->where('created', '<=', $to_timestamp);
+        }
+        $is_childs = false;
+        if (($is_childs = $this->request->query('childs')) != "") {            
+            if($is_childs == 1) {
+                $query->join('z_user_child')
+                    ->on('z_user_child.user_id', '=', 'user.id');
+            } else {
+                $query->join('z_user_child', 'left')
+                    ->on('z_user_child.user_id', '=', 'user.id')
+                    ->where('z_user_child.user_id', '=', NULL);
+            }
+        }
+        $query->select( DB::expr('COUNT(z_user_order.order_id) as num_orders'), DB::expr('MAX(z_user_order.created) as last_order_date') )
+              ->join('z_user_order', 'left')
+              ->on('z_user_order.user_id', '=', 'user.id')
+              ->group_by('user.id');
+        
+        $users = $query->find_all();
+
+        $content .= '"ID";' . '"Email";' . '"Телефон";' . '"Имя";' . '"Фамилия";' . '"Отчество";' 
+                . '"Сумма заказов, руб.";' . '"Количество заказов";' . '"Дата последнего заказа";' 
+                . '"Любимый";' . '"Рассылка";' . '"Создан";' . '"Беременность";'. '"Срок (недель)";';         
+        if ($is_childs) {
+            $content .=  '"Дети";';
+        }        
+        $content .=  "\n";        
+        foreach($users  as $user) {
+            $content .= $user->id . ';'
+                    . '"' . $user->email . '";'
+                    . '"' . $user->phone . '";'
+                    . '"' . $user->name . '";'
+                    . '"' . $user->last_name . '";'
+                    . '"' . $user->second_name . '";'
+                    . $user->sum . ';'
+                    . $user->num_orders. ';'
+                    . $user->last_order_date. ';'
+                    . ($user->status_id ? 'Да' : '') . ';'
+                    . ($user->sub ? 'Да' : '') . ';'
+                    . date('d-m-Y H:i:s', $user->created) . ';';
+            $content .= ($user->pregnant ? 'Да' : 'Нет') . ';';
+            $content .= ($user->pregnant ? $user->get_pregnant_weeks() : '') . ';';
+            if ($is_childs) {
+                $kids = $user->kids->find_all()->as_array('id');
+                if ($kids) {
+                    foreach ($kids as $child) {
+                        $content .= ($child->sex == 1 ? 'мальчик' : 'девочка') . '; ' . Txt::childAge($child->birth).';';
+                    }
+                }
+            }
+            $content .= "\n";
+        }
+
+        echo iconv("utf-8", "windows-1251//TRANSLIT", $content);
+        exit;
     }
 
     /**
@@ -1903,13 +2271,66 @@ class Controller_Admin extends Controller_Authorised {
      * @return array
      */
     function action_user_edit($user) {
+        
+        $sessions = DB::select()
+                ->from('z_session')
+                ->where('user_id', '=', $user->id)
+                ->execute()
+                ->as_array('id');
+
+        foreach ($sessions as &$s) {
+            $s['hash'] = md5($s['id'].Cookie::$salt);
+        }
+        
         return array(
+            'sessions' => $sessions,
             'orders'   => $user->orders       ->order_by('id', 'DESC')->limit(20)->find_all()->as_array(), // Заказы
+            'address'  => $user->address(), //Адреса
             'comments' => ORM::factory('comment_theme')->getLast(20, 0, $user->id), // Отзывы о сайте
             'reviews'  => $user->good_reviews ->order_by('id', 'DESC')->limit(20)->find_all()->as_array(), // Отзывы о товаре
-            'returns'  => $user->returns      ->order_by('id', 'DESC')->limit(20)->find_all()->as_array()  // Претензии
+            'returns'  => $user->returns      ->order_by('id', 'DESC')->limit(20)->find_all()->as_array(),  // Претензии
+            'childs'   => $user->kids->find_all()->as_array('id') // Дети
         );
     }
+	
+    public function action_tag_edit(\Model_Tag $tag)
+    {
+		$returner = [];
+		
+        if ($tag->in_google != 1) {
+            $json = json_decode(file_get_contents('http://www.google.com/uds/GwebSearch?v=1.0&q="' . $tag->code . '"%20site:www.mladenec-shop.ru'), true);
+
+            if (!empty($json['responseData'])) {
+                $tag->in_google = empty($json['responseData']['results']) ? 1 : 2;
+            } else {
+                $tag->in_google = 3;
+            }
+        }
+
+		$returner['google_code'] = $tag->in_google;
+		
+		$blocks = explode(',', $tag->params);
+		
+		$filtersIds = [];
+		foreach($blocks as $block) {
+
+			list($name) = explode('=', $block);
+            // Это фильтр
+			if($name > 0) $filtersIds[(int)$name] = (int)$name;
+	    }
+		
+		$notFound = [];
+		if ( ! empty($filtersIds)) {
+			$items = ORM::factory('filter')->select('id')->where('id', 'IN', $filtersIds )->find_all()->as_array('id');
+
+			foreach( $items as $id => $v) unset($filtersIds[$id]);
+		}
+
+		$returner['notFound'] = $notFound;
+		
+		return $returner;
+	}
+	
     /**
      * Список теговых страниц - с фильтрацией по категории и строке
      * @return array
@@ -1918,6 +2339,17 @@ class Controller_Admin extends Controller_Authorised {
     {
         $return = array();
 
+		$return['log_exists'] = is_file( APPPATH . "cache/tags_log.txt" );
+		
+		if( isset( $_GET['log'] ) ){
+		
+			header('Content-Description: File Transfer');
+			header('Content-Type: text/txt');
+			header('Content-Disposition: attachment; filename=log.txt');
+			echo file_get_contents(APPPATH . 'cache/tags_log.txt');
+			exit;
+		}
+		
         if (isset($_FILES['excel']) && Upload::not_empty($_FILES['excel'])) { // parse Excel for data
 
             $total = $changed = $added = 0;
@@ -2002,7 +2434,11 @@ class Controller_Admin extends Controller_Authorised {
         $query = $this->model->with('tree');
 
         if ($name = $this->request->query('name')) {
-            $query->where('tag.name', 'LIKE', '%'.$name.'%');
+            $query->where_open();
+                $query->where('tag.name', 'LIKE', '%'.$name.'%');
+                $query->or_where('tag.code', 'LIKE', '%'.$name.'%');
+            $query->where_close();
+
         }
         if ($tree_id = $this->request->query('tree_id')) {
             $query->where('tree_id', '=', $tree_id);
@@ -2015,6 +2451,30 @@ class Controller_Admin extends Controller_Authorised {
             $query->where('goods_count', '=', 0);
         }
         
+        $filter_not_exists = $this->request->query('filter_not_exists');
+        
+        if ( !empty( $filter_not_exists ) ) {
+            $query->where('filter_not_exists', '=', 1);
+        } elseif($filter_not_exists === '0') {
+            $query->where('filter_not_exists', '=', "0");
+        }
+		
+        $checked = $this->request->query('checked');
+        
+        if ( !empty( $checked ) ) {
+            $query->where('checked', '=', 1);
+        } elseif($checked === '0')  {
+            $query->where('checked', '=', "0");
+        }
+        
+        $not_redirected = $this->request->query('not_redirected');
+        
+        if ( !empty($not_redirected)) {
+            $query->where('tag.code', 'NOT IN', DB::expr('(SELECT url FROM tag_redirect WHERE to_id <> 0)'));
+        } elseif ($not_redirected === '0') {
+            $query->where('tag.code', 'IN', DB::expr('(SELECT url FROM tag_redirect WHERE to_id <> 0)'));
+        }
+		
         if ($section_id = $this->request->query('section_id')) {
             $query->join('z_tag_section')->on('tag.id','=','z_tag_section.tag_id')->where('z_tag_section.section_id', '=', $section_id);
         }
@@ -2022,7 +2482,7 @@ class Controller_Admin extends Controller_Authorised {
         if ($brand_id = $this->request->query('brand_id')) {
             $query->join('z_tag_brand')->on('tag.id','=','z_tag_brand.tag_id')->where('z_tag_brand.brand_id', '=', $brand_id);
         }
-        
+       
         $query->reset(FALSE);
         $return['brands'] = ORM::factory('brand')->distinct('id')
                 ->join('z_tag_brand')->on('brand.id','=','z_tag_brand.brand_id')
@@ -2030,10 +2490,9 @@ class Controller_Admin extends Controller_Authorised {
                 ->order_by('name','asc')->find_all()->as_array();
         $return['pager'] = $pager = new Pager($query->count_all(), 50);
         $return['list'] = $query->order_by('tag.name', 'desc')->offset($pager->offset)->limit($pager->per_page)->find_all();
-
         return $return;
     }
-
+    
     public function action_tagbylink()
     {
         $vars = array();
@@ -2397,99 +2856,67 @@ class Controller_Admin extends Controller_Authorised {
      */
     function action_goods()
     {
-        $return = array();
+        $return = ['sections' => Model_Section::get_catalog(FALSE, $this->request->post('vitrina'))]; // запрос на категории
 
-        
-        $return['sections'] = Model_Section::get_catalog(TRUE);
-
-        $query = ORM::factory('good')
+        $query = ORM::factory('good') // запрос на товары
             ->where('price', '>', '0')
             ->where('section_id', '>', '0')
             ->where('brand_id', '>', '0');
-        
-        /* Вспоминалка названия */
-        $name = $this->request->query('name');
-        if (is_null($name)) $name = Cookie::get('goodz_search_name');
-        else {
-            if (empty($name)) Cookie::delete ('goodz_search_name');
-            else Cookie::set('goodz_search_name', $name);
-        }
-        if ($name)  {
-            $query->and_where_open();
-                $query->where('name', 'LIKE', '%' . $name . '%');
-                $query->or_where('group_name', 'LIKE', '%' . $name . '%');
-            $query->and_where_close();
-            $return['name'] = $name;
-        }
-        
-        /* Вспоминалка артикула */
-        $code = $this->request->query('code');
-        if (is_null($code)) $code = Cookie::get('goodz_search_code');
-        else {
-            if (empty($code)) Cookie::delete ('goodz_search_code');
-            else Cookie::set('goodz_search_code', $code);
-        }
-        
-        if ($code)
-        {
-            if (FALSE !== strpos($code, ','))
-            {
-                $code = array_map('trim',explode(',',$code));
-                
-                if ( ! empty($code)) $query->where('code', 'IN', $code);
-                else $code = array();
-                
-                $return['code'] = implode(',', $code);
+
+        $brands_q = ORM::factory('brand')->where('active', '=', 1)->order_by('name'); // запрос на бренды
+
+        $id1c = array_unique(array_filter(preg_split('~\D+~isu', $this->request->post('id1c'))));  // если есть коды товаров - учитываем только их
+
+        if ( ! empty($id1c)) {
+            $query->where('id1c', 'IN', $id1c);
+            $return['id1c'] = $id1c;
+
+        } else {
+            $name = $this->request->post('name'); // условие на название
+            if ( ! empty($name)) {
+                $query->and_where_open();
+                    $query->where('name', 'LIKE', '%' . $name . '%');
+                    $query->or_where('group_name', 'LIKE', '%' . $name . '%');
+                $query->and_where_close();
+                $return['name'] = $name;
             }
-            else 
-            {
-                $query->where('code', 'LIKE', $code.'%');
-                $return['code'] = trim($code);
+
+            $brand_id = $this->request->post('brand_id'); // условие на бренд
+            if (is_array($brand_id)) $brand_id = array_filter($brand_id);
+            if ($brand_id) {
+                $query->where('brand_id', 'IN', $brand_id);
+                $return['brand_id'] = $brand_id;
             }
-        }
-        
-        /* Вспоминалка Бренда */
-        $brand_id = $this->request->query('brand_id');
-        if (is_null($brand_id)) $brand_id = Cookie::get('goodz_search_brand_id');
-        else {
-            if (empty($brand_id)) Cookie::delete ('goodz_search_brand_id');
-            else Cookie::set('goodz_search_brand_id', $brand_id);
-        }
-        if ($brand_id) {
-            $query->where('brand_id', '=', $brand_id);
-            $return['brand_id'] = $brand_id;
-        }
-        
-        $brands_q = ORM::factory('brand')->where('active','=',1);
-        
-        /* Вспоминалка раздела */
-        $section_id = $this->request->query('section_id');
-        if (is_null($section_id)) $section_id = Cookie::get('goodz_search_section_id');
-        else {
-            if (empty($section_id)) Cookie::delete ('goodz_search_section_id');
-            else Cookie::set('goodz_search_section_id', $section_id);
-        }
-        if ($section_id) {
-            $query->where('section_id', '=', $section_id);
-            
-            $brands_q->join('z_section_brand')->on('z_section_brand.brand_id','=','brand.id')
-                    ->where('z_section_brand.section_id','=', $section_id);
-            
-            $return['section_id'] = $section_id;
+
+            $section_id = $this->request->post('section_id'); // условие на категорию
+            if (is_array($section_id)) $section_id = array_filter($section_id);
+            if ( ! empty($section_id)) {
+                $query->where('section_id', 'IN', $section_id);
+
+                $bs = DB::select('brand_id', 'section_id') // если есть категории - берём бренды только из этих категорий
+                    ->from('z_section_brand')
+                    ->where('section_id', 'IN', $section_id)
+                    ->execute()
+                    ->as_array('brand_id', 'section_id');
+
+                if ( ! empty($bs)) $brands_q->where('id', 'IN', array_keys($bs));
+
+                $return['section_id'] = $section_id;
+            }
         }
 
-        
         $query->reset(FALSE);
-        $return['brands']   = $brands_q->order_by('name')->find_all();
+
+        $return['brands']   = $brands_q->find_all();
         $return['pager']    = $pager = new Pager($query->count_all(), 50);
         $return['list']     = $query
             ->order_by('group_name')
             ->order_by('name')
             ->limit($pager->per_page)
-            ->offset($pager->offset);
+            ->offset($pager->offset)
+            ->find_all();
 
-        $return['list'] = $query->find_all();
-        $return['choice'] = false;
+        $return['choice'] = FALSE;
 
         exit(View::factory('smarty:admin/good/search', $return)->render());
     }
@@ -2500,63 +2927,62 @@ class Controller_Admin extends Controller_Authorised {
      */
     public function action_chosen()
     {
-        if ( ! $this->request->query('action_id')) throw new HTTP_Exception_404;
-        $action = new Model_Action($this->request->query('action_id'));
+        if ( ! $this->request->post('action_id')) throw new HTTP_Exception_404;
+        $action = new Model_Action($this->request->post('action_id'));
         if ( ! $action->loaded()) throw new HTTP_Exception_404;
 
-//        $already = $action->goods->find_all()->as_array('id'); // уже отобранные
-
-        if ($choice = $this->request->query('choice')) { // есть отобранные галочками
+        if ($choice = $this->request->post('choice')) { // есть отобранные галочками
 
             $query = ORM::factory('good')->where('id', 'IN', $choice);
 
-        } else { // отбор по успловию
+        } else { // отбор по успловию - условия как в action_goods
 
             $query = ORM::factory('good')
                 ->where('price', '>', '0')
                 ->where('section_id', '>', '0')
                 ->where('brand_id', '>', '0');
 
-            if ($name = $this->request->query('name')) {
-                $query->and_where_open();
-                    $query->where('name', 'LIKE', '%'.$name.'%');
-                    $query->or_where('group_name', 'LIKE', '%'.$name.'%');
-                $query->and_where_close();
-            }
-            if ($code = $this->request->query('code')) 
-            {
-                if (FALSE !== strpos($code, ','))
-                {
-                    $code = array_map('trim',explode(',',$code));
+            $id1c = array_unique(array_filter(preg_split('~\D+~isu', $this->request->post('id1c'))));  // если есть коды товаров - учитываем только их
 
-                    if ( ! empty($code)) $query->where('code', 'IN', $code);
-                    else $code = array();
+            if ( ! empty($id1c)) {
+                $query->where('id1c', 'IN', $id1c);
+                $return['id1c'] = $id1c;
 
-                    $return['code'] = implode(',', $code);
+            } else {
+                $name = $this->request->post('name'); // условие на название
+                if ( ! empty($name)) {
+                    $query->and_where_open();
+                        $query->where('name', 'LIKE', '%' . $name . '%');
+                        $query->or_where('group_name', 'LIKE', '%' . $name . '%');
+                    $query->and_where_close();
                 }
-                else 
-                {
-                    $query->where('code', 'LIKE', $code.'%');
-                    $return['code'] = trim($code);
+
+                $brand_id = $this->request->post('brand_id'); // условие на бренд
+                if (is_array($brand_id)) $brand_id = array_filter($brand_id);
+                if ($brand_id) {
+                    $query->where('brand_id', 'IN', $brand_id);
                 }
-            }
-            if ($brand_id = $this->request->query('brand_id')) {
-                $query->where('brand_id', '=', $brand_id);
-            }
-            if ($section_id = $this->request->query('section_id')) {
-                $query->where('section_id', '=', $section_id);
+
+                $section_id = $this->request->post('section_id'); // условие на категорию
+                if (is_array($section_id)) $section_id = array_filter($section_id);
+                if ( ! empty($section_id)) {
+                    $query->where('section_id', 'IN', $section_id);
+                }
             }
         }
 
         $add = $query->find_all()->as_array('id'); // добавочные
 
+        /*
         foreach($add as $k => $v) {
             if ( ! empty($already[$k])) unset($add[$k]);
         }
+        */
 
         $tmpl = array(
             'goods' => $add,
-            'total' => count($add)
+            'total' => count($add),
+            'mode'  => $this->request->post('mode')
         );
 
         exit(View::factory('smarty:admin/good/chosen', $tmpl)->render());
@@ -2731,5 +3157,25 @@ class Controller_Admin extends Controller_Authorised {
         $this->tmpl['history'] = $return;
         $this->layout->body = View::factory('smarty:admin/pricelab', $this->tmpl)->render();
     }
+	
+	function action_tag_excel(){
+		
+		header('Content-Description: File Transfer');
+		header('Content-Type: text/csv');
+		header('Content-Disposition: attachment; filename=tags.csv');
+		$content = '';
+		
+		$result = DB::query(Database::SELECT, "SELECT * FROM z_tag WHERE goods_count > 0")->execute();
+
+		$content .= '"URL";' . '"Code";' . '"Title";' . '"Описание";' . '"Keywords";' . '"Имя";' . '"Анкор";' . '"text";' . "\n";
+		while( $tag = $result->current() ){
+			
+			$content .= '"http://mladenec-shop.ru/' . $tag['code'] . '";' . '"' . $tag['code'] . '";' . '"' . $tag['title'] . '";' . '"' . $tag['description'] . '";' . '"' . htmlspecialchars(strip_tags( $tag['keywords'])) . '";' . '"' . htmlspecialchars(strip_tags( $tag['name'])) . '";' . '"' . htmlspecialchars(strip_tags( $tag['anchor'])) . '";' . '"' . htmlspecialchars(strip_tags( $tag['text'] )) . '";' . "\n";
+			$result->next();
+		}
+		
+		echo iconv("utf-8", "windows-1251//TRANSLIT", $content );
+		exit;
+	}
 }
 

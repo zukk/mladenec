@@ -1,23 +1,52 @@
-<div id="simple">
-    <h1>Страница не найдена (ошибка 404)</h1>
+<div id="simple" style="text-align: center">
+	<a href="/" title="На главную"><img src='/i/averburg/404/face1.jpg' width="773" height="537" /></a>
+	<div>
+	    <h1>Что-то случилось, и этой страницы здесь нет :(...</h1>
+		<p style="font-size: 1.4em;">
+			Вы можете <a href="/" style="text-decoration: underline">вернуться на главную</a>, позвонить нам по номеру 8 (800) 555 699 4
+		</p>
+		<p>
+			или <a href="#" id="send_letter"><img src="/i/averburg/404/button.png" style="margin-bottom: -23px;" /></a>
+			<script>
+				$(function(){
+					$('#send_letter').click(function(){
+						$('#return_form').slideToggle();
+						return false;
+					});
+				});
+			</script>
+		</p>
+		<p>&nbsp;</p>
+		<form action="/contacts" method="post" class="cols hide" id="return_form" enctype="multipart/form-data" style="width: 600px;margin-left: -300px;position: relative;left: 50%;">
+			<label class="l" for="name">Имя<sup>*</sup></label>
+			<input id="name" name="name" class="txt " value="">
 
-	<p>Здравствуйте, уважаемый посетитель.</p> 
-	<p>К&nbsp;сожалению, запрашиваемой Вами страницы не&nbsp;существует на&nbsp;нашем сайте.</p> 
-	<p>Возможно, это случилось по&nbsp;одной из&nbsp;этих причин:</p> 
-	<ul> 
-		<li>Вы&nbsp;ошиблись при наборе адреса страницы (URL)</li> 
-		<li>перешли по&nbsp;«битой» (неработающей, неправильной) ссылке</li>
+			<label class="l" for="email">Email<sup>*</sup></label>
+			<input id="email" name="email" class="txt " value="">
 
-		<li>запрашиваемой страницы никогда не&nbsp;было на&nbsp;сайте или она была удалена</li> 
-	</ul> 
-	<p>Мы&nbsp;просим прощения за&nbsp;доставленные неудобства и&nbsp;предлагаем следующие пути:</p> 
-	<ul> 
-		<li>вернуться назад при помощи кнопки браузера</li>
-		<li>проверить правильность написания адреса страницы (URL)</li> 
-		<li>перейти на&nbsp;<a href="/">главную страницу сайта</a></li> 
-		<li>воспользоваться меню разделов сайта</li>
-	</ul> 
+			<label class="l" for="text">Сообщение<sup>*</sup></label>
+			<textarea id="text" name="text" class="wtxt " rows="10"></textarea>
+			<p>Не более 2000 символов.</p>
 
-	<p>Если Вы&nbsp;уверены в&nbsp;правильности набранного адреса страницы и&nbsp;считаете, что эта ошибка произошла по&nbsp;нашей вине, 
-	пожалуйста, сообщите об&nbsp;этом разработчикам (или владельцам) сайта при помощи электронной почты.</p> 
+						<label for="captcha" class="l"><img src="/captcha" alt=""></label>
+				<div class="fl">
+					<label>Введите цифры с&nbsp;картинки <sup>*</sup></label><br>
+					<input id="captcha" type="text" name="captcha" value="" maxlength="6" class="txt ">
+				</div>
+					<input type="submit" value="Отправить сообщение" class="butt" name="feedback">
+		</form>
+
+	</div>
 </div>
+{if not empty($config->rr_enabled)}
+    <div class="cl rr_slider" title="Рекомендуем Вам:" data-func="PersonalRecommendation" data-param="{$smarty.cookies.rrpusid}"></div>
+{/if}
+<script>
+	window.dataLayer = window.dataLayer || [];
+	dataLayer.push({
+		'category': '404 Response',
+		'action': document.location.href,
+		'label': document.referrer, 
+		'event': '404error'
+	});
+</script>

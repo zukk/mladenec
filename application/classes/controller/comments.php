@@ -68,7 +68,7 @@ class Controller_Comments extends Controller_Frontend {
     public function action_old_view()
 	{
 		header("HTTP/1.1 301 Moved Permanently");
-		header("Location: /about/review#!id" . $this->request->param('id'));
+		header("Location: /about/review/" . $this->request->param('id'));
 		exit;
 	}
 	
@@ -83,30 +83,45 @@ class Controller_Comments extends Controller_Frontend {
         if ( ! $item->active) throw new HTTP_Exception_404;
 
         $this->tmpl['theme'] = $item;
-		
-		$hash = $this->request->query('hash');
-		
-		$currentUser = Model_User::current();
-		
-		$allowAnswer = false;
-		if( ( !empty( $hash ) && $item->getHash() == $hash ) || ( ! empty( $currentUser ) && $currentUser->id == $item->user_id ) ){
-			
-			$allowAnswer = true;
-		}
-		
-		$this->tmpl['data'] = $item->getData(true);
-		$this->tmpl['allowAnswer'] = $allowAnswer;
-        $this->layout->title = 'Отзыв: '.$item->name;
-		
-		$v = View::factory('smarty:comments/view',$this->tmpl);
-		echo ($v->render());
-		exit;
-	}
+
+        $hash = $this->request->query('hash');
+
+        $currentUser = Model_User::current();
+
+        $allowAnswer = false;
+        if ((!empty($hash) && $item->getHash() == $hash ) || (!empty($currentUser) && $currentUser->id == $item->user_id )) {
+
+            $allowAnswer = true;
+        }
+
+        $this->tmpl['data'] = $item->getData(true);
+        $this->tmpl['allowAnswer'] = $allowAnswer;
+        $this->layout->title = 'Отзыв: ' . $item->name;
+
+        if(!$this->request->is_ajax()) {
+            $this->tmpl['content'] = View::factory('smarty:comments/_index',$this->tmpl)->render();
+        } else {
+            $v = View::factory('smarty:comments/view', $this->tmpl);
+            echo ($v->render());
+            exit;
+        }
+    }
 	
-	public function action_index()
-    {
-		$this->tmpl['content'] = View::factory('smarty:comments/_index',$this->tmpl)->render();
-	}
+    public function action_index() {
+        $params = $this->request->query();
+        if(count($params)>0) {
+            foreach($params as $key=>$val) {
+                if(strpos($key, 'id') === 0) {
+                    header("HTTP/1.1 301 Moved Permanently");
+                    header("Location: /about/review/" . str_replace('id', '', $key));
+                    exit;
+                }
+            }
+        }
+        
+        $this->layout->title = 'Отзывы клиентов';
+        $this->tmpl['content'] = View::factory('smarty:comments/_index', $this->tmpl)->render();
+    }
 
     /**
      * Список отзывов

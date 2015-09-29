@@ -11,6 +11,9 @@ a.changee { color:#d24040 !important; border-bottom:1px dotted red; margin-botto
 .r { text-align:right;}
 .do { margin:20px 0 20px 170px; background:#cfc; clear:both; float:left; padding:1em;}
 .do_cancel { margin:20px 0 20px 170px; background:#ffbfbf; clear:both; float:left; padding:1em;}
+.indent {
+    padding-left: 40px;
+}
 
 textarea.txt { height:80px; width:50%;}
 
@@ -70,10 +73,9 @@ nav#menu blockquote strong { padding-top:20px; display:block;}
 
 form input.fixed { position:fixed; top:1em; right:1em;z-index:1000}
 
-.redactor_box { width:800px;}
+.redactor-box { width:775px;}
 
 form.forms { 
-    margin:0 auto;
     max-width:1200px;
 }
 .datepicker select, div.area input {
@@ -95,9 +97,7 @@ a.toggler { position:absolute; right:10px; top:10px; display:block; width:10px; 
 a.error { cursor:pointer;}
 
 #filters { overflow:hidden;}
-#filters ul { width:200px; float:left; border:1px dotted #ccc; padding:3px; margin:0 10px 10px 0;}
-#filters li { margin-bottom:0; list-style-type: none;}
-#filters label { text-align:left; display:block; position:relative; float:none; white-space:nowrap; margin:2px;}
+#filters li ul { border:1px dotted #ccc; padding:1em; margin:0;}
 
 #flags { float:right; width:400px;}
 #flags label { white-space:nowrap; display:block; float:none; position:relative; text-align:left;}
@@ -234,6 +234,18 @@ label.wd { width:50px !important;}
 	border: 1px solid #ccc;
 	font-weight: bold;
 }
-.fancybox-inner form {margin:30px 10px;min-width:600px;}
 .fancybox-inner h1 {margin-bottom:10px;font-size:20px;text-align:center;background-color: #d7d7d7;border-radius: 5px;padding:10px;}
 #sort-images img { box-shadow:0 0 5px #ddd;}
+
+#user-login {
+    width:300px;
+
+}
+#user-login input {
+    margin-bottom:.1em;
+    float:none;
+    clear:both !important;
+}
+.childs {
+    margin-left: 20px;
+}

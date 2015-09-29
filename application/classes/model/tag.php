@@ -11,69 +11,73 @@ class Model_Tag extends ORM {
 
     protected $_table_name = 'z_tag';
 
-    protected $_table_columns = array(
+    protected $_table_columns = [
         'id' => '', 'name' => '', 'tree_id' => '', 'code' => '', 'text' => '',
-        'title' => '', 'description' => '', 'keywords' => '', 'anchor' => '', 'params' => '',
-        'section_id' => '', 'goods_count'=> '', 'goods_count_ts' => ''
-    );
+        'title' => '', 'description' => '', 'keywords' => '', 'anchor' => '', 'params' => '', 'query' => '',
+        'section_id' => '', 'goods_count'=> '', 'goods_count_ts' => '', 'goods_empty_ts' => '', 'filter_not_exists' => '', 'checked' => '', 'in_google' => ''
+    ];
 
-    protected $_belongs_to = array(
-        'tree' => array('model' => 'tag_tree', 'foreign_key' => 'tree_id'),
-    );
+    protected $_belongs_to = [
+        'tree' => ['model' => 'tag_tree', 'foreign_key' => 'tree_id'],
+        'section' => ['model' => 'section', 'foreign_key'   => 'section_id'],
+    ];
 
-    protected $_has_many = array(
-        'sections' => array(
-            'model' => 'section',
-            'through'    => 'z_tag_section',
+    protected $_has_many = [
+        'sections' => [
+            'model'     => 'section',
+            'through'   => 'z_tag_section',
             'foreign_key'   => 'tag_id',
             'far_key'   => 'section_id'
-        ),
-        'filter_values' => array(
-            'model' => 'filter_value',
-            'through'    => 'z_tag_filter_value',
+        ],
+        'filter_values' => [
+            'model'     => 'filter_value',
+            'through'   => 'z_tag_filter_value',
             'foreign_key'   => 'tag_id',
             'far_key'   => 'filter_value_id'
-        ),
-        'brands' => array(
-            'model' => 'brand',
-            'through'    => 'z_tag_brand',
+        ],
+        'brands' => [
+            'model'     => 'brand',
+            'through'   => 'z_tag_brand',
             'foreign_key'   => 'tag_id',
             'far_key'   => 'brand_id'
-        ),
-    );
-    
+        ],
+    ];
+
     /**
      * @return array
      */
     public function rules()
     {
-        return array(
-            'name' => array(
-                array('not_empty'),
-            ),
-            /*
-            'tree_id' => array(
-                array('not_empty'),
-            ),
-            */
-            'code' => array(
-                array('not_empty'),
-                array(array($this, 'unique'), array('code', ':value')),
-            )
-        );
+        return [
+            'name' => [
+                ['not_empty'],
+            ],
+            'code' => [
+                ['not_empty'],
+                [[$this, 'unique'], ['code', ':value']],
+                ['regex', [':value', '~^(catalog/[0-9a-z_-]+|tag(/[0-9a-z_-]+)*)/[0-9a-z_-]+(\.html)?$~']]
+            ]
+        ];
     }
 
     /**
      * @param bool $html 
      * @return string
      */
-    public function get_link($html = true)
+    public function get_link($html = TRUE)
     {
         $url = Route::url('tag', ['code' => $this->code]);
         return $html ? HTML::anchor($url, $this->name) : $url;
     }
-    
-    public function get_filters() {
+
+    /**
+     * Получить фильтры для всех прикрепленных категорий
+     * @return array
+     * @throws Exception
+     * @throws Kohana_Exception
+     */
+    public function get_filters()
+    {
         if ( ! $this->loaded()) throw new Exception ('Unable to get filters for not loaded tag');
         
         $section_parent_ids = DB::select('id','parent_id')
@@ -93,8 +97,11 @@ class Model_Tag extends ORM {
         return $filters;
     }
 
-    public function admin_save() {
-    
+    /**
+     * Сохранение в админке
+     */
+    public function admin_save()
+    {
         /* формирование строки параметров */
 
         $params_arr = $return = array();
@@ -105,6 +112,8 @@ class Model_Tag extends ORM {
         $sections = $this->sections->order_by('id','asc')->find_all()->as_array('id','id');
         if ( ! empty($sections)) {
             $sections_string = implode('|', $sections);
+            
+            if ( count($sections) == 1) $this->section_id = array_shift ($sections);
         }
         
         $brands = $this->brands->order_by('id','asc')->find_all()->as_array('id','id');
@@ -116,7 +125,7 @@ class Model_Tag extends ORM {
             $params_arr[] = 'SECTION_ID=' . $sections_string;
         }
         if ( ! empty($brands_string)) {
-            $params_arr[] = ',PROPERTY_BRAND=' . $brands_string;
+            $params_arr[] = 'PROPERTY_BRAND=' . $brands_string;
         }
         
         /* Обработка фильтров */
@@ -135,27 +144,35 @@ class Model_Tag extends ORM {
             }
         }
         
-        /* Проверяем установленные галочки фильтров */
+        // Проверяем установленные галочки фильтров 
         foreach($filters as $filter => $values_array) {
             if ( ! empty($values_array)) {
-                /* Заодно - собираем строку параметров */
+                // Заодно - собираем строку параметров
                 $params_arr[] = $filter . '=' . implode('|',$values_array);
             }
             
             foreach($values_array as $val_id) {
                 if ( empty($existing_filter_values[$val_id])) {
-                    /* Новая галочка установлена */
-                     $this->add('filter_values', $val_id);
+                    // Новая галочка установлена
+                    $this->add('filter_values', $val_id);
                 }
             }
         }
 
-        if ( ! empty($misc['old_code']) && $misc['old_code'] != $this->code) {
+        if ( ! empty($misc['redirect']) && ($misc['redirect'] != $this->code)) {
+            $this->add_redirect($misc['redirect']);
+            $return['messages'] = array('Добавлен редирект <strong>'.$misc['redirect'].'</strong> =>>> <strong>'.$this->code.'</strong>');
+        }
+        
+        if ( ! empty($misc['old_code']) && ($misc['old_code'] != $this->code)) {
             $this->add_redirect($misc['old_code']);
             $return['messages'] = array('Добавлен редирект <strong>'.$misc['old_code'].'</strong> =>>> <strong>'.$this->code.'</strong>');
         }
         
         $this->params = implode(',', $params_arr);
+        
+        $this->query = $this->build_query();
+        
         $this->save();
 
         return $return;
@@ -230,6 +247,35 @@ class Model_Tag extends ORM {
         return $return;
     }
 
+    public function build_query() {
+        
+        $params = $this->parse_params();
+        
+        if ( ! empty($params['f'])) {
+            foreach($params['f'] as &$p) {
+                sort($p);
+                $p = implode('_', $p);
+            }
+            ksort($params['f']);
+            foreach($params['f'] as $k => &$p) {
+                $params['f'.$k] = [$p];
+            }
+            unset($params['f']);
+        }
+        
+        foreach ($params as &$p) {
+            asort($p);
+        }
+
+        foreach ($params as &$p) {
+            $p = implode('_', $p);;
+        }
+
+        ksort($params);
+
+        return  http_build_query($params);
+    }
+    
     /**
      * проверяем, не нужен ли редирект для теговой
      */
@@ -244,18 +290,75 @@ class Model_Tag extends ORM {
             ->get('url');
     }
 
+    public function get_incoming_redirects()
+    {
+        $to_id = DB::select('id')
+                ->from('tag_redirect')
+                ->where('to_id', '=', 0)
+                ->where('url', '=', $this->code)
+                ->execute()->get('id');
+        
+        return  DB::select('id','url')
+                    ->from('tag_redirect')
+                    ->where('to_id', '=', $to_id)
+                    ->execute()->as_array('id','url');
+    }
+    
     /**
      * Добавить редирект на себя с другого урла
      * @param $from
      */
     public function add_redirect($from)
     {
-        // может у нас уже есть id текущего урла?
-        $to_id = DB::select('id')->from('tag_redirect')->where('url', '=', $this->code)->execute()->get('id');
-        if (empty($to_id)) {
+        $existing = DB::select()
+            ->from('tag_redirect')
+            ->where_open()
+                ->where('url', '=', $this->code)
+                ->or_where('url', '=', $from)
+            ->where_close()
+            ->execute()
+            ->as_array('url');
+        
+        if ( ! empty($existing[$this->code])) { // "Куда" уже есть
+            $to_id = $existing[$this->code]['id'];
+            
+            // Во избежание зацикливания
+            DB::update('tag_redirect')->set(array('to_id'=> 0))->where('id', '=', $to_id)->execute();
+        }
+        
+        if (empty($to_id)) { // Надо создать приемник
             $to_id = DB::insert('tag_redirect')->columns(array('url'))->values(array($this->code))->execute()[0];
         }
-        DB::insert('tag_redirect')->columns(array('url', 'to_id'))->values(array($from, $to_id))->execute();
+        
+        if ( ! empty($existing[$from])) { // "Откуда" уже есть
+            
+            $from_id = $existing[$from]['id'];
+            
+            // направим куда надо
+            DB::update('tag_redirect')->set(array('to_id' => $to_id))->where('id', '=', $from_id)->execute();
+
+            // редирект существующих ссылок на текущую - перекинуть на новую ссылку
+            $existing_to_from = DB::select('id')->from('tag_redirect')->where('to_id', '=', $from_id)->execute()->as_array('id','id');
+
+            if ( ! empty($existing_to_from)) {
+                DB::update('tag_redirect')->set(['to_id' => $to_id])->where('id', 'IN', $existing_to_from)->execute();
+            }
+
+        } else {
+
+            // Надо создать `откуда`
+            DB::insert('tag_redirect')->columns(['url', 'to_id'])->values([$from, $to_id])->execute()[0];
+        }
+    }
+
+    /**
+     * Получить все категорийные теговые по номеру категории
+     * @param $section_id
+     * @return Model_Tag[]
+     */
+    public function by_section($section_id)
+    {
+        return self::factory('tag')->where('section_id', '=', $section_id)->find_all()->as_array();
     }
     
     /**
@@ -352,5 +455,8 @@ class Model_Tag extends ORM {
         
         return $this;
     }
-    
+
+	public function flag(){
+        return array('checked', 'in_google');
+    }
 }

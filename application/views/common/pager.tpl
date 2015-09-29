@@ -13,7 +13,7 @@
                 <strong>{$p}</strong>
             {else}
 				{if !$hash and $n eq 1}
-	                <a href="{$base}{$link}{if $hash};{/if}" {if $fancy|default:0}rel="ajax" data-fancybox-type="ajax"{/if}>{$n}</a>
+	                <a href="{$base}{mb_substr($link, 0, -1 )}{if $hash};{/if}" {if $fancy|default:0}rel="ajax" data-fancybox-type="ajax"{/if}>{$n}</a>
 				{else}
 	                <a href="{$base}{$link}{Pager::PARAM}={$n}{if $hash};{/if}" {if $fancy|default:0}rel="ajax" data-fancybox-type="ajax"{/if}>{$n}</a>
 				{/if}

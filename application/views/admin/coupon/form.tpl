@@ -1,19 +1,54 @@
-
-<form action="" method="post" class="forms forms-columnar" enctype="multipart/form-data">
     {if $i->id}
         <h1 class="unit-80">Купон {$i->id}</h1>
     {else}
         <h1>Создание купона</h1>
     {/if}
 
+<form action="" method="post" class="forms forms-columnar" enctype="multipart/form-data">
+    <p>
+        <label for="type">Тип купона</label>
+        <select name="type" id="type">
+        {html_options options=Model_Coupon::type() selected=$i->type}
+        </select>
+    </p>
+
     <p>
         <label for="name">Код купона</label>
         <input type="text" id="name" name="name" value="{$i->name}" class="width-25" maxlength="16" />
     </p>
-    <p>
-        <label for="sum">Сумма скидки</label>
-        <input type="text" id="sum" name="sum" value="{$i->sum}" class="width-25" />
-    </p>
+
+    <div id="type0" {if not $i->id OR $i->type != Model_Coupon::TYPE_SUM}class="hide"{/if}>
+        <p>
+            <label for="sum">Сумма скидки</label>
+            <input type="text" id="sum" name="sum" value="{$i->sum}" class="width-25" />
+        </p>
+    </div>
+
+    <div id="type1" {if not $i->id OR $i->type != Model_Coupon::TYPE_PERCENT}class="hide"{/if}>
+        {if $i->id}
+            <label>
+                Товары, на которые даётся скидка<br />
+                <a onclick="$('tr.del').click()" class="no">удалить все</a>
+            </label>
+
+            <table class="area">
+            {foreach from=$i->get_goods() key=discount item=goods}
+                {foreach from=$goods item=g}
+                <tr>
+                    <td class="nowrap">
+                        <input type="text" name="discount[]" value="{$discount}" maxlength="2" size="2" class="left"/>%
+                    </td>
+                    <td>
+                        <input type="text" class="width-80 left" value="{$g->id1c} {$g->group_name|escape:html} {$g->name|escape:html}" />
+                        <input type="hidden" name="good_id[]" value="{$g->id}" />
+                    </td>
+                </tr>
+                {/foreach}
+            {/foreach}
+            </table>
+        {/if}
+    </div>
+
 	<p>
 		<label for="min_sum">Минимальная сумма заказа</label>
 		<input type="text" id="min_sum" name="min_sum" value="{$i->min_sum}" class="width-25" />

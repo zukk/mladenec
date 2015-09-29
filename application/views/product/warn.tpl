@@ -1,7 +1,7 @@
 <h2>Уведомить о поставке</h2>
 
 {if empty($sent)}
-<form action="/product/warn/{$good->id}" method="post" id="warn" class="ajax cols small">
+<form action="{Route::url('warn', ['id' => $good->id])}" method="post" id="warn" class="ajax cols small">
 
     <div class="half">
         {capture assign=name}{$good->group_name|escape:'html'} {$good->name|escape:'html'}{/capture}

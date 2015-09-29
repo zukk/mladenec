@@ -28,6 +28,11 @@ $(document).ready(function() {
         <input type="text" id="email" name="email" value="{$i->email|default:''}" size="50" readonly="readonly"/>
     </p>
     <p>
+        <label for="order-num">Номер заказа</label>
+        <input type="text" id="order-num" name="order_num" value="{$i->order_num|default:''}" class="width-25"  />
+        {if $i->order_num|intval neq 0}<a href="/od-men/order/{$i->order_num|intval}">Просмотреть</a>{/if}
+    </p>
+    <p>
         <label>Создана</label><span>{$i->created|date_format:'Y-m-d'}</span>
     </p>
     <p><label for="text">Текст</label><p>{$i->text|default:''}</p>

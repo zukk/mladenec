@@ -1,18 +1,16 @@
 <?php
-return array(
-    'memcache' => array
-    (
+
+return [
+    'memcache' => [
         'driver'             => 'memcache',
         'default_expire'     => 3600,
         'compression'        => FALSE,
-        'servers'            => array
-        (
-            'local' => array
-            (
+        'servers'            => [
+            'local' => [
                 'host'          => 'localhost',
                 'port'          => 11211,
                 'persistent'    => FALSE,
-            ),
-        ),
-    ),
-);
+            ],
+        ],
+    ],
+];

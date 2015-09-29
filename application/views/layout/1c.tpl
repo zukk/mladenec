@@ -20,7 +20,7 @@
     <link href="/c/1c.css" rel="stylesheet" type="text/css" />
 
     <script type="text/javascript">
-        is_kiosk = false; register_poll = false; product_load = false; IE7 = false;
+        register_poll = false; product_load = false; IE7 = false;
     </script>
 </head>
 

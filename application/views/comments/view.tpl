@@ -1,6 +1,13 @@
-<div id="breadcrumb">
-    <a href="/" title="На главную">Главная</a> &rarr;
-    <a href="{$theme->get_list_link()}" title="Отзывы о нашем магазине">Отзывы</a>
+<div id="breadcrumb">    
+    <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb" itemref="breadcrumb-1">
+        <a href="/" itemprop="url" title="На главную"><span itemprop="title">Главная</span></a>
+    </span>
+    &rarr;
+    <span itemprop="child" itemscope itemtype="http://data-vocabulary.org/Breadcrumb" id="breadcrumb-1">
+        <a href="{$theme->get_list_link()}" title="Отзывы о нашем магазине"><span itemprop="title">Отзывы</span></a>
+    </span>
+    &rarr;
+    <span>{$theme->name}</span>
 </div>
 
 <div>
@@ -20,7 +27,7 @@
              </div>
 			{foreach from=$c['answers'] item=answer}
              <div class="liveanswer">
-                 <div class="liveanswer_body">{$answer->answer}</div>
+                 <div class="liveanswer_body open">{$answer->answer}</div>
                  <i></i>
              </div>
              <small>{$answer->get_answer_by()}</small>

@@ -88,20 +88,24 @@ class Controller_Daemon extends Controller
      */
     protected function quest_sms($params)
     {
+        Database::instance()->begin();
         $sms = ORM::factory('sms')
             ->where('sent_ts', '=', 0)
+            ->where('status', '=', Model_Sms::STATUS_NEW)
             ->order_by('priority', 'DESC')
             ->limit(Model_Sms::SEND_RATE)
             ->find_all()
-            ->as_array();
-        
-        $i = 0;
-        foreach($sms as $s)
-        {
-            $s->send();
-            $i++;
+            ->as_array('id');
+
+        if ( ! empty($sms)) {
+            DB::update('z_sms')
+                ->set(['status' => Model_Sms::STATUS_SENDING])
+                ->where('id', 'IN', array_keys($sms))
+                ->execute();
         }
-        Log::instance()->add(Log::INFO, 'Daemon sent ' . $i . ' sms');
+        Database::instance()->commit();
+
+        foreach($sms as $s) $s->send();
 
         return TRUE;
     }

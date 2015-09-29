@@ -5,9 +5,7 @@
     {if ! empty($m.children)}
         <ul>
             {foreach from=$m.children key=c_id item=c}
-                {if not ($is_kiosk and ($c_id eq 5))}
-                    <li><a href="/{$c.link}">&sdot; &thinsp; {$c.name}</a>
-                {/if}
+                <li><a href="/{$c.link}">&sdot; &thinsp; {$c.name}</a>
             {/foreach}
         </ul>
     {/if}

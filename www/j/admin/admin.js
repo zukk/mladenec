@@ -1,34 +1,3 @@
-function get_inputs(form) {
-    var inputs = new Object(), name, is_array, val;
-    $('input[name], select, textarea', form).each(function() {
-        name = $(this).prop('name');
-        is_array = name.replace('[]', '') != name;
-        val = false;
-
-        if ($(this).prop('type') == 'checkbox') {
-            val = $(this).prop('checked') ? ($(this).prop('value') ? $(this).prop('value') : 1 ) : 0;
-        }
-        if ( ($(this).prop('type') == 'radio' && $(this).prop('checked')) ||
-            ($(this).prop('type') == 'text' || $(this).prop('type') == 'password' || $(this).prop('type') == 'hidden'
-                || $(this).prop('type') == 'submit' || $(this).prop('type') == 'button') ||
-            $(this).is('select') || $(this).is('textarea')
-            ) {
-            val = $(this).val();
-        }
-
-        if ( ! inputs[name] && is_array) inputs[name] = [];
-        if ( val !== false) {
-            if (is_array) inputs[name].push(val);
-            else inputs[name] = val;
-        }
-
-    });
-
-    inputs.ajax = 1;
-
-    return inputs;
-}
-
 $(document).ready(function() {
     /* Скрывать элементы при загрузке */
     $('.hidden').hide();
@@ -36,11 +5,13 @@ $(document).ready(function() {
     $('.expand-toggle-control').click(function(){
         $(this).nextAll('.expand-toggle').first().toggle();
     });
-    
+
+    $('[data-filemanager]').filemanager();
+
     $('textarea.html').redactor({
         lang:'ru',
         imageUpload: '/od-men/json/mfile/upload',
-        imageGetJson: '/od-men/json/mediafiles',
+        imageManagerJson: '/od-men/json/mediafiles',
         convertDivs: false,
         iframe: true,
         fixed: true,
@@ -48,7 +19,7 @@ $(document).ready(function() {
         css: '/c/body.css',
         minHeight: 500,
         autoresize: true,
-        plugins: ['fontcolor', 'goods']
+        plugins: ['fontcolor', 'goods', 'table', 'video', 'imagemanager', 'filemanager']
     });
     $('textarea.text').redactor({lang:'ru',  air: true, airButtons: ['bold', 'italic', 'link'], convertDivs: false });
     $("a[data-fancybox-type='ajax']").fancybox({
@@ -101,7 +72,7 @@ $(document).ready(function() {
 
     $(document)
             .on('click', '#goodz input[name=search]', function(ev) { // подбор товаров
-                $.get('/od-men/goods', get_inputs('#goodz'), function(data) {
+                $.post('/od-men/goods', $('input, textarea, select', '#goodz').serialize(), function(data) {
                     $('#goodz').parent().html(data);
                 });
                 return false;
@@ -111,7 +82,7 @@ $(document).ready(function() {
                 $(this).closest('form').append(sq);
             })
             .on('click', '#goodz input[name=all]', function() {
-                var t = parseInt($('#qty').text(), 10);
+                var t = parseInt($('#qty').text(), 10), rel = $(this).attr('rel');
                 if (isNaN(t)) {
                     alert('Нет отобранных товаров');
                     return false;
@@ -119,21 +90,21 @@ $(document).ready(function() {
                 if (t > 200 && ! confirm('Будет добавлено более 200 товаров, вы уверены?')) {
                     return false;
                 }
-                var inputs = get_inputs($('#goodz'));
+                var send = $('input, select, textarea', '#goodz').serialize();
+                send += '&action_id=' + $('#action_id').val();
+                send += '&mode=' + ($('#chose' + rel).hasClass('goods_b') ? 'b' : '');
 
-                $.get('/od-men/chosen', {
-                    name:       inputs.name,
-                    section_id: inputs.section_id,
-                    brand_id:   inputs.brand_id,
-                    code:       inputs.code,
-                    action_id: $('#action_id').val()
-                }, function(data) {
-                    $('.area').append(data);
-                    $.fancybox.close();
-                });
+                $.post(
+                    '/od-men/chosen',
+                    send,
+                    function(data) {
+                        $('#chose' + rel).closest('.area').append(data);
+                        $.fancybox.close();
+                    }
+                );
             })
             .on('click', '#goodz input[name=marked]', function() {
-                var inputs = $('#goodz input:checked'), choice = [];
+                var inputs = $('#goodz input:checked'), choice = [], rel = $(this).attr('rel');
                 if (inputs.length < 1) {
                     alert('Товаров не выбрано');
                     return;
@@ -141,17 +112,19 @@ $(document).ready(function() {
                 for(var i = 0; i < inputs.length; i++) {
                     choice.push($(inputs[i]).attr('name').replace('choice[', '').replace(']', ''));
                 }
-                $.get('/od-men/chosen', {
+                $.post('/od-men/chosen', {
                     choice:       choice,
-                    action_id: $('#action_id').val()
+                    action_id: $('#action_id').val(),
+                    mode: $('#chose' + rel).hasClass('goods_b') ? 'b' : ''
                 }, function(data) {
-                    $('.area').append(data);
+                    $('#chose' + rel).closest('.area').append(data);
                     $.fancybox.close();
                 });
 
             })
-            .on('click', '#goodz + .pager a', function() {
-                $.get('/od-men/goods' + $(this).attr('href'), function(data) {
+            .on('click', '#goodz + .pager a', function() { // товары по страницам
+                var page = $(this).text();
+                $.post('/od-men/goods?page=' + page, $('input, textarea, select', '#goodz').serialize(), function(data) {
                     $('#goodz').parent().html(data);
                     $.fancybox.update();
                 });
@@ -179,7 +152,7 @@ $(document).ready(function() {
                 if (f.parent().hasClass('fancybox-inner')) fancy = true;
                 $('input[type=submit]', this).after('<i class="load"></i>');
 
-                $.post($(this).attr('action'), get_inputs(this), function(data) {
+                $.post($(this).attr('action'), $('input', this).serialize(), function(data) {
                     var redir = function(){};
 
                     if (data.redirect){

@@ -1,9 +1,14 @@
-<div id="breadcrumb"><a href="/">Главная</a> | </div>
+<div id="breadcrumb">    
+    <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+        <a href="/" itemprop="url" title="На главную"><span itemprop="title">Главная</span></a>
+    </span>
+    &rarr;
+    <span>Отзывы</span>
+</div>
 
 <script type="text/javascript">
 $(function() {
-    $( ".liveanswer_body" ).hide();
-    $( ".liveanswer_btn" ).on( "click", function( event ) {
+    $(document).on( "click",  ".liveanswer_btn", function( event ) {
         event.preventDefault();
         $(this).next().toggle();
         //$(this).parent().children('.liveanswer_body').toggle();

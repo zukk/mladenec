@@ -26,8 +26,7 @@ class Controller_News extends Controller_Frontend {
             ->where('active', '=', 1)
             ->reset(FALSE);
 
-        $iPerPageQty = @Kohana::$hostnames[Kohana::$server_name]['per_page_elements'] ?: 10;
-        $this->tmpl['pager'] = $pager = Pager::factory($q->count_all(), $iPerPageQty);
+        $this->tmpl['pager'] = $pager = Pager::factory($q->count_all(), 10);
 
 		$title = 'О новинках для детей и будущих мам в ' . ( empty($_SERVER['HTTP_HOST']) ? 'default' : $_SERVER['HTTP_HOST'] );
 		$description = 'Младенец.ру представляет новинки товаров для детей. Обзор новых игрушек, продуктов питания и других детских товаров.';

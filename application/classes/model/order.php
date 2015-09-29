@@ -5,12 +5,13 @@ class Model_Order extends ORM {
 
     const PAY_DEFAULT = 1; // оплата наличными при получении
     const PAY_CARD = 8; // оплата картой
-    const PAY_CARD_LATER = 9; // оплата картой после сборки заказа
     const PAY_BANK = 5; // оплата банковским переводом
 
     const SHIP_COURIER = 2; // доставка курьером
     const SHIP_SERVICE = 3; // доставка транспортной компанией (через dpd)
     const SHIP_SELF = 4; // самовывоз - (сейчас не используется)
+    const SHIP_OZON = 5;
+    const SHIP_UNKNOWN = 9;
 
     const EDOST_ID = 1499;
     const EDOST_PSWD = 'OMY9Fmx6y9gqrX66tSSVWVMq3cPR0fCy';
@@ -20,54 +21,55 @@ class Model_Order extends ORM {
 
     protected $_table_name = 'z_order';
 
-    protected $_table_columns = array(
+    protected $_table_columns = [
         'id' => '', 'type' => '', 'user_id' => '', 'user_status' => '', 'created' => '', 'changed' => '',  'description' => '',
         'manager' => '', 'price' => '',	'discount' => '', 'price_ship' => '', 'status' => '', 'status_time' => '',
-        'pay_type' => '', 'payment' => '', 'delivery_type' => '', 'vitrina' => '', 'coupon_id' => ''
-    );
+        'pay_type' => '', 'payed' => 0, 'pay8'=> '', 'pay1' => '', 'delivery_type' => '', 'vitrina' => '', 'coupon_id' => '', 'can_pay' => '',
+        'in1c' => 0, 'call_card' => 0
+    ];
 
-    protected $_belongs_to = array(
-        'user' => array('model' => 'user', 'foreign_key' => 'user_id'),
-        'coupon' => array('model' => 'coupon', 'foreign_key' => 'coupon_id'),
-    );
+    protected $_belongs_to = [
+        'user' => ['model' => 'user', 'foreign_key' => 'user_id'],
+        'coupon' => ['model' => 'coupon', 'foreign_key' => 'coupon_id'],
+    ];
 
-    protected $_has_many = array(
-        'goods' => array(
+    protected $_has_many = [
+        'goods' => [
             'model'         => 'good',
             'through'       => 'z_order_good',
             'foreign_key'   => 'order_id',
             'far_key'       => 'good_id',
-        ),
-    );
-
-    protected $_has_one = array(
-        'data' => array(
-            'model' => 'order_data',
-            'foreign_key' => 'id',
-        ),
-        'logistic' => array(
-            'model' => 'order_logistic',
-            'foreign_key' => 'order_id',
-        ),
-        'card' => array(
+        ],
+        'payments' => [
             'model' => 'payment',
             'foreign_key' => 'order_id',
-        )
-    );
+        ]
+    ];
+
+    protected $_has_one = [
+        'data' => [
+            'model' => 'order_data',
+            'foreign_key' => 'id',
+        ],
+        'logistic' => [
+            'model' => 'order_logistic',
+            'foreign_key' => 'order_id',
+        ],
+    ];
 
     public $qty = 0;
     public $total = 0;
 
     public function rules()
     {
-        return array(
-            'user_id' => array(
-                array('not_empty'),
-            ),
-            'price' => array(
-                array('not_empty'),
-            ),
-        );
+        return [
+            'user_id' => [
+                ['not_empty'],
+            ],
+            'price' => [
+                ['not_empty'],
+            ],
+        ];
     }
 
     public function get_link($html = true)
@@ -76,19 +78,44 @@ class Model_Order extends ORM {
         return $html ? HTML::anchor($href, $this->id) : $href;
     }
 
-    public static function get_status_list() {
-         static $stats = array(
+    public static function get_status_list()
+    {
+        static $stats = [
             'N' => 'Принят',
             'C' => 'Ожидает оплаты картой',
             'S' => 'В обработке',
             'D' => 'Сформирован',
-            'X' => 'Отменён',
+            'T' => 'Заказ передан в службу доставки',
+            'R' => 'Заказ на маршруте',
             'F' => 'Выполнен',
-        );
+            'X' => 'Отменён',
+        ];
          
         return $stats;
     }
-    
+
+    public static function pay_types()
+    {
+        static $types = [
+            self::PAY_CARD => 'Карта',
+            self::PAY_DEFAULT => 'Наличные',
+        ];
+
+        return $types;
+    }
+
+    /**
+     * Получить крайний сеанс оплаты для заказа
+     * Если заказ ещё не оплачивали - FALSE
+     * @return Model_Payment|FALSE
+     */
+    public function payment()
+    {
+        $payment = $this->payments->order_by('id', 'DESC')->find();
+        if (empty($payment)) return FALSE;
+        return $payment;
+    }
+
     /**
      * Возвращает строку статуса
      * @return mixed
@@ -100,13 +127,32 @@ class Model_Order extends ORM {
         if (empty($stats[$this->status])) throw new ErrorException('bad status');
         return $stats[$this->status];
     }
-    
+
+    /**
+     * Изменилось состояние оплаты заказа
+     * @throws Kohana_Exception
+     */
+    public function on_payment_change()
+    {
+        if ($this->pay_type == self::PAY_CARD && $this->can_pay == 1) { // оплата картой разрешена
+            if ($this->data->mobile_phone) {
+                Model_Sms::to_queue($this->data->mobile_phone, 'Заказ ' . $this->id . ' готов к оплате: http://mladenec.ru/' . $this->id);
+            }
+            Mail::htmlsend('order', ['o' => $this, 'od' => $this->data, 'canPay' => TRUE] // что передадим в почту
+            , $this->data->email, 'Заказ '.$this->id.' готов к оплате');
+        }
+    }
+
+    /**
+     * Если заказ сменил статус
+     * @throws Kohana_Exception
+     */
     public function on_status_change()
     {
         $got_status = FALSE;
-            
-        if(in_array($this->status, array('D', 'X', 'F'))) {
-            
+
+        if (in_array($this->status, ['T', 'X', 'F'])) {
+
             
             if ('F' == $this->status) { // заказ доставлен 
 
@@ -128,41 +174,41 @@ class Model_Order extends ORM {
             $this->on_status_change_email($got_status);
         }
         
-        // Пересчитаем накопления по акцииям
+        // Пересчитаем накопления по активным накопительным акцииям
         // Накопления пересчитываются при всех сменах статусов, чтобы корректно отображались накопленные баллы
-        
-        $user_action_credits = Model_Action::get_user_credits($this->user->pk());
+        $actions = Model_Action::get_active(Conf::VITRINA_ALL, [], TRUE);
+        $user_action_credits = [];
+        foreach($actions as $id => $a) {
+            $user_action_credits[$id] = $this->user->get_funded($a);
+        }
 
-        foreach ($user_action_credits as $action_id=>$credits) {
-            $user_action = DB::select(DB::expr('MAX(`order_id`) as `from_order`'))
-                    ->from('z_order_good')
-                    ->where('action_id', '=', $action_id)
-                    ->execute()->as_array();
+        foreach ($user_action_credits as $action_id => $credits) { // апдейтим записи в таблице с накоплениями
 
-            $from_order = 0;
-            if ( ! empty($user_action['from_order'])) $from_order = $user_action['from_order'];
+            Database::instance()->begin();
 
-            DB::delete('z_action_user')
-                    ->where('user_id', '=', $this->user->pk())
-                    ->where('action_id', '=', $action_id)
-                    ->execute();
+            DB::delete('z_action_user') // вместо update у нас  delete - insert - чтобы обрабатывать новые записи
+                ->where('user_id', '=', $this->user->pk())
+                ->where('action_id', '=', $action_id)
+                ->execute();
 
             DB::insert('z_action_user')
-                    ->columns(array('action_id','user_id','from_order','sum','qty'))
-                    ->values(array(
-                        'action_id'  => $action_id,
-                        'user_id'    => $this->user->pk(),
-                        'from_order' => $from_order,
-                        'sum'        => empty($credits['sum'])?0:$credits['sum'],
-                        'qty'        => empty($credits['qty'])?0:$credits['qty']
-                    ))->execute();
+                ->columns(['action_id','user_id','from_order','sum','qty'])
+                ->values([
+                    'action_id'  => $action_id,
+                    'user_id'    => $this->user->pk(),
+                    'from_order' => intval($credits['from_order']),
+                    'sum'        => floatval($credits['sum']),
+                    'qty'        => intval($credits['qty'])
+                ])->execute();
+
+            Database::instance()->commit();
         }
     }
     
     private function on_status_change_email($got_status)
     {
         
-        $mail_values = array('o' => $this, 'od' => $this->data); // что передадим в почту
+        $mail_values = ['o' => $this, 'od' => $this->data]; // что передадим в почту
 		$mail_subj = 'Ваш заказ '.$this->id.' '.$this->status();
 
         if ($got_status) $mail_values['got_status'] = TRUE;
@@ -170,21 +216,14 @@ class Model_Order extends ORM {
         if ('F' == $this->status) { // заказ доставлен 
 
             // для этого статуса заголовок зависит от типа доставки
-            if (self::SHIP_SELF == $this->delivery_type) {
-
-                $shop_user = ORM::factory('user', $mail_values['od']->address_id); // данные магазина
-                $mail_values['shop_phone'] = $shop_user->phone;
-                $mail_subj = 'Ваш заказ '.$this->id.' отправлен на пункт самовывоза';
-
-            } elseif (self::SHIP_SERVICE == $this->delivery_type) {
-
+            if (self::SHIP_SERVICE == $this->delivery_type) {
                 $mail_subj = 'Ваш заказ '.$this->id.' передан в транспортную компанию';
             }
         }
         
         Mail::htmlsend('order', $mail_values, $this->data->email, $mail_subj);
     }
-    
+
     /**
      * Пытается отправить СМС о том что заказ принят
      */
@@ -205,7 +244,7 @@ class Model_Order extends ORM {
                 $mobile_phone = $order_data->phone2;
             }
             if ( ! empty($mobile_phone)) {
-                $sms_text = View::factory('smarty:sms/accepted', array('o' => $this, 'od' => $order_data))->render();
+                $sms_text = "Мы приняли Ваш заказ ".$this->id.", сумма ".($this->price + $this->price_ship)."р.Спасибо!Ваш mladenec.ru";
                 Model_Sms::to_queue($mobile_phone, $sms_text, $this->user_id, $this->id);
             }
         }
@@ -217,12 +256,16 @@ class Model_Order extends ORM {
      */
     public function get_goods()
     {
-        $res = DB::query(Database::SELECT, 'SELECT `good_id`, `price`, `quantity`, `comment` FROM z_order_good WHERE order_id = '.$this->id)->execute();
-        $good_q = $res->as_array('good_id');
-        if (empty($good_q)) return array();
+        $good_q = DB::select('good_id', 'price', 'quantity', 'comment')
+            ->from('z_order_good')
+            ->where('order_id', '=', $this->id)
+            ->execute()
+            ->as_array('good_id');
+
+        if (empty($good_q)) return [];
 
         $goods = ORM::factory('good')->where('id', 'IN', array_keys($good_q))->find_all();
-        $return = array();
+        $return = [];
         foreach($goods as $g) {
             $g->quantity = $good_q[$g->id]['quantity'];
             $g->price = $good_q[$g->id]['price'];
@@ -248,16 +291,16 @@ class Model_Order extends ORM {
 
         $goods = $cart->recount();
         $presents = $cart->check_actions($goods);
-        
+
         foreach ($goods as $g) {
-            $ins->values(array(
+            $ins->values([
                 'order_id' => $this->id,
                 'good_id' => $g->id,
                 'price' => $g->price,
-                'quantity' => $g->quantity,
+                'quantity' => $cart->goods[$g->id],
                 'comment' => $cart->get_comment($g->id),
                 'action_id' => 0
-            ));
+            ]);
             $not_empty = TRUE;
         }
 
@@ -265,41 +308,42 @@ class Model_Order extends ORM {
             foreach($presents as $action_id => $present_id) { // проверяем выбранные призы или отказ от приза
                 $action = $cart->actions[$action_id];
                 $add = TRUE;
-                if ($action->count_from) { // накопительная
+                if ($action->is_funded()) { // накопительная
                     if ( ! empty($cart->no_presents[$action_id]))  {
                         $add = FALSE; // отказ от приза!
                     } else {
                         $action->set_count_from(Model_User::current()->id, $this->id); // взяли приз, запоминаем номер с которого считать сумму
                     }
                 }
-
+        
                 if ($add) {
-                    $ins->values(array(
-                        'order_id' => $this->id,
-                        'good_id' => $present_id,
-                        'price' => 0,
-                        'quantity' => $action->pq,
-                        'comment' => '',
+                    $ins->values([
+                        'order_id'  => $this->id,
+                        'good_id'   => $present_id,
+                        'price'     => 0,
+                        'quantity'  => $action->pq,
+                        'comment'   => '',
                         'action_id' => $action->pk()
-                    ));
+                    ]);
                 }
             }
         }
-
+        
         if ( ! empty($cart->blago)) {
-            $ins->values(array(
+            $ins->values([
                 'order_id' => $this->id,
                 'good_id' => Cart::BLAG_ID,
                 'price' => 1,
                 'quantity' => $cart->blago,
                 'comment' => '',
                 'action_id' => 0
-            ));
+            ]);
         }
-        if ( ! empty($cart->coupon)) { // есть купон на скидку
+        if (isset($cart->coupon['type']) && ($cart->coupon['type'] != Model_Coupon::TYPE_LK)) { // есть купон на скидку - тут надо засчитать использование
+
             $coupon = new Model_Coupon($cart->coupon['id']);
             if ($coupon->loaded()) {
-                $this->coupon_id = $coupon->id;
+                $this->coupon_id = $cart->coupon['id'];
                 $this->save();
                 $coupon->used(); // используем купон
             }
@@ -309,7 +353,7 @@ class Model_Order extends ORM {
 
     /**
      * Меняет список товаров в заказе на новый, пришедший из 1с
-     * @param $goods array(id => array('qty' => $qty, 'price' => price))
+     * @param $goods [id => ['qty' => $qty, 'price' => price]]
      */
     public function change_goods($goods)
     {
@@ -321,16 +365,16 @@ class Model_Order extends ORM {
         
         DB::delete('z_order_good')->where('order_id', '=', $this->id)->execute(); // удалим всё что было
         
-        $ins = DB::insert('z_order_good', array('order_id', 'good_id', 'price', 'quantity', 'action_id'));
+        $ins = DB::insert('z_order_good', ['order_id', 'good_id', 'price', 'quantity', 'action_id']);
         
         foreach ($goods as $id => $g) {
-            $ins->values(array(
+            $ins->values([
                 'order_id' => $this->id,
                 'good_id' => $id,
                 'price' => current($g),
                 'quantity' => key($g),
                 'action_id' => (empty($good_action[$id]) ? 0 : $good_action[$id])
-            ));
+            ]);
         }
 
         $ins->execute();
@@ -342,7 +386,7 @@ class Model_Order extends ORM {
      */
     public static function delivery_types()
     {
-        return array(self::SHIP_COURIER, self::SHIP_SERVICE, self::SHIP_SELF);
+        return [self::SHIP_COURIER, self::SHIP_SERVICE];
     }
 
     /**
@@ -353,11 +397,11 @@ class Model_Order extends ORM {
      */
     public static function delivery_call($call = null)
     {
-        $return = array(
-            '0' => 'не нужно',
-            '5' => 'за 5-10 минут',
+        $return = [
             '20' => 'за 20-30 минут',
-        );
+            '5' => 'за 5-10 минут',
+            '0' => 'не нужно',
+        ];
 
         if ( ! is_null($call)) {
             return ! empty($return[$call]) ? $return[$call] : FALSE;
@@ -385,22 +429,37 @@ class Model_Order extends ORM {
      */
     public function price_ship($od)
     {
-        if (in_array($this->delivery_type, array(Model_Order::SHIP_SERVICE, Model_Order::SHIP_SELF))) return 0;
+        if (empty($od->ship_zone)) { // регион
 
-        $zone = new Model_Zone($od->ship_zone);
-        if ( ! $zone->loaded()) throw new ErrorException('Zone not found '.$od->ship_zone);
+            $ship_data = explode(':', $od->comment); // тут ожидаем данные
+            $return = floatval(array_pop($ship_data));
 
-        $time = new Model_Zone_Time($od->ship_time);
-        if ( ! $time->loaded()) throw new ErrorException('Time not found '.$od->ship_time);
+        } else {
 
-        if ($time->zone_id != $zone->id) {
-            throw new ErrorException('Zone time '.$time->id.' not allowed for zone '.$zone->id);
+            $zone = new Model_Zone($od->ship_zone);
+            if ( ! $zone->loaded()) throw new ErrorException('Zone not found ' . $od->ship_zone);
+
+            $time = new Model_Zone_Time($od->ship_time);
+            if ( ! $time->loaded()) { // нет времени доставки - ставим первое из выбранной зоны
+                Log::instance()->add(Log::WARNING, 'Time not found '.$od->ship_time.' for zone '.$od->ship_zone);
+
+                $time = ORM::factory('zone_time')
+                    ->where('zone_id', '=', $zone->id)
+                    ->where('active', '=', 1)
+                    ->order_by('sort')
+                    ->limit(1)
+                    ->find();
+
+                if ( ! $time->loaded()) throw new ErrorException('No time for zone '.$od->ship_zone);
+            }
+            if ($time->zone_id != $zone->id) {
+                Log::instance()->add(Log::WARNING, 'Zone time '.$time->id.' not allowed for zone '.$zone->id);
+            }
+
+            $return = $time->get_price($this->price);
+            if ($od->ship_zone == Model_Zone::ZAMKAD) $return += $od->mkad * self::PRICE_KM;
+            if ($od->ship_date == '2015-12-31') $return += 500; // + 500 рублей 31 декабря
         }
-
-
-        $return = $time->get_price($this->price);
-        if ($od->ship_zone == Model_Zone::ZAMKAD) $return += $od->mkad * self::PRICE_KM;
-        if ($od->ship_date == '2014-12-31') $return += 500; // + 500 рублей 31 декабря
 
         return $return;
     }
@@ -413,8 +472,8 @@ class Model_Order extends ORM {
     public static function edost($to_city)
     {
         $cart = Cart::instance();
-        if ( 0 == $cart->get_qty() ) return array('qty_company' => 0, 'stat' => 0); // нет корзины
-        if ( ! Model_User::logged()) return array('qty_company' => 0, 'stat' => -1); // нет пользователя
+        if ( 0 == $cart->get_qty() ) return ['qty_company' => 0, 'stat' => 0]; // нет корзины
+        if ( ! Model_User::logged()) return ['qty_company' => 0, 'stat' => -1]; // нет пользователя
 
         $weight = 0;
         foreach($cart->recount() as $g) {
@@ -452,16 +511,16 @@ class Model_Order extends ORM {
 
         if ( ! empty($x->stat[0]) && $x->stat[0] == 1) {
             $k = 1;
-            $store = array();
+            $store = [];
             foreach($x->tarif as $t) {
-                $item = array();
+                $item = [];
                 foreach($t as $name => $val) {
                     $item[$name] = (string)$val;
                 }
                 $store[$k++] = $item;
             }
             Session::instance()->set('edost', $store)->write(); // запомним в сессии тарифы
-            return View::factory('smarty:user/order/edost', array('opts' => $x->tarif))->render();
+            return View::factory('smarty:user/order/edost', ['opts' => $x->tarif])->render();
 
         } elseif (isset($x->stat[0])) {
 
@@ -486,11 +545,11 @@ class Model_Order extends ORM {
      */
     public static function is_shop($shop_id = NULL)
     {
-        static $shops = array(
+        static $shops = [
             36878 => 'М.О. г.&nbsp;Мытищи, ул.&nbsp;Шараповская, д.1 корп.2; Тел.: <nobr>+7 (910) 019-79-58</nobr>',
             // 36428 => 'М.О. г.&nbsp;Королев ул.&nbsp;Декабристов, д.20; Тел.: <nobr>+7 (495) 519-53-24</nobr>',
             36955 => 'М.О. г.&nbsp;Юбилейный, ул.&nbsp;Лесная, д.14; Тел.: <nobr>+7 (495) 515-93-80</nobr>'
-        );
+        ];
 
         if ( ! is_null($shop_id)) {
             return ! empty($shops[$shop_id]) ? $shops[$shop_id] : false;
@@ -559,5 +618,5 @@ class Model_Order extends ORM {
 		
         return parent::save($validation);
     }
-
 }
+

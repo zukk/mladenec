@@ -51,7 +51,7 @@ class Model_Zone_Time extends ORM { // интервалы для зон дост
      */
     public function get_price($sum)
     {
-        $price = $this->prices->where('min_sum', '<', $sum)->order_by('min_sum', 'DESC')->limit(1)->find();
+        $price = $this->prices->where('min_sum', '<=', $sum)->order_by('min_sum', 'DESC')->limit(1)->find();
 
         if ( ! $price->id) return $this->price; // базовая цена для интервала
         return $price->price;

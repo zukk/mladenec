@@ -5,7 +5,7 @@ class Cart {
     const MAX_SIMPLE = 4500; // сумма заказа
     const BLAG_ID = 138549; // идентификатор товара благотворительности
 
-    public $total           = 0;        // общая стоимость товаров в корзине
+    public $total           = 0;        // общая стоимость товаров (без благотворительности и доставки) в корзине
     public $qty             = 0;        // общее количество товаров в корзине
     public $actions         = [];  // action.id => Model_Action
     public $goods           = [];  // good.id => qty
@@ -16,24 +16,30 @@ class Cart {
     public $presents        = [];  // [ $action_id => $good_id, ... ]
     public $present_variants  = [];  // Подарки _на выбор_, $action_id => [$good_id1,$good_id2, ...]
     public $presents_selected = []; // Выбранные подарки [ $action_id => $good_id, ... ]
-    public $no_presents     = [];  // ид подарков от которых человек отказался
+    public $no_presents     = [];  // [ $action_id => $action_id, ... ] ид акций в  которых человек отказался от подарка
     public $promo           = [];  // промо подарков - массив, ключ = сумма накопленная, значение = акция
+    public $sborkable       = [];  // [$id => $qty] массив id товаров для которых возможна бесплатная сборка
     public $big             = [];  // [$id => $qty] массив id крупногабаритки в заказе
+    public $to_wait         = [];  // [$id => $qty] массив id товаров не со склада в заказе
     public $discount        = 0;        // сумма скидки
     public $no_possible     = [];  // товары которых заказано больше чем есть
-    public $coupon          = [];  // использовать купон на скидку
+    public $coupon          = FALSE;  // код купона или FALSE если нету
+    public $coupon_error    = FALSE;  // ошибка если код купона непуст и неприменим
+    public $delivery_open   = FALSE; // открыть ли форму с адресом доставки?
+
+    public $ship_wrong = FALSE; // флаг проблемного веса / объёма в заказе
+
 	protected $_session_id  = NULL;
     protected $force_recount = TRUE;
 
-    public $total_action = []   // скидочная акция на всё (сумма от => процент скидки)
-    ;
-    
+    public $total_action = [];   // скидочная акция на всё (сумма от => процент скидки)
+
     /**
      * Конструктор может сразу добавлять
      * @param array $goods
      * @param string $session_id
      */
-    function __construct($goods = array(), $session_id = NULL)
+    function __construct($goods = [], $session_id = NULL)
     {
         try {
             $cart_s = Session::instance(NULL, $session_id)->get('cart');
@@ -45,18 +51,33 @@ class Cart {
 		$this->reset_status();
 
         if ($cart_s instanceof Cart) {
-        
-            $this->total = $cart_s->total;;
+            $this->total = $cart_s->total;
             $this->goods = $cart_s->goods;
             $this->qty = $cart_s->qty;
-            $this->comments = ! empty($cart_s->comments) ? $cart_s->comments : array();
+            $this->comments = ! empty($cart_s->comments) ? $cart_s->comments : [];
             $this->blago = ! empty($cart_s->blago) ? $cart_s->blago : 0;
             $this->discount = ! empty($cart_s->discount) ? $cart_s->discount : 0;
-            $this->presents_selected = ! empty($cart_s->presents_selected) ? $cart_s->presents_selected : array();
-            $this->no_presents = ! empty($cart_s->no_presents) ? $cart_s->no_presents : array();
-            $this->big = ! empty($cart_s->big) ? $cart_s->big : array();
-            $this->no_possible = ! empty($cart_s->no_possible) ? $cart_s->no_possible : array();
-            $this->coupon = ! empty($cart_s->coupon) ? $cart_s->coupon : array();
+            $this->presents_selected = ! empty($cart_s->presents_selected) ? $cart_s->presents_selected : [];
+            $this->no_presents = ! empty($cart_s->no_presents) ? $cart_s->no_presents : [];
+            $this->big = ! empty($cart_s->big) ? $cart_s->big : [];
+            $this->sborkable = ! empty($cart_s->sborkable) ? $cart_s->sborkable : [];
+            $this->to_wait = ! empty($cart_s->to_wait) ? $cart_s->to_wait : [];
+            $this->no_possible = ! empty($cart_s->no_possible) ? $cart_s->no_possible : [];
+            $this->coupon = [];
+            if ( ! empty($cart_s->coupon)) {
+                if ( ! is_array($cart_s->coupon)) { // всегда массив ждём
+                    $this->load_coupon(strval($cart_s->coupon));
+                } elseif (empty($cart_s->coupon['id'])) {
+                    $this->load_coupon(strval($cart_s->coupon['name']));
+                } else {
+                    $this->coupon = $cart_s->coupon;
+                }
+            }
+
+            $this->delivery_open = ! empty($cart_s->delivery_open);
+            if(isset($cart_s->ozon_terminals)) {
+                $this->ozon_terminals = $cart_s->ozon_terminals;
+            }
         }
         $this->add($goods); // может быть сразу добавление товаров
     }
@@ -64,9 +85,9 @@ class Cart {
     /**
      * @return Cart
      */
-    static function instance()
+    static function instance($goods = [])
     {
-        return new self();
+        return new self($goods);
     }
         
     /**
@@ -76,6 +97,9 @@ class Cart {
     {
         $this->status_id = 0;
         if ($cur = Model_User::current()) $this->status_id = $cur->status_id;
+        if ( ! empty($this->coupon['type']) && $this->coupon['type'] == Model_Coupon::TYPE_LK) {
+            $this->status_id = 1;
+        }
         return $this->status_id;
     }
 
@@ -91,7 +115,8 @@ class Cart {
         $this->reset_status();
 
         $this->blago = 0;
-        $this->goods = $this->presents = $this->comments = $this->big = $this->no_possible = $this->coupon = array();
+        $this->coupon_error = FALSE;
+        $this->coupon = $this->goods = $this->presents = $this->comments = $this->sborkable = $this->big = $this->to_wait = $this->no_possible = [];
         return $this->save();
     }
 
@@ -108,14 +133,11 @@ class Cart {
 		$oldg = $this->goods;
 
 		foreach($goods as $good_id => $q) {
-
-            // Добавление благотворительности уже есть в recount
-
             if ( ! isset($this->goods[$good_id])) $this->goods[$good_id] = 0;
-
             $this->goods[$good_id] += $q;
         }
 
+        // Добавление благотворительности уже есть в recount
 		$g = $this->recount();
 
 		if ($warn) {// нужно сообщить о добавлении товара
@@ -137,7 +159,8 @@ class Cart {
      * @param array $comments good.id=>comment
      * @return $this
      */
-    public function set_comments($comments) {
+    public function set_comments($comments)
+    {
         if (empty($comments)) return $this;
         $this->comments = $comments + $this->comments; // Новый массив (первый, $comments) имеет больший приоритет
         $this->clear_comments(); // Убираем комментарии к отсутствующим в корзине товарам
@@ -150,14 +173,23 @@ class Cart {
      * 
      * @param array $presents [$action_id => $good_id, ...]
      */
-    public function select_presents($presents) {
-        
+    public function select_presents($presents)
+    {
         if ( empty($presents) || ! is_array($presents)) return;
         
         foreach($presents as $action_id => $present_id) {
-            $this->presents_selected[$action_id] = $present_id;
-            $this->presents[$action_id] = $present_id; 
+
+            if ($present_id == -1) { // отказ от подарка в накопительной акции
+                $this->no_presents[$action_id] = 1;
+                if (isset($this->presents[$action_id])) unset($this->presents[$action_id]);
+                if (isset($this->presents_selected[$action_id])) unset($this->presents_selected[$action_id]);
+            } else {
+                $this->presents_selected[$action_id] = $present_id;
+                $this->presents[$action_id] = $present_id;
+                if (isset($this->no_presents[$action_id])) unset($this->no_presents[$action_id]);
+            }
         }
+        $this->save();
     }
 
     /**
@@ -268,16 +300,16 @@ class Cart {
     }
     
     /**
-     * 
-     * @param Model_Good $goods
+     * Подсёт цены, ограничений на кол-во, статуса по кгт и нет на складе
+     * @param Model_Good[] $goods
      * @return array
      */
-    protected function apply_price( & $goods)
+    protected function check_qty_wait_lk( & $goods)
     {
-        $base_price = array(); // розничная цена
+        $base_price = []; // сюда положим цену от которой потом считаем скидки
 
         foreach($this->goods as $id => $q) { // считаем сумму по обычным ценам
-            if ( ! empty($goods[$id])) {
+            if ( ! empty($goods[$id]) && ($goods[$id] instanceof Model_Good)) {
                 $base_price[$id] = $goods[$id]->price;
 
                 $this->goods[$id] = $goods[$id]->buy_limit($q);
@@ -293,10 +325,14 @@ class Cart {
                 $this->total += $goods[$id]->total;
                 $this->qty += $this->goods[$id];
 
-                if ($goods[$id]->big) $this->big[$id] = $goods[$id]->qty; // крупногабаритка в формате ид - кол-во!
+                if ($goods[$id]->big) $this->big[$id] = $goods[$id]->qty; // крупногабаритка в формате ид - кол-во
+                if ($goods[$id]->sborkable()) $this->sborkable[$id] = $goods[$id]->qty; // товары со сборкой ид - кол-во
+                if ($goods[$id]->qty == -1) $this->to_wait[$id] = $goods[$id]->qty; // нет на складе, в формате ид - ид
             } else {
                 unset($this->goods[$id]); // если 0 или меньше - убираем товар из корзины
+                if ( isset($this->sborkable[$id])) unset($this->sborkable[$id]); // и сборка
                 if ( isset($this->big[$id])) unset($this->big[$id]); // и из крупных
+                if ( isset($this->to_wait[$id])) unset($this->to_wait[$id]); // и из нет на сладе
             }
         }
         
@@ -304,13 +340,8 @@ class Cart {
         if ($this->status_id == 0 && ($this->total >= self::MAX_SIMPLE)) $this->status_id = 1; // тоже любимый
         if ($this->status_id == 1) $this->apply_lk_price($goods);
         
-        /* если
-        foreach($this->goods as $id => $q)
-        {
-            $base_price[$id] = $goods[$id]->price;
-        }
-        */
-        
+//        foreach($this->goods as $id => $q) $base_price[$id] = $goods[$id]->price; // считать скидку от цены клиента, без этой строки - от розницы
+
         return $base_price;
     }
 
@@ -337,7 +368,10 @@ class Cart {
     protected function count_ordered_sum($action, $goods, $base_price)
     {
         $ordered_value = 0;
-        foreach($action->good_ids as $gid)  // На какую сумму заказано
+
+        $idz = $action->total ? array_keys($goods) : $action->good_ids;  // участники акции
+
+        foreach($idz as $gid)  // На какую сумму заказано
         {
             if ( ! empty($goods[$gid]) AND ! empty($base_price[$gid]))
             {
@@ -360,13 +394,16 @@ class Cart {
         return $ordered_value;
     }
 
-    protected function apply_discount( & $goods, $base_price, $discount_percent, $good_ids = NULL)
+    /*
+     * Применить скидку на товары от указанных цен на процент
+     */
+    protected function apply_discount( & $goods, $base_price, $discount_percent, $good_ids)
     {
         foreach($goods as &$g)
         {
             if (empty($good_ids[$g->id])) continue;
 
-            $gprice = round($base_price[$g->id] * (1 - $discount_percent / 100) * 100) / 100; // цена товара со скидкой - округляется до 1 коп
+            $gprice = round($base_price[$g->id] * (1 - $discount_percent / 100) * 10) / 10; // цена товара со скидкой - округляется до 10 коп
             $delta = ($g->price - $gprice) * $g->quantity;
             $this->discount += $delta;
             $this->total -= $delta; // общая сумма уменьшается!
@@ -383,12 +420,12 @@ class Cart {
      */
     protected function check_price_actions( & $goods, $base_price)
     {
-        $active_actions = Model_Action::by_goods(array_keys($this->goods), Conf::VITRINA_ALL, array(
+        $active_actions = Model_Action::by_goods(array_keys($this->goods), Conf::VITRINA_ALL, [
             Model_Action::TYPE_PRICE_QTY,
             Model_Action::TYPE_PRICE_QTY_AB,
             Model_Action::TYPE_PRICE_SUM,
             Model_Action::TYPE_PRICE_SUM_AB
-        ));
+        ]);
 
         foreach($active_actions as $a)
         {
@@ -437,22 +474,117 @@ class Cart {
                 }
             }
         }
-    }
 
-    protected function check_coupon()
-    {
-        if ( ! empty($this->coupon))
-        {
-            $coupon_obj = new Model_Coupon($this->coupon);
-            
-            if ($coupon_obj->is_usable($this->total))
-            {
-                $this->total -= $this->coupon['sum'];
-            }
+        if ( ! empty($this->coupon)) {
+            $this->use_coupon($goods, $base_price);
         }
     }
-	
-	public function remove( $good_id )
+
+    /**
+     * Проверка купона на существование и запись его в корзину если есть
+     * @param $name
+     * @return array|bool
+     */
+    public function load_coupon($name)
+    {
+        $coupon = new Model_Coupon(['name' => $name, 'active' => 1]);
+        if ( ! $coupon->loaded()) {
+            $this->coupon_error = 'Купона с таким кодом не существует';
+            return FALSE;
+        }
+        $this->coupon = $coupon->as_array();
+        return TRUE;
+    }
+
+    /**
+     * Пытаемся использовать прикрепленный к корзине купон. Если не можем - заполняем ошибку
+     * @param $goods [] товары корзины
+     * @param $base_price [] цены на товары, от которых считать скидки
+     * @return bool
+     */
+    protected function use_coupon($goods, $base_price)
+    {
+        $this->coupon_error = FALSE;
+
+        if (empty($this->total)) { $this->coupon_error = 'В корзине нет товаров'; return FALSE; };
+
+        if (empty($this->coupon['id'])) { $this->coupon_error = 'Нет такого купона'; return FALSE; }
+        $coupon = new Model_Coupon($this->coupon['id']);
+
+        if ( ! $coupon->is_begun()) { $this->coupon_error = 'Купон может быть активирован с '.$coupon->from; return FALSE; };
+
+        if ($coupon->is_expired()) { $this->coupon_error = 'Купон просрочен с '.$coupon->to; return FALSE; };
+
+        if ($coupon->used >= $coupon->uses) { $this->coupon_error = 'Превышен лимит использований купона'; return FALSE; };
+
+        if ($this->total < $coupon->min_sum) { $this->coupon_error = 'Минимальная сумма товаров '.$coupon->min_sum; return FALSE; };
+
+        if (Model_User::logged()) { // есть пользователь - посчитаем сколько купонов потратил
+
+            $uses = ORM::factory('order')
+                ->where('user_id', '=', Model_User::current()->id)
+                ->where('coupon_id', '=', $coupon->id)
+                ->where('status', '!=', 'X')
+                ->count_all();
+
+            if ($uses >= $coupon->per_user) { $this->coupon_error = 'Превышен лимит использований купона'; return FALSE; };
+        }
+
+        switch ($coupon->type) {
+
+            case Model_Coupon::TYPE_SUM:  // скидка на сумму
+                $this->total -= $coupon->sum;
+                $this->discount += $coupon->sum;
+                break;
+
+            case Model_Coupon::TYPE_PERCENT:  // скидка на процент на конкретные товары
+                $cgoods = $coupon->get_goods();
+                if (empty($cgoods))  { $this->coupon_error = 'В корзине нет товаров, для которых активен купон'; return FALSE; };
+
+                $used = FALSE;
+                foreach($cgoods as $discount => $goodz) {
+                    foreach($goodz as $good_id => $g) {
+                        if ( ! empty($goods[$good_id])) {  // купон сработал! @note проверить другие акции?
+
+                            $qty = $this->goods[$good_id];
+                            $max_qty = 1; // макс число одинаковых товаров на которое дают скидку
+                            if ($qty > $max_qty) {
+                                // считаем скидку в процентах за каждый, при учете что даём скидку не более чем на два товара
+                                $gprice = round($base_price[$g->id] * (1 - $discount / 100) * 10) / 10; // цену округляем до 10 коп
+                                $total = $base_price[$good_id] * ($qty - $max_qty) + $gprice * $max_qty;
+                                $each = $total / $qty;
+                                $percent = (1 - $each / $base_price[$good_id]) * 100;
+                                $this->apply_discount($goods, $base_price, $percent, [$good_id => $good_id]);
+                            } else {
+                                $this->apply_discount($goods, $base_price, $discount, [$good_id => $good_id]); // применяем скидку на все
+                            }
+
+                            $used = TRUE;
+                        }
+                    }
+                }
+                if ( ! $used ) { $this->coupon_error = 'В корзине нет товаров, для которых активен купон'; return FALSE; };
+                break;
+
+            case Model_Coupon::TYPE_LK;
+                $user = Model_User::current();
+                if ($user && $user->status_id == 1) {
+                    $this->coupon_error = 'Купон не может быть использован, Вы уже получили статус &laquo;Любимый клиент&raquo;'; return FALSE;
+                }
+                if ($user) {
+                    $user->status_id = 1;
+                    $user->save();
+                    $coupon->used();
+                }
+
+                $this->status_id = 1;
+                break;
+        }
+
+        return TRUE;
+    }
+
+    public function remove($good_id)
     {
         $this->set_good_qty($good_id, 0);
 		
@@ -468,18 +600,19 @@ class Cart {
     
     /**
      * 
-     * @param type $good_id
-     * @param type $qty
+     * @param int $good_id
+     * @param int $qty
      * @return \Cart
      */
     public function set_good_qty($good_id, $qty)
     {
-        
         $old_qty = $this->get_good_qty($good_id);
 
-		if ('blago' == $good_id) $this->blago = $qty;
-		
-        else $this->goods[$good_id] = $qty;
+		if ('blago' == $good_id) {
+            $this->blago = $qty;
+        }  else {
+            $this->goods[$good_id] = $qty;
+        }
         
         if ($old_qty != $qty) $this->force_recount = TRUE;
         
@@ -498,7 +631,8 @@ class Cart {
 		return $this->set_good_qty($good_id, $this->get_good_qty($good_id) - 1);
 	}
 
-	public function change($goodId, $value ){
+	public function change($goodId, $value)
+    {
 		$this->goods[$goodId] = (int)$value;
 		return $this->recount();
 	}
@@ -510,10 +644,8 @@ class Cart {
     public function recount()
     {
         $this->save_clear(); // Удаляем все вычисляемые позже данные
-        
         $this->reset_status(); // Устанавливаем статус в тот, что стоит у самого клиента
         
-        $this->big = [];
         $goods = []; // [id=>qty]
         $this->goods = array_filter(array_map('abs', $this->goods)); // без отрицательных и 0
 		
@@ -523,29 +655,27 @@ class Cart {
         }
 
         if ( ! empty($this->goods)) {
-            $goods = ORM::factory('good') // попадают только товары с ненулевой ценой и количеством
+            $goods = ORM::factory('good') // попадают только товары с ненулевым количеством
                 ->where('id', 'IN', array_keys($this->goods))
-                ->where('show', '=', 1) // tut blago est
+                //->where('show', '=', 1)
                 ->where('qty', '!=', 0)
                 ->find_all()
                 ->as_array('id');
 
-			foreach( $this->no_possible as $id => $_ ){
-				$_ = &$goods[$id];
-				
-				if( empty( $this->goods[$id] ) || ($_ instanceof Model_Good && $this->goods[$id] == $_->buy_limit($this->goods[$id]))) {
-					unset( $this->no_possible[$id] );
+            foreach ($this->no_possible as $id => $good_arr) { // перепроверяем тут количество и переборы
+				$good = &$goods[$id];
+
+				if (empty($this->goods[$id]) || ($good instanceof Model_Good && $this->goods[$id] == $good->buy_limit($this->goods[$id]))) {
+					unset($this->no_possible[$id]);
 				}
 			}
-			
-            $base_price = $this->apply_price($goods); // Пересчитываем цены, в т.ч. ЛК, убираем товары с 0 qty
 
-            $this->check_price_actions($goods, $base_price);
-            
-            $this->check_coupon();
+            $base_price = $this->check_qty_wait_lk($goods); // Пересчитываем цены, в т.ч. ЛК, убираем товары с 0 qty
+
+            $this->check_price_actions($goods, $base_price); // проверяет акции и купон
 
         } else {
-            $this->goods = array();
+            $this->goods = [];
         }
         $this->save();
 
@@ -565,7 +695,7 @@ class Cart {
         
         $cart->save_clear();
         
-        Session::instance(null, $this->_session_id)->set('cart', $cart)->write();
+        Session::instance(NULL, $this->_session_id)->set('cart', $cart)->write();
 		
         return $this;
     }
@@ -575,13 +705,14 @@ class Cart {
     {
         $this->total            = NULL;
         $this->qty              = NULL;
-        $this->actions          = array();
+        $this->actions          = [];
         $this->status_id        = NULL;
         $this->added            = NULL;
-        $this->presents         = array();
-        $this->present_variants = array();
-        $this->promo            = array();
-        $this->big              = array();
+        $this->presents         = [];
+        $this->present_variants = [];
+        $this->promo            = [];
+        $this->big              = [];
+        $this->sborkable        = [];
         $this->discount         = NULL;
         $this->force_recount    = TRUE;
         
@@ -593,15 +724,9 @@ class Cart {
      */
     public function __toString()
     {
-		
-		if( Request::current()->uri() != 'personal/basket.php' ){
-			
-			$cart = View::factory('smarty:common/cart', array('cart' => $this))->render();
+        if ($this->get_total() > 0 && (('/'.Request::current()->uri()) == Route::url('cart'))) return ''; // если мы в корзине и она не пуста - не показываем малую корзинку
 
-			return $cart;
-		}
-		
-		return '';
+        return View::factory('smarty:common/cart', array('cart' => $this))->render();
     }
 
     /**
@@ -630,7 +755,7 @@ class Cart {
     }
     
     /**
-     * проверяет товары в корзине на предмет работы акций по этим товарам
+     * проверяет товары в корзине на предмет работы подарочных акций по этим товарам
      * товары надо скармливать те, которые получены из get_goods
      * @param $goods Model_Good[] массив товаров
      * @param $del_presents [] массив ид подарков, которые надо удалить
@@ -642,10 +767,10 @@ class Cart {
 
         $active_actions = Model_Action::by_goods(array_keys($goods));
 
-		$this->presents = array();
+		$this->presents = [];
         
         foreach($active_actions as $a) {
-            $promo = array();
+            $promo = [];
             if ($a->new_user && Model_User::logged() && Model_User::current()->sum) continue; // акция только для новых пользователей
             
             if ($a->is_gift_type()) { // обрабатываем пока только акции с подарками
@@ -663,13 +788,16 @@ class Cart {
                    }
                 }
                 if ($a->count_from && Model_User::logged()) { // накопительная акция - посчитаем сколько накопил
-                    $old_ordered_value = Model_User::current()->get_goods_sum($a);
+                    $old_ordered_value = Model_User::current()->get_funded($a);
                     if(strtotime($a->count_to) >= time()) {
-                        $ordered_value += $old_ordered_value; // всего накопил
+                        $ordered_value += $old_ordered_value['sum']; // всего накопил
                     }
                 }
                 $to_next_sum = null; // Сколько не хватает до следующего уровня
                 $current_value = $this->check_conditions(array_keys($present_ids), $ordered_value, $condition_level, $to_next_sum);
+
+                if ( ! $a->check_per_day()) $current_value = FALSE; // проверить акцию на ограничение срабатываний в день
+
                 if (FALSE !== $current_value) { // На подарок хватает
                     $a->pq = 1; // 1 всегда дарим, если хоть на 1 хватает
                     if ($a->each) { // за каждые
@@ -679,13 +807,13 @@ class Cart {
                         elseif (Model_Action::TYPE_GIFT_QTY == $a->type) $a->pq = $ordered_value;
                     }
                 }
-                // надо проверить , а не накопительная ли это акция                       
+                // надо проверить , а не накопительная ли это акция
                 if ($a->count_from AND ! is_null($to_next_sum)) { // считаем сколько до подарка
 
                     $promo = array(
                         'delta' => $to_next_sum,
                         'sum'   => $ordered_value,
-                        'stage' => $condition_level + 1 // Уведомление о шаге промо
+                        'stage' => count($present_ids) < 2 ? -1 : $condition_level + 1 // Уведомление о шаге промо
                     );
                 }
                 if ( ! empty($present_ids[$current_value])) {
@@ -706,25 +834,6 @@ class Cart {
                     $this->actions[$a->id] = $a;
                 }
                 
-            } elseif (in_array ($a->type, array(
-                Model_Action::TYPE_PRICE_QTY,
-                Model_Action::TYPE_PRICE_QTY_AB,
-                Model_Action::TYPE_PRICE_SUM,
-                Model_Action::TYPE_PRICE_SUM_AB
-            ))) { // Тип скидка
-
-                $sum = 0;
-                foreach($a->good_ids as $gid) { // Сколько товаров из прикрепленных к акции заказано
-                    $sum += $goods[$gid]->quantity * $goods[$gid]->price;
-                }
-                /* TODO добавить учет типа акции
-                if ($sum < $a->sum) {
-                    $promo['sum']       = $sum;
-                    $promo['delta']     = $a->sum - $sum;
-                    $promo['discount']  = $a->quantity;
-                    
-                }
-                 */
             }
 
             // добавляем данные для напоминания о накопительной акции
@@ -734,7 +843,6 @@ class Cart {
                 $promo['cart_icon_text']    = $a->cart_icon_text;
                 $this->promo[$a->id] = $promo;
             }
-            
         }
         if ( ! empty($del_presents) && ! empty($this->no_presents)) { // удалять товары с отказами (по ID акции!!!)
             foreach($this->no_presents as $aid) {
@@ -743,7 +851,7 @@ class Cart {
                 }
             }
         }
-        
+
         return $this->presents;
     }
     
@@ -786,18 +894,16 @@ class Cart {
     }
     
     /**
-     * Есть ли внутри крупногабаритка, лежащая на складе у поставщика?
+     * Получить товар с доставкой со склада поставщика?
      */
-    public function big_to_wait($get_if_any = FALSE)
+    public function to_wait()
     {
-        
-        if (empty($this->big)) return FALSE; // Крупногабаритки в заказе нет
-        if ( ! in_array(-1, $this->big)) return FALSE; // вся крупногабаритка есть на складе
-        if ($get_if_any == FALSE) return TRUE;
+        if (empty($this->to_wait)) return FALSE;
 
-        $idz = array_keys($this->big); // Optimisation
-        
-        return ORM::factory('good')->where('id', 'IN', $idz)->find_all()->as_array('id');
+        return ORM::factory('good')
+            ->where('id', 'IN', array_keys($this->to_wait))
+            ->find_all()
+            ->as_array('id');
     }
 
     /**
@@ -807,42 +913,30 @@ class Cart {
     {
         if (empty($this->goods)) return FALSE;
 
-        $data = DB::select('g.id', 'g.section_id', 's.parent_id')
+        $section_ids = DB::select('g.id', 'g.section_id', 's.parent_id', 's.vitrina')
             ->from(['z_good', 'g'])
             ->join(['z_section', 's'])
                 ->on('g.section_id', '=', 's.id')
+            ->distinct('section_id')
             ->where('g.id', 'IN', array_keys($this->goods))
             ->execute()
-            ->as_array();
+            ->as_array('section_id');
 
-        foreach($data as $i) {
-            // мы не доставляем детское питание (все подкатегории категории 28934)
-            if ($i['parent_id'] == 28934) return FALSE;;
-            // и категории Детские домики, горки, качели, песочницы (116957) и Кроватки и аксессуары (30025)
-            if (in_array($i['section_id'], [116957, 30025])) return FALSE;
-        }
+        if (empty($section_ids)) return FALSE;
+        
+        if ( ! Conf::instance()->regional_shipping_allowed($section_ids)) return FALSE;
+        
         return TRUE;
     }
 
     /**
-     * Добавить скидочный купон
-     * @param $coupon
-     */
-    public function add_coupon(Model_Coupon $coupon)
-    {
-        $this->coupon = $coupon->as_array();
-        $this->total -= $coupon->sum;
-    }
-
-    /**
-     * Убрать скидку
+     * Убрать купон из корзины
      */
     function remove_coupon()
     {
         if ( ! empty($this->coupon)) {
-            $this->total += $this->coupon['sum'];
-            $this->coupon = array();
-            $this->save();
+            $this->coupon = [];
+            $this->recount();
         }
     }
 
@@ -854,5 +948,338 @@ class Cart {
     {
         if ( $this->force_recount) $this->recount();
         return $this->status_id;
+    }
+
+    /* получить вес заказа */
+    public function weight()
+    {
+        $return = 0;
+
+        if (empty($this->goods)) return $return;
+
+        $weight = DB::select('id', 'weight')
+            ->from('z_good_prop')
+            ->where('id', 'IN', array_keys($this->goods))
+            ->execute()
+            ->as_array('id', 'weight');
+
+        foreach ($weight as $id => $w) {
+            if ($w == '0.00') $this->ship_wrong = TRUE;
+            $return += $w * $this->goods[$id];
+        }
+
+        if ($this->ship_wrong) $this->save();
+        return $return * 1.25; // 1.25 на упаковку
+    }
+
+    /* получить объём заказа */
+    public function volume()
+    {
+        $return = 0;
+
+        if (empty($this->goods)) return $return;
+
+        $size = DB::select('id', 'size')
+            ->from('z_good_prop')
+            ->where('id', 'IN', array_keys($this->goods))
+            ->execute()
+            ->as_array('id', 'size');
+
+        foreach ($size as $id => $s) {
+            if (empty($s)) $this->ship_wrong = TRUE;
+
+            if (preg_match('~^(\d+)x(\d+)x(\d+)$~', $s, $matches)) {
+                if ($matches[1] * $matches[2] * $matches[3] == 1) $this->ship_wrong = TRUE;
+                $return += $matches[1] * $matches[2] * $matches[3] * $this->goods[$id];
+            }
+        }
+        if ($this->ship_wrong) $this->save();
+        return $return * 1e-9 * 1.5; // 1.5 - на упаковку
+    }
+
+    /**
+     * Вычисление цены доставки корзины
+     * @param $latlong
+     * @param $zone_id
+     * @param int $mkad_or_city
+     * @return FALSE - цена не определена или число - рассчитанная цена
+     */
+    public function ship_price($latlong = 0, $zone_id = NULL, $mkad_or_city = 0)
+    {
+        if (is_null($zone_id) || $latlong = 0) { // нет зоны доставки - попробуем определить из крайнего адреса
+
+            $zone_id = 0;
+
+            if (Model_User::logged()) {
+                $addr = Model_User::current()->address();
+                if ( ! empty($addr)) {
+                    $last = current($addr);
+                    $zone_id = $last->zone_id;
+                    $latlong = $last->latlong;
+                    if ($zone_id == Model_Zone::ZAMKAD) {
+                        $mkad_or_city = $last->mkad;
+                    }
+                }
+            }
+        }
+
+        if ($zone_id == 0) { // это регион или зона не определена
+
+            return FALSE;
+
+        } else { // есть зона - определим по зоне на ближайшую дату
+
+            $z = new Model_Zone($zone_id);
+            if ( ! $z->loaded()) return FALSE;
+            $date = key($this->allowed_date($z, $latlong)); // первая дата
+            $time_id = key($this->allowed_time($z, $date, $latlong)); // первое время
+
+            $zt = new Model_Zone_Time($time_id);
+            if ( ! $zt->loaded()) return FALSE;
+
+            $sum =  $zt->get_price($this->total);
+            if ($zone_id == Model_Zone::ZAMKAD) $sum += intval($mkad_or_city) * Model_Order::PRICE_KM;
+
+            return $sum;
+        }
+    }
+
+    /**
+     * Получить 10 дат доставки для зоны
+     * @param Model_Zone $zone зона доставки
+     * @return array ts => morning
+     */
+    public function allowed_date($zone = NULL, $latlong = 0)
+    {
+        $add = 0;
+
+        if ($this->total > 0) {
+            if ( ! empty($this->to_wait)) {
+                $add = 3;   // + 3 дня если нет на складе
+            } elseif ( ! empty($this->big)) {
+                $add = 1;   // + 1 день если просто крупногабаритка
+            }
+        }
+
+        if ($zone == FALSE) $add += 1; // регионы + 1 день на отгрузку
+
+        $hm = intval(date('Gi')); // часыминуты
+        $deadline = 1200;
+
+        $exclude_dates = [];
+        if ( ! empty($zone) && $zone instanceof Model_Zone) {
+            // получение списка возможных дат доставки
+            $exclude_dates = DB::select('id', 'morning')
+                ->from('z_no_delivery')
+                ->where('id', '>=', strftime('%Y-%m-%d'))
+                ->where('zone_id', '=', $zone->id)
+                ->execute()
+                ->as_array('id', 'morning'); // эти даты надо исключить
+
+            if (Model_Zone::locate($latlong, Model_Zone::MYTISHI)) { //по мытищам на сегодня до 16-30
+                $deadline = 1600;
+            }
+        }
+
+        $i = $hm >= $deadline ? 1 : 0; // c 1200 часов доставка на сегодня вырубается
+        $dates = 10; // число выдаваемых дат
+        $return = [];
+
+        do { // набиваем $dates дат, кроме исключённых
+            $d = strtotime('+ '.($i).' days midnight');
+            $i++;
+            if ($i < $add) continue;
+            $key = strftime('%Y-%m-%d', $d);
+            if ( ! isset($exclude_dates[$key]) || $exclude_dates[$key] == 1) {
+                $return[$key] = ! empty($exclude_dates[$key]); // TRUE for morning
+                $dates--;
+            }
+        } while($dates > 0);
+
+        return $return;
+    }
+
+    /**
+     * Получить возможные интервалы доставки для даты в формате (Y-m-d)
+     * @param Model_Zone|bool $zone - зона доставки
+     * @param string $date - дата
+     * @param string $latlong - координаты точки для проверки замкад в пятницу или сегодня - мытищи
+     * @param bool|float $sum - считать цену
+     * @return array - со св-вами - times - интервалы, friday_mkad - флаг того что это доставка за мкад в птн и интервалы ограничены
+     */
+    public function allowed_time($zone, $date, $latlong, $sum = FALSE)
+    {
+        if (empty($zone)) return FALSE; // нет зоны - нет времени
+
+        if (empty($date) || strtotime($date) < strtotime('today midnight')) $date = date('Y-m-d', time() + 3600 * 24 * 2); // нет даты +2 дня
+
+        $time = intval(date('Gi'));
+        $return = [
+            'zamkad'    => $zone->id == Model_Zone::ZAMKAD,
+            'times'     => [0 => 'Нет доступных интервалов на эту дату'],
+        ];
+
+        $excluded = DB::select('morning') // эти даты исключить из выбора
+            ->from('z_no_delivery')
+            ->where('zone_id', '=', $zone->id)
+            ->where('id', '=', $date)
+            ->execute()
+            ->current();
+
+        // c 1800 часов доставка на завта утро - вырубается
+        if (strtotime($date) == strtotime('+1 days midnight')
+            && $time >= 1800
+            && ! isset($excluded))
+        {
+            $excluded = 1;
+        }
+
+        if ($excluded === 0) return $return;
+
+        $week_day = date('N', strtotime($date));
+        $q = $zone->times
+            ->order_by('morning')
+            ->order_by('sort')
+            ->where('active', '=', 1)
+            ->where('week_day', '&', 1 << ($week_day - 1)); // учёт дня недели
+
+        // по пятницам проверяем замкад если больше 3 км - только первый интервал (но не в мытищах)
+        if ($week_day == 5 && ! Model_Zone::locate($latlong, Model_Zone::MYTISHI) && ! Model_Zone::locate($latlong, Model_Zone::MKAD)) {
+            $closest_mkad = Model_Zone::closest_mkad($latlong);
+            $dist = Model_Zone::distance($latlong, implode(' ', $closest_mkad));
+            if ($dist >= 3) {
+                $return['friday_mkad'] = TRUE;
+                $q->limit(1);
+            }
+        }
+
+        if ($excluded == 1) { // утреннее время исключено
+            $q->where('morning', '=', 0);
+        }
+
+        $times = $q->find_all()->as_array();
+        if (empty($times)) return $return;
+
+        if ($date == date('Y-m-d')) { // сегодня исключаем интервалы до окончания которых меньше 3ч часов
+            foreach ($times as $k => $t) {
+                $from_to = Txt::extract_time($t->name);
+                if ($from_to['to'] < $time / 100 + 3) {
+                    unset($times[$k]);
+                };
+            }
+        }
+        $return['times'] = [];
+        $price = ($date == '2016-12-31') ? 500 : 0; // +500 рублей 31.12
+
+        foreach($times as $time) {
+            $return['times'][$time->id] = [
+                'name' => $time->name,
+                'price' => $time->get_price($sum === FALSE ? $this->total : $sum) + $price
+            ];
+        }
+        return $return;
+    }
+
+    /**
+     * HTML большой корзины
+     * @return string
+     * @throws View_Exception
+     */
+    function checkout($full = FALSE)
+    {
+        $goods = $this->recount();
+
+        $params = [
+            'goods' => $goods,
+            'images' => Model_Good::many_images([70], array_keys($goods)), // все картинки размера 70 - одним запросом
+            'cart' => $this,
+            'promo' => $this->promo,
+            'blago' => $this->blago,
+            'presents' => $this->check_actions($goods),
+            'present_goods' => $this->get_present_goods(),
+            'comments' => $this->get_comments(),
+            'session_params' => Session::instance()->get('cart_delivery'),
+            'delivery' => Controller_Product::cart_delivery(),
+            'slider' => $this->slider($goods),
+            'sborka' => empty($this->sborkable) ?  FALSE : new Model_Good(['code' => Model_Good::SBORKA_ID1C]),
+        ];
+
+        return View::factory($full ? 'smarty:product/cart' : 'smarty:cart/goods', $params)->render();
+    }
+
+    /**
+     * Слайдер для корзины с товарами
+     * @param $goods Model_Good[]
+     * @return array []
+     * @throws Kohana_Exception
+     */
+    function slider(&$goods)
+    {
+        $return = ['goods' => []];
+
+        $promos = [];
+        foreach($goods as $g) $promos = array_merge($promos, $g->get_promos());
+
+        $return['method'] = 'cart_set';
+
+        if ( ! empty($promos)) { // есть промо к товарам в корзине
+
+            $return['method'] = 'cart2_set';
+
+            $prmkey = rand(0, count($promos) - 1);
+            $promo = $promos[$prmkey];
+            $slider_goods = $promo->get_goods();
+
+            foreach ($slider_goods as $y => $sg) if ( ! empty($goods[$sg->id])) unset($slider_goods[$y]); // есть в корзине - исключим
+
+            $sliderCount = count($slider_goods);
+            $slider_goods = array_slice($slider_goods, 0, 5);
+
+            if ( ! empty($promo->slider_header)) {
+                $return['id']   = $prmkey;
+                $return['name'] = $promo->slider_header;
+            }
+            $return['page'] = 1;
+
+        } else { // нет промо - случайное предложение из товарных наборов для корзины
+
+            $sets = ORM::factory('good_set')
+                ->where('active', '=', 1)
+                ->where('cart', '=', 1)
+                ->order_by('id', 'DESC')
+                ->find_all()
+                ->as_array();
+
+            $sets_count = count($sets);
+
+            if ($sets_count >= 1) {
+                $set = $sets[rand(0, count($sets) - 1)];
+                if ( ! empty($set) AND ($set instanceof Model_Good_Set) AND $set->loaded()) {
+                    $slider_page = rand(-10, 10);
+                    $slider_goods = Model_Good::get_set_slider($set->pk(), $total, $slider_page, 5, TRUE, array_keys($goods));
+
+                    if ( ! empty($slider_goods)) {
+                        $return['id']   = $set->id;
+                        $return['name'] = $set->name;
+                        $return['page']  = $slider_page;
+                    }
+                }
+            }
+        }
+
+        if ( ! empty($slider_goods)) {
+            $return['goods'] = $slider_goods;
+
+            $slider_good_ids = [];
+            foreach($slider_goods as $sg) $slider_good_ids[] = $sg->id;
+
+            // цены и картинки
+            $return['price']= Model_Good::get_status_price(1, $slider_good_ids);
+            $return['images']= Model_Good::many_images(array(255), $slider_good_ids);
+        }
+
+        if ( ! empty($sliderCount)) $return['count'] = $sliderCount;
+
+        return $return;
     }
 }

@@ -37,6 +37,39 @@
 
 {/if}
 
+	{if $payment->status eq Model_Payment::STATUS_Charged or $payment->status eq Model_Payment::STATUS_Authorized}
+	<script>
+			window.dataLayer = window.dataLayer || [];
+			dataLayer.push({
+			  'userId': uid,
+			  'ecommerce': {
+				'purchase': {
+				  'actionField': {
+				'id': '{$o->id}',
+				'affiliation': '{$vitrina}',
+				'revenue': '{$o->price}',
+				'shipping': '{$o->price_ship}'
+				  },
+				  'products': [
+					{foreach from=$o->get_goods() item=g name=n}
+					{if $g->price gt 0}
+					  {                            
+						'id': '{$o->id}',
+						'name': '{$g->group_name|escape:'html'} {$g->name|escape:'quotes'}',
+						'price': '{$g->price}',
+						'category': '{$g->section->name|escape:'html'}',
+						'brand': '{$g->brand->name|escape:'html'}',
+						'quantity': '{$g->quantity}'
+					   }{if !$smarty.foreach.n.last},{/if}
+					{/if}
+					{/foreach}
+				   ]
+				}
+			  },
+			  'event': 'transsuccess'
+			});
+	</script>
+	{/if}
     <p><a href="/account/order/{$o->id}{if ! empty($thanx)}/thanx{/if}">Перейти к&nbsp;данным заказа</a></p>
 
 </div>

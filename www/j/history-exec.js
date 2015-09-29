@@ -1,10 +1,10 @@
-var documentStack = {};
+var documentStack = { };
 $(function(){
 	var location = window.history.location || window.location;
 
 	$(document).on('click', 'a.ajaxlink', function() {
-	  history.pushState(null, null, this.href);
-	  return false;
+		history.pushState(null, null, this.href);
+		return false;
 	});		
 
 	$(window).on('popstate', function(e) {
@@ -16,7 +16,6 @@ $(function(){
 			});
 		}
 
-		$('.buy > input:text').incdec();
 		if (typeof(zoombox_clickable) == 'function') zoombox_clickable();
 		updateLinks();
 

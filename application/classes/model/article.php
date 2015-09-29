@@ -1,36 +1,36 @@
 <?php
-// aкции
+
 class Model_Article extends ORM {
 
 	use Seo;
 	
     protected $_table_name = 'z_article';
 
-    protected $_belongs_to = array(
-        'minimg' => array('model' => 'file', 'foreign_key' => 'preview_img'),
-        'image' => array('model' => 'file', 'foreign_key' => 'img'),
-    );
+    protected $_belongs_to = [
+        'minimg' => ['model' => 'file', 'foreign_key' => 'preview_img'],
+        'image' => ['model' => 'file', 'foreign_key' => 'img'],
+    ];
 
-    protected $_table_columns = array(
+    protected $_table_columns = [
         'id' => '', 'name' => '', 'title' => '', 'description' => '', 'active' => '', 'preview' => '', 'text' => '', 'preview_img' => '', 'img' => '',
-    );
+    ];
 
     /**
      * @return array
      */
     public function rules()
     {
-        return array(
-            'name' => array(
-                array('not_empty'),
-            ),
-            'preview' => array(
-                array('not_empty'),
-            ),
-            'text' => array(
-                array('not_empty'),
-            ),
-        );
+        return [
+            'name' => [
+                ['not_empty'],
+            ],
+            'preview' => [
+                ['not_empty'],
+            ],
+            'text' => [
+                ['not_empty'],
+            ],
+        ];
     }
 
     /**
@@ -39,7 +39,7 @@ class Model_Article extends ORM {
      */
     public function get_link($html = true)
     {
-        $link = sprintf('/about/article/%d', $this->id);
+        $link = Route::url('article', ['id' => $this->id]);
         return $html ? HTML::anchor($link, $this->name) : $link;
     }
 
@@ -49,7 +49,7 @@ class Model_Article extends ORM {
      */
     static function get_list_link()
     {
-        return '/about/article';
+        return Route::url('article');
     }
 
     /**
@@ -58,7 +58,7 @@ class Model_Article extends ORM {
      */
     public function flag()
     {
-        return array('active');
+        return ['active'];
     }
 
     /**
@@ -67,6 +67,6 @@ class Model_Article extends ORM {
      */
     public function img()
     {
-        return array('preview_img' => array(105, 105));
+        return ['preview_img' => [105, 105]];
     }
 }

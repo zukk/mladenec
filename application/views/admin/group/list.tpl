@@ -2,10 +2,10 @@
     Раздел:&nbsp;<select name="section_id">
         <option value="0">Все</option>
         {foreach from=$sections item=s}
-            <option value="{$s['id']}" disabled="disabled">{$s['name']}</option>
-            {if ! empty($s['children'])}
-                {foreach from=$s['children'] item=sub}
-                    <option {if $smarty.get.section_id|default:'' eq $sub->id}selected="selected"{/if} value="{$sub->id}">{$s['name']}::{$sub->name}</option>
+            <option value="{$s->id}" disabled="disabled">{$s->name}</option>
+            {if ! empty($s->children)}
+                {foreach from=$s->children item=sub}
+                    <option {if $smarty.get.section_id|default:'' eq $sub->id}selected="selected"{/if} value="{$sub->id}">{$s->name}::{$sub->name}</option>
                 {/foreach}
             {/if}
         {/foreach}

@@ -50,7 +50,7 @@ fwrite($fp,'</categories>
 $goods_written = 0;
 
 define( 'EXPORTXML_SEX', 1951 );
-define( 'EXPORTXML_COLOR', 1952 );
+define( 'EXPORTXML_COLOR', 1952 ); 
 define( 'EXPORTXML_SIZE', 1949 );
 define( 'EXPORTXML_GROWTH', 1950 );
 
@@ -109,10 +109,11 @@ foreach( $goodFilters as $type => $filters ){
 }
 
 $goodFiltersIds = [];
-
+$image_types = 'originals';
 for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size,$heap_number);$heap_number++) {
 	$c = 0;
 	
+    $good_ids = [];
     foreach($goods as &$g) {
 		if ($id2Catalog[$g['section_id']]->parent_id > 0){
 			$section = $id2Catalog[$id2Catalog[$g['section_id']]->parent_id];
@@ -123,9 +124,10 @@ for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size,$heap_number);$he
 
 		$g['real_section'] = $section->id;
 
-		if( $section->export_type > 0 ){
-			$goodFiltersIds[$section->export_type][] = $g['id'];
+		if( $section->is_cloth()){
+			$goodFiltersIds[1][] = $g['id'];
 		}
+                $good_ids[] = $g['id'];
 	}
 	unset( $g );
 
@@ -158,7 +160,8 @@ for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size,$heap_number);$he
 			$result->next();
 		}
 	}
-
+       
+        $images = Model_Good::many_images([$image_types], $good_ids);  
     foreach($goods as &$g) {
 		
 		// Если одновременно мальчик-девочка, то пол не передаем
@@ -183,9 +186,20 @@ for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size,$heap_number);$he
 			}
 			unset( $valuesIds );
 		}
-		
+        
+        //подготовка изображений   
+        $good_images = [];
+        if( isset($images[$g['id']][$image_types]) && 
+            count($images[$g['id']][$image_types]) > 0 ) {    
+            //загрузка только 1 фото на товар
+            $good_images[] = array_pop($images[$g['id']][$image_types]); 
+        } elseif($g['img1600']!='') {            
+            $good_images[] = ORM::factory('file', $g['img1600']);
+        }
+        
         fwrite($fp, View::factory('smarty:page/export/yml/good', array(
 			'g' => $g, 
+            'images' => $good_images,
 			'section' => $id2Catalog[$g['real_section']], 
 			'filter_labels' => $goodFiltersLabels,
 			'good_filter' => !empty( $goodFiltersV[$g['id']] ) ? $goodFiltersV[$g['id']] : [],

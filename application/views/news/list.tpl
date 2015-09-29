@@ -1,5 +1,9 @@
-<div id="breadcrumb">
-    <a href="/">Главная</a> |
+<div id="breadcrumb"> 
+    <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+        <a href="/" itemprop="url" title="На главную"><span itemprop="title">Главная</span></a>
+    </span>
+    &rarr;
+    <span>Новости</span>
 </div>
 
 <div id="simple">

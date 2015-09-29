@@ -46,9 +46,3 @@
         </div>
     </div>
 </div>
-
-{if empty($is_kiosk)}
-    {literal}
-        <!-- Put specific counters and chats here -->
-    {/literal}
-{/if}

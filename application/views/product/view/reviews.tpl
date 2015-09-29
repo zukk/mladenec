@@ -1,12 +1,17 @@
 {foreach from=$comments item=c name=c}
 {if $smarty.foreach.c.index lt 5}
-<div>
+<div vocab="http://schema.org/" typeof="Review">
     <div class="data">
-        <strong class="review-data-name">{$c->author->name|default:'Аноним'}</strong>
+        <strong class="review-data-name" itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">{$c->author->name|default:'Аноним'}</span></strong>
 
         {if ! empty($params[$c->id]['me'])} ({$params[$c->id]['me']}) {/if}
 
         <span class="stars"><span style="width:{$c->rating*20}%"></span></span>
+        {if $c->rating neq 0}
+        <span itemprop="reviewRating" itemscope itemtype="http://schema.org/Rating">
+        <meta itemprop="ratingValue" content="{$c->rating}" />
+        </span>
+        {/if}
 
         {if ! empty($params[$c->id][1])}
             <div class="good">
@@ -42,5 +47,5 @@
 {/foreach}
 
 {if ! empty($has_more)}
-<a class="do" rel="{$has_more}" id="load_reviews">Загрузить ещё отзывы</a>
+<a class="do{if isset($is_quickview) AND $is_quickview} quickview{/if}" rel="{$has_more}" id="load_reviews">Загрузить ещё отзывы</a>
 {/if}

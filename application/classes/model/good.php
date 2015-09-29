@@ -30,6 +30,7 @@ class Model_Good extends ORM {
     const PAMPERS_SECTION = 29798;
     const PAMPERS_BRAND = 51566;
     const OZON_MIN_QTY = 5;
+    const SBORKA_ID1C = 'Uslug1790014'; // 50055179; // код товара - услуга сборки КГТ
 
     const TYPE_PRICE_DEFAULT = 0;
     const TYPE_PRICE_LK      = 1;
@@ -39,8 +40,7 @@ class Model_Good extends ORM {
     public $total = 0; // FOR CART сумма денег заказано
     public $order_comment = ''; // FOR CART комментарий к товару
 
-    public $grouped = 0; // for search - число товаров в группе падает в этот параметр для товаров - групп
-    public $same_price = FALSE; // for search - флаг единой цены для товаров - групп
+    public $grouped = 1; // for search - число товаров в группе падает в этот параметр для товаров - групп
 
     protected $_table_name = 'z_good';
 	public $totalFrequently = 0;
@@ -49,6 +49,7 @@ class Model_Good extends ORM {
         'group' => array('model' => 'group', 'foreign_key' => 'group_id'),
         'section' => array('model' => 'section', 'foreign_key' => 'section_id'),
         'brand' => array('model' => 'brand', 'foreign_key' => 'brand_id'),
+        'country' => array('model' => 'country', 'foreign_key' => 'country_id'),
         'promo' => array('model' => 'promo', 'foreign_key' => 'promo_id'),
         'img' => array('model' => 'file', 'foreign_key' => 'image')
     );
@@ -57,6 +58,7 @@ class Model_Good extends ORM {
     );
 
     protected $_has_many = array(
+        'text' => array('model' => 'good_text', 'foreign_key' => 'good_id'),
         'reviews' => array('model' => 'good_review', 'foreign_key' => 'good_id'),
         'imgs' => array('model' => 'file', 'through' => 'z_good_img', 'foreign_key' => 'good_id', 'far_key' => 'file_id'),
         'filters' => array('model' => 'filter_value', 'through' => 'z_good_filter', 'foreign_key' => 'good_id', 'far_key' => 'value_id'),
@@ -72,7 +74,8 @@ class Model_Good extends ORM {
         'translit'        => '', 
         'section_id'      => '', 
         'brand_id'        => '', 
-        'group_id'        => '', 
+        'group_id'        => '',
+        'country_id'      => '',
         'active'          => '', // активность [0] - 404, [1] - продаем, [2] - показываем но не продаем, нет в поиске
         'order'           => 0, 
         'image'           => '', 
@@ -87,8 +90,10 @@ class Model_Good extends ORM {
         'price_ts'        => '', // int Время последнего изменения базовой цены  UNIX_TIMESTAMP
         'price_sale_from' => '', // int Время начала действия цены распродажи UNIX_TIMESTAMP
         'price_sale_to'   => '', // int Время конца действия цены распродажи UNIX_TIMESTAMP
-        'pack'            => '', 
-        'rating'          => '', 
+        'nds'             => '', // Размер ставки НДС для данного товара 
+        'pack'            => '',
+        'per_pack'        => '', // число штук в пачке (для подгузов)
+        'rating'          => '',
         'review_qty'      => '', 
         'qty'             => '', 
         'popularity'      => '', 
@@ -106,7 +111,7 @@ class Model_Good extends ORM {
 
     public function events()
     {
-        $events = array();
+        $events = [];
         
         if ( ! $this->pk()) $events[Model_Event::T_GOOD_ADD] = '';
         
@@ -195,7 +200,8 @@ class Model_Good extends ORM {
      * Пересчет количества активных отзывов
      * @return int
      */
-    public function review_count() {
+    public function review_count()
+    {
         $this->review_qty = DB::select(DB::expr('count(`id`) as `cnt`'))
             ->from('z_good_review')
             ->where('good_id', '=', $this->id)
@@ -253,6 +259,10 @@ class Model_Good extends ORM {
      */
     public static function refresh()
     {
+//        passthru('indexer --rotate --all', $return); // переиндексация
+
+//        Database::instance()->begin();
+
         DB::query(Database::INSERT, '
             INSERT IGNORE INTO z_group(id, active, min_price, max_price, image, good_id, brand_id, qty)
             SELECT group_id, MAX(IF(active = 1, 1, 0)), MIN(price), MAX(price), img255, MAX(IF(`show`, z_good.id, 0)), MAX(IF(active = 1, z_good.brand_id, 0)), SUM(active)
@@ -284,26 +294,45 @@ class Model_Good extends ORM {
         ')->execute();
 
         // пересчитать рейтинг и отзывы товаров и групп
+        DB::query(Database::UPDATE, "UPDATE z_good SET rating = 0, review_qty = 0")->execute();
         DB::query(Database::INSERT, 'INSERT INTO z_good (rating, review_qty, id)
             SELECT AVG(z_good_review.rating) as r, count(z_good_review.id) as q, good_id
               FROM z_good_review
               JOIN z_good ON (z_good.id = good_id)
-            WHERE good_id > 0 AND z_good.active = 1 AND z_good_review.active = 1 AND z_good_review.rating > 0
+            WHERE good_id > 0 AND z_good_review.active = 1 AND z_good_review.rating > 0
               GROUP BY good_id
             ON DUPLICATE KEY UPDATE
               z_good.rating = VALUES(rating),
               z_good.review_qty = VALUES(review_qty)
         ')->execute();
 
-
+        DB::query(Database::UPDATE, "UPDATE z_group SET rating = 0, review_qty = 0")->execute();
         DB::query(Database::INSERT, 'INSERT INTO z_group(id, rating, review_qty)
           SELECT group_id, AVG(rating), SUM(review_qty)
             FROM `z_good`
-          WHERE rating > 0 AND active = 1
-            GROUP BY group_id
+          WHERE rating > 0 AND (z_good.big = 1 OR z_good.section_id IN
+            (
+              SELECT id FROM z_section WHERE active = 1 AND parent_id = '.Model_Section::CLOTHS_ROOT.'
+            )
+          )
+          GROUP BY group_id
+
           ON DUPLICATE KEY UPDATE rating = VALUES(rating), review_qty = VALUES(review_qty)
         ')->execute();
-        
+
+        // прописываем всем товарам как группе
+        DB::query(Database::INSERT, 'INSERT INTO z_good(id, rating, review_qty)
+          SELECT g.id, gr.rating, gr.review_qty
+            FROM z_good g
+            LEFT JOIN z_group gr ON (g.group_id = gr.id)
+          WHERE (g.big = 1 OR g.section_id IN
+            (
+              SELECT id FROM z_section WHERE active = 1 AND parent_id = '.Model_Section::CLOTHS_ROOT.'
+            )
+          )
+          ON DUPLICATE KEY UPDATE rating = VALUES(rating), review_qty = VALUES(review_qty)
+        ')->execute();
+
         // чистка старых новинок
         DB::query(Database::UPDATE, 'UPDATE  z_good g, z_good_prop gp
             SET g.new = 0, gp.new_till = NULL
@@ -328,6 +357,8 @@ class Model_Good extends ORM {
           WHERE g.show = 1 AND g.qty != 0
             GROUP BY g.id'
         )->execute();
+
+//        Database::instance()->commit();
 
         // Перерасчет данных акций
         $current_user = Model_User::i_robot();
@@ -365,7 +396,7 @@ class Model_Good extends ORM {
      * @param $doc_id
      * @return object
      */
-    public function set_status_price($status_id, $price, $doc_id)
+    public function set_status_price($status_id, $price, $doc_id = 0)
     {
         return DB::query(Database::INSERT, sprintf("
             INSERT INTO z_price (good_id, status_id, price)
@@ -434,35 +465,77 @@ class Model_Good extends ORM {
      * @param array $ids
      * @return array
      */
-    public static function many_images($sizes = array(255), array $ids) {
+    public static function many_images($sizes = array(255), array $ids = [], $all_photos = false) {
 
         $return = array();
         if (empty($ids)) return $return;
+        
+        if(in_array('originals', $sizes)) {
+            $files = ORM::factory('file')->where('MODULE_ID', '=', 'Model_Good')->where('DESCRIPTION','IN',$ids)->find_all()->as_array('ID');
+            if (empty($files)) return $return;
+
+            foreach ($files as $file_id => $data) {
+                $return[$data->DESCRIPTION]['originals'][] = $data;
+            }
+            
+            //id товаров без оригиналов
+            $not_found = array_diff($ids, array_keys($return));
+            if(count($not_found)==0) return $return;
+            
+            $imgs = DB::select()
+                ->from('z_good_prop')                    
+                ->where('id', 'IN', $not_found)
+                ->execute()
+                ->as_array('img500');            
+            if (empty($imgs))
+                return $return;
+            
+            $files = ORM::factory('file')->where('ID', 'IN', array_keys($imgs))->find_all()->as_array('ID');
+            
+            if (empty($files))
+                return $return;
+            
+            foreach ($imgs as $file_id => $data) {
+                if (!empty($files[$file_id])) {
+                    $return[$data['id']]['originals'][] = $files[$file_id];
+                }
+            }
+            
+            return $return;
+        }
 
         // получить все прикрепленные картинки id => size
         $imgs = DB::select()
-            ->from('z_good_img')
-            ->where('good_id', 'IN', $ids)
-            ->where('size', 'IN', $sizes)
-            ->order_by('file_id','DESC')
-            ->execute()
-            ->as_array('file_id');
+                ->from('z_good_img')
+                ->where('good_id', 'IN', $ids)
+                ->where('size', 'IN', $sizes)
+                ->order_by('file_id', 'DESC')
+                ->execute()
+                ->as_array('file_id');
 
-        if (empty($imgs)) return $return;
+        if (empty($imgs))
+            return $return;
 
         // Получить все объекты кучей
         $files = ORM::factory('file')->where('ID', 'IN', array_keys($imgs))->find_all()->as_array('ID');
-        if (empty($files)) return $return;
 
-        foreach($imgs as $file_id => $data) {
-            if ( ! empty($files[$file_id])) {
-                $return[$data['good_id']][$data['size']] = $files[$file_id];
+        if (empty($files))
+            return $return;
+
+        foreach ($imgs as $file_id => $data) {
+            if (!empty($files[$file_id])) {
+                if (!$all_photos) {
+                    $return[$data['good_id']][$data['size']] = $files[$file_id];
+                } else {
+                    $return[$data['good_id']][$data['size']][] = $files[$file_id];
+                }
             } // Если картинки нет то в следующем цикле вставится заглушка
         }
 
-        foreach($ids as $good_id) { // fill empty images if any
-            foreach($sizes as $size) {
-                if (empty($return[$good_id][$size])) $return[$good_id][$size] = new Model_File();
+        foreach ($ids as $good_id) { // fill empty images if any
+            foreach ($sizes as $size) {
+                if (empty($return[$good_id][$size]))
+                    $return[$good_id][$size] = new Model_File();
             }
         }
         return $return;
@@ -576,151 +649,6 @@ class Model_Good extends ORM {
 
         return ORM::factory('good')->with('prop')->where('good.id', 'IN', $page_ids)->where('show', '=', 1)->where('qty', '!=', 0)->find_all()->as_array('id');
     }
-    
-    /**
-     * Получить страницу товаров c суперценами
-     * @static
-     * @param $total
-     * @param $page
-     * @param int $per_page
-     * @return array|bool
-     */
-    public static function get_superprice(&$total, &$page, $per_page = Pager::PER_PAGE)
-    {
-        $cache = Cache::instance();
-
-        $superprice = $cache->get('good_superprice'); // кэшируем список id новых товаров на час
-        if ($superprice) {
-            $ids = unserialize($superprice);
-        } else {
-            $ids = DB::select('z_good.id')
-                ->from('z_good')
-                    ->where('z_good.show', '=', 1)
-                    ->where('z_good.qty', '>', 0)
-                ->join('z_good_prop')
-                    ->on('z_good.id', '=', 'z_good_prop.id')
-                    ->where('z_good_prop.superprice', '=', '1')
-                ->join('z_group')
-                    ->on('z_good.group_id', '=', 'z_group.id')
-                    ->where('z_group.active', '=', '1')
-                ->join('z_section')
-                    ->on('z_good.section_id', '=', 'z_section.id')
-                    ->where('z_section.active', '=', '1')
-                ->execute()
-                ->as_array('id', 'id');
-
-            $cache->set('good_superprice', serialize($ids), 3600);
-        }
-
-        $total = count($ids);
-        if ( ! $total) return FALSE;
-
-        $page_ids = Txt::cycle_page($page, $per_page, $ids);
-        if (empty($page_ids)) return FALSE;
-
-        return ORM::factory('good')->with('prop')->where('good.id', 'IN', $page_ids)->find_all()->as_array('id');
-    }
-    /**
-     * Получить страницу новых товаров
-     * @static
-     * @param $total
-     * @param $page
-     * @param int $per_page
-     * @return array|bool
-     */
-    public static function get_new(&$total, $page, $per_page = Pager::PER_PAGE)
-    {
-        // если Вконтакте - меняем витрину на первую в списке
-        $vitrina = VK_APP_SERVER_NAME == Kohana::$server_name ? key(Kohana::$hostnames) : Kohana::$server_name;
-
-        $cache = Cache::instance();
-        $cache_key = $vitrina.'.new';
-
-        $new = $cache->get($cache_key); // кэшируем список id новых товаров на час
-        $new = null;
-        if ($new) {
-            $ids = unserialize($new);
-        } else {
-            
-            $q = DB::select('z_good.id')
-                ->from('z_good')
-                    ->where('z_good.show', '=', 1)
-                    ->where('z_good.image', '>', 0)
-                    ->where('z_good.qty', '!=', 0)
-                    ->where('z_good.new', '=', '1')
-                ->join('z_group')
-                    ->on('z_good.group_id', '=', 'z_group.id')
-                    ->where('z_group.active', '=', '1')
-                ->join('z_section')
-                    ->on('z_good.section_id', '=', 'z_section.id')
-                    ->where('z_section.active', '=', '1')
-                    ->where('z_section.vitrina', '=', $vitrina);
-
-            $ids = $q->execute()
-                ->as_array('id', 'id');
-
-            $cache->set($cache_key, serialize($ids), 3600);
-        }
-
-        $total = count($ids);
-        if ( ! $total) return FALSE;
-
-        $page_ids = Txt::cycle_page($page, $per_page, $ids);
-        if (empty($page_ids)) return FALSE;
-
-        return ORM::factory('good')->with('prop')->where('good.id', 'IN', $page_ids)->find_all()->as_array('id');
-    }
-
-    /**
-     * Получить страницу распродажных товаров
-     * @static
-     * @param $total
-     * @param $page
-     * @param int $per_page
-     * @return array|bool
-     */
-    public static function get_sale(&$total, &$page, $per_page = Pager::PER_PAGE)
-    {
-        $cache = Cache::instance();
-
-        $vitrina = VK_APP_SERVER_NAME == Kohana::$server_name ? key(Kohana::$hostnames) : Kohana::$server_name;
-        $cache_key = $vitrina.'.sale';
-
-        $sale = $cache->get($cache_key); // кэшируем список id новых товаров
-
-        if ($sale) {
-
-            $ids = unserialize($sale);
-
-        } else {
-
-            $q = DB::select('z_good.id')
-                ->from('z_good')
-                    ->where('z_good.show', '=', 1)
-                    ->where('z_good.old_price', '>', 0)
-                    ->where('z_good.qty', '>', 0)
-                ->join('z_group')
-                    ->on('z_good.group_id', '=', 'z_group.id')
-                    ->where('z_group.active', '=', '1')
-                ->join('z_section')
-                    ->on('z_good.section_id', '=', 'z_section.id')
-                    ->where('z_section.active', '=', '1')
-                    ->where('z_section.vitrina', '=', $vitrina);
-
-            $ids = $q->execute()
-                ->as_array('id', 'id');
-
-            $cache->set($cache_key, serialize($ids), 3600);
-        }
-
-        $total = count($ids);
-        if ( ! $total) return FALSE;
-
-        $page_ids = Txt::cycle_page($page, $per_page, $ids);
-        if (empty($page_ids)) return FALSE;
-
-        return ORM::factory('good')->with('prop')->where('good.id', 'IN', $page_ids)->find_all()->as_array('id');
-    }
 
     /**
      *  Получить товары, участвующие в промоакции вместе с этим
@@ -792,7 +720,7 @@ class Model_Good extends ORM {
 
     /**
      * @param bool $only_active
-     * @return Model_Promo
+     * @return Model_Promo[]
      */
     public function get_promos($only_active = FALSE) {
         $promos = array();
@@ -893,30 +821,38 @@ class Model_Good extends ORM {
      * @throws Exception
      * @return bool
      */
-    public function get_frequent($page = 1, $per_page = 5)
-    {
-        if ( ! $this->id) throw new Exception('Cannot get frequent for no object');
+    public function get_frequent($page = 1, $per_page = 5) {
+        if (!$this->id)
+            throw new Exception('Cannot get frequent for no object');
 
         $cache = Cache::instance();
-        $key = 'frequent.'.$this->id;
+        $key = 'frequent.' . $this->id;
 
         $page_ids = $cache->get($key);
-        if ( ! $page_ids OR TRUE) {
-            $more = DB::select('min_good_id', 'qty')
-                ->from('z_good_good')
-                    ->where('max_good_id', '=', $this->id)
-                    ->order_by('qty', 'DESC')
+        if (!$page_ids OR TRUE) {
+            $more = DB::select('gg.min_good_id', 'gg.qty')
+                    ->from(array('z_good_good', 'gg'))               
+                    ->join(array('z_good', 'g'), 'LEFT')
+                    ->on('gg.min_good_id', '=', 'g.id')
+                    ->where('gg.max_good_id', '=', $this->id)
+                    ->where('g.show', '=', 1)
+                    ->where('g.qty', '!=', 0)
+                    ->order_by('gg.qty', 'DESC')
                     ->limit(100)
-                ->execute()
-                ->as_array('min_good_id', 'qty');
+                    ->execute()
+                    ->as_array('min_good_id', 'qty');
 
-            $less = DB::select('max_good_id', 'qty')
-                ->from('z_good_good')
+            $less = DB::select('gg.max_good_id', 'gg.qty')
+                    ->from(array('z_good_good', 'gg'))                    
+                    ->join(array('z_good', 'g'), 'LEFT')
+                    ->on('gg.max_good_id', '=', 'g.id')
                     ->where('min_good_id', '=', $this->id)
-                    ->order_by('qty', 'DESC')
+                    ->where('g.show', '=', 1)
+                    ->where('g.qty', '!=', 0)
+                    ->order_by('gg.qty', 'DESC')
                     ->limit(100)
-                ->execute()
-                ->as_array('max_good_id', 'qty');
+                    ->execute()
+                    ->as_array('max_good_id', 'qty');
 
             $frequent = $more + $less;
             arsort($frequent);
@@ -926,37 +862,29 @@ class Model_Good extends ORM {
         }
 
         $total = count($page_ids);
-		$this->totalFrequently = $total;
-		
-		if ( ! $total) return FALSE;
+        $this->totalFrequently = $total;
+
+        if (!$total)
+            return FALSE;
         $offset = (($page - 1) * $per_page + $total) % $total;
-        if ($offset < 0) { $offset = $total + $offset; }
+        if ($offset < 0) {
+            $offset = $total + $offset;
+        }
         $slice_ids = array_slice($page_ids, $offset, $per_page);
         $found = count($slice_ids);
         if ($found < $per_page) {
             $slice_ids = array_merge($slice_ids, array_slice($page_ids, 0, $per_page - $found));
         }
 
-        if (empty($slice_ids)) return FALSE;
+        if (empty($slice_ids))
+            return FALSE;
 
-		
         $return = ORM::factory('good')->with('prop')
-            ->where('show', '=', 1)
-            ->where('qty', '!=', 0)
-            ->where('good.id', 'IN', $slice_ids)
-            ->find_all()
-            ->as_array('id');
-		
-		if( count( $return ) < 5 && $this->section_id ){
-			
-			$sec_id = $this->section_id;
-			if( $this->section->parent_id ){
-				$sec_id = $this->section->parent_id;
-			}
-			$return += array_slice(Model_Good::get_hitz($sec_id), 0, 5 - count( $return ));
-		}
-		
-		return $return;
+                ->where('good.id', 'IN', $slice_ids)
+                ->find_all()
+                ->as_array('id');
+
+        return $return;
     }
 
     /**
@@ -985,7 +913,7 @@ class Model_Good extends ORM {
      * @param array $where - доп условия
      * @return boolean
      */
-    public static function for_yml($heap_size, $heap_number, $where = NULL)
+    public static function for_yml($heap_size, $heap_number, $where = NULL, $ya = TRUE)
     {
         $active_top_sections = DB::select('z_section.id')
                 ->from('z_section')
@@ -993,23 +921,24 @@ class Model_Good extends ORM {
                 ->where('active','=',1)
                 ->execute()->as_array();
         
-        $query = DB::select('good.*', 'file.SUBDIR', 'file.FILE_NAME','prop.img1600','prop.desc',
+        $query = DB::select('good.*', 'file.SUBDIR', 'file.FILE_NAME','prop.img1600','prop.img500','prop.desc',
                 array('brand.name','brand_name'),
-                array('section.name','section_name')
+                array('section.name','section_name'),
+                array('section.market_category','market_category')
             )->from(array('z_good', 'good'))
 
-                ->join(array('z_good_prop',   'prop'))    ->on('good.id',         '=', 'prop.id'   )
-                ->join(array('z_brand',       'brand'))   ->on('good.brand_id',   '=', 'brand.id'  )
-                ->join(array('z_section',     'section')) ->on('good.section_id', '=', 'section.id')
-                ->join(array('z_group',       'group'))   ->on('good.group_id',   '=', 'group.id'  )
-                ->join(array('b_file',        'file'))    ->on('prop.img1600',     '=', 'file.id'   )
+                ->join(['z_good_prop',   'prop'])    ->on('good.id',         '=', 'prop.id')
+                ->join(['z_brand',       'brand'])   ->on('good.brand_id',   '=', 'brand.id')
+                ->join(['z_section',     'section']) ->on('good.section_id', '=', 'section.id')
+                ->join(['z_group',       'group'])   ->on('good.group_id',   '=', 'group.id')
+                ->join(['b_file',        'file'])    ->on('prop.img1600',     '=', 'file.id')
                 
                 ->where('good.show',      '=', 1)
                 ->where('good.qty', '!=', '0')
                 ->where('good.section_id',  '>', 0)
                 ->where('good.brand_id',    '>', 0)
                 ->where('good.group_id',    '>', 0)
-                ->where('prop.to_yandex',   '!=',0)
+
                 ->where('prop.img1600',     '>', 0)
                 ->where('section.active',   '=', 1)
                 ->where_open()
@@ -1023,6 +952,10 @@ class Model_Good extends ORM {
 
         if ( ! empty($where)) {
             foreach($where as $w) $query->where($w[0], $w[1], $w[2]);
+        }
+        if ($ya) {
+         // $query->where('prop.to_yandex', '!=', 0);
+		//	$query->where('good.big','=', 0);
         }
         $goods = $query->execute()->as_array('id');
 
@@ -1038,21 +971,31 @@ class Model_Good extends ORM {
     public function is_advert_hidden()
     {
         // Товар в нужной секции?
-        if ( '29065' === $this->section_id) {
+        if ($this->section_id == 29065) {
             //загрузить фильтры
             $filters = Cache::instance('memcache')->get('good_advert_hidden');
             if ( empty($filters)) {
                 $filters = DB::select('good_id')
-                        ->from('z_good_filter')
-                        ->where('filter_id','=',1467)
-                        ->where('value_id','IN',array(13097,13098,13100,13101,13102))
-                        ->execute()->as_array('good_id');
+                    ->from('z_good_filter')
+                    ->where('filter_id', '=', 1467)
+                    ->where('value_id', 'IN', [13097, 13098, 13100, 13101, 13102])
+                    ->execute()
+                    ->as_array('good_id');
             }
             if ( ! empty($filters[$this->id])) return TRUE;   
         }
         return FALSE;
     }
-    
+
+    /**
+     * Может ли к товару быть заказана бесплатная сборка
+     */
+    public function sborkable()
+    {
+        return FALSE; // отключено до выяснения финансового результата
+        // in_array($this->section_id, [32129, 50752, 30025]); // кровати, комоды, шкафы
+    }
+
     /**
      * Проверить, готова ли карточка товара к выгрузке на Озон
      * 
@@ -1096,6 +1039,17 @@ class Model_Good extends ORM {
         $request = Request::current();
 
 		$prop = $request->post('prop');
+
+        // { сохранение текстов вкладок
+        $text = $request->post('good_text');
+        if ( ! empty($text)) {
+            $ins_text = DB::insert('z_good_text', ['good_id', 'name', 'content']);
+            foreach ($text as $name => $content) {
+                $ins_text->values(['good_id' => $this->id, 'name' => $name, 'content' => $content]);
+            }
+            DB::query(Database::INSERT, $ins_text . ' ON DUPLICATE KEY UPDATE content = VALUES(content)')->execute();
+        }
+        // }
 
 		if (method_exists($this->prop, 'flag')) {  // reset checkboxes if no value only
 			foreach($this->prop->flag() as $f) {
@@ -1300,7 +1254,7 @@ class Model_Good extends ORM {
      */
     public function can_appear()
     {
-		return time() > ( ( $this->prop->last_seen > 0 ? strtotime($this->prop->last_seen): time() ) + 90 * 24 * 60 * 60);
+		return time() - strtotime($this->prop->last_seen) <  90 * 24 * 60 * 60;
 	}
 
     /**
@@ -1322,7 +1276,7 @@ class Model_Good extends ORM {
      * @return array
      * @throws Kohana_Exception
      */
-    public function analogy()
+    public function analogy( $limit = 5 )
     {
 		foreach ($this->filters_data() as $k => $v) {
 			if ( ! $this->is_cloth() || in_array($v['filter_id'], [Controller_Product::FILTER_TYPE])) { // если одежда, то подбираем только тип
@@ -1341,12 +1295,12 @@ class Model_Good extends ORM {
                 ->where('fvalue', 'IN', $fdata)
                 ->where('brand_id', '=' , intval($this->brand_id))
                 ->order_by('popularity', 'DESC')
-                ->limit(5);
+                ->limit($limit);
 
             $goods = array_merge($goods, Database::instance('sphinx')->query(Database::SELECT, $q)->as_array('id', 'id'));
 
             $found = count($goods);
-            if ($found < 5 ) { // добиваем товарами других брендов
+            if ($found < $limit ) { // добиваем товарами других брендов
 
                 $q = DB::select('id')
                     ->from('goods_zukk')
@@ -1355,38 +1309,37 @@ class Model_Good extends ORM {
                     ->where('fvalue', 'IN', $fdata)
                     ->where('brand_id', '!=' , intval($this->brand_id))
                     ->order_by('popularity', 'DESC')
-                    ->limit(5 - $found);
+                    ->limit($limit - $found);
 
                 $goods = array_merge($goods, Database::instance('sphinx')->query(Database::SELECT, $q)->as_array('id', 'id'));
             }
         }
 
         $found = count($goods);
-        if ($found < 5) { // добиваем товарами из группы
+        if ($found < $limit) { // добиваем товарами из группы
             $q = DB::select('id')
                 ->from('goods_zukk')
                 ->where('x', '=', 1)
                 ->where('group_id', '=', intval($this->group_id))
-                ->limit(5 - $found);
+                ->limit($limit - $found);
 
             $goods = array_merge($goods, Database::instance('sphinx')->query(Database::SELECT, $q)->as_array('id', 'id'));
         }
 
         $found = count($goods);
-        if ($found < 5) { // добиваем товарами из категории
+        if ($found < $limit) { // добиваем товарами из категории
             $q = DB::select('id')
                 ->from('goods_zukk')
                 ->where('x', '=', 1)
                 ->where('section_id', '=', intval($this->section_id))
-                ->limit(5 - $found);
+                ->limit($limit - $found);
 
             $goods = array_merge($goods, Database::instance('sphinx')->query(Database::SELECT, $q)->as_array('id', 'id'));
         }
 
-		if( empty( $goods ) )
-			return false;
-		else
-			return ORM::factory('good')->where('id', 'IN', $goods)->find_all()->as_array('id');
+		if (empty($goods)) return FALSE;
+
+		return ORM::factory('good')->where('id', 'IN', $goods)->find_all()->as_array('id');
 	}
 
     /**
@@ -1409,6 +1362,7 @@ class Model_Good extends ORM {
                 ->join(array('z_filter',   'f'))    
 					->on('f.id', '=', 'r.filter_id'   )
 				->where('good_id', '=' , $this->id)
+                ->where('f.id', '!=', Model_Filter::WEIGHT)
                     ->order_by('f.sort', 'DESC')
                     ->order_by('v.sort', 'ASC')
                 ->execute()
@@ -1433,7 +1387,7 @@ class Model_Good extends ORM {
 
 		if ( ! empty($result)) {
             foreach($result as $vf) {
-                if( ! empty( $section ) && empty( $section->settings['list'] ) && ! empty( $section->settings['list_filter'] ) && $vf['filter_id'] == $section->settings['list_filter'] ) continue;
+                if( ! empty( $section ) && empty( $section->settings['list'] ) && ! empty( $section->settings['sub_filter'] ) && $vf['filter_id'] == $section->settings['sub_filter'] ) continue;
                 $return[$vf['filter_name']][] = $vf['value_name'];
             }
         }
@@ -1486,64 +1440,138 @@ class Model_Good extends ORM {
     }
     
     /**
-     * Получить ид фильтров подходящих для товаров памперс
-     * @param bool $fv - получать также фильтры и значения
-     * @return array (filters => IDS, values => IDS, goodids => IDS)
+     * Получить id товаров памперс
+     * @return []
      */
-    public static function get_pampers($fv = TRUE)
+    public static function get_pampers()
     {
         $good_ids = DB::select('id')
             ->from('z_good')
             ->where('brand_id', '=', self::PAMPERS_BRAND)
             ->where('section_id', '=', self::PAMPERS_SECTION)
             ->where('show', '=', 1)
+            ->where('active', '=', 1)
+            ->where('qty', '!=', 0)
             ->execute()
             ->as_array('id', 'id');
 
-        if ($fv === FALSE) return $good_ids;
-
-        $matched = DB::select('filter_id', 'value_id')
-            ->from('z_good_filter')
-            ->where('good_id', 'IN', $good_ids)
-            ->execute()
-            ->as_array();
-
-        $filters = array();
-        $values = array();
-        foreach($matched as $fv) {
-            $filters[$fv['filter_id']] = $fv['filter_id'];
-            $values[$fv['value_id']] = $fv['value_id'];
-        }
-
-        return array($filters, $values, $good_ids);
+        return $good_ids;
     }
 
     /**
-     * Получить хиты продаж
+     * Получить 5 хитов продаж, исключить те что не в наличии, заменить заменами если есть замены
      * @param $section_id
+     * @param $admin
      * @return Model_Good[]
      */
-    static function get_hitz($section_id = NULL)
+    static function get_hitz($section_id, $admin = FALSE)
     {
-        $query = DB::select('good_id', 'section_id')->from('z_hit');
-        if ($section_id) {
-            $query->where('section_id', '=', $section_id);
-        }
-        $r = $query->execute()->as_array('good_id', 'section_id');
+        $r = DB::select('good_id', 'sort')
+            ->from('z_hit')
+            ->where('section_id', '=', $section_id)
+            ->order_by('sort')
+            ->execute()
+            ->as_array('sort', 'good_id');
 
-		if( empty( $r ) ){
-			return array();
-		}
-		
-        $goods = ORM::factory('good')->where('id', 'IN', array_keys($r))->find_all()->as_array('id');
-        if ($section_id) return $goods;
+        $goods_q = ORM::factory('good')->where('id', 'IN', $r);
 
-        // возврат хитов в массиве по категориям
-        $return = array();
-        foreach($r as $good_id => $section_id) {
-            $return[$section_id][$good_id] = $goods[$good_id];
+        if ( ! $admin) {
+            $goods_q
+                ->where('show', '!=', 0)
+                ->where('qty', '!=', 0);
         }
+
+        $goods = $goods_q->find_all()->as_array('id');
+
+        $return = $add = $used = [];
+
+        if ($admin) {
+
+            foreach($r as $k => $good_id) {
+                $return[$k] = $goods[$good_id] ? $goods[$good_id] : FALSE;
+            }
+            return $return;
+        }
+
+        for($i = 1; $i <= 5; $i++) {
+            $gid = $gid2 = 0;
+            if ( ! empty($r[$i])) $gid = $r[$i]; // хит
+            if ( ! empty($r[$i + 5])) $gid2 = $r[$i + 5]; // замена
+            if ( ! empty($gid) && ! empty($goods[$gid])) { // основной хит есть
+                $return[$i] = $goods[$gid];
+                $used[] = $gid;
+            } elseif ( ! empty($gid2) && ! empty($goods[$gid2])) { // замена есть
+                $return[$i] = $goods[$gid2];
+                $used[] = $gid2;
+            } else {
+                $add[] = $i; // надо будет добавить хит
+            }
+        }
+
+        if ( ! empty($add)) { // добавим хитов
+
+            $sidz = DB::select('id')
+                ->from('z_section')
+                ->where('parent_id', '=', $section_id)
+                ->where('active', '=', 1)
+                ->execute()
+                ->as_array('id', 'id');
+
+            if ( ! empty($sidz)) {
+                $q = DB::select('id')->from('goods_zukk')
+                    ->where('section_id', 'IN', array_map('intval', $sidz))
+                    ->where('x', '=', 1)
+                    ->order_by('popularity', 'DESC')
+                    ->limit(5 - count($used));
+
+                if ( ! empty($used)) $q->where('id', 'NOT IN', array_map('intval', $used));
+
+                $ids = Database::instance('sphinx')
+                    ->query(Database::SELECT, $q)
+                    ->as_array('id', 'id');
+
+                if ( ! empty($ids)) {
+                    $goods = ORM::factory('good')->where('id', 'IN', $ids)->find_all()->as_array();
+                    foreach($add as $i) {
+                        if ( ! empty($goods)) $return[$i] = array_pop($goods);
+                    }
+                }
+
+            }
+        }
+
         return $return;
+    }
+    
+    /**
+     * Получить хиты продаж
+     * @return Model_Good[]
+     * @throws Cache_Exception
+     */
+    public static function get_hitz_sections()
+    {
+        $hitz_sections = Cache::instance()->get('hitz_sections');
+        
+        if ( empty( $hitz_sections )) {
+            
+            $hitz_sections = DB::select(['section_id', 'id'], ['z_section.name','name'])
+                ->distinct('section_id')
+                ->from('z_hit')
+                    ->join('z_section')
+                    ->on('z_section.id','=','z_hit.section_id')
+                ->where('z_section.active', '=', 1)
+                ->where('z_section.vitrina', '=', 'mladenec')
+                ->where('z_section.parent_id', '=', 0)
+                ->where('z_section.parent_id', '!=', Model_Section::CLOTHS_ROOT)
+
+                ->order_by('z_section.sort','ASC')
+                ->execute()
+                ->as_array('id');
+
+            Cache::instance()->set('hitz_sections', $hitz_sections, 3600);
+        }
+        
+        return $hitz_sections;
     }
 
     /**
@@ -1553,5 +1581,110 @@ class Model_Good extends ORM {
     {
         $cloth_subs = Model_Section::get_cloth_subs();
         return ! empty($cloth_subs[$this->section_id]);
+    }
+
+    /**
+     * Получить массив всех значений цветов => размеров для товарных групп, цвета д.б. всегда
+     * @param [] $group_ids
+     * @return array [colorsize => , colors => , sizes => , allsizes => , colorimage => , sizefilter => ]
+     */
+	public static function get_color_size($group_ids, $good_ids = [])
+    {
+        $init = ['colorsize' => [], 'colors' => [], 'sizes' => [], 'allsizes' => [], 'colorimage' => [], 'size_filter' => []];
+        $return = [];
+
+        $q = DB::select('good_id', 'color', 'group_id')
+            ->from('good_color')
+            ->where('group_id', 'IN', $group_ids);
+
+        if ( ! empty($good_ids)) $q->where('good_id', 'IN', $good_ids);
+
+        $colors = $q->execute()->as_array('good_id');
+
+        if (empty($colors)) return FALSE;
+
+        $colorimage = $goods = array();
+        foreach($colors as $good_id => $data) { // собираем по цветам, пустые цвета склеиваем в один, для получения картинок + товары по группам
+            if (empty($return[$data['group_id']])) $return[$data['group_id']] = $init;
+            if (empty($data['color'])) $data['color'] = 'NO_COLOR';
+            $goods[$data['good_id']] = $data['group_id'];
+            if (empty($colorimage[$data['group_id']][$data['color']])) $colorimage[$data['group_id']][$data['color']] = $data['good_id'];
+            $return[$data['group_id']]['colors'][$data['color']][] = $data['good_id'];
+        }
+
+        // получаем все размеры для этих товаров
+        $good_sizes = DB::select(
+            ['v.id', 'vid'],
+            ['f.id', 'filter_id'],
+            ['f.name', 'filter_name'],
+            ['v.name', 'value_name'],
+            'r.good_id'
+        )
+            ->from(['z_good_filter','r'])
+            ->join(['z_filter_value', 'v'])
+                ->on('v.id', '=', 'r.value_id')
+            ->join(['z_filter', 'f'])
+                ->on('f.id', '=', 'r.filter_id')
+            ->where('good_id', 'IN' , array_keys($goods))
+            ->where('r.filter_id', 'IN', [Controller_Product::FILTER_SIZE, Controller_Product::FILTER_GROWTH, Controller_Product::FILTER_AGE])
+                ->order_by('f.sort', 'DESC')
+                ->order_by('v.sort', 'ASC')
+                ->order_by('v.name', 'ASC')
+            ->execute()
+            ->as_array();
+
+        if ( ! empty($good_sizes)) {
+
+            $group_sizes = []; // // раскладываем размеры по товарным группам
+            foreach($good_sizes as $data) {
+                if (empty($sizes[$goods[$data['good_id']]])) $sizes[$goods[$data['good_id']]] = [];
+                $group_sizes[$goods[$data['good_id']]][] = $data;
+            }
+
+            foreach($group_sizes as $group_id => $sizes) { // заполняем по группам данные о цветах и размерах
+
+                $return[$group_id]['size_filter'] = $size_filter = $sizes[0]['filter_id'];
+
+                foreach ($sizes as $data) { // и заполняем связь товар -> размеры
+                    if ($data['filter_id'] == $size_filter) {
+                        $return[$group_id]['sizes'][$data['good_id']][$data['vid']] = $data['value_name'];
+                        $return[$group_id]['allsizes'][$data['vid']] = $data['value_name'];
+                    }
+                }
+                // теперь заполняем цветам какому размеру какой товар
+                foreach ($return[$group_id]['colors'] as $color => $goodz) {
+                    foreach ($goodz as $gid) {
+                        if ( ! empty($return[$group_id]['sizes'][$gid])) {
+                            foreach ($return[$group_id]['sizes'][$gid] as $vid => $vname) {
+                                $return[$group_id]['colorsize'][$color][$vid][] = $gid;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        $images = Model_Good::many_images([70], array_keys($goods)); // получим малые картинки для всех разных цветов
+        foreach($colorimage as $group_id => $data) {
+            foreach($data as $color => $good_id) {
+                $return[$goods[$good_id]]['colorimage'][$color] = $images[$good_id][70]->get_img(0);
+            }
+        }
+        return $return;
+    }
+
+    /**
+     * Опции для бесплатной сборки КГТ
+     */
+    public static function sborka()
+    {
+        $opts = [
+            '' => 'не нужна',
+            'на следующий день' => 'на следующий день',
+            'через день' => 'через день',
+            'через два дня' => 'через два дня',
+            'через три дня' => 'через три дня',
+        ];
+        return $opts;
     }
 }

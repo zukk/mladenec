@@ -3,54 +3,33 @@ class Model_Order_Data extends ORM {
 
     protected $_table_name = 'z_order_data';
 
-    protected $_belongs_to = array(
-        'order' => array('model' => 'order', 'foreign_key' => 'id'),
-    );
+    protected $_belongs_to = [
+        'order' => ['model' => 'order', 'foreign_key' => 'id'],
+    ];
 
-    protected $_table_columns = array(
+    protected $_table_columns = [
         'id' => '', 'last_name' => '', 'second_name' => '', 'name' => '', 'phone' => '',
         'phone2' => '', 'mobile_phone' => '', 'email' => '', 'ship_time' => '', 'ship_time_text' => '', 'ship_date' => '',
         'ship_zone' => '', 'mkad' => '', 'city' => '', 'street' => '', 'house' => '', 'corp' => '',
-        'enter' => '', 'domofon' => '', 'floor' => '', 'call' => '', 'lift' => '', 'kv' => '', 'urname' => '',
+        'enter' => '', 'domofon' => '', 'floor' => '', 'call' => '', 'no_ring' => 0, 'no_call' => 0, 'lift' => '', 'kv' => '', 'urname' => '',
         'uraddr' => '', 'postaddr' => '', 'rs' => '', 'ks' => '', 'bik' => '', 'bank' => '', 'innkpp' => '', 'ogrn' => '',
         'okpo' => '', 'gendir' => '', 'user_status' => '', 'address' => '', 'latlong' => '',
-        'correct_addr' => '', 'comment' => '', 'courier' => '', 'address_id' => '',
-    );
-
-    public function filters() {
-        return array(
-            'phone' => array(
-                array('Txt::phone_clear', array(':value')),
-            ),
-            'phone2' => array(
-                array('Txt::phone_clear', array(':value')),
-            ),
-            'mobile_phone' => array(
-                array('Txt::phone_clear', array(':value')),
-            )
-        );
-    }
+        'correct_addr' => '', 'comment' => '', 'courier' => '', 'address_id' => '', 'ozon_delivery_id' => '', 'ozon_barcode' => '', 'ozon_status' => ''
+    ];
 
     public function rules()
     {
-        return array(
-            'email' => array(
-                array('not_empty'),
-                array('email'),
-            ),
-            /* 'phone' => array(
-                array('not_empty'),
-                array('phone', array(':value', 11)),
-            ),
-            'phone2' => array(
-                array('phone', array(':value', 11)),
-            ),
-            'mobile_phone' => array(
-                array('Txt::phone_is_mobile', array(':value')),
-            ), */
-            'name' => array(
-                array('not_empty'),
-            ),
-        );
+        return [
+            'phone' => [
+                ['not_empty'],
+                ['Txt::phone_clear', [':value']],
+            ],
+            'phone2' => [
+                ['Txt::phone_clear', [':value']],
+            ],
+            'mobile_phone' => [
+                ['Txt::phone_is_mobile', [':value']],
+            ],
+        ];
     }
 }

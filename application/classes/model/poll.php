@@ -8,10 +8,11 @@ class Model_Poll extends ORM {
      * @property type
      */
     
-    const TYPE_DEFAULT          = 0;
-    const TYPE_ORDER_COMPLETE   = 1;
-    const TYPE_REGISTER         = 2;
-    
+    const TYPE_DEFAULT          = 0; // обычный опрос
+    const TYPE_ORDER_COMPLETE   = 1; // опрос после завершения заказа
+    const TYPE_REGISTER         = 2; // опрос после регистрации
+    const TYPE_COUPON           = 3; // опрос с купоном - допуск только по ссылке с ключом юзера
+
     protected $_table_name = 'z_poll';
 
     protected $_has_many = array(
@@ -19,7 +20,7 @@ class Model_Poll extends ORM {
     );
 
     protected $_table_columns = array(
-        'id' => '', 'name' => '', 'active' => '', 'closed' => '', 'new_user' => '','type'=>''
+        'id' => '', 'name' => '', 'text' => '', 'active' => '', 'closed' => '', 'new_user' => '','type'=>'', 'coupon' => '',
     );
 
     /**
@@ -34,20 +35,22 @@ class Model_Poll extends ORM {
         );
     }
 
-    public function get_type_name() {
-        $name = '';
-        switch ($this->type) {
-            case self::TYPE_ORDER_COMPLETE:
-                $name = 'При завершении заказа';
-                break;
-            case self::TYPE_REGISTER:
-                $name = 'При регистрации';
-                break;
-            default:
-                $name = 'Обычный опрос';
-                break;
-        }
-        return $name;
+    /**
+     * Текстовое представление типа опроса
+     * @param bool $all_types
+     * @return array
+     */
+    public function type($all_types = TRUE)
+    {
+        $types = [
+            self::TYPE_DEFAULT => 'Обычный опрос',
+            self::TYPE_REGISTER => 'При регистрации',
+            self::TYPE_ORDER_COMPLETE => 'При завершении заказа',
+            self::TYPE_COUPON => 'Купон за ответы',
+        ];
+
+        if ($all_types === TRUE) return $types;
+        return $types[$this->type];
     }
     
     /**
@@ -75,7 +78,8 @@ class Model_Poll extends ORM {
         return array('active', 'closed');
     }
 
-    public function vote_handler($user_id) {
+    public function vote_handler($user_id)
+    {
         Log::instance()->add(Log::INFO, 'User ' . $user_id . ' votes for poll ' . $this->id);
         
         if (empty($user_id)) {
@@ -89,6 +93,7 @@ class Model_Poll extends ORM {
             ->where('poll_id', '=', $this->id)
             ->execute()
             ->get('poll_id');
+
         if ($already_vote) {
             Log::instance()->add(Log::INFO, 'User ' . $user_id . ' trying to vote twice, poll: ' . $this->id);
             return FALSE; 
@@ -121,6 +126,7 @@ class Model_Poll extends ORM {
                     unset ($var);
                     $ok = TRUE;
                     break;
+
                 case Model_Poll_Question::TYPE_MULTI:
                     $variants = $qstn->variants->where('question_id', '=', $qstn_id)->find_all()->as_array('id');
                     /* @var $var Model_Poll_Variant */
@@ -139,10 +145,12 @@ class Model_Poll extends ORM {
                     unset ($v_id);
                     $ok = TRUE;
                     break;
+
                 case Model_Poll_Question::TYPE_TEXT:
                     if ( ! empty($text_answers[$qstn_id])) $qstn->vote_text($user_id, $text_answers[$qstn_id]);
                     $ok = TRUE;
                     break;
+
                 case Model_Poll_Question::TYPE_PRIORITY:
                     $variants = $qstn->variants->where('question_id', '=', $qstn_id)->find_all()->as_array('id');
                     /* @var $var Model_Poll_Variant */
@@ -269,9 +277,8 @@ class Model_Poll extends ORM {
                 }
                 if ($do_insert) {
                     $ins->execute();
-                    Model_History::log('poll', $this->id, 'varints added', $misc['new_var']);
+                    Model_History::log('poll', $this->id, 'variants added', $misc['new_var']);
                 }
-
             }
         }
     }

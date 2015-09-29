@@ -1,126 +1,60 @@
 <?php
 class Controller_User extends Controller_Frontend
 {
-	protected function _subscribe_api( $action, $params = array(), $session = '', $request_id = 0 ){
-
-		$params['one_time_auth'] = array(
-			'login' => 'mladenec',
-			'sublogin' => 'mladenec',
-			'passwd' => 'voo3Gal'
-		);
-
-		if( empty( $request_id ) ){
-
-			$request_id = rand(100,1000000);
-		}
-
-		$curl = new Curl();
-		
-		$returner = json_decode($curl->get_url('https://pro.subscribe.ru/api' . $session, array(
-			'apiversion' => 100,
-			'json' => 1,
-			'request.id' => $request_id,
-			'request' => json_encode(array_merge(array(
-				'action' => $action
-			), $params ))
-		)), true );
-		
-		if( !empty( $returner['REDIRECT'] ) ){
-
-			$returner = $this->_subscribe_api($action, $params, $returner['REDIRECT']);
-		}
-
-		return $returner;
-	}
-	
     /**
-     * Clean external session data.
+     * Регистрация нового юзера
      */
-    public function action_external_clean()
+    public function action_register()
     {
-        $account = Session::instance()->get('external');
-        Session::instance()->set('external', NULL)->write();
-        die(json_encode(array('clean' => ( ! empty($account)))));
-    }
-
-    // регистрация
-    public function action_register(){
-		
-        if ( !$this->request->post('ajax')) {
+        if ( ! $this->request->post('ajax')) {
             $this->request->redirect('/?reg'); // на главную с открытой формой регистрации
         }
 
-		$mode = $this->request->post('mode');
-		
-		if( !in_array( $mode, ['cart', 'general'] ) ){
-			$mode = 'general';
-		}
-		
         $user = new Model_User();
 
-        if ($this->request->post()){
+        if ($this->request->post()) {
+
             $post = $this->request->post();
             if (isset($post['email'])) $post['email'] = trim($post['email']); // у мыла режем пробелы
+            $post['login'] = $post['email'];
 
             $v = $user->validation()->copy($post)
                 ->rule('password', 'not_empty')
-                ->rule('password', 'min_length', array(':value', 6))
+                ->rule('password', 'min_length', [':value', 6])
                 ->rule('password2', 'not_empty')
-                ->rule('password', 'matches', array(':validation', 'password', 'password2'))
-                ->rule('email', array(ORM::factory('user'), 'unique'), array('email', ':value'));
+                ->rule('password', 'matches', [':validation', 'password', 'password2'])
+                ->rule('email', [ORM::factory('user'), 'unique'], ['email', ':value']);
 
-            if ($v->check()){
-				
-                $salt = Text::random();
+            if ( ! $v->check()) $this->return_json(['error' => $v->errors('user')]); // ошибки при создании юзера
 
-                $user->values(array(
-                    'name'      => $v['name'],
-                    'login'     => $v['email'],
-                    'email'     => $v['email'],
-                    'password'  => $salt.md5($salt.$v['password']),
-                    'phone'     => $v['phone'],
-                    'created'   => time(),
-                    'sub'       => 1, // подписка на рассылку - по умолчанию
-                ))->create();
+            $user->create_new($v);
+            Model_User::login($user);
 
-				$this->_subscribe_api('member.set', array(
-					'email' => $v['email'],
-					'addr_type' => 'email',
-					'newbie.confirm' => '0',
-					'if_exists' => 'error',
-					'source' => Request::$client_ip
-				));
-				
-                Mail::htmlsend('register', array('user' => $user, 'passwd' => $v['password']), $v['email'], 'Добро пожаловать!');
-				
-                Model_User::login($user);
-
-                $refer = $this->request->referrer();
-                if ($has_q = strpos($refer, '?')) {
-                    $refer = substr_replace($refer, '?reg_done='.$user->id.'&', $has_q, 1);
-                } else {
-                    $refer .= '?reg_done='.$user->id;
-                }
-
-                if ( ! empty($post['poll_id'])) {
-                    $poll = ORM::factory('poll',$post['poll_id']);
-                    if ($poll->loaded()) {
-                        $ok = $poll->vote_handler($user->id);
-                    }
-                }
-				
-				if( $mode == 'cart' ){
-					$this->return_json( [ 
-						'delivery' => Controller_Product::cart_delivery(),
-						'userpad' => $this->userpad()
-					] );
-				} else{
-	                $this->return_redirect($refer);
-				}
+            $refer = $this->request->referrer();
+            if ($has_q = strpos($refer, '?')) {
+                $refer = substr_replace($refer, '?reg_done='.$user->id.'&', $has_q, 1);
+            } else {
+                $refer .= '?reg_done='.$user->id;
             }
-            else
-            {
-                $this->return_error($v->errors('user'));
+
+            if ( ! empty($post['poll_id'])) {
+                $poll = ORM::factory('poll',$post['poll_id']);
+                if ($poll->loaded()) {
+                    $ok = $poll->vote_handler($user->id);
+                }
+            }
+
+            if (parse_url($this->request->referrer(), PHP_URL_PATH) == Route::url('cart')) { // с корзины
+                $this->return_json( [
+                    'delivery' => Controller_Product::cart_delivery(),
+                    'userpad' => $this->userpad(),
+                    'userId' => $user->id
+                ]);
+            } else {
+                $this->return_json([
+                    'userId' => $user->id,
+                    'redirect' => $refer
+                ]);
             }
         };
     }
@@ -154,8 +88,6 @@ class Controller_User extends Controller_Frontend
             if ( ! empty($reason)) Model_Spam::why($reason);
             Model_User::unsubscribe($mail);
 
-			$ee = $this->_subscribe_api('member.delete', array('email' => $mail));
-				
             $this->tmpl['done'] = TRUE;
 
         } else { // первый приход - проверить подписан дли вообще адрес?
@@ -171,85 +103,86 @@ class Controller_User extends Controller_Frontend
      */
     public function action_login()
     {
-		$json = false;
-		
-		$mode = $this->request->post('mode');
-		
-		if( !in_array( $mode, ['cart', 'general'] ) ){
-			$mode = 'general';
-		}
+		$json = [];
 		
         if (($l = $this->request->post('login')) AND ($p = $this->request->post('password'))
         ) {
 			$u = Model_User::login(array('login' => $l, 'password' => $p, 'remember' => $this->request->post('remember')));
 
-			if( $u ){
-				
+            if ($u) {
+
 				$Session = Session::instance();
 				$cart = $Session->get('cart');
-				
+
 				$session_id = Session::instance()->id();
-				
+
 				$old_sessions = ORM::factory('session')->where('user_id', '=', $u->id)->where('id', '!=', $session_id)->find_all()->as_array('id');
-				
-				if( !empty( $old_sessions ) ){
 
-					$old_goods = array();
-					
-					foreach( $old_sessions as $key => $sess ){
-						
-						$old_data = unserialize($sess->data);
-						$old_goods = $old_goods + $old_data['cart']->goods;
-					}
-					
-					if( !empty( $old_goods ) ){
+				if (empty($old_sessions)) $this->return_redirect($this->request->referrer());
 
-						if( empty( $cart->goods ) ){
-							
-							$Cart = Cart::instance();
-                            
-							$Cart->add($old_goods);
-                            
-							$Session->set('cart', $Cart)->write();
-							
-							$json = ['redirect' => $this->request->referrer()];
-						}
-						else{
+                $old_goods = [];
+                foreach ($old_sessions as $key => $sess) {
+                    $old_data = unserialize($sess->data);
+                    $old_goods = $old_goods + $old_data['cart']->goods;
+                }
+                if (empty($old_goods)) $this->return_redirect($this->request->referrer());
+                if (empty($cart->goods)) {
 
-							$ogoods = ORM::factory('good')->where('id', 'IN', array_keys( $old_goods ))->find_all()->as_array('id');
-							$json = ['fancybox' => View::factory('smarty:admin/user/merge_carts', array( 'old_sessions' => array_keys( $old_sessions ), 'old_goods' => $ogoods, 'old_goods_counts' => $old_goods, 'user' => Model_User::current()))->render(), 'redirect' => $this->request->referrer()];
-						}
-					}
-					else{
-						$json = ['redirect' => $this->request->referrer()];
-					}
-				}
-				else
-					$json = ['redirect' => $this->request->referrer()];
-			}
+                    $Cart = Cart::instance($old_goods);
+                    $Session->set('cart', $Cart)->write();
+                    $json = ['redirect' => $this->request->referrer()];
+
+                } else {
+
+                    $ogoods = ORM::factory('good')
+                        ->where('id', 'IN', array_keys($old_goods))
+                        ->find_all()
+                        ->as_array('id');
+
+                    $json = [
+                        'redirect' => $this->request->referrer(),
+                        'fancybox' => View::factory('smarty:admin/user/merge_carts', [
+                            'old_sessions' => array_keys($old_sessions),
+                            'old_goods' => $ogoods,
+                            'old_goods_counts' => $old_goods,
+                            'user' => Model_User::current()
+                        ])->render(),
+                    ];
+                }
+
+                $json['userId'] = $u->id;
+            }
         }
-		
-		if( !empty( $json ) ){
+
+		if ( ! empty($json)) {
 			
-			if( $mode == 'cart' ){
-				$json = [ 'delivery' => Controller_Product::cart_delivery() ];
-			}
-			
-			if( empty( $json['redirect'] ) )
-				$json['userpad'] = $this->userpad();
-			
+			if (parse_url($this->request->referrer(), PHP_URL_PATH) == Route::url('cart')) { // c корзины
+                $json['cart'] = Cart::instance()->checkout(); // нужна новая корзина ведь при логине может сумма измениться
+                $json['fancybox'] = FALSE;
+                $json['redirect'] = FALSE;
+                $json['delivery'] = Controller_Product::cart_delivery(); // подгрузим доставку  
+                $address_list = [];
+                foreach( $u->address() as $address) {
+                    $address_list[$address->id] = $address->as_array();
+                }
+                $json['addresses'] = $address_list; // адреса для подстановки
+            }
+
+            if (empty($json['redirect'])) $json['userpad'] = $this->userpad(); // общий блок логина-пароля
+
 			$this->return_json( $json );
 		}
 
-        $this->return_error(array('login' => 'Неправильный логин или пароль', 'password' => 'Неправильный пароль или логин'));
+        $this->return_error(['login' => 'Неправильный логин или пароль', 'password' => 'Неправильный пароль или логин']);
     }
 	
 	/**
 	 * html плашки в шапке
 	 * @return type
 	 */
-	public static function userpad(){
-		return View::factory('smarty:averburg/user/userpad', ['user' => Model_User::current()] )->render();
+	public static function userpad()
+    {
+		return View::factory('smarty:user/userpad', ['user' => Model_User::current()] )->render();
 	}
 	
     /**
@@ -283,9 +216,10 @@ class Controller_User extends Controller_Frontend
             } catch (ORM_Validation_Exception $e) {
                 $this->return_error($e->errors('user'));
             }
-            $this->return_html('Ваши данные успешно изменены <a href="/account" class="ok">Сменить снова</a>');
+            $this->return_html('Ваши данные успешно изменены <a href="'.Route::url('user').'" class="ok">Сменить снова</a>');
         }
 
+		$this->tmpl['user_phones'] = $this->user->get_phones();
         $this->tmpl['user'] = $this->user;
     }
 
@@ -301,6 +235,22 @@ class Controller_User extends Controller_Frontend
 
         $this->tmpl['pager'] = $pager = new Pager($orders->count_all());
         $this->tmpl['orders'] = $orders
+            ->order_by('id', 'DESC')
+            ->offset($pager->offset)
+            ->limit($pager->per_page)
+            ->find_all();
+    }
+
+    public function action_deferred()
+    {
+        if (!$this->user) {
+            throw new HTTP_Exception_403;
+        }
+
+        $deferreds = ORM::factory('deferred')
+            ->where('user_id', '=', $this->user->id);
+        $this->tmpl['pager'] = $pager = new Pager($deferreds->count_all());
+        $this->tmpl['deferreds'] = $deferreds
             ->order_by('id', 'DESC')
             ->offset($pager->offset)
             ->limit($pager->per_page)
@@ -356,7 +306,7 @@ class Controller_User extends Controller_Frontend
 			foreach ($user_kids as $id => $kid) { //существующие дети
                 $kid->values(array(
                     'sex' => isset($post['sex'][$id]) ? $post['sex'][$id] : 0,
-                    'birth' => isset($post['birth'][$id]) ? $post['birth'][$id] : 0,
+                    'birth' => isset($post['birth'][$id]) ? Txt::date_reverse($post['birth'][$id]) : 0,
                     'name' => isset($post['name'][$id]) ? $post['name'][$id] : '',
                 ));
                 $v = $kid->validation();
@@ -372,7 +322,7 @@ class Controller_User extends Controller_Frontend
                     $kid->user_id = $this->user->id;
                     $kid->values(array(
                         'sex' => isset($post['new_sex'][$id]) ? $post['new_sex'][$id] : null,
-                        'birth' =>  isset($post['new_birth'][$id]) ? $post['new_birth'][$id] : null,
+                        'birth' =>  isset($post['new_birth'][$id]) ? Txt::date_reverse($post['new_birth'][$id]) : null,
                         'name' => $new_name,
                     ));
                     $v = $kid->validation();
@@ -383,7 +333,20 @@ class Controller_User extends Controller_Frontend
                     }
                 }
             }
+            
+            // сохранение флага беременности и срока
+            if(isset($post['pregnant']) && $post['pregnant'] == 1
+               && intval($post['pregnant_terms'])>0
+               && intval($post['pregnant_terms'])<=41) {
+                $this->user->pregnant = 1;
+                $this->user->pregnant_terms = (time()- intval($post['pregnant_terms'])*7*24*60*60);
+                $this->user->save();
 
+            } else {
+                $this->user->pregnant = 0;
+                $this->user->save();
+            }
+            
             if (count($_errors)) {
                 $return_errors = array();
                 foreach($_errors as $type => $child_errors) {
@@ -399,7 +362,12 @@ class Controller_User extends Controller_Frontend
             }
         }
 
-		$this->tmpl['sexes'] = array_combine(Model_User_Child::$SEX, Model_User_Child::$SEX_CAPTION); // варианты пола
+        // скидка за даные о детях
+        $this->user->child_discount( ! empty($user_kids) || ! empty($this->user->pregnant));
+
+        //срок беременности
+        $this->tmpl['pregnant_weeks'] = ($this->user->pregnant_terms) ? $this->user->get_pregnant_weeks() : NULL;
+	    $this->tmpl['sexes'] = array_combine(Model_User_Child::$SEX, Model_User_Child::$SEX_CAPTION); // варианты пола
         $this->tmpl['children']	 = $user_kids; // дети
     }
 
@@ -410,27 +378,70 @@ class Controller_User extends Controller_Frontend
     public function action_action()
     {
         if ( ! $this->user) throw new HTTP_Exception_403;
-
-        $actions = ORM::factory('action')
-                ->where('count_from', 'IS NOT', NULL)
-                ->where('active', '=', 1)
-                ->order_by('name','ASC')
-                ->find_all()->as_array();
-        if ( ! empty($actions)) {
-            $credits = DB::select('action_id','sum','qty')
-                    ->from('z_action_user')
-                    ->where('user_id',   '=',  $this->user->pk())
-                    ->where('action_id', 'IN', $actions)
-                    ->execute()->as_array('action_id');
-            $this->tmpl['credits'] = $credits;
-            $this->tmpl['actions'] = $actions;
-        } else {
-            $this->tmpl['credits'] = array();
-            $this->tmpl['actions'] = array();
-        }
-        
+        $this->tmpl['actions'] = Model_Action::get_active(0, [], 1);
     }
+	
+	protected function _get_user_goods($limit)
+    {
+		$result = ORM::factory('user_good')
+            ->where('user_id', '=', $this->user->id)
+            ->group_by('good_id')
+            ->order_by('created', 'DESC')
+            ->limit($limit)
+            ->find_all()
+            ->as_array('good_id');
+
+        $ids = array_keys($result);
+
+        $return = [];
+		if ( ! empty($ids)) {
+			$return = ORM::factory('good')
+                ->where('id', 'IN', $ids)
+                ->find_all()
+                ->as_array('id');
+		}
+
+		return $return;
+	}
     
+    /**
+     * Личный кабинет юзера
+     * @throws HTTP_Exception_403
+     */
+    public function action_goods_ajax()
+    {
+        if ( ! $this->user) throw new HTTP_Exception_403;
+
+		// TODO !!!
+		exit;
+		echo View::factory('smarty:product/view/tiles', [
+            'goods' => $this->_get_user_goods(5),
+			'is_topbar' => TRUE
+        ])->render();
+		exit;
+	}
+	
+    /**
+     * Личный кабинет юзера - история просмотров
+     * @throws HTTP_Exception_403
+     */
+    public function action_goods()
+    {
+        if ( ! $this->user) throw new HTTP_Exception_403;
+        
+        $goods = $this->_get_user_goods(20);        
+        $keys = array_keys($goods);
+        $images = Model_Good::many_images([255], $keys);        
+        $prices  = Model_Good::get_status_price(1, $keys);
+        
+        $this->tmpl['goods'] = View::factory('smarty:product/view/tiles', [
+            'goods' => $goods,
+            'images' => $images,
+            'price' => $prices,
+            'row' => 5
+        ])->render();
+    }
+	
     /**
      * Личный кабинет юзера
      * @throws HTTP_Exception_403
@@ -439,8 +450,6 @@ class Controller_User extends Controller_Frontend
     {
         if ( ! $this->user) throw new HTTP_Exception_403;
 
-		$good = new Model_Good();
-
 		$reviews = ORM::factory('good_review')
 			->where('user_id', '=', $this->user->id)
 			->with('author')
@@ -448,16 +457,11 @@ class Controller_User extends Controller_Frontend
 			->find_all()
 			->as_array('id');
 		
-		$goodsIds = array();
-		foreach( $reviews as &$review ){
-		
-			$goodsIds[] = $review->good_id;
-		}
-		unset( $review );
-		
+		$goodsIds = [];
+		foreach($reviews as $review) $goodsIds[] = $review->good_id;
+
 		$goods = [];
-		if( !empty( $goodsIds ) ){
-			
+		if ( ! empty($goodsIds)) {
 			$goods = ORM::factory('good')
 				->where('id', 'in', $goodsIds)
 				->find_all()
@@ -485,426 +489,6 @@ class Controller_User extends Controller_Frontend
         if ( $child->loaded()) $child->delete();
 
         $this->return_redirect(Route::url('user_child'));
-    }
-	
-    /**
-     * Старый заказ юзера
-     *
-     * @throws HTTP_Exception_403
-     * @throws HTTP_Exception_404
-     */
-    /* public function action_cart()
-    {
-        $order_id = $this->request->param('id');
-        if (empty($order_id)) throw new HTTP_Exception_404;
-        if (empty($this->user)) throw new HTTP_Exception_403;
-        $this->tmpl['user'] = $this->user;
-
-        $order = new Model_Order($order_id);
-        if ( ! $order->loaded()) throw new HTTP_Exception_404;
-        if ($order->user_id != $this->user->id)  throw new HTTP_Exception_403;
-
-        $this->tmpl['order_goods'] = $order->get_goods();
-
-        if ($this->request->param('thanx')) { // это спасибо-страница?
-
-            if (Session::instance()->get('thanx') != $order_id) $this->request->redirect(Route::url('order_detail', array('id' => $order_id))); // если нет в сесии - на просто страницу заказа
-            Session::instance()->delete('thanx'); // ключ одноразовый зачистить
-
-            $thanx = TRUE;
-            View::bind_global('thanx', $thanx);
-
-            $this->layout->o = $order;
-
-            // show coolstat params here - to tell them about order
-            $coolstat_params = array(
-                'client_name' => $this->user->id,
-                'code' => $this->request->cookie('coolstat_code'),
-                'order_id' => $order->id,
-                'sum' => round($order->get_total()),
-                'site_id' => 20,
-                'secret_key' => 'e558c7b98c42eea6fa82f2c16830a2e71e999f8ed0acdec99ecae9a961da57ba'
-            );
-            $coolstat_params['sign'] = hash('sha256', strtoupper(http_build_query($coolstat_params)));
-            unset($coolstat_params['secret_key']);
-
-            $this->tmpl['coolstathref'] = 'http://web-economica.ru/index.php?route=api/orders&task=add&'.http_build_query($coolstat_params);
-
-            // check for PG goods to show for Channel Intelligence
-            $pg_goods = array();
-            foreach($order->get_goods() as $g) if ($g->upc) $pg_goods[] = $g; // they got upc
-
-            $this->tmpl['pg_goods'] = $pg_goods;
-
-            // get active polls to promote
-            $polls = ORM::factory('poll')
-                    ->where('active', '=', 1)
-                    ->where('type', '=', Model_Poll::TYPE_ORDER_COMPLETE)
-                    ->where('closed', '=', 0)
-                    ->order_by('id', 'DESC')
-                    ->find_all()->as_array();
-            if ( ! empty($polls)) { // есть опросы
-                $votes = Model_Poll::votes($this->user->id); // за что уже голосовал
-                $new_user = ORM::factory('order')->where('user_id', '=', $this->user->id)->count_all() <= 1; // новый ли пользователь?
-                $can_poll = FALSE;
-
-                foreach($polls as $p) {
-                    if ( ! empty($votes[$p->id])) continue; // уже голосовал тут
-                    if ( ! $p->new_user || ($p->new_user && $new_user)) { // может быть ещё условие на новизну юзера
-                        $can_poll = TRUE;
-                        break;
-                    }
-                }
-                $this->tmpl['can_poll'] = $can_poll;
-            }
-        }
-
-        $this->tmpl['o'] = $this->tmpl['cart'] = $order;
-        $this->tmpl['od'] = $order->data;
-        $this->tmpl['coupon'] = $order->coupon_id ? $order->coupon : FALSE;
-    } */
-
-    public function action_order2(){
-		
-		$returner = [];
-		
-		$this->user = Model_User::current();
-		
-		$this->action_order();
-
-		$returner['result'] = 'ok';
-		
-		exit(json_encode($returner));
-	}
-
-    /**
-     * Оформление заказа - ввод адреса и т.п.
-     *
-     * @throws HTTP_Exception_403
-     * @throws Kohana_Exception
-     */
-    public function action_order()
-    {
-        if (empty($this->user) && ! empty($this->external_account)) {
-            $this->tmpl['user'] = (object) $this->external_account['info'];
-        } elseif ( ! empty($this->user)) {
-            $this->tmpl['user'] = $this->user;
-        }
-        
-		$url_append = '';
-
-        $this->tmpl['cart'] = $cart = Cart::instance();
-        $this->tmpl['big_to_wait'] = $big_to_wait = $cart->big_to_wait(TRUE);
-        $this->tmpl['dt'] =  Model_Order::SHIP_COURIER;// способ доставки по-умолчанию
-
-        if (empty($cart->goods)) $this->return_redirect(Route::url('cart'));
-
-        if ($this->request->post())
-        {
-            // Если пользователь до этого не был авторизован, но есть внешний акк
-            if (empty($this->user))
-            {
-                $user = new Model_User();
-                $arPost = $this->request->post();
-
-                // Validate model by internal rules.
-                $validation = $user->validation()->copy($arPost)
-                    ->rule('email', array(ORM::factory('user'), 'unique'), array('email', ':value'));
-
-                // Check validation rules.
-                if ( ! $validation->check()) $this->return_error($validation->errors('order/order_data'));
-
-                $salt = Text::random();     // Generate salt.
-                $password = Text::random(); // Generate password.
-
-                // Определение указания галки сохранения.
-                $bSaveUser = $this->request->post('save_user');
-
-                // Try create new user.
-                $user->values(array(
-                    'name'      => $validation['name'],
-                    'last_name' => $validation['last_name'],
-                    'login'     => $validation['email'],
-                    'email'     => $validation['email'],
-                    'password'  => $salt . md5($salt.$password),
-                    'phone'     => $validation['phone'],
-                    'created'   => time(),
-                    'sub'       => 1, // подписка на рассылку - по умолчанию
-                ))->create();
-
-                Mail::htmlsend('register', array('user' => $user, 'passwd' => $password), $validation['email'], 'Добро пожаловать!');
-
-                // Replace current user.
-                $this->user = Model_User::login($user);
-
-				$url_append = '?reg_done=' . $this->user->id;
-				
-                // Linkage user and account.
-                if ( ! empty($this->external_account['info'])) {
-                    Model_User_External::linkageUserAccount(
-                        $this->external_account['source'],
-                        $this->external_account,
-                        $this->user->id
-                    );
-                }
-            }
-
-            $order_data = new Model_Order_Data();
-            $order_data->values($this->request->post());
-            $dt = $this->request->post('delivery_type');
-
-            switch($dt) {
-                case Model_Order::SHIP_COURIER: // доставка курьерской службой
-                case Model_Order::SHIP_SERVICE: // доставка через транспортную компанию
-
-                    if ($this->request->post('address_id')) { // старый адрес!
-                        $addr = new Model_User_Address($this->request->post('address_id'));
-                        if ( ! $addr->loaded()) throw new HTTP_Exception_404; // no address found
-                        if ($addr->user_id != $this->user->id) throw new HTTP_Exception_403; // not current user address
-
-                        $order_data->values($addr->as_array());
-                        $mkad = intval($this->request->post('mkad'));
-
-                        $addr->mkad = $mkad;
-                        $addr->save();
-
-                        $order_data->mkad = $addr->mkad;
-
-                    } else {
-                        $addr = new Model_User_Address();
-                    }
-
-                    $v = $order_data->validation();
-                    foreach($addr->rules() as $f => $rules) $v->rules($f, $rules);
-                    if ($dt == Model_Order::SHIP_SERVICE) {
-                        Session::instance()->set('tarif_id', $this->request->post('tarif_id')); // remember chosen tarif for transport
-                    }
-                    break;
-
-                case Model_Order::SHIP_SELF: // самовывоз
-                    $v = $order_data->validation();
-                    $v->rule('address_id', array('Model_Order', 'is_shop'));
-                    break;
-
-                default:
-                    throw new ErrorException('Not valid delivery_type '.var_export($dt, TRUE));
-            }
-
-            if ($v->check())
-            {
-                // запомним данные пользователя, если стоит галка
-                if ($this->request->post('save_user')) {
-
-                    try {
-                        $this->user->values(array(
-                            'name' => $order_data->name,
-                            'last_name' => $order_data->last_name,
-                            'second_name' => $order_data->second_name,
-                            'phone'  => $order_data->phone,
-                            'phone2' => $order_data->phone2,
-                            //'email' => $order_data->email  // we do not save email here to prevent changing it from here
-                        ))->save();
-                    } catch (ORM_Validation_Exception $e) {
-                        Log::instance()->add(Log::ERROR, $e->getMessage().var_export($this->user->as_array(), true));
-                    }
-                }
-                $od = $order_data->as_array() +
-                    array(
-                        'delivery_type' => $dt,
-                        'address_id' => $this->request->post('address_id')
-                    );
-
-                Session::instance()->set('od', json_encode($od))->write();
-
-                $this->return_redirect(Route::url('order_valid') . $url_append);
-            } else {
-                $this->return_error($v->errors('order/order_data'));
-            }
-        }
-		else{
-			Session::instance()->set('od_time', time())->write();
-		}
-    }
-
-    /**
-     * Страница подтверждения заказа пользователем
-     */
-    public function action_order_valid()
-    {
-        $od = Session::instance()->get('od');
-
-        $cart = Cart::instance();
-        $cart->recount();
-        $this->tmpl['cart'] = $cart;
-        
-        if (empty($cart->goods)) $this->return_redirect(Route::url('cart'));
-
-        $this->tmpl['order_goods'] = $goods = $cart->recount();
-        $cart->check_actions($goods, TRUE);
-        $this->tmpl['big_to_wait'] = $big_to_wait = $cart->big_to_wait(TRUE);
-
-        if ( ! empty($od) AND ($odata = json_decode($od, 1)))
-        {
-            $o = new Model_Order();
-            $od = new Model_Order_Data();
-            $od->values($odata, array_keys($od->as_array()));
-
-            $o->delivery_type = $odata['delivery_type'];
-            $o->price = $cart->get_total();
-            $o->discount = $cart->discount;
-
-            if (in_array($o->delivery_type, array(Model_Order::SHIP_COURIER, Model_Order::SHIP_SERVICE))) { // доставка по адресу
-
-                if (empty($odata['address_id'])) { // создаём новый адрес
-                    $a = new Model_User_Address();
-                    $a->values($odata);
-                    $a->user_id = $this->user->id;
-                }
-
-                // вычисление стоимости доставки
-                if ($o->delivery_type == Model_Order::SHIP_COURIER) {
-                    $o->price_ship = $o->price_ship($od);
-                }
-                if ($o->delivery_type == Model_Order::SHIP_SERVICE) { // доставка через edost
-                    $od->comment = '';
-                    $o->price_ship = 0;
-
-                    $tarif_id = Session::instance()->get('tarif_id');
-                    $edost = Session::instance()->get('edost');
-
-                    if ( ! empty($edost) AND ! empty($tarif_id)) {
-                        if ($tarif = $edost[$tarif_id]) {
-                            $od->comment = $tarif['company'].', '.$tarif['name'];
-                            $o->price_ship = $tarif['price'];
-                        }
-                    }
-                }
-
-            }
-            if ($o->delivery_type == Model_Order::SHIP_SELF) { // самовывоз
-                $o->price_ship = 0;
-                $od->address = Model_Order::is_shop($odata['address_id']);
-            }
-
-            if ($this->request->post('agree')) { // только если согласился
-                $pt = $this->request->post('pay_type');
-
-                if ($o->delivery_type == Model_Order::SHIP_SERVICE) {
-                    $pt = Model_Order::PAY_CARD; // только картой
-
-                } elseif ($o->delivery_type == Model_Order::SHIP_COURIER) { // картой или налом
-                    if ( ! in_array($pt, array(Model_Order::PAY_DEFAULT, Model_Order::PAY_CARD))) $pt = Model_Order::PAY_DEFAULT; // по умолчанию - наличка
-
-                } elseif($o->delivery_type == Model_Order::SHIP_SELF) {
-                    $pt = Model_Order::PAY_DEFAULT; // только наличкой
-                }
-
-                $o->values(array(
-                    'user_id' => $this->user->id,
-                    'user_status' => $cart->status_id,
-                    'description' => $this->request->post('description'),
-                    'status' => $pt == Model_Order::PAY_CARD ? 'C' : 'N', // при оплате по карте - свой статус
-                    'status_time' => date("Y-m-d H:i:s"),
-                    'pay_type' => $pt,
-                ));
-
-				/**
-				 * Проверка дат
-				 */
-				
-				$setNextDate = false;
-				$today_time = mktime(0, 0, 0);
-
-				if( $od->ship_zone ){
-					
-					$Zone = ORM::factory('zone', $od->ship_zone);
-					$dates = $Zone->allowed_date( $cart );
-					list($first_date) = each( $dates );
-				}
-				else
-					$first_date = date('Y-m-d',strtotime('tomorrow'));
-				
-				if( empty($od->ship_date) )
-					$setNextDate = true;
-				
-				else{
-					
-					// Если это заказ из прошлого, то ставим первую дату из открытых
-					$ship_time = strtotime( $od->ship_date );
-					
-					if( $ship_time < $today_time || ( $od->ship_date == date('Y-m-d') && time() >= $today_time + 43200 ) ){
-						$setNextDate = true;
-					}
-				}
-				
-                if ($setNextDate){
-					
-					$od->ship_date = $first_date;
-				}
-				
-				/**
-				 * /Проверка дат
-				 */
-
-				$od_time = date('Y-m-d H:i:s', Session::instance()->get('od_time') );
-				
-				if( !empty( $od_time ) ){
-					
-					$o->created = $od_time;
-				}
-				
-                $o->save();
-                $o->save_goods($cart);
-
-                $od->id = $o->id;
-
-                if ( ! empty($a)) {
-                    $a->save();
-                    $od->address_id = $a->id;
-                }
-                $od->save();
-
-                $cart->clean(); // чистка корзины!
-                
-                if ($pt == Model_Order::PAY_CARD) { // Переходим к оплате по карте
-                    Session::instance()->set('order_id', $o->id); // у нас в сессии теперь висит заказ с незавершённой оплатой
-                    $this->return_redirect(Route::url('payment'));
-                } else {
-                    /* Отправляем СМС о принятом заказе */
-                    $o->send_sms_accepted();
-                }
-                $mail_params = array(
-                    'o' => $o,
-                    'od' => $od,
-					'coupon' => $o->coupon_id ? $o->coupon : FALSE
-                );
-                if ( ! empty($big_to_wait)) $mail_params['big_to_wait'] = $big_to_wait;
-                Mail::htmlsend('order', $mail_params, $od->email, 'Ваш заказ '.$o->id.' принят');
-                
-                Session::instance()->set('thanx', $o->id);
-                $this->return_redirect(Route::url('order_detail', array('id' => $o->id, 'thanx' => 'thanx'))); // идём на страницу спасибо
-            } else {
-                $this->return_error(array('agree' => 'Для отправки заказа Вы&nbsp;должны согласиться с&nbsp;пользовательским соглашением.'));
-            }
-
-            $this->tmpl['od'] = $od;
-            $this->tmpl['o'] = $o;
-
-        } else {
-            $this->return_redirect(Route::url('order')); // if no order data - back to data
-        }
-
-        if ($cart->presents) { // если есть подарки - получим
-            $this->tmpl['presents']      = $cart->get_presents(FALSE, FALSE);
-            $this->tmpl['present_goods'] = $cart->get_present_goods(FALSE, FALSE);
-        }
-        if ($cart->big) { // если есть крупногабаритка - получим
-            $this->tmpl['big'] = ORM::factory('good')->where('id', 'IN', array_keys($cart->big))->find_all()->as_array('id');
-        }
-        $this->tmpl['blago'] = $cart->blago;
-        $this->tmpl['coupon'] = ! empty($cart->coupon) ? new Model_Coupon($cart->coupon) : FALSE;
-
-        $this->layout->title = 'Подтверждение заказа';
     }
 
     /**
@@ -958,8 +542,8 @@ class Controller_User extends Controller_Frontend
      * Смена пароля
      * @throws HTTP_Exception_404
      */
-    public function action_password() {
-
+    public function action_password()
+    {
         if ($code = $this->request->query('code')) { // юзер пришёл с кодом, проверить и залогинить
 
             if ( ! empty($this->user)) $this->request->redirect(Route::url('user')); // залогиненный так не может
@@ -983,11 +567,13 @@ class Controller_User extends Controller_Frontend
                 ->rule('password2', 'not_empty')
                 ->rule('password', 'matches', array(':validation', 'password', 'password2'));
 
-
             if ($code) { // старый пароль проверять не надо
                 $oldpass = TRUE;
             } else {
-                $user = ORM::factory('user')->where('id', '=', $this->user->id)->password($this->request->post('old_password'))->find();
+                $user = ORM::factory('user')
+                    ->where('id', '=', $this->user->id)
+                    ->password($this->request->post('old_password'))
+                    ->find();
                 $oldpass = $user->loaded();
             }
 
@@ -998,7 +584,7 @@ class Controller_User extends Controller_Frontend
                 $this->user->checkword = ''; // чистим код восстановления
                 Model_User::login($this->user);
 
-                $this->return_html('Ваш пароль успешно изменён. <a href="/account">Перейти в&nbsp;личный кабинет</a>');
+                $this->return_html('Ваш пароль успешно изменён. '.HTML::anchor(Route::url('user'), 'Перейти в личный кабинет'));
 
             } else {
 
@@ -1030,116 +616,157 @@ class Controller_User extends Controller_Frontend
     }
 
     /**
-     * Оплата по карте
+     * Оплата по карте - возврат с платёжного шлюза
      *
      * @throws HTTP_Exception_404
      * @throws HTTP_Exception_403
      */
-    public function action_payment()
+    public function action_pay_success()
     {
-        if (empty($this->user))  throw new HTTP_Exception_403;
+        $session_id = $this->request->query('orderId');
 
-        $order_id = Session::instance()->get('order_id');
-        if (empty($order_id)) {
-            Session::instance()->delete('order_id');
-            $this->request->redirect($this->request->referrer());
-        }
+        if (empty($session_id)) throw new HTTP_Exception_404;
 
-        $o = new Model_Order($order_id);
-        if ( ! $o->loaded()) {
-            Session::instance()->delete('order_id');
-            $this->request->redirect($this->request->referrer());
-        }
+        $payment = new Model_Payment(['session_id' => $session_id]);
+        if ( ! $payment->loaded()) throw new HTTP_Exception_404;
+        $payment->status(); // письма юзеру и прочее - см. внутри status()
 
-        if ($o->user_id != $this->user->id)  {
-            Session::instance()->delete('order_id');
-            $this->request->redirect($this->request->referrer());
-        }
-
-        // ищём, может уже платили по заказу
-        $payment = new Model_Payment($o->id);
-
-        switch($this->request->param('todo')) {
-
-            case 'payment': // первый этам оплаты
-
-                if ($payment->loaded()) {
-                    if ($payment->status == Model_Payment::STATUS_New) {
-                        $payment->pay(); // повторно пришёл на оплату - продолжим
-                        return;
-                    } else {
-                        $res = $payment->status(); // письма юзеру и прочее - см. внутри status()
-                        $this->tmpl['state'] = $res['State'];
-                    }
-                } else {
-                    $payment->init($o);  // нет оплаты - начнём сеанс
-                }
-
-                break;
-
-            case 'pay_success': // возврат от банка на страницу оплаты
-
-                if ( ! $payment->loaded()) {
-                    $e = 'Payment not found for order '.$o->id;
-                    Log::instance()->add(Log::ERROR, $e);
-                    exit($e);
-                };
-
-                $res = $payment->status(); // письма юзеру и прочее - см. внутри status()
-                $this->tmpl['state'] = $res['State'];
-
-                break;
-        }
-
-        $this->tmpl['payment'] = $payment;
-        $this->tmpl['o'] = $o;
+        $this->request->redirect(Route::url('pay', ['id' => $payment->order_id])); // переходим на страницу со статусом оплаты
     }
 
     /**
      * Возврат с формы оплаты по карте
-     * Нужно убрать заказ и вернуть человека на страницу с выбором типа оплаты
      */
     public function action_payment_back()
     {
-        if (empty($this->user))  throw new HTTP_Exception_403;
+        $this->request->redirect(Route::url('pay', ['id' => intval($_SERVER['QUERY_STRING'])]));
+    }
+	
+	public function action_phone(){
+		
+        if ( ! $this->user) throw new HTTP_Exception_403;
+		
+		$phone = $this->request->post('phone');
+		
+		$Phone = new Model_User_Phone();
+		
+		$post = $this->request->post();
+		$post['user_id'] = $this->user->id;
+		
+		$v = $Phone->validation()->copy($post);
+		
+		if( $v->check() ){
+			
+			$newPhone = $Phone->values(array(
+				'phone'      => $v['phone'],
+				'user_id' => $v['user_id']
+			))->create();
+			$this->user->phone_active = $newPhone->id;
+			$this->user->save();
+			
+			$this->return_json(['ok' => $newPhone->id, 'html' => View::factory('smarty:user/phone', [
+				'user_phones' => $this->user->get_phones(),
+				'user' => $this->user
+			])->render()]);
+		}
+		else{
+			$this->return_error($v->errors());
+		}
+	}
 
-        $oid = intval($_SERVER['QUERY_STRING']); // номер заказа должен придти из запроса
-        if (empty($oid)) throw new HTTP_Exception_404;
+    /**
+     * Просмотр заказа юзером
+     * @param int $id
+     * @return array
+     * @throws HTTP_Exception_403
+     * @throws HTTP_Exception_404
+     * @throws Kohana_Exception
+     */
+    public function action_order($id = 0)
+    {
+        $order_id = (empty($id)) ? $this->request->param('id') : $id;
 
-        $o = new Model_Order($oid);
-        if ( ! $o->loaded()) throw new HTTP_Exception_404; // нет такого заказа
+        if (empty($order_id)) throw new HTTP_Exception_404;
+        $order = new Model_Order($order_id);
+        if ( ! $order->loaded()) throw new HTTP_Exception_404;
+        
+        //обработка повторного открытия страницы спасибо
+        if (Session::instance()->get('show_ecommerce') == $order->id) {
+            $this->tmpl['is_new'] = TRUE;
+            Session::instance()->delete('show_ecommerce');
+        } 
 
-        if ($o->user_id != $this->user->id)  throw new HTTP_Exception_404; // это заказ другого пользователя
+        $this->tmpl['phone'] = $order->data->phone;
 
-        if ($o->status != 'C') throw new HTTP_Exception_404; // заказ д.б. в статусе ожидания оплаты
+        $this->tmpl['order_goods'] = $order->get_goods();
 
-        Session::instance()->delete('order_id'); // вычистим order_id из сессии
+        if ($this->request->param('thanx')) { // это спасибо-страница - тут юзера может не быть (для заказов в один клик)
 
-        $odata = $o->data->as_array();
-        Session::instance()->set('od', json_encode($odata + array('delivery_type' => $o->delivery_type))); // восстанавливаем данные заказа
-        $goods = $o->get_goods();
+            $this->tmpl['thanx'] = TRUE; 
 
-        if ( ! empty($goods)) { // восстанавливаем данные о товарах в заказе TODO - добавиит благотворительность, проверить подарки
-            $gg = array();
-            foreach($goods as $g) {
-                $gg[$g->id] = $g->quantity;
-            }
-            Cart::instance()->add($gg);
-        }
+            $this->layout->o = $order;
 
-        if ($o->delivery_type == Model_Order::SHIP_SERVICE) {
+            // check for PG goods to show for Channel Intelligence
+            $pg_goods = array();
+            foreach($order->get_goods() as $g) if ($g->upc) $pg_goods[] = $g; // they got upc
 
-            $tarif_id = Session::instance()->get('tarif_id');
-            $edost = Session::instance()->get('edost');
-            if (empty($tarif_id) OR empty($edost)) { // восстановим данные о тарифе
-                Session::instance()->set('tarif_id', 1);
-                @list($c, $name) = explode(', ', $o->data->comment);
-                if ($c and $name) {
-                    Session::instance()->set($edost, array(1 => array('company' => $c, 'name' => $name, 'price' => $o->price_ship)));
+            $this->tmpl['pg_goods'] = $pg_goods;
+
+            // get active polls to promote
+            $polls = ORM::factory('poll')
+                ->where('active', '=', 1)
+                ->where('type', '=', Model_Poll::TYPE_ORDER_COMPLETE)
+                ->where('closed', '=', 0)
+                ->order_by('id', 'DESC')
+                ->find_all()->as_array();
+
+            if ($this->user && ! empty($polls)) { // есть опросы
+                $votes = Model_Poll::votes($this->user->id); // за что уже голосовал
+                $new_user = ORM::factory('order')->where('user_id', '=', $this->user->id)->count_all() <= 1; // новый ли пользователь?
+                $can_poll = FALSE;
+
+                foreach($polls as $p) {
+                    if ( ! empty($votes[$p->id])) continue; // уже голосовал тут
+                    if ( ! $p->new_user || ($p->new_user && $new_user)) { // может быть ещё условие на новизну юзера
+                        $can_poll = TRUE;
+                        break;
+                    }
                 }
+                $this->tmpl['can_poll'] = $can_poll;
             }
+        } else {
+            if ( ! $this->user) throw new HTTP_Exception_403;
         }
 
-        $this->request->redirect(Route::url('cart'));
+        $this->tmpl['o'] = $this->tmpl['cart'] = $order;
+        $this->tmpl['od'] = $order->data;
+        $this->tmpl['coupon'] = $order->coupon_id ? $order->coupon : FALSE;
+
+        return $this->tmpl;
+    }
+
+    /**
+     * Оплата заказа картой - пускаем всех!
+     */
+    public function action_pay()
+    {
+        $order_id = $this->request->param('id');
+        $o = new Model_Order($order_id);
+        if ( ! $o->loaded()) throw new HTTP_Exception_404; // нет заказа
+        if ($o->pay_type != Model_Order::PAY_CARD || ! $o->can_pay) throw new HTTP_Exception_404; // не карта
+
+        if ($this->request->post('ajax')) { // хотят оплатить
+
+            $payment = $o->payments
+                ->where('status', '=', Model_Payment::STATUS_New)
+                ->find();
+
+            if (empty($payment->id)) { // нет оплат - создадим новую
+                $payment = new Model_Payment();
+            }
+            $this->return_redirect($payment->init($o));
+        }
+        $this->tmpl['order'] = $o;
+
     }
 }

@@ -1,28 +1,34 @@
 <h1>Личный кабинет</h1>
 
 <div class="tabs mt">
-    <div>
-        <a class="t" href="{Route::url('user')}">Мои данные</a>
-        <a class="t" href="{Route::url('order_list')}">Мои заказы</a>
-        <a class="t" href="{Route::url('user_address')}">Мои адреса</a>
-        <a class="t" href="{Route::url('user_child')}">Мои дети</a>
-        <a class="t active" href="{Route::url('user_action')}">Мои баллы по акции</a>
-        <a class="t" href="{Route::url('user_reviews')}">Мои отзывы</a>
-    </div>
+
+    {include file='user/personal.tpl' active='user_action'}
+
     <div class="tab-content active">
-        <p>Накопленные по акциям баллы</p>
+        <p>Накопленные по&nbsp;акциям баллы</p>
         <table class="tt">
             <tr>
                 <th class="l">Название акции</th>
-                <th class="l">Накопление баллов до</th>
+                <th class="l">Сроки проведения</th>
                 <th class="l">Баллы</th>
             </tr>
             {foreach $actions as $a}
                 <tr>
                     <td>{$a->get_link()}</td>
-                    <td>{$a->count_to|date_ru|default:'&mdash;'}</td>
-                    <td>
-                        {$credits[$a->pk()]['sum']|price|default:'&mdash;'}
+                    <td>{if $a->count_from}
+                            начало:&nbsp;{$a->count_from|date_ru}
+                        {/if}
+                        {if $a->count_to}<br />
+                            окончание:&nbsp;{$a->count_to|date_ru}
+                        {/if}
+                    </td>
+                    <td>{assign var=credits value=$user->get_funded($a)}
+                        {$credits.sum|price}
+                        {if $credits.from_order}
+                        <p>Подарок получен в&nbsp;заказе
+                            <a href="{Route::url('order_detail', ['id' => $credits.from_order])}">{$credits.from_order}</a>
+                        </p>
+                        {/if}
                     </td>
                 </tr>
             {/foreach}
