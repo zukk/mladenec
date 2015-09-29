@@ -1,0 +1,1 @@
+{if isset($delivery_cost)}{$delivery_cost}{else}-1{/if}

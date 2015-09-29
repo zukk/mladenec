@@ -1,0 +1,1 @@
+{$body|default:''}{if $force_profiling|default:''}{$profile}{/if}
