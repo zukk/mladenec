@@ -3,17 +3,26 @@
 require('../../../www/preload.php');
 
 $url = "https://dashboard.metacommerce.ru/api/products?file=true"; //
+//$url = "﻿http://passport.metahouse.ru/login.html?appId=dashboard&returnUrl=https%253A%252F%252Fdashboard.metacommerce.ru%252Fapi%252Fproducts%253Ffile%253Dtrue&companyId=";
 
 $post = [
-    'request' => '{"companyId":"mladenec-shop.ru","date":null,"requestFacets":true,"search":"","filters":{"name":"","skuSearch":"","skuMatching":[],"articles":[""],"market":[],"region":[],"clientRegion":[],"source":[],"collectMethod":[],"availability":["inStock"],"markdown":["none"],"catalogMatching":[],"catalog":[],"sku":["dYLjL#0","18gT8B#0","vWhyL#0","KoENKC#0","5L8rn#0","ebSF9B#0","nNxPDB#0","lEwnc#0","IXViw#0","wHrzO#0"]},"limit":1000,"offset":0}',
-    'fields' => '["name","url","marketId","collectDate","price.online.value","price.online.currency","availability","sku.item.name","sku.item.article"]',
+    'request' => '{"companyId":"mladenec-shop.ru","date":null,"requestFacets":true,"search":"","filters":{"name":"","skuSearch":"","skuMatching":[],"articles":[""],"market":[],"region":[],"clientRegion":[],"source":["origin"],"collectMethod":[],"availability":["inStock"],"markdown":["none"],"catalogMatching":[],"validations":[],"catalog":[],"sku":["dYLjL#0","18gT8B#0","vWhyL#0","KoENKC#0","5L8rn#0","ebSF9B#0","nNxPDB#0","lEwnc#0","IXViw#0","wHrzO#0"]},"offset":0,"limit":1000}',
+    'fields' => '["name","url","marketId","source","collectDate","price.online.value","availability","sku.item.name","sku.item.article","sku.matchings"]',
 ];
+
 $cookie = [
-    'exportColumns-mc.desktop.search.ProductGrid' => '["name","marketId","price.online.value","sku.item.article","availability","url","price.online.currency","sku.item.name","collectDate"]',
-    'mc.dashboard.authCookie' => '171a7ba7-4b81-4557-84eb-c8378b269970',
+    'exportColumns-mc.desktop.search.ProductGrid' => '["name","availability","sku.item.name","marketId","price.online.value","price.online.currency","sku.item.article","collectDate","source","url"]',
+    'mc.dashboard.authCookie' => 'e397ba9e-0569-4361-b749-5d7652f1cf0a',
     'mh.socketsConfig.authCookieName' => 'mc.dashboard.authCookie',
     'mh.socketsConfig.port' => '8181',
 ];
+/**
+ * Авторизация
+ * https://dashboard.metacommerce.ru/
+ * mladenec-shop.ru
+ * executive@mladenec.ru
+ * Gw8fOnq3Vh
+ */
 
 $ch = curl_init();
 array_walk($cookie, function (&$v, $k) { $v = $k.'='.urlencode($v);});
@@ -35,7 +44,7 @@ if ( ! $data) {
 }
 curl_close($ch);
 
-$translate = array_flip([
+$translate = array_flip([ // не нужно
     "name" => "name",
     "updated" => 'collectDate',
     "marketId" => "marketId",
