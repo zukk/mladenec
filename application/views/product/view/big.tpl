@@ -140,7 +140,17 @@
             <dl>
                 <dt>Код товара</dt> <dd>{$cgood->id1c} <span class="hide">{$cgood->code}, {$cgood->code1c}</span></dd>
                 {foreach from=$filters key=fname item=vals}
+                    {assign var=under value=$fname|strpos:'_'}
+                    {if $under}{assign var=fname value=$fname|mb_substr:$under}{/if}
+
+                    {if ($cgood->section_id == 29982 and in_array($fname, ['Возраст', 'Вес', 'Размер шасси', 'Вид']))
+                        or $cgood->section_id != 29982
+                    } {* коляски = 29982 *}
+
                     <dt>{$fname}</dt> <dd>{', '|implode:$vals}</dd>
+                    {/if}
+
+
                 {/foreach}
             </dl>
             <div class="advantage">
