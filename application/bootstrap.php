@@ -604,7 +604,7 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 		->defaults(array('controller' => 'page', 'action' => 'findologic_yml'));
 
 	Route::set('google', 'export/google.xml')
-		->defaults(array('controller' => 'page', 'action' => 'yml', 'google' => TRUE));
+		->defaults(array('controller' => 'page', 'action' => 'google'));
 
 	Route::set('mailru', 'export/mailru.xml')
 		->defaults(array('controller' => 'page', 'action' => 'mailru_xml'));

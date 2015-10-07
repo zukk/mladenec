@@ -31,9 +31,32 @@ fwrite($fp,'</categories>
         <local_delivery_cost>350</local_delivery_cost>
         <offers>');
 $goods_written = 0;
+$image_types = 'originals';
+
 for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size,$heap_number);$heap_number++) {
+    $good_ids = [];
+    foreach($goods as &$g) {
+        $good_ids[] = $g['id'];
+    }
+    unset($g);
+    $images = Model_Good::many_images([$image_types], $good_ids);
     foreach($goods as $g) {
-        fwrite($fp, View::factory('smarty:page/export/yml/good', array('g' => $g)));
+        //подготовка изображений   
+        $good_images = [];
+        if( isset($images[$g['id']][$image_types]) && 
+            count($images[$g['id']][$image_types]) > 0 ) {    
+            //загрузка только 1 фото на товар
+            $good_images[] = array_pop($images[$g['id']][$image_types]); 
+        } elseif($g['img1600']!='') {            
+            $good_images[] = ORM::factory('file', $g['img1600']);
+        }
+        
+        fwrite($fp, View::factory('smarty:page/export/yml/good', 
+                array(
+                    'g' => $g, 
+                    'images' => $good_images)
+                )
+              );
         $goods_written++;
     }
     gc_collect_cycles();
