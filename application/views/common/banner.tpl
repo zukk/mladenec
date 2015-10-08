@@ -1,3 +1,4 @@
+{if Kohana::ENVIRONMENT eq Kohana::PRODUCTION}
 {if $code eq 'banner_bg'}
 {literal}
 <script type="javascript">
@@ -565,4 +566,5 @@ setTimeout(function(){ document.close();}, 10);
 {/if}
 </div>
 
+{/if}
 {/if}

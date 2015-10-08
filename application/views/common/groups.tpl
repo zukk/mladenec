@@ -62,13 +62,21 @@
                 {if not empty($params.f)}
                     {foreach from=$params.f key=fid item=fvals}
                         {if not Model_Filter::big($fid)}
-                            {foreach from=$fvals item=i}
-                                {if not empty($menu.vals[$fid][$i])}
-                                    {assign var=v value=$menu.vals[$fid][$i]}
-                                    <a title="{$v.name}" href="{$sphinx->href(['f' => [$fid => [-$i]]])}">{$v.name}</a>
-                                    {assign var=choice value=1}
+                            {if in_array($fid, [Model_Filter::STROLLER_WEIGHT, Model_Filter::STROLLER_SHASSI])}
+                                {if is_array($fvals)}
+                                    {$fvals|print_r}
+                                {else}
+                                    <a title="{$fvals}" href="{$sphinx->href(['f' => [$fid => [0]]])}">{$fvals} {if $fid eq Model_Filter::STROLLER_WEIGHT}кг{else}см{/if}</a>
                                 {/if}
-                            {/foreach}
+                            {else}
+                                {foreach from=$fvals item=i}
+                                    {if not empty($menu.vals[$fid][$i])}
+                                        {assign var=v value=$menu.vals[$fid][$i]}
+                                        <a title="{$v.name}" href="{$sphinx->href(['f' => [$fid => [-$i]]])}">{$v.name}</a>
+                                        {assign var=choice value=1}
+                                    {/if}
+                                {/foreach}
+                            {/if}
                         {/if}
                     {/foreach}
                 {/if}

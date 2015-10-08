@@ -8,8 +8,6 @@ class Model_File extends ORM {
 
     protected $_primary_key = 'ID';
 
-    static $counter = 0; // счётчик для хостов
-
     protected $_table_columns = array(
         'ID' => '', 'TIMESTAMP_X' => '', 'MODULE_ID' => '', 'HEIGHT' => '', 'WIDTH' => '', 'FILE_SIZE' => '',
         'CONTENT_TYPE' => '', 'SUBDIR' => '', 'FILE_NAME' => '', 'ORIGINAL_NAME' => '', 'DESCRIPTION' => '',
@@ -64,7 +62,7 @@ class Model_File extends ORM {
      */
     public function get_url()
     {
-        return sprintf(self::get_host().'/upload/%s/%s', $this->SUBDIR, rawurlencode($this->FILE_NAME));
+        return sprintf($this->get_host().'/upload/%s/%s', $this->SUBDIR, rawurlencode($this->FILE_NAME));
     }
 
     /**
@@ -243,9 +241,9 @@ class Model_File extends ORM {
      * Хосты для статики
      * @return string
      */
-    static function get_host()
+    function get_host()
     {
-        return (Kohana::$environment == Kohana::PRODUCTION) ? 'http://st'.(floor(self::$counter++ / 10)).'.mladenec.ru' : '';
+        return (Kohana::$environment == Kohana::PRODUCTION) ? 'http://st'.($this->pk() % 10).'.mladenec.ru' : '';
     }
 
     /**

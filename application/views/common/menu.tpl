@@ -84,7 +84,7 @@
         {/if}
         {/capture}
 
-        {if $section->id != 29293}{$branda}{/if}
+        {if $sid != 29293}{$branda|default:''}{/if}
 
         {if not empty($filters)}
             {assign var=shownf value=0}
@@ -92,7 +92,7 @@
 
                 {if $fname and not Model_Filter::big($fid) and empty($hide[$fid])}
 
-                    {if $section->id == 29293 && $shownf eq 1} {* в этой категории бренды после первого фильтра *}
+                    {if $sid == 29293 && $shownf eq 1} {* в этой категории бренды после первого фильтра *}
                         {$branda}
                     {/if}
 
@@ -102,6 +102,9 @@
                 {if $under}{assign var=fname value=$fname|mb_substr:$under}{/if}
 	            <strong>{$fname} <i class="toggler"></i></strong>
 
+                {if $fid eq Model_Filter::STROLLER_WEIGHT or $fid eq Model_Filter::STROLLER_SHASSI}
+                    {include file="common/menu/begunok.tpl"}
+                {else}
                 <ul>
                     {if $fid eq Model_Filter::PURE_SOSTAV and Model_Filter::taste_on($params)}
 
@@ -155,7 +158,7 @@
                         </li>
                     {/if}
 
-                    {if $fid eq 2198}{* бегунок по весу *}
+                    {if $fid eq 2198}{* бегунок по весу для подгузников *}
                         {if ! empty($vals[Model_Filter::WEIGHT])}
                             {assign var=first value=array_shift($vals[Model_Filter::WEIGHT])}
                             {assign var=last value=array_pop($vals[Model_Filter::WEIGHT])}
@@ -176,8 +179,11 @@
                             <input id="weight" name="weight" type="hidden" value="{$weight|default:'0-35'}" data-url="{$sphinx->href(['weight' => 1])}"/>{* weight *}
                         </li>
                     {/if}
-	            </ul>
-	            {/if}
+
+                </ul>
+                {/if}
+
+                {/if}
 	        {/foreach}
 		{/if}
 
@@ -235,7 +241,7 @@
 
     <input id="prpr" name="pr" type="hidden" value="{$pr|default:''}" data-url="{$sphinx->href(['pr' => 1])}"/>{* price *}
 
-    <input name="section" value="{$section->id|default:0}" type="hidden" id="search_section" />
+    <input name="section" value="{$sid}" type="hidden" id="search_section" />
     <input name="mode" value="{$mode}" type="hidden" id="search_mode" />
     <input name="query" value="{$query}" type="hidden" id="search_query" />
 

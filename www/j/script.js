@@ -1127,7 +1127,7 @@ $(document).ready(function () {
             }
         })
 
-        .on('touchstart mousedown', 'div.range span.line i', function (event) { // линеечка с ценами
+        .on('touchstart mousedown', 'div.range span.line i', function (event) { // бегунок от-до
 
             var cssProp, css1Prop, inp,
                 mode = $(this).hasClass('min') ? 'left' : 'right';

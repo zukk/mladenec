@@ -48,7 +48,6 @@ class Model_Filter_Value extends ORM {
      * И массив значений для них в формате [filter_id] => [id => name]
      * Одним запросом
      */
-
     public static function filter_val($values_ids)
     {
         $fvalues = DB::select('fv.id', 'fv.name', 'fv.roditi', DB::expr('f.id as fid'), DB::expr('f.name as filter_name'))

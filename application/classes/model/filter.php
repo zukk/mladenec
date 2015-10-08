@@ -9,6 +9,9 @@ class Model_Filter extends ORM {
 
     const PURE_SOSTAV = 2068; // фильтр состава в пюре
 
+    const STROLLER_WEIGHT = 2329;
+    const STROLLER_SHASSI = 2324;
+
     const WEIGHT = 100; // искусственный фильтр по весу в подгузах
     const TASTE = 101; // искусственный фильтр  - только выбранные вкусы
 
@@ -128,6 +131,63 @@ class Model_Filter extends ORM {
         20426 => [193260, 51454, 76140, 193258, 160871, 193277, 51593, 74341],
         // уход за ногами - CAMAY, KAI, Kotex, Mama Com.fort, Procter & Gamble, Sanosan, Satin Care, Venus
         20427 => [193281, 193438, 51511, 160871, 51576, 51592, 193292, 193293],
+    ];
+
+    /**
+     * Интервалы для Веса колясок
+     */
+    public static $_stroller_weight = [
+        1 => [
+            'min' => 1,
+            'max' => 6,
+            'name' => 'до 6 кг',
+        ],
+        2 => [
+            'min' => 6,
+            'max' => 8,
+            'name' => 'от 6 до 8 кг',
+        ],
+        3 => [
+            'min' => 8,
+            'max' => 10,
+            'name' => 'от 8 до 10 кг',
+        ],
+        4 => [
+            'min' => 10,
+            'max' => 15,
+            'name' => 'от 10 до 15 кг',
+        ],
+        5 => [
+            'min' => 15,
+            'max' => 100,
+            'name' => 'от 15 кг',
+        ]
+    ];
+
+    /**
+     * Интервалы для Шасси колясок
+     */
+    public static $_stroller_shassi = [
+        1 => [
+            'min' => 1,
+            'max' => 40,
+            'name' => 'до 40 см',
+        ],
+        2 => [
+            'min' => 41,
+            'max' => 50,
+            'name' => 'с 41 до 50 см',
+        ],
+        3 => [
+            'min' => 51,
+            'max' => 60,
+            'name' => 'с 51 до 60 см',
+        ],
+        4 => [
+            'min' => 61,
+            'max' => 100,
+            'name' => 'от 61 см',
+        ],
     ];
 
     /**

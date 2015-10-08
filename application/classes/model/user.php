@@ -578,8 +578,7 @@ class Model_User extends ORM {
      */
     public static function can_one_click($good = NULL)
     {
-        // локалхост всегда может
-        if (in_array(Request::$client_ip, ['127.0.0.1'])) return TRUE;
+        if (in_array(Request::$client_ip, ['127.0.0.1', '10.0.2.2'])) return TRUE;
 
         $region = Session::instance()->get('region'); // регион пользователя
         $return = in_array($region, ['RU-MOW', 'RU-MOS']);
@@ -589,7 +588,7 @@ class Model_User extends ORM {
     }
 
     /**
-     * Получить адреса пользователя
+     * Получить активные адреса пользователя по дате использвания
      * @return array
      * @throws Kohana_Exception
      */

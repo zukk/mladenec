@@ -30,7 +30,6 @@ class Sphinx {
     public $pager   = []; // пажинатор для результатов поиска
     public $filters   = []; // ab
     public $found   = 0; // число найденных результатов
-    public $hash    = ''; // хэш для пажинатора
     public $qs      = FALSE; // флаг наличия дополнительных параметров в запросе
 
     public $other_shop_goods            = []; // Товары, найденные на других витринах
@@ -364,6 +363,45 @@ class Sphinx {
                             'roditi'   => $roditi[$fid][$vid]
                         ];
                     }
+                    if ($fid == Model_Filter::STROLLER_WEIGHT) { // вес в колясках - статистика по интервалам + минимум и максимум
+                        $stroller_weight = [];
+                        foreach($vals[$fid] as $val) {
+                            $float = floatval($val['name']);
+                            if (empty($stroller_weight['min']) || $stroller_weight['min'] > $float) {
+                                $stroller_weight['min'] = $float;
+                            }
+                            if (empty($stroller_weight['max']) || $stroller_weight['max'] < $float) {
+                                $stroller_weight['max'] = $float;
+                            }
+
+                            foreach(Model_Filter::$_stroller_weight as $id => $data) {
+                                if (empty($stroller_weight[$id])) $stroller_weight[$id] = 0;
+                                if ($data['max'] >= $float and $data['min'] <= $float) {
+                                    $stroller_weight[$id] += $val['qty'];
+                                }
+                            }
+                        }
+                    }
+
+                    if ($fid == Model_Filter::STROLLER_SHASSI) { // шасси в колясках - статистика по интервалам + минимум и максимум
+                        $stroller_shassi = [];
+                        foreach($vals[$fid] as $val) {
+                            $float = intval($val['name']);
+                            if (empty($stroller_shassi['min']) || $stroller_shassi['min'] > $float) {
+                                $stroller_shassi['min'] = $float;
+                            }
+                            if (empty($stroller_shassi['max']) || $stroller_shassi['max'] < $float) {
+                                $stroller_shassi['max'] = $float;
+                            }
+
+                            foreach(Model_Filter::$_stroller_shassi as $id => $data) {
+                                if (empty($stroller_shassi[$id])) $stroller_shassi[$id] = 0;
+                                if ($data['max'] >= $float and $data['min'] <= $float) {
+                                    $stroller_shassi[$id] += $val['qty'];
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -440,6 +478,9 @@ class Sphinx {
                 'filters'   => ! empty($filters) ? $filters : [],
                 'vals'      => ! empty($vals) ? $vals : [],
             ];
+            if ( ! empty($stroller_weight)) $return['stroller_weight'] = $stroller_weight;
+            if ( ! empty($stroller_shassi)) $return['stroller_shassi'] = $stroller_shassi;
+
             Cache::instance()->set($stats_key, $return); // кэшируем результат на час
         }
         return $return;
@@ -780,9 +821,12 @@ class Sphinx {
                 default:
                     if (preg_match('~^f(\d+)$~', $k, $matches)) { // фильтры
                         $fid = $matches[1];
-                        $vals = array_filter(explode('_', $v), 'ctype_digit');
-                        if ( ! empty($vals)) $this->_params['f'][$fid] = $vals;
-
+                        if (in_array($fid, [Model_Filter::STROLLER_WEIGHT, Model_Filter::STROLLER_SHASSI]) && preg_match('~^(\d+)-(\d+)$~', $v)) {
+                            $this->_params['f'][$fid] = $v;
+                        } else {
+                            $vals = array_filter(explode('_', $v), 'ctype_digit');
+                            if ( ! empty($vals)) $this->_params['f'][$fid] = $vals;
+                        }
                     }
                     if ( ! empty($this->_params['f'])) $this->qs = TRUE;
                     break;
@@ -792,7 +836,7 @@ class Sphinx {
         if ( ! empty($this->_params['f'])) {
             foreach ($this->_params['f'] as $fid => $vals) { // выкидываем некорректные фидьтры
 
-                if ($fid == Model_Filter::TASTE) continue; // { // только выбранные вкусы - собираем все доступные вкусы
+                if ($fid == Model_Filter::TASTE || $fid == Model_Filter::STROLLER_SHASSI || $fid == Model_Filter::STROLLER_WEIGHT) continue; // { // только выбранные вкусы - собираем все доступные вкусы
 
                 foreach ($vals as $key => $fv) {
                     if (empty($stats['vals'][$fid][$fv]) && $fid != Model_Filter::TASTE) {  // выбран фильтр которого нет в категории
@@ -892,14 +936,13 @@ class Sphinx {
         // значения фильтров
         $binded_values = []; // параметры от связанных фильтров собираем в одну группу where, иначе условия поиска будут взаимоисключающими
         if ( ! empty($params['f'])) {
-
             foreach($params['f'] as $fid => $values) {
 
-                if ($fid == Model_Filter::TASTE) {
+                if ($fid == Model_Filter::TASTE) { // только выбранные вкусы
                     $tastes = [];
                     foreach ($this->stats()['vals'] as $tid => $tvals) {
                         if (Model_Filter::taste($tid)) {
-                            foreach($tvals as $id => $val) {
+                            foreach ($tvals as $id => $val) {
                                 if ( ! empty($params['f'][$tid]) && in_array($id, $params['f'][$tid])) { // этот вкус выбран
                                     unset($tvals[$id]);
                                 }
@@ -909,8 +952,69 @@ class Sphinx {
                     }
 
                     if ( ! empty($tastes)) {
-                        foreach($tastes as $t) {
+                        foreach ($tastes as $t) {
                             $q->where('fvalue', 'NOT IN', [intval($t)]);
+                        }
+                    }
+                } elseif ($fid == Model_Filter::STROLLER_WEIGHT) { // вес для колясок
+
+                    if (is_string($values)) { // передан интервал от - до - умножаем на 10 - в индексе int
+
+                        $sw = explode('-', $values);
+                        $sw[0] = empty($sw[0]) ? 1 : round(floatval($sw[0]) * 10);
+                        $sw[1] = empty($sw[1]) ? 1000 : round(floatval($sw[1]) * 10);
+
+                        $q  ->where('stroller_weight', '>=', intval($sw[0]))
+                            ->where('stroller_weight', '<=', intval($sw[1]));
+
+                    } elseif (is_array($values)) { // искусственные интервалы - надо заменить на набор id значений фильтров попадающих в интервал
+
+                        $vals_ids = [];
+                        foreach($values as $int_id) {
+                            if ( ! empty(Model_Filter::$_stroller_weight[$int_id])) {
+                                $min = Model_Filter::$_stroller_weight[$int_id]['min'];
+                                $max = Model_Filter::$_stroller_weight[$int_id]['max'];
+                                //echo $min.' < '.$max.' = ';
+                                foreach(ORM::factory('filter_value')->where('filter_id', '=', $fid)->find_all()->as_array('id', 'name') as $id => $name) {
+                                    if (floatval($name) >= $min && floatval($name) <= $max) {
+                                        $vals_ids[] = $id;
+                                    }
+                                }
+                            }
+                        }
+                        if ( ! empty($vals_ids)) {
+                            $q->where('fvalue', 'IN', array_map('intval', $vals_ids));
+                        }
+                    }
+
+                } elseif ($fid == Model_Filter::STROLLER_SHASSI) { // ширина шасси для колясок
+
+                    if (is_string($values)) { // передан интервал от - до - умножаем на 10 - в индексе int
+
+                        $ss = explode('-', $values);
+                        $ss[0] = empty($ss[0]) ? 1 : intval($ss[0]);
+                        $ss[1] = empty($ss[1]) ? 100 : intval($ss[1]);
+
+                        $q  ->where('stroller_shassi', '>=', intval($ss[0]))
+                            ->where('stroller_shassi', '<=', intval($ss[1]));
+
+                    } elseif (is_array($values)) { // искусственные интервалы - надо заменить на набор id значений фильтров попадающих в интервал
+
+                        $vals_ids = [];
+                        foreach($values as $int_id) {
+                            if ( ! empty(Model_Filter::$_stroller_shassi[$int_id])) {
+                                $min = Model_Filter::$_stroller_shassi[$int_id]['min'];
+                                $max = Model_Filter::$_stroller_shassi[$int_id]['max'];
+                                //echo $min.' < '.$max.' = ';
+                                foreach(ORM::factory('filter_value')->where('filter_id', '=', $fid)->find_all()->as_array('id', 'name') as $id => $name) {
+                                    if (floatval($name) >= $min && floatval($name) <= $max) {
+                                        $vals_ids[] = $id;
+                                    }
+                                }
+                            }
+                        }
+                        if ( ! empty($vals_ids)) {
+                            $q->where('fvalue', 'IN', array_map('intval', $vals_ids));
                         }
                     }
 
@@ -1363,26 +1467,43 @@ class Sphinx {
             if ( ! empty($this->_params['f'])) {
                 foreach ($this->_params['f'] as $fid => $vids) {
                     $return['f' . $fid] = $vids;
-                    if ( ! empty($change['f'][$fid])) {
-                        foreach ($change['f'][$fid] as $vid) {
-                            if ($vid > 0) $return['f' . $fid][] = $vid;
-                            if ($vid < 0) $return['f' . $fid] = array_filter($return['f' . $fid], function($v) use ($vid) { return $vid + $v;});
+                    if ( ! is_string($vids)) { // для бегунков тут может быть строка MIN-MAX
+                        if ( ! empty($change['f'][$fid])) {
+                            foreach ($change['f'][$fid] as $vid) {
+                                if ($vid > 0) $return['f' . $fid][] = $vid;
+                                if ($vid < 0) $return['f' . $fid] = array_filter($return['f' . $fid], function($v) use ($vid) { return $vid + $v;});
+                            }
+                            unset($change['f'][$fid]); // чтобы не добавить потом в строку
                         }
-                        unset($change['f'][$fid]); // чтобы не добавить потом в строку
+
+                        $return['f' . $fid] = array_unique($return['f' . $fid]);
+                        sort($return['f' . $fid]);
+                        $return['f' . $fid] = implode('_', $return['f' . $fid]);
+                    } else {
+
                     }
-                    $return['f' . $fid] = array_unique($return['f' . $fid]);
-                    sort($return['f' . $fid]);
-                    $return['f' . $fid] = implode('_', $return['f' . $fid]);
                 }
             }
             if ( ! empty($change['f'])) {
                 foreach ($change['f'] as $fid => $ch) { // добавим новые фильтры
                     foreach ($ch as $vid) {
-                        if ($vid > 0) $return['f' . $fid][] = $vid;
+                        if ($vid >= 0) {
+                            if (empty($return['f' . $fid]) || is_array($return['f' . $fid])) {
+                                $return['f' . $fid][] = $vid;
+                            } else {
+                                if ($vid == 0) { // для строковых непустых значений (бегунки) - сбросить все если в change = [0]
+                                    unset($return['f' . $fid]);
+                                } else {
+                                    $return['f' . $fid] = [$vid];
+                                }
+                            }
+                        };
                     }
-                    $return['f' . $fid] = array_unique($return['f' . $fid]);
-                    sort($return['f' . $fid]);
-                    $return['f' . $fid] = implode('_', $return['f' . $fid]);
+                    if ( ! empty($return['f' . $fid])) {
+                        $return['f' . $fid] = array_unique($return['f' . $fid]);
+                        sort($return['f' . $fid]);
+                        $return['f' . $fid] = implode('_', $return['f' . $fid]);
+                    }
                 }
             }
         }
@@ -1484,7 +1605,7 @@ class Sphinx {
         if ( ! empty($this->_params['f'])) { // фильтры
             foreach ($this->_params['f'] as $fid => $vals) {
                 $count_selected_filters[$fid] = 0;
-                if ( ! Model_Filter::big($fid)) {
+                if ( ! Model_Filter::big($fid) && is_array($vals)) {
                     foreach($vals as $v) {
                         if ( ! empty($names['vals'][$fid][$v])) {
                             $words['f'][] = $names['vals'][$fid][$v]['name'];
