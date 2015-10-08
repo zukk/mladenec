@@ -1,4 +1,4 @@
-{if Kohana::ENVIRONMENT eq Kohana::PRODUCTION}
+{if Kohana::$environment eq Kohana::PRODUCTION}
 {if $code eq 'banner_bg'}
 {literal}
 <script type="javascript">
