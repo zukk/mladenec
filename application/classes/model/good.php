@@ -465,66 +465,103 @@ class Model_Good extends ORM {
      * @param array $ids
      * @return array
      */
-    public static function many_images($sizes = array(255), array $ids = [], $all_photos = false) {
+    public static function many_images($sizes = [255], array $ids = [], $all_photos = FALSE)
+    {
 
-        $return = array();
+        $return = [];
         if (empty($ids)) return $return;
-        
-        if(in_array('originals', $sizes)) {
-            $files = ORM::factory('file')->where('MODULE_ID', '=', 'Model_Good')->where('DESCRIPTION','IN',$ids)->find_all()->as_array('ID');
-            if (empty($files)) return $return;
 
-            foreach ($files as $file_id => $data) {
-                $return[$data->DESCRIPTION]['originals'][] = $data;
+        // получить только оригиналы картинок, могут быть в неправильном порядке (лицо не первое)
+        if (in_array('originals', $sizes)) {
+            $files = ORM::factory('file')
+                ->where('MODULE_ID', '=', 'Model_Good')
+                ->where('DESCRIPTION', 'IN', $ids) // в этом поле id товара к которому прикреплена картинка
+                ->find_all()
+                ->as_array('ID');
+
+            if ( ! empty($files)) {
+                foreach ($files as $file_id => $data) {
+                    $return[$data->DESCRIPTION]['originals'][] = $data;
+                }
             }
             
-            //id товаров без оригиналов
-            $not_found = array_diff($ids, array_keys($return));
-            if(count($not_found)==0) return $return;
+            $not_found = array_diff($ids, array_keys($return)); // id товаров без оригиналов
+            if (empty($not_found)) return $return;
             
-            $imgs = DB::select()
+            $imgs = DB::select('img500', 'id') // если нет оригинала - поищем картинки 500х500
                 ->from('z_good_prop')                    
                 ->where('id', 'IN', $not_found)
+                ->where('img500', '!=', 0)
                 ->execute()
-                ->as_array('img500');            
-            if (empty($imgs))
-                return $return;
+                ->as_array('img500', 'id');
+
+            if (empty($imgs)) return $return;
             
-            $files = ORM::factory('file')->where('ID', 'IN', array_keys($imgs))->find_all()->as_array('ID');
+            $files = ORM::factory('file')
+                ->where('ID', 'IN', array_keys($imgs))
+                ->find_all()
+                ->as_array('ID');
             
-            if (empty($files))
-                return $return;
+            if (empty($files)) return $return;
             
-            foreach ($imgs as $file_id => $data) {
-                if (!empty($files[$file_id])) {
-                    $return[$data['id']]['originals'][] = $files[$file_id];
+            foreach ($imgs as $file_id => $good_id) {
+                if ( ! empty($files[$file_id])) {
+                    $return[$good_id]['originals'][] = $files[$file_id];
                 }
             }
             
             return $return;
         }
 
+        if (in_array('500', $sizes)) { // получить только картинки500
+
+            $imgs = DB::select('img500', 'id')
+                ->from('z_good_prop')
+                ->where('id', 'IN', $ids)
+                ->where('img500', '!=', 0)
+                ->execute()
+                ->as_array('img500', 'id');
+
+            if (empty($imgs)) return $return;
+
+            $files = ORM::factory('file')
+                ->where('ID', 'IN', array_keys($imgs))
+                ->find_all()
+                ->as_array('ID');
+
+            if (empty($files)) return $return;
+
+            foreach ($imgs as $file_id => $good_id) {
+                if ( ! empty($files[$file_id])) {
+                    $return[$good_id]['500'][] = $files[$file_id];
+                }
+            }
+
+            return $return;
+        }
+
         // получить все прикрепленные картинки id => size
         $imgs = DB::select()
-                ->from('z_good_img')
-                ->where('good_id', 'IN', $ids)
-                ->where('size', 'IN', $sizes)
-                ->order_by('file_id', 'DESC')
-                ->execute()
-                ->as_array('file_id');
+            ->from('z_good_img')
+            ->where('good_id', 'IN', $ids)
+            ->where('size', 'IN', $sizes)
+            ->order_by('file_id', 'DESC')
+            ->execute()
+            ->as_array('file_id');
 
-        if (empty($imgs))
-            return $return;
+        if (empty($imgs)) return $return;
 
         // Получить все объекты кучей
-        $files = ORM::factory('file')->where('ID', 'IN', array_keys($imgs))->find_all()->as_array('ID');
+        $files = ORM::factory('file')
+            ->where('ID', 'IN', array_keys($imgs))
+            ->find_all()
+            ->as_array('ID');
 
-        if (empty($files))
-            return $return;
+        if (empty($files)) return $return;
 
         foreach ($imgs as $file_id => $data) {
-            if (!empty($files[$file_id])) {
-                if (!$all_photos) {
+            if ( ! empty($files[$file_id])) {
+                if ( ! $all_photos) {
                     $return[$data['good_id']][$data['size']] = $files[$file_id];
                 } else {
                     $return[$data['good_id']][$data['size']][] = $files[$file_id];
