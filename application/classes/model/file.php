@@ -34,7 +34,7 @@ class Model_File extends ORM {
     /**
      * Выдаёт html-код пустой картинки
      */
-    public static function empty_image($props = array(), $size = NULL)
+    public static function empty_image($props = [], $size = NULL)
     {
         if( ! is_null($size) && file_exists(DOCROOT.'/i/no_'.intval($size).'.png')) {
             /* Custom cap size */
@@ -70,7 +70,7 @@ class Model_File extends ORM {
      * @param array $props
      * @return string
      */
-    public function get_img($props = array())
+    public function get_img($props = [])
     {
         if ( ! $this->FILE_NAME) return self::empty_image($props);
 
@@ -143,7 +143,7 @@ class Model_File extends ORM {
      * @param array $size
      * @return Model_File|bool
      */
-    public static function image($i, $size = array())
+    public static function image($i, $size = [])
     {
         if ( ! Upload::image($_FILES[$i])) return FALSE; // не картинка
 
@@ -212,11 +212,10 @@ class Model_File extends ORM {
         $im = new Imagick($tmp_name = $this->get_path());
         $im->thumbnailimage($maxsize, $maxsize, TRUE);
 		
-		if( $width < $maxsize ){
-			$im->cropimage($width, $height, intval( ( $maxsize - $width ) / 2 ), 0 );
-		}
-		else if( $height < $maxsize ){
-			$im->cropimage($width, $height, 0, intval( ( $maxsize - $height ) / 2 ) );
+		if ($width < $maxsize) {
+			$im->cropimage($width, $height, intval(($maxsize - $width) / 2), 0);
+		} else if($height < $maxsize) {
+			$im->cropimage($width, $height, 0, intval(($maxsize - $height) / 2));
 		}
 		
         return self::from_imagick($im);
