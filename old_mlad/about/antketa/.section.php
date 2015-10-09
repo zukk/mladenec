@@ -1,6 +1,0 @@
-<?
-$sSectionName = "Анкетирование";
-$arDirProperties = Array(
-
-);
-?>

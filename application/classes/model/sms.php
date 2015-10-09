@@ -119,7 +119,7 @@ class Model_Sms extends ORM  {
 			
             if (Kohana::$environment == Kohana::PRODUCTION) { // по-настоящему шлём смс только на боевом
 				
-				if (Conf::instance()->sms_method == Model_Config::SMS_MTS ){
+				if (Conf::instance()->sms_method == Model_Config::SMS_MTS) {
 
 					$_request = "http://mcommunicator.ru/m2m/m2m_api.asmx/SendMessage?" . http_build_query([
 						'msid' => $phone,

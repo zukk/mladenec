@@ -1,3 +1,6 @@
 ^old_mlad$
 ^application/cache$
 ^application/logs$
+^application/config/database.php$
+^application/config/sms.php$
+^application/config/payment.php$
