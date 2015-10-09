@@ -23,10 +23,10 @@
 {if not empty($images) and is_array($images)}
     {assign var=i value=$images|current}
 
-    {if $i.255}<img id="no_sale" class="{$css}" src="{$i.255->get_img(0)}" alt="{$good_name}" />{/if}
+    {if $i.255}<img id="no_sale" class="{$css|default:''}" src="{$i.255->get_img(0)}" alt="{$good_name}" />{/if}
 
 {else}
-    <img id="no_sale" class="{$css}" src="/i/no.png" alt="Нет в наличии" title="Нет в наличии">
+    <img id="no_sale" class="{$css|default:''}" src="/i/no.png" alt="Нет в наличии" title="Нет в наличии">
 
 {/if}
 
