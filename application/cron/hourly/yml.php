@@ -39,10 +39,7 @@ foreach($catalog as $item) {
 
 fwrite($fp, View::factory('smarty:page/export/yml/categories', ['catalog' => $catalog]));
 
-fwrite($fp, '</categories>
-    <local_delivery_cost>350</local_delivery_cost>
-    <offers>');
-
+fwrite($fp, '</categories><local_delivery_cost>350</local_delivery_cost><offers>');
 $goods_written = 0;
 
 define('EXPORTXML_SEX', 1951);
@@ -150,16 +147,16 @@ for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size, $heap_number); $
 			$result->next();
 		}
 	}
-       
+
     $images = Model_Good::many_images([$image_types], $good_ids);
-    foreach($goods as $g) {
-		
+    foreach($goods as &$g) { // тут передаем по ссылке, иначе послдний элемент дублируется
 		// Если одновременно мальчик-девочка, то пол не передаем
 		if ( ! empty($goodFiltersV[$g['id']][EXPORTXML_SEX]) && count($goodFiltersV[$g['id']][EXPORTXML_SEX]) > 1) {
 			unset($goodFiltersV[$g['id']][EXPORTXML_SEX]);
 		}
 		
-		if ( ! empty($goodFiltersV[$g['id']])) {
+
+        if ( ! empty($goodFiltersV[$g['id']])) {
 			foreach($goodFiltersV[$g['id']] as $filter_id => $valuesIds) {
 				foreach($valuesIds as $key => $valueId) {
 					$rr = $filterClosures[$filter_id]($filterValues[$valueId]);
@@ -168,8 +165,7 @@ for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size, $heap_number); $
 				}
 			}
 		}
-        
-        //подготовка изображений   
+        //подготовка изображений
         $good_images = [];
         if (isset($images[$g['id']][$image_types]) && count($images[$g['id']][$image_types]) > 0) {
             //загрузка только 1 фото на товар
@@ -178,7 +174,7 @@ for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size, $heap_number); $
         } elseif ( ! empty($g['img1600'])) {
             $good_images[] = ORM::factory('file', $g['img1600']); // если нет картинок никаких, добавим 1600 - но она с вотермаркой
         }
-        
+
         fwrite($fp, View::factory('smarty:page/export/yml/good', [
             'g'             => $g,
             'images'        => $good_images,
@@ -189,7 +185,7 @@ for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size, $heap_number); $
         ]));
         $goods_written++;
     }
-	
+
     gc_collect_cycles();
 }
 

@@ -959,10 +959,10 @@ class Model_Good extends ORM {
                 ->execute()->as_array();
         
         $query = DB::select('good.*', 'file.SUBDIR', 'file.FILE_NAME','prop.img1600','prop.img500','prop.desc',
-                array('brand.name','brand_name'),
-                array('section.name','section_name'),
-                array('section.market_category','market_category')
-            )->from(array('z_good', 'good'))
+                ['brand.name','brand_name'],
+                ['section.name','section_name'],
+                ['section.market_category','market_category']
+            )->from(['z_good', 'good'])
 
                 ->join(['z_good_prop',   'prop'])    ->on('good.id',         '=', 'prop.id')
                 ->join(['z_brand',       'brand'])   ->on('good.brand_id',   '=', 'brand.id')
@@ -984,6 +984,7 @@ class Model_Good extends ORM {
                 ->where_close()
                 ->where('group.active',     '=', 1)
                 ->where('brand.active',     '=', 1)
+                ->order_by('good.id')
                 ->offset($heap_number * $heap_size)
                 ->limit($heap_size);
 
