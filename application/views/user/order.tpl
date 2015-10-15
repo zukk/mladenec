@@ -98,12 +98,20 @@
     {*$is_new|var_dump*}
     {if not empty($is_new) AND (Kohana::$environment eq Kohana::PRODUCTION)}
         <script>
+            window.dataLayer = window.dataLayer || [];
 
-            var ya_goods = [];
+            var ya_goods = [], transactionProducts = [];
             {foreach from=$order_goods item=g}
             {if $g->price gt 0}
             ya_goods.push({
                 id: {$g->id},
+                name: '{$g->group_name|escape:'javascript'} {$g->name|escape:'javascript'}',
+                category: '{$g->section->name|escape:'javascript'}',
+                price: {$g->price},
+                quantity: {$g->quantity}
+            });
+            transactionProducts.push({
+                sku: {$g->id},
                 name: '{$g->group_name|escape:'javascript'} {$g->name|escape:'javascript'}',
                 category: '{$g->section->name|escape:'javascript'}',
                 price: {$g->price},
@@ -120,7 +128,14 @@
                 goods: ya_goods
             };
 
-            window.dataLayer = window.dataLayer || [];
+            dataLayer.push({
+                transactionId: '{$o->id}',
+                transactionAffiliation: '{$vitrina}',
+                transactionTotal: '{$o->price}',
+                transactionShipping: '{$o->price_ship}',
+                transactionProducts: transactionProducts
+            });
+
             dataLayer.push({
                 userId: {$o->user_id},
                 ecommerce: {
