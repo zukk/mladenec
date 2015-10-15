@@ -5,11 +5,9 @@ require('../www/preload.php');
 define('_FILE', APPPATH . 'views/layout/assets/common.tpl');
 unlink(_FILE);
 chdir(APPPATH . '../');
-$rev = exec('hg log -T {rev}');
+exec('hg update -C');
+$rev = exec('hg parents -T {rev}');
 
-//$vdata = explode(':', exec('svnversion'));
-//$version = intval(array_pop($vdata));
-var_dump($rev);
 $version = $rev;
 
 file_put_contents(_FILE, str_replace('$SVN$', $version, file_get_contents(_FILE)));
