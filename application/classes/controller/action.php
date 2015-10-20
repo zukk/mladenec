@@ -52,7 +52,7 @@ class Controller_Action extends Controller_Frontend
     /**
      * показ списка акций
      */
-     public function action_list()
+    public function action_list()
     {
         $q = ORM::factory('action')
             ->where('show_actions', '=', 1)

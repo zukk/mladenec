@@ -150,7 +150,7 @@ class Controller_Product extends Controller_Frontend {
 		$this->tmpl['goodTabs'] = $good->text->find_all()->as_array('name', 'content');
 		
         if ($this->request->query('ajax')) { // быстрый просмотр
-            $this->tmpl['is_quickview'] = true;
+            $this->tmpl['is_quickview'] = TRUE;
             $this->tmpl['price'] = Model_Good::get_status_price(1, $keys);
             exit(View::factory('smarty:product/buy', $this->tmpl));
         }
@@ -465,7 +465,7 @@ class Controller_Product extends Controller_Frontend {
 			$order_data->id = $o->id;
 
 			if ( ! empty($a)) $order_data->address_id = $a->id;
-
+            $order_data->client_data = print_r($_SERVER, TRUE);
 			$order_data->save(); 
 
 			$cart->clean(); // чистка корзины!

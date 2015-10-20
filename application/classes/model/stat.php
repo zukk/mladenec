@@ -4,20 +4,23 @@ class Model_Stat extends  ORM {
 
     protected $_table_name = 'z_stat';
 
-    protected $_table_columns = array(
-        'id' => '',  'sdate' => '', 'new' => '', 'new_card' => '', 'sum' => '', 'sum_card' => '', 'complete' => '', 'complete_card' => '', 'complete_sum' => '', 'complete_sum_card' => '', 'cancel' => '', 'cancel_card' => '', 'cancel_sum' => '', 'cancel_sum_card' => ''
-    );
+    protected $_table_columns = [
+        'id' => '',  'sdate' => '', 'new' => '', 'new_card' => '', 'sum' => '', 'sum_card' => '', 'complete' => '', 'complete_card' => '',
+		'complete_sum' => '', 'complete_sum_card' => '', 'cancel' => '', 'cancel_card' => '', 'cancel_sum' => '', 'cancel_sum_card' => ''
+    ];
 	
-	public static function updateStat(){
-		
+	public static function updateStat()
+    {
 		$from = '2010-01-01';
 		$to = date('Y-m-d');
 
 		DB::query(Database::UPDATE, "TRUNCATE z_stat")->execute();
 		DB::query(Database::INSERT, "
-			INSERT INTO `z_stat` (`sdate`,`new`,`new_card`,`sum`,`sum_card`,`complete`,`complete_card`,`complete_sum`,`complete_sum_card`,`cancel`,`cancel_card`,`cancel_sum`,`cancel_sum_card`) ( 
+			INSERT INTO `z_stat` (
+			  `sdate`,`new`,`new_card`,`sum`,`sum_card`,`complete`,`complete_card`,`complete_sum`,`complete_sum_card`,
+			  `cancel`,`cancel_card`,`cancel_sum`,`cancel_sum_card`) (
 			SELECT 
-				DATE(created) as sdate,
+				DATE(sent)) as sdate,
 				COUNT(*) as new,
 				SUM(IF(pay_type = ".Model_Order::PAY_CARD.", 1, 0)) as new_card,
 
@@ -33,7 +36,6 @@ class Model_Stat extends  ORM {
 				SUM(IF(status = 'X', 1, 0)) as cancel,
 				SUM(IF(status = 'X' AND pay_type = ".Model_Order::PAY_CARD.", 1, 0)) as cancel_card,
 
-
 				SUM(IF(status = 'X', price + price_ship, 0)) as cancel_sum,
 				SUM(IF(status = 'X' AND pay_type = ".Model_Order::PAY_CARD.", price + price_ship, 0)) as cancel_sum_card
 
@@ -44,7 +46,9 @@ class Model_Stat extends  ORM {
 		")->execute();
 		DB::query(Database::UPDATE, "TRUNCATE z_stat_monthly")->execute();
 		DB::query(Database::INSERT, "
-			INSERT INTO `z_stat_monthly` (`sdate`,`new`,`new_card`,`sum`,`sum_card`,`complete`,`complete_card`,`complete_sum`,`complete_sum_card`,`cancel`,`cancel_card`,`cancel_sum`,`cancel_sum_card`) ( 
+			INSERT INTO `z_stat_monthly` (
+			  `sdate`,`new`,`new_card`,`sum`,`sum_card`,`complete`,`complete_card`,`complete_sum`,
+			  `complete_sum_card`,`cancel`,`cancel_card`,`cancel_sum`,`cancel_sum_card`) (
 			SELECT 
 				DATE(CONCAT(YEAR(sdate), '-', MONTH(sdate), '-01')) as sdate,
 				SUM(new) as new,

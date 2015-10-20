@@ -960,7 +960,7 @@ class Controller_Page extends Controller_Frontend {
 
             if ($p->validation()->check()) {
 
-		        Mail::htmlsend('admin_pampers', array('o' => $p, 'time' => date('d.m.y H:59:59')), 'contest@new-point.ru,e.muradyanc@mladenec.ru,d.spirin@mladenec.ru,a.melnikov@mladenec.ru', 'анкета памперс');
+		        Mail::htmlsend('admin_pampers', array('o' => $p, 'time' => date('d.m.y H:59:59')), 'contest@new-point.ru,a.melnikov@mladenec.ru', 'анкета памперс');
 				
                 $p->save();
                 $this->tmpl['p'] = TRUE;

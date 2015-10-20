@@ -1713,7 +1713,7 @@ class Controller_Admin extends Controller_Authorised {
         
             $return['from'] = $from_date = $this->read_date($from);
             
-            $query->where('created', '>=' , $from_date);
+            $query->where('sent', '>=' , $from_date);
         }
         $to = $this->request->query('to');
 
@@ -1735,7 +1735,7 @@ class Controller_Admin extends Controller_Authorised {
             $to_timestamp = $to_timestamp + 86399;
 
             $return['to'] = $to_date = date("Y-m-d H:i:s",$to_timestamp);
-            $query->where('created', '<=' , $to_date);
+            $query->where('sent', '<=' , $to_date);
         }
 
         $query->reset(FALSE);

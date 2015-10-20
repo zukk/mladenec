@@ -13,6 +13,9 @@ class Model_Order extends ORM {
     const SHIP_OZON = 5;
     const SHIP_UNKNOWN = 9;
 
+    const SHIP_DOOR = 0; // доставка до двери
+    const SHIP_TERMINAL = 1; // доставка до терминала
+
     const EDOST_ID = 1499;
     const EDOST_PSWD = 'OMY9Fmx6y9gqrX66tSSVWVMq3cPR0fCy';
     const EDOST_URL = 'http://www.edost.ru/edost_calc_kln.php';
@@ -22,7 +25,7 @@ class Model_Order extends ORM {
     protected $_table_name = 'z_order';
 
     protected $_table_columns = [
-        'id' => '', 'type' => '', 'user_id' => '', 'user_status' => '', 'created' => '', 'changed' => '',  'description' => '',
+        'id' => '', 'type' => '', 'user_id' => '', 'user_status' => '', 'sent' => '', 'created' => '', 'changed' => '', 'description' => '',
         'manager' => '', 'price' => '',	'discount' => '', 'price_ship' => '', 'status' => '', 'status_time' => '',
         'pay_type' => '', 'payed' => 0, 'pay8'=> '', 'pay1' => '', 'delivery_type' => '', 'vitrina' => '', 'coupon_id' => '', 'can_pay' => '',
         'in1c' => 0, 'call_card' => 0
