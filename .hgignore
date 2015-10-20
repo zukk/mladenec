@@ -1,5 +1,6 @@
 ^old_mlad$
 .DS_Store$
+^.idea/
 ^application/cache$
 ^application/logs$
 ^application/config/database.php$
