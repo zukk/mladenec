@@ -481,10 +481,8 @@ class Controller_Product extends Controller_Frontend {
 			if ( ! empty($to_wait)) $mail_params['to_wait'] = $to_wait;
 			Mail::htmlsend('order', $mail_params, $order_data->email, 'Ваш заказ '.$o->id.' принят');
 
-			Session::instance()->set('thanx', $o->id);
-            Session::instance()->set('show_ecommerce', TRUE);
-
-			$this->return_redirect(Route::url('order_detail', array('id' => $o->id, 'thanx' => 'thanx'))); // идём на страницу спасибо
+			Session::instance()->set('show_ecommerce', $o->id); // отправить статистику по заказу в ГА и Я
+			$this->return_redirect(Route::url('order_detail', ['id' => $o->id, 'thanx' => 'thanx'])); // идём на страницу спасибо
 
 		} else {
             $this->return_error($v->errors('order/order_data'));
@@ -1064,6 +1062,7 @@ class Controller_Product extends Controller_Frontend {
         $order->discount = $cart->discount();
         $order->price = $cart->get_total();
         $order->user_status = $cart->status_id;
+        $order->created = date('Y-m-d H:i:s');
         $order->save();
 
         $return['order_id'] = $order->id;
@@ -1110,7 +1109,7 @@ class Controller_Product extends Controller_Frontend {
 	    $this->user = $user;
         if ( ! empty($return['new_user'])) Model_User::login($user);
 
-		Session::instance()->set('show_ecommerce', TRUE); // чтобы сообщить все статистики по заказу
+		Session::instance()->set('show_ecommerce', $order->id); // чтобы сообщить все статистики по заказу
         $this->return_redirect(Route::url('order_detail', ['id' => $order->id, 'thanx' => 'thanx']));
     }
 

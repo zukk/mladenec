@@ -689,12 +689,6 @@ class Controller_User extends Controller_Frontend
         if (empty($order_id)) throw new HTTP_Exception_404;
         $order = new Model_Order($order_id);
         if ( ! $order->loaded()) throw new HTTP_Exception_404;
-        
-        //обработка повторного открытия страницы спасибо
-        if (Session::instance()->get('show_ecommerce') == $order->id) {
-            $this->tmpl['is_new'] = TRUE;
-            Session::instance()->delete('show_ecommerce');
-        } 
 
         $this->tmpl['phone'] = $order->data->phone;
 
@@ -702,6 +696,10 @@ class Controller_User extends Controller_Frontend
 
         if ($this->request->param('thanx')) { // это спасибо-страница - тут юзера может не быть (для заказов в один клик)
 
+            if (Session::instance()->get('show_ecommerce') == $order->id) { // чтобы не слать статистику в ГА и Я второй раз
+                $this->tmpl['is_new'] = TRUE;
+                Session::instance()->delete('show_ecommerce');
+            }
             $this->tmpl['thanx'] = TRUE; 
 
             $this->layout->o = $order;
