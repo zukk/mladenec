@@ -12,3 +12,6 @@
 {/if}
 
 {include file="user/order/view.tpl" o=$i od=$i->data order_goods=$i->get_goods()}
+
+<hr />
+{$i->data->client_data}

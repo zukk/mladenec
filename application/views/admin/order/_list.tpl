@@ -44,7 +44,7 @@
     <table id="list">
         <tr>
             <th>#</th>
-            <th title="Если заказ не изменялся стоит только время создания">Создан<br />Изменен</th>
+            <th title="Если заказ не изменялся стоит только время создания">Создан<br />Отправлен<br />Изменен</th>
             <th>Клиент</th>
             <th>Оплата</th>
             <th>Сумма</th>
@@ -55,7 +55,7 @@
         {foreach from=$list item=i}
             <tr {cycle values='class="odd",'}>
                 <td><a href="{Route::url('admin_edit',['model'=>'order','id'=>$i->id])}"><small>{$i->id}</small></a></td>
-                <td>{$i->created}<br />{if $i->created neq $i->changed}{$i->changed}{/if}</td>
+                <td>{$i->created}<br />{$i->sent}<br />{if $i->created neq $i->changed}{$i->changed}{/if}</td>
                 <td>{if $i->user_id}
                     <b><a href="{Route::url('admin_edit',['model'=>'user','id'=>$i->user_id])}">{$i->data->name}</a></b> {$i->user->email}{/if}<br />
                     {$i->data->city},{$i->data->street}, {$i->data->house} {if $i->data->corp}, корп. {$i->data->corp}{/if} {if $i->data->kv}, кв./оф.{$i->data->kv}
