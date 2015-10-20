@@ -20,7 +20,7 @@ class Model_Stat extends  ORM {
 			  `sdate`,`new`,`new_card`,`sum`,`sum_card`,`complete`,`complete_card`,`complete_sum`,`complete_sum_card`,
 			  `cancel`,`cancel_card`,`cancel_sum`,`cancel_sum_card`) (
 			SELECT 
-				DATE(sent)) as sdate,
+				DATE(sent) as sdate,
 				COUNT(*) as new,
 				SUM(IF(pay_type = ".Model_Order::PAY_CARD.", 1, 0)) as new_card,
 
