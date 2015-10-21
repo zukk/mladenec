@@ -85,7 +85,7 @@ class OzonDelivery {
         if ($cart->ship_wrong == FALSE && $cart->weight() > $this->_weight_limit) {
             return ['error' => 'Самовывоз доступен только для заказов не превышающих вес 20 кг'];
         }
-        if(count($cart->goods) == 0) return false;
+        if(count($cart->goods) == 0) return FALSE;
         $ids = array_keys($cart->goods);
         $goods = ORM::factory('good')
                 ->where('id', 'IN', $ids)
@@ -102,19 +102,20 @@ class OzonDelivery {
         $goods_blist = array_keys($goods_blist);
         foreach ($goods as $g) {
             if ($g->big == 1) {
-                return ['error' => true];
+                return ['error' => TRUE];
             }
             if ($g->section_id == Model_Section::MILK_ID && in_array($g->id, $goods_blist)) {
-                return ['warning' => true];
+                return ['warning' => TRUE];
             }
         }
-        return true;
+        return TRUE;
     }
 
     /*
      * Получение терминалов из БД
      */
-    public function get_terminals() {
+    public function get_terminals()
+    {
         $check = $this->check_products();
         
         //получаем терминалы из базы

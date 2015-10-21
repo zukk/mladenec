@@ -15,7 +15,7 @@ class Controller_Frontend extends Controller_Smarty
         'j/history.min.js',
         'j/history-exec.js',
         'j/base64.js',
-        'j/adfox.js',
+        //'j/adfox.js',
 		'plugins/incdec/jquery.incdec.js',
 		'plugins/pencilator/jquery.pencilator.js',
 		'plugins/mladenecbox/jquery.mladenecbox.js',

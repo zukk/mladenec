@@ -95,23 +95,14 @@
     </div>
 
     {*  тут все скрипты для всякой статистики *}
-    {*$is_new|var_dump*}
     {if not empty($is_new) AND (Kohana::$environment eq Kohana::PRODUCTION)}
         <script>
-            window.dataLayer = window.dataLayer || [];
 
-            var ya_goods = [], transactionProducts = [];
+            var ya_goods = [];
             {foreach from=$order_goods item=g}
             {if $g->price gt 0}
             ya_goods.push({
                 id: {$g->id},
-                name: '{$g->group_name|escape:'javascript'} {$g->name|escape:'javascript'}',
-                category: '{$g->section->name|escape:'javascript'}',
-                price: {$g->price},
-                quantity: {$g->quantity}
-            });
-            transactionProducts.push({
-                sku: {$g->id},
                 name: '{$g->group_name|escape:'javascript'} {$g->name|escape:'javascript'}',
                 category: '{$g->section->name|escape:'javascript'}',
                 price: {$g->price},
@@ -127,44 +118,6 @@
                 exchange_rate: 1,
                 goods: ya_goods
             };
-            {* дубликат статистики нужной
-            dataLayer.push({
-                transactionId: '{$o->id}',
-                transactionAffiliation: '{$vitrina}',
-                transactionTotal: '{$o->price}',
-                transactionShipping: '{$o->price_ship}',
-                transactionProducts: transactionProducts
-            });
-            *}
-
-            dataLayer.push({
-                userId: {$o->user_id},
-                ecommerce: {
-                    purchase: {
-                        actionField: {
-                            id: '{$o->id}',
-                            affiliation: '{$vitrina}',
-                            revenue: '{$o->price}',
-                            shipping: '{$o->price_ship}'
-                        },
-                        products: [
-                            {foreach from=$order_goods item=g name=n}
-                            {if $g->price gt 0}
-                            {
-                                id: '{$o->id}',
-                                name: '{$g->group_name|escape:'javascript'} {$g->name|escape:'javascript'}',
-                                price: '{$g->price}',
-                                category: '{$g->section->name|escape:'javascript'}',
-                                brand: '{$g->brand->name|escape:'javascript'}',
-                                quantity: '{$g->quantity}'
-                            }{if ! $smarty.foreach.n.last},{/if}
-                            {/if}
-                            {/foreach}
-                        ]
-                    }
-                },
-                event: 'transsuccess'
-            });
         </script>
 
         {* P&G promo confirmation code *}

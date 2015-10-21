@@ -75,9 +75,6 @@ class Cart {
             }
 
             $this->delivery_open = ! empty($cart_s->delivery_open);
-            if(isset($cart_s->ozon_terminals)) {
-                $this->ozon_terminals = $cart_s->ozon_terminals;
-            }
         }
         $this->add($goods); // может быть сразу добавление товаров
     }
@@ -950,7 +947,7 @@ class Cart {
         return $this->status_id;
     }
 
-    /* получить вес заказа */
+    /* получить вес заказа в килограммах */
     public function weight()
     {
         $return = 0;
@@ -972,7 +969,7 @@ class Cart {
         return $return * 1.25; // 1.25 на упаковку
     }
 
-    /* получить объём заказа */
+    /* получить объём заказа в кубометрах  */
     public function volume()
     {
         $return = 0;

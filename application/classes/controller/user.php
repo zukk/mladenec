@@ -691,17 +691,16 @@ class Controller_User extends Controller_Frontend
         if ( ! $order->loaded()) throw new HTTP_Exception_404;
 
         $this->tmpl['phone'] = $order->data->phone;
-
-        $this->tmpl['order_goods'] = $order->get_goods();
+        $this->tmpl['order_goods'] = $order_goods = $order->get_goods();
 
         if ($this->request->param('thanx')) { // это спасибо-страница - тут юзера может не быть (для заказов в один клик)
 
             if (Session::instance()->get('show_ecommerce') == $order->id) { // чтобы не слать статистику в ГА и Я второй раз
                 $this->tmpl['is_new'] = TRUE;
                 Session::instance()->delete('show_ecommerce');
+                $this->layout->dataLayer = View::factory('smarty:user/order/datalayer', ['o' => $order, 'order_goods' => $order_goods]); // хотели dataLayer выше gtm
             }
-            $this->tmpl['thanx'] = TRUE; 
-
+            $this->tmpl['thanx'] = TRUE;
             $this->layout->o = $order;
 
             // check for PG goods to show for Channel Intelligence

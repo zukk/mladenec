@@ -2,28 +2,27 @@
 	{assign var=ga_list value="category"}
 {/if}
 
-
 {if not empty($goods) and is_array($goods)}
 <script>
 	window.dataLayer = window.dataLayer || [];
 	
 	var googleImpressionsList = "{$ga_list}";
-	if( typeof( dataLayerDetail ) != "undefined" ){
+	if(typeof(dataLayerDetail) != "undefined") {
 		googleImpressionsList = "item";
 	}
 	
 	var impressions = [
-			{foreach from=array_values($goods) item=good key=i}
+		{foreach from=array_values($goods) item=good key=i}
 		{
 		  "id": "{$good->id1c}",
-		  "name": "{addslashes($good->group_name)} {addslashes($good->name)}",
+		  "name": "{$good->group_name|escape:'javascript'} {$good->name|escape:'javascript'}",
 		  "price": "{$good->get_price()}",
-		  "brand": "{$good->brand->name}",
-		  "category": "{$good->section->name}",
+		  "brand": "{$good->brand->name|escape:'javascript'}",
+		  "category": "{$good->section->name|escape:'javascript'}",
 		  "position": {$i},
 		  "list": googleImpressionsList
 		},
-			{/foreach}
+		{/foreach}
 	];
 	
 	var ecommerce = {
@@ -44,7 +43,7 @@
 	var impressionsObject = {
 	  'userId': uid,
 	  "ecommerce": ecommerce,
-	  {if !empty( $ga_ajax )}
+	  {if ! empty( $ga_ajax )}
 		"event" : "dataload"
 	  {else}
 		"event" : "dataload"
@@ -52,7 +51,6 @@
     };
 
 	// dataLayerDetail
-	dataLayer.push(impressionsObject);	
-	  
+	dataLayer.push(impressionsObject);
 </script>
 {/if}
