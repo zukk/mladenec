@@ -83,7 +83,8 @@ class Model_Spam extends ORM {
     public function admin_save()
     {
         $request = Request::current();
-        $messages = array();
+        $messages = [];
+
         if (($this->status < self::STATUS_PROCEED) AND ( ! empty($_FILES['zip']))
             AND Upload::valid($_FILES['zip']) AND Upload::not_empty($_FILES['zip']))
         {
@@ -91,7 +92,7 @@ class Model_Spam extends ORM {
             if ($zip->open($_FILES['zip']['tmp_name']) === TRUE) { // загрузка папки с рассылкой
                 $mail_dir = Upload::$default_directory.'/mail/'.$this->id;
                 if ( ! file_exists($mail_dir)) {
-                    mkdir($mail_dir, 0777, true);
+                    mkdir($mail_dir, 0777, TRUE);
                 }
                 $zip->extractTo($mail_dir);
                 $zip->close();
@@ -106,6 +107,59 @@ class Model_Spam extends ORM {
                 Model_History::log('spam', $this->id, 'zip uploaded');
             }
         }
+        if (($this->status < self::STATUS_PROCEED) AND ( ! empty($_FILES['excel']))
+            AND Upload::valid($_FILES['excel']) AND Upload::not_empty($_FILES['excel'])) {
+
+            include(APPPATH.'classes/PHPExcel/IOFactory.php');
+
+            $excel = PHPExcel_IOFactory::load($_FILES['excel']['tmp_name']);
+            $sheet = $excel->getActiveSheet();
+            $column = PHPExcel_Cell::columnIndexFromString($sheet->getHighestColumn());
+            $row = $sheet->getHighestRow();
+
+            $mails = [];
+            for($x = 0; $x <= $column; $x++) {
+                for($y = 1; $y <= $row; $y++) {
+                    $data = strval($sheet->getCellByColumnAndRow($x, $y)->getValue());
+                    if (Valid::email($data)) {
+                        $mails[$data] = $data;
+                    }
+                }
+            }
+            $total = count($mails);
+
+            // отсеем почты тех кто отписан от рассылок
+            $no_spam = DB::select("email")
+                ->from("z_user")
+                ->where('sub', '=', 0)
+                ->where('email', 'IN', $mails)
+                ->execute()
+                ->as_array('email', 'email');
+
+            $to_add = array_diff($mails, $no_spam);
+
+            $rejected = count($no_spam);
+
+            $ins = DB::insert('z_spam_user', ['spam_id', 'mail']);
+            foreach($to_add as $mail) {
+                $ins->values([$this->id, $mail]);
+            }
+            list($ids, $added) = DB::query(Database::INSERT, 'INSERT IGNORE '.substr($ins, 6))->execute();
+
+            $messages['messages'][] = "Загружен Excel. Адресов всего $total, добавлено $added, отклонено $rejected";
+
+            Model_History::log('spam', $this->id, 'recipients added '.$added);
+        }
+
+        if (($this->status < self::STATUS_PROCEED) AND ($request->post('clear_list') == 'do')) {
+
+            DB::delete("z_spam_user")
+                ->where('spam_id', '=', $this->id)
+                ->execute();
+
+            Model_History::log('spam', $this->id, 'reset recipients list');
+        }
+
         if ($request->post('mail') AND ($this->status >= self::STATUS_NEW) AND ($this->status < self::STATUS_PROCEED)) { // тестовое письмо
             $mail = new Mail();
             $mail_dir = Upload::$default_directory.'/mail/'.$this->id.'/';
@@ -126,11 +180,15 @@ class Model_Spam extends ORM {
 
         if ($request->post('spamit') AND ($this->status == self::STATUS_READY)) { // запуск рассылки
 
-            // проставим получателей
-            DB::query(Database::INSERT,
-                "INSERT IGNORE INTO z_spam_user (spam_id, mail) "
-                ."SELECT ".$this->id.", email FROM z_user WHERE sub = 1"
-            )->execute();
+            $recipients = $this->recipients();
+
+            if (empty($recipients)) {
+                // проставим получателями всех подписчиков
+                DB::query(Database::INSERT,
+                    "INSERT IGNORE INTO z_spam_user (spam_id, mail) "
+                    . "SELECT " . $this->id . ", email FROM z_user WHERE sub = 1"
+                )->execute();
+            }
 
             $this->status = self::STATUS_PROCEED;
             $this->save();
@@ -148,5 +206,17 @@ class Model_Spam extends ORM {
     {
         $ins = DB::insert('z_spam_why', array('why'))->values(array($reason)).' ON DUPLICATE KEY UPDATE qty = qty + 1';
         DB::query(Database::INSERT, $ins)->execute();
+    }
+
+    /**
+     * Список получателей
+     */
+    public function recipients()
+    {
+        return DB::select()
+            ->from('z_spam_user')
+            ->where('spam_id', '=', $this->id)
+            ->execute()
+            ->as_array('mail', 'status');
     }
 }

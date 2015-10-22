@@ -366,7 +366,7 @@ $(document).ready(function() {
             <input type="file" name="img" />
         </div>
     </div>
-<p>
+    <p>
         <label for="new">Новинка {if $i->prop->new_till}(до {$i->prop->new_till}){/if}</label>
         <input type="checkbox" id="new" name="prop[new]" value="1" {if $i->new}checked="checked"{/if} readonly="readonly" />
     </p>

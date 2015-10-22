@@ -43,7 +43,7 @@ class Controller_Admin extends Controller_Authorised {
             'choose_good', 'choose_good_param', 'choose_goods_all',
             'ids',              // Товары, отображаемые в акции
             'goods_show',       // Товары, отображаемые в акции
-            'mail', 'spamit',   // for spam
+            'mail', 'spamit', 'clear_list',   // for spam
             'week_day', 'prices', 'new_price', 'new_min_sum'// for zones
         ];
     }
