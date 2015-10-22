@@ -25,8 +25,10 @@
             Рассылку получат все подписчики
         {else}
             Рассылку получит {$recipients|count} чел
+            {if $i->status < Model_Spam::STATUS_PROCEED}
             <input name="clear_list" id="clear_list" value="0" type="hidden" />
             <button class="btn btn-red" id="clear_list_button">Очистить список</button>
+            {/if}
         {/if}
     </div>
     <div class="area">
@@ -52,7 +54,12 @@
 
         {if $i->status eq Model_Spam::STATUS_READY}
             <p>
-                {ORM::factory('user')->where('sub', '=', 1)->count_all()} получателя
+                {if empty($recipients)}
+                {ORM::factory('user')->where('sub', '=', 1)->count_all()}
+                {else}
+                {$recipients|count}
+                {/if}
+                чел
                 <input type="hidden" id="spamit" name="spamit" value="0" />
                 <input class="no" name="edit" type="submit" value="Начать рассылку" onclick="if (confirm('Вы уверены что хотите начать рассылку?')) {literal}{ document.getElementById('spamit').value = 1; return true;}{/literal}" />
             </p>
