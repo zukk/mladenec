@@ -25,17 +25,19 @@
             Рассылку получат все подписчики
         {else}
             Рассылку получит {$recipients|count} чел
-            {if $i->status < Model_Spam::STATUS_PROCEED}
-            <input name="clear_list" id="clear_list" value="0" type="hidden" />
-            <button class="btn btn-red" id="clear_list_button">Очистить список</button>
+            {if $i->status lt Model_Spam::STATUS_PROCEED}
+                <input name="clear_list" id="clear_list" value="0" type="hidden" />
+                <button class="btn btn-red" id="clear_list_button">Очистить список</button>
             {/if}
         {/if}
     </div>
     <div class="area">
+        {if $i->status lt Model_Spam::STATUS_PROCEED}
         <p>Загрузить excel c email получателей:
             {if $recipients}(<small>список добавляется к существующим</small>){/if}
             <input type="file" name="excel" />
         </p>
+        {/if}
     </div>
     <div class="area">
         {if $i->status lt Model_Spam::STATUS_PROCEED}
@@ -65,7 +67,7 @@
             </p>
         {/if}
 
-        {if $i->status eq Model_Spam::STATUS_PROCEED}
+        {if $i->status gte Model_Spam::STATUS_PROCEED}
             <p>
                 Отослано писем {DB::select(DB::expr('COUNT(*) as c'))->from('z_spam_user')->where('spam_id', '=', $i->id)->where('status', '>', 0)->execute()->get('c')}
                 / осталось {DB::select(DB::expr('COUNT(*) as c'))->from('z_spam_user')->where('spam_id', '=', $i->id)->where('status', '=', 0)->execute()->get('c')}
