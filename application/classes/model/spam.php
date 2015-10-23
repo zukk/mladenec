@@ -110,7 +110,7 @@ class Model_Spam extends ORM {
         if (($this->status < self::STATUS_PROCEED) AND ( ! empty($_FILES['excel']))
             AND Upload::valid($_FILES['excel']) AND Upload::not_empty($_FILES['excel'])) {
 
-            include(APPPATH.'classes/PHPExcel/IOFactory.php');
+            include(APPPATH . 'classes/PHPExcel/IOFactory.php');
 
             $excel = PHPExcel_IOFactory::load($_FILES['excel']['tmp_name']);
             $sheet = $excel->getActiveSheet();
@@ -118,8 +118,8 @@ class Model_Spam extends ORM {
             $row = $sheet->getHighestRow();
 
             $mails = [];
-            for($x = 0; $x <= $column; $x++) {
-                for($y = 1; $y <= $row; $y++) {
+            for ($x = 0; $x <= $column; $x++) {
+                for ($y = 1; $y <= $row; $y++) {
                     $data = strval($sheet->getCellByColumnAndRow($x, $y)->getValue());
                     if (Valid::email($data)) {
                         $mails[$data] = $data;
@@ -139,15 +139,16 @@ class Model_Spam extends ORM {
                     ->as_array('email', 'email');
             }
             $to_add = array_diff($mails, $no_spam);
-
+            $added = 0;
             $rejected = count($no_spam);
 
-            $ins = DB::insert('z_spam_user', ['spam_id', 'mail']);
-            foreach($to_add as $mail) {
-                $ins->values([$this->id, $mail]);
+            if ( ! empty($to_add)) {
+                $ins = DB::insert('z_spam_user', ['spam_id', 'mail']);
+                foreach ($to_add as $mail) {
+                    $ins->values([$this->id, $mail]);
+                }
+                list($ids, $added) = DB::query(Database::INSERT, 'INSERT IGNORE ' . substr($ins, 6))->execute();
             }
-            list($ids, $added) = DB::query(Database::INSERT, 'INSERT IGNORE '.substr($ins, 6))->execute();
-
             $messages['messages'][] = "Загружен Excel. Адресов всего $total, добавлено $added, отклонено $rejected";
 
             Model_History::log('spam', $this->id, 'recipients added '.$added);
