@@ -129,13 +129,15 @@ class Model_Spam extends ORM {
             $total = count($mails);
 
             // отсеем почты тех кто отписан от рассылок
-            $no_spam = DB::select("email")
-                ->from("z_user")
-                ->where('sub', '=', 0)
-                ->where('email', 'IN', $mails)
-                ->execute()
-                ->as_array('email', 'email');
-
+            $no_spam = [];
+            if ( ! empty($mails)) {
+                $no_spam = DB::select("email")
+                    ->from("z_user")
+                    ->where('sub', '=', 0)
+                    ->where('email', 'IN', $mails)
+                    ->execute()
+                    ->as_array('email', 'email');
+            }
             $to_add = array_diff($mails, $no_spam);
 
             $rejected = count($no_spam);

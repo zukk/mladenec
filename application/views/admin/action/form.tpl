@@ -7,7 +7,6 @@
         </div>
     {else}<h1>Создание акции</h1>{/if}
 
-    
     <div class="units-row">
         <div class="unit-70">
             <div class="units-row">
@@ -68,7 +67,7 @@
                         снимите флаг «входящая ссылка», чтобы отключить акцию.</span>
                 {/if}
             </p>
-                <p>
+            <p>
                 <label for="show">Опубликовать</label>
                 {if $i->parent_id gt 0}
                     <input type="hidden" name="show" value="0" />
@@ -143,86 +142,91 @@
         {if ! empty($i->banner)}
             <span class="forms-desc"><img src="{$i->banner}" /></span>
         {/if}
-        <span class="forms-desc">URL файла (желательно без имени домена, если находится у нас на сервере), например /upload/a/f/s/5/123.jpg<br />
-        Ширина плашки должна быть строго 712 точек. В правом нижнем углу следует оставить место шириной 165 точек и 
-        высотой 35 точек для автоматически прикрепляемой кнопки. </span>
+        <span class="forms-desc">
+            URL файла (желательно без имени домена, если находится у нас на сервере), например /upload/a/b/c/5/123.jpg<br />
+            Ширина плашки должна быть строго 712 точек.
+        </span>
     </p>
 	<p>
         <label for="total">Все товары</label>
-        <input type="checkbox" id="total" name="total" onclick="return confirm('Ты уверен? (Каторжнов)')" value="1" {if $i->total}checked="checked"{/if} />
+        <input type="checkbox" id="total" name="total" onclick="return confirm('Точно учавствуют все товары?')" value="1" {if $i->total}checked="checked"{/if} />
 	</p>
     {if $i->id}
         <p class="forms-inline">
             <label>
                 Товары, участвующие в&nbsp;акции<br />
-                <a onclick="$('tr.del').click()" class="no">удалить все</a>
+                <a onclick="$('#goods_a tr.del').click()" class="no">удалить все</a>
             </label>
 
-            <div class="area">
+            <div class="area" id="goods_a">
                 {include file='admin/good/chosen.tpl' goods=$i->goods->with('action_good')->find_all()}
             </div>
         </p>
         {if $i->is_ab_type()}
             <p class="forms-inline">
-                <label>Товары Б</label>
-                <div class="area">
+                <label>
+                    Товары Б<br />
+                    <a onclick="$('#goods_b tr.del').click()" class="no">удалить все</a>
+                </label>
+                <div class="area" id="goods_b">
                     {include file='admin/good/chosen.tpl' goods=$i->get_b_goods() mode=b}
                 </div>
             </p>
         {/if}
     {/if}
     <div class="units-row">
-            <div class="unit-30">
-                {if $i->is_gift_type()}
-                    <p>
-                        <label for="each">Давать за каждые</label>
-                        <input type="checkbox" id="each" name="each" onclick="return confirm('давать за каждые?')" value="1" {if $i->each}checked="checked"{/if} />
-                    </p>
-                {/if}
-                {if $i->type neq Model_Action::TYPE_PRICE}
-                    <p>
-                        <label for="new_user">Только новым пользователям</label>
-                        <input type="checkbox" id="new_user" name="new_user" onclick="return confirm('Только новым пользователям?')" value="1" {if $i->new_user}checked="checked"{/if} />
-                    </p>
-                {/if}
-            </div>
-            <div class="unit-70">
-                <p class="forms-inline">
-                    <label>Накопительная, считать в заказах с:</label>
-                    {html_select_date time=$i->count_from field_array=count_from field_order=DMY all_empty='' start_year="-4" end_year="+1"}
-                    <span class="forms-desc">
-                        <br>Дата, с которой считаются накопления баллов по акции
-                    </span>
+        <div class="unit-30">
+            {if $i->is_gift_type()}
+                <p>
+                    <label for="each">Давать за каждые</label>
+                    <input type="checkbox" id="each" name="each" onclick="return confirm('давать за каждые?')" value="1" {if $i->each}checked="checked"{/if} />
                 </p>
-                <p class="forms-inline">
-                    <label>Накопительная, считать в заказах до:</label>
-                    {html_select_date time=$i->count_to field_array=count_to field_order=DMY all_empty='' start_year="-4" end_year="+2"}
-                    <span class="forms-desc">
-                        <br>Дата, по которую считаются накопления баллов по акции
-                    </span>
+            {/if}
+            {if $i->type neq Model_Action::TYPE_PRICE}
+                <p>
+                    <label for="new_user">Только новым пользователям</label>
+                    <input type="checkbox" id="new_user" name="new_user" onclick="return confirm('Только новым пользователям?')" value="1" {if $i->new_user}checked="checked"{/if} />
                 </p>
-            </div>
+            {/if}
         </div>
-        {if $i->count_from OR $i->count_to}
-            <p>
-                <label for="cart_icon">Иконка в корзине</label>
-                <input  type="text" id="cart_icon" name="cart_icon" value="{$i->cart_icon}" class="width-50" />
-                {if ! empty($i->cart_icon)}
-                    <span class="forms-desc"><img src="{$i->cart_icon}" /></span>
-                {/if}
-                <span class="forms-desc">URL файла (желательно без имени домена, если находится у нас на сервере), например /upload/a/f/s/5/123.jpg<br />
-                Размер иконки максимум 92 по ширине и 111 точек по высоте.</span>
+        <div class="unit-70">
+            <p class="forms-inline">
+                <label>Накопительная, считать в заказах с:</label>
+                {html_select_date time=$i->count_from field_array=count_from field_order=DMY all_empty='' start_year="-1" end_year="+1"}
+                <span class="forms-desc">
+                    <br>Дата, с которой считаются накопления баллов по акции (с 0 часов начинают считаться)
+                </span>
             </p>
-            <p>
-                <label for="cart_icon_text">Начало текста к иконке в корзине</label>
-                <input type="text" id="cart_icon_text" name="cart_icon_text" value="{$i->cart_icon_text}" class="width-50" />
-                <span class="forms-desc">Например &laquo;Осталось купить бытовой химии на&raquo;.</span>
+            <p class="forms-inline">
+                <label>Накопительная, считать в заказах до:</label>
+                {html_select_date time=$i->count_to field_array=count_to field_order=DMY all_empty='' start_year="-1" end_year="+2"}
+                <span class="forms-desc">
+                    <br>Дата, по которую считаются накопления баллов по акции (с 0 часов перестают считаться)
+                </span>
             </p>
-        {/if}
-    </fieldset>
+        </div>
+    </div>
+    {if $i->count_from OR $i->count_to}
+        <p>
+            <label for="cart_icon">Иконка в корзине</label>
+            <input  type="text" id="cart_icon" name="cart_icon" value="{$i->cart_icon}" class="width-50" />
+            {if ! empty($i->cart_icon)}
+                <span class="forms-desc"><img src="{$i->cart_icon}" /></span>
+            {/if}
+            <span class="forms-desc">
+                URL файла (желательно без имени домена, если находится у нас на сервере), например /upload/a/f/s/5/123.jpg<br />
+                Размер иконки максимум 92 по ширине и 111 точек по высоте.
+            </span>
+        </p>
+        <p>
+            <label for="cart_icon_text">Начало текста к иконке в корзине</label>
+            <input type="text" id="cart_icon_text" name="cart_icon_text" value="{$i->cart_icon_text}" class="width-50" />
+            <span class="forms-desc">Например &laquo;Осталось купить бытовой химии на&raquo;.</span>
+        </p>
+    {/if}
+
     {if $i->is_gift_type()}
         <fieldset  class="forms-inline">
-            {$present_objs = $i->presents->find_all()->as_array('id')}
             <table>
                 <tr>
                     <th>Подарок</th>
@@ -234,26 +238,35 @@
                     <th>Уведомлять меньше</th>
                     <th></th>
                 </tr>
-            {foreach from=$i->get_present_ids(FALSE, FALSE) key=present_val item=p_ids}
-                {$warn_qtys = DB::select('good_id','warn_on_qty')->from('z_action_present')->where('good_id','IN',$p_ids)->execute()->as_array('good_id','warn_on_qty')}
-                {foreach from=$p_ids item=p_id}
+
+                {$present_objs = $i->presents->find_all()->as_array('id')}
+
+                {$presents = DB::select()
+                    ->from('z_action_present')
+                    ->where('action_id', '=', $i->id)
+                    ->order_by('val')
+                    ->order_by('good_id')
+                    ->execute()->as_array('id')}
+
+                {foreach from=$presents key=id item=p}
                     <tr>
                         <td>
-                            <input type="hidden" name="misc[presents][{$p_id}]" value="1" />
-                            <a href="{Route::url('admin_edit',['model'=>'good','id'=>$p_id])}" target="_blank">#{$p_id}</a>, 
-                            {$present_objs[$p_id]->group_name} {$present_objs[$p_id]->name}</td>
-                        <td>{$present_objs[$p_id]->qty}&nbsp;шт.</td>
-                        <td><b>от&nbsp;{$present_val}
+                            <input type="hidden" name="misc[presents][{$id}]" value="1" />
+                            <a href="{Route::url('admin_edit',['model' => 'good', 'id' => $p.good_id])}" target="_blank">#{$p.good_id}</a>,
+                            {$present_objs[$p.good_id]->group_name} {$present_objs[$p.good_id]->name}</td>
+                        <td>{$present_objs[$p.good_id]->qty}&nbsp;шт.</td>
+                        <td><b>от&nbsp;{$p.val}
                             {if $i->type eq Model_Action::TYPE_GIFT_SUM}руб.{/if}
                             {if $i->type eq Model_Action::TYPE_GIFT_QTY}шт.{/if}
-                            </b></td>
+                            </b>
+                        </td>
                         <td>
-                            <input class="text" id="gift_id" name="misc[warn_on_qtys][{$p_id}]" value="{$warn_qtys[$p_id]|default:10}" size="3" />
+                            <input class="text" id="gift_id" name="misc[warn_on_qtys][{$id}]" value="{$p.warn_on_qty|default:10}" size="3" />
                         </td>
                         <td><input type="button" class="btn btn-small btn-red trdel" value="удалить" /></td>
                     </tr>
                 {/foreach}
-            {/foreach}
+
                 <tr>
                     <td><input class="text" id="gift_id" name="misc[present_new][good_id]" value="" class="width-100" /><br /><small>Введите ID подарка</small></td>
                     <td></td>
@@ -350,4 +363,3 @@
             <span class="forms-desc">Чем больше число, тем выше акция в списке</span>
         </p>
     {/if}
-        

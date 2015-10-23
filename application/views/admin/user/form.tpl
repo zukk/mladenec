@@ -88,11 +88,13 @@
     <p>Был {date('Y-m-d H:i', $s['last_active'])}  http://www.mladenec-shop.ru/sync?mladenec={$sid}&hash={$s['hash']}</p>
 {/foreach}
 <h3>Накопленные по акциям баллы</h3>
+
 {$actions = ORM::factory('action')
-->where('count_from', 'IS NOT', NULL)
-->where('active', '=', 1)
-->order_by('name','ASC')
-->find_all()->as_array()}
+    ->where('count_from', 'IS NOT', NULL)
+    ->where('active', '=', 1)
+    ->order_by('name','ASC')
+    ->find_all()->as_array()}
+
 {if not empty($actions)}
     {$credits = DB::select('action_id','sum','qty')
     ->from('z_action_user')
@@ -114,11 +116,12 @@
                         с&nbsp;{$a->count_from|date_ru}
                     {/if}
                     {if $a->count_to}
-                        с&nbsp;{$a->count_to|date_ru}
+                        {$a->count_to}
+                        по&nbsp;{$a->count_to|date_ru}
                     {/if}
                 </td>
                 <td>
-                    {$credits[$a->pk()]['sum']|price}
+                    {$credits[$a->pk()]['sum']|price|default:0}
                 </td>
             </tr>
         {/foreach}

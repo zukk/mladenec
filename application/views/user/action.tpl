@@ -19,7 +19,7 @@
                             начало:&nbsp;{$a->count_from|date_ru}
                         {/if}
                         {if $a->count_to}<br />
-                            окончание:&nbsp;{$a->count_to|date_ru}
+                            окончание:&nbsp;{$a->count_to|date_ru} в&nbsp;0&nbsp;часов
                         {/if}
                     </td>
                     <td>{assign var=credits value=$user->get_funded($a)}

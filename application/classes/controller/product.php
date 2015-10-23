@@ -950,24 +950,24 @@ class Controller_Product extends Controller_Frontend {
         $cart = Cart::instance();
         $cart->recount();// иначе не получим big
 
-		$user = Model_User::current();
+        $user = Model_User::current();
         $sessionParams = Session::instance()->get('cart_delivery');
 
         if ( ! empty($user)) {
-			$sessionParams = array_merge([
-				'delivery_type' => 0,
-				'pay_type'      => Model_Order::PAY_DEFAULT,
-				'description'   => ''
-			], empty($sessionParams) ? [] : $sessionParams );
+            $sessionParams = array_merge([
+                'delivery_type' => 0,
+                'pay_type'      => Model_Order::PAY_DEFAULT,
+                'description'   => ''
+            ], empty($sessionParams) ? [] : $sessionParams );
 
             if (empty($sessionParams['pay_type'])) $sessionParams['pay_type'] = Model_Order::PAY_DEFAULT;
-		}
+        }
 
         if(Conf::instance()->use_ozon_delivery != 0) {
             $cart->use_ozon_delivery = true;
-            if(Session::instance()->get('city') == 'Москва') {    
+            if(Session::instance()->get('city') == 'Москва') {
                 $ozon_delivery = new OzonDelivery();
-                $cart->ozon_terminals = $ozon_delivery->get_terminals();                
+                $cart->ozon_terminals = $ozon_delivery->get_terminals();
                 if(!$cart->ozon_terminals) $cart->use_ozon_delivery = false;
             }
         }
@@ -978,8 +978,8 @@ class Controller_Product extends Controller_Frontend {
             'cart' => $cart,
         ])->render();
 
-		return $return;
-	}
+        return $return;
+    }
 	
     /**
      * Заказ в один клик. Принимает номер телефона и учитывает юзера, если есть. Создаёт заказ.
@@ -1081,6 +1081,7 @@ class Controller_Product extends Controller_Frontend {
         $order_data->ship_date = key($cart->allowed_date($central)); // дату доставки ставим ближайшую для центр. зоны
 
         if (Txt::phone_is_mobile($_phone)) $order_data->mobile_phone = $_phone;
+        $order_data->client_data = print_r($_SERVER, TRUE);
         $order_data->save();
 
         // очищаем корзину или восстанавливаем корзину

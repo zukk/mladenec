@@ -621,5 +621,11 @@ class Model_Order extends ORM {
 		
         return parent::save($validation);
     }
+
+    static function terminal($city, $region)
+    {
+       // Model_Terminal::
+
+    }
 }
 

@@ -589,7 +589,7 @@ class Controller_Odinc extends Controller {
                                 }
                             }
                             if ($charged != $to_charge) {
-                                mail('m.zukk@ya.ru', 'Снятая сумма не совпадает с запрошенной '.$order->id, "$charged != $to_charge");
+                                mail('m.zukk@ya.ru, a.sergeev@mladenec.ru', 'Снятая сумма не совпадает с запрошенной '.$order->id, "$charged != $to_charge");
                             }
 
                         } elseif ($order->status == 'X') { // order cancelled - unblock money
@@ -597,7 +597,7 @@ class Controller_Odinc extends Controller {
                             $voided = 0;
                             $to_void = intval($order->pay8 * 100); // в копейках!
                             foreach($authz as $card) {
-                                if ($voided < $to_void) { // ещё надо снимать деньги
+                                if ($voided < $to_void) { // пытаемся разблокировать пока не наберем нужную сумму
                                     $sum = min($card->sum, $to_void);
                                     if ($card->unblock($sum)) {
                                         $voided += $sum;
@@ -605,7 +605,7 @@ class Controller_Odinc extends Controller {
                                 }
                             }
                             if ($voided != $to_void) {
-                                mail('m.zukk@ya.ru', 'Разблокированная сумма не совпадает с запрошенной '.$order->id, "$voided != $to_void");
+                                //mail('m.zukk@ya.ru', 'Разблокированная сумма не совпадает с запрошенной '.$order->id, "$voided != $to_void");
                             }
                         }
                     }
@@ -1492,7 +1492,8 @@ class Controller_Odinc extends Controller {
     /**
      * Просчет стоимости доставки
      */
-    public function action_calculate_delivery() {
+    public function action_calculate_delivery()
+    {
         $strings = explode("\n", $this->body);
         foreach($strings as $s) {
             $s = trim($s);

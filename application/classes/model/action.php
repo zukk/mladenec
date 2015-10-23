@@ -679,17 +679,18 @@ class Model_Action extends ORM
      */
     public function up_presents($new_presents)
     {
-        $old_presents = DB::select('good_id')
+        $old_presents = DB::select('id')
             ->from('z_action_present')
-            ->where('action_id','=',$this->id)
-            ->execute()->as_array('good_id','good_id');
+            ->where('action_id', '=', $this->id)
+            ->execute()
+            ->as_array('id','id');
 
         $del_presents = array_diff($old_presents, array_keys($new_presents));
 
         if ( ! empty($del_presents)) { // Удаляем расхождения
             DB::delete('z_action_present')
                 ->where('action_id', '=', $this->id)
-                ->where('good_id', 'IN', $del_presents)
+                ->where('id', 'IN', $del_presents)
                 ->execute();
         }
     }
@@ -794,7 +795,7 @@ class Model_Action extends ORM
             $this->up_presents($new_presents);
             if ( ! empty($misc['present_new']['good_id']) AND isset($misc['present_new']['val'])) {
                 $present_id = $misc['present_new']['good_id'];
-                $present = ORM::factory('good',$misc['present_new']['good_id']);
+                $present = ORM::factory('good', $misc['present_new']['good_id']);
                 if ( ! $present->loaded()) {
                     $errors = 'Невозможно добавить подарок #' . $present_id;
                 }
