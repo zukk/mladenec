@@ -89,7 +89,7 @@ class Model_Action extends ORM
      */
     public function flag()
     {
-        return array('active', 'allowed','show', 'show_goods', 'each', 'new_user', 'total', 'main','show_wow','incoming_link','show_actions','require_all_presents');
+        return ['active', 'allowed', 'show', 'show_goods', 'each', 'new_user', 'total', 'main', 'show_wow', 'incoming_link', 'show_actions', 'require_all_presents'];
     }
 
     /**
@@ -143,35 +143,6 @@ class Model_Action extends ORM
     }
 
     /**
-     * Метатип для ключа кеша, для подарочных акций - 2, для скидочных - 1
-     * @param $types
-     * @return int|string
-     */
-    protected static function get_metatype($types)
-    {
-        sort($types);
-        $return = implode('_', $types);
-        $is_price = $is_gift = FALSE;
-
-        if (in_array(self::TYPE_PRICE_QTY, $types)
-            || in_array(self::TYPE_PRICE_QTY_AB, $types)
-            || in_array(self::TYPE_PRICE_SUM, $types)
-            || in_array(self::TYPE_PRICE_SUM_AB, $types)
-        ) {
-            $is_price = TRUE;
-        }
-
-        if (in_array(self::TYPE_GIFT_QTY, $types)
-            || in_array(self::TYPE_GIFT_SUM, $types)
-        ) {
-            $is_gift = TRUE;
-        }
-        if ($is_price && ! $is_gift) return 1;
-        if ($is_gift && ! $is_price) return 2;
-        return $return;
-    }
-
-    /**
      * @param int $vitrina
      * @param int $metatype 0 is "all types"
      * @return string
@@ -179,22 +150,6 @@ class Model_Action extends ORM
     public static function get_cache_key($vitrina, $metatype, $funded)
     {
         return is_null($metatype) ? NULL : self::CACHE_KEY_ACTIVE . $vitrina . $metatype . $funded;
-    }
-
-    public static function drop_active_cache($type)
-    {
-        $vitrinas = [Conf::VITRINA_ALL, Conf::VITRINA_MLADENEC, Conf::VITRINA_EATMART];
-
-        foreach($vitrinas as $v) {
-            Cache::instance()->delete(self::get_cache_key($v, 0, 0));
-            Cache::instance()->delete(self::get_cache_key($v, 0, 1));
-
-            $key = self::get_cache_key($v, self::get_metatype([$type]), 0);
-            $key1 = self::get_cache_key($v, self::get_metatype([$type]), 1);
-
-            if ( ! is_null($key)) Cache::instance()->delete($key);
-            if ( ! is_null($key1)) Cache::instance()->delete($key1);
-        }
     }
 
     /**
@@ -418,7 +373,10 @@ class Model_Action extends ORM
 
         $reports = array_merge($reports, $activate_reports);
 
-        if ( ! empty($reports)) { self::send_reports($reports); }
+        if ( ! empty($reports)) { // есть изменения в акциях
+            self::send_reports($reports);  // сообщить об изменениях
+            Cache::instance()->delete(self::CACHE_KEY_ACTIVE); // почистить кеш списка акций
+        }
     }
 
     private static function send_reports($reports,$mail_subject = 'Изменения в акциях')
@@ -599,7 +557,7 @@ class Model_Action extends ORM
 
         $sub_actions = ORM::factory('action')
             ->where('parent_id','=',$this->id)
-            ->where('type', 'IN', array(self::TYPE_GIFT_SUM, self::TYPE_GIFT_QTY))
+            ->where('type', 'IN', [self::TYPE_GIFT_SUM, self::TYPE_GIFT_QTY])
             ->find_all()->as_array('id');
 
         if (count($sub_actions)) { // Есть подчиненные
@@ -612,20 +570,22 @@ class Model_Action extends ORM
             }
         }
 
+        $presents = $this->presents->find_all()->as_array('id', 'qty');
+
         if (empty($presents)) return 1; // подарки если не прикреплены - всегда есть
         $instock = count(array_filter($presents)); // сколько подарков есть на складе
 
         $instock_flag = $instock > 0;
 
         if ($this->require_all_presents AND $instock < count($presents)) {
-            $instock_flag = false;
+            $instock_flag = FALSE;
         }
 
         if ($instock_flag) {
             if ($this->presents_instock == 0) {
                 $this->presents_instock = 1;
                 self::send_reports(
-                    array(array('event' => 'presents_instock', 'msg' => 'Подарки появились на складе ','action' => $this)),
+                    [['event' => 'presents_instock', 'msg' => 'Подарки появились на складе ','action' => $this]],
                     'Акция #' . $this->id . ', подарки появились на складе'
                 );
             }
@@ -634,7 +594,7 @@ class Model_Action extends ORM
             if ($this->presents_instock > 0) {
                 $this->presents_instock = 0;
                 self::send_reports(
-                    array(array('event' => 'presents_off', 'msg' => 'Закончились подарки ', 'action' => $this)),
+                    [['event' => 'presents_off', 'msg' => 'Закончились подарки ', 'action' => $this]],
                     'Акция #' . $this->id . ', закончились подарки'
                 );
             }
@@ -816,9 +776,9 @@ class Model_Action extends ORM
             if ($this->changed('presents_instock')) $this->save();
 
             if ( ! empty($misc['warn_on_qtys'])) { //
-                foreach($misc['warn_on_qtys'] as $woq_gid=>$woq_qty) {
+                foreach($misc['warn_on_qtys'] as $woq_gid => $woq_qty) {
                     DB::update('z_action_present')
-                        ->set(array('warn_on_qty'=>$woq_qty))
+                        ->set(['warn_on_qty'=>$woq_qty])
                         ->where('action_id','=',$this->pk())
                         ->where('good_id','=',$woq_gid)
                         ->execute();
@@ -827,7 +787,7 @@ class Model_Action extends ORM
         }
 
         self::activator(Model_User::current()); // Перерасчет активности акций по условиям
-        return array('errors' => $errors, 'messages' => $messages);
+        return ['errors' => $errors, 'messages' => $messages];
     }
 
     public function save(Validation $validation = NULL)
@@ -887,8 +847,6 @@ class Model_Action extends ORM
                         $reports[] = array('event'=>'off', 'msg' => 'ОТКЛючена', 'action'=>$this);
                     }
                     self::send_reports($reports, $mail_subject);
-
-                    self::drop_active_cache($this->type);
                 }
             }
         } else { // нельзя включать новые созданные акции
@@ -917,39 +875,41 @@ class Model_Action extends ORM
     }
 
     /**
-     *
+     * @param int $funded
      * @param int $vitrina
-     * @param array $types
      * @return Model_Action[]
      */
-    public static function get_active($vitrina = Conf::VITRINA_ALL, $types = [], $funded = NULL)
+    public static function get_active($funded = FALSE)
     {
-        $cache_key = self::get_cache_key($vitrina, self::get_metatype($types), $funded === NULL ? '' : intval($funded));
+        $cache_key = self::CACHE_KEY_ACTIVE;
         $active_actions_cache = Cache::instance()->get($cache_key);
 
-        if (empty($active_actions_cache))
-        {
-            $active_actions_q = ORM::factory('action')
+        if (empty($active_actions_cache)) {
+
+            $active_actions = ORM::factory('action')
                 ->where('active', '=', 1)
-                ->where_open()
-                ->where('vitrina_active', '=', 'all')
-                ->or_where('vitrina_active_id', '=', $vitrina)
-                ->where_close();
+                ->find_all()
+                ->as_array('id');
 
-            if ( ! empty($types) AND is_array($types)) $active_actions_q->where('type', 'IN', $types);
+            Cache::instance()->set($cache_key, serialize($active_actions));
 
-            if ( ! empty($funded)) $active_actions_q->where('count_from', 'IS NOT', DB::expr('NULL'));
+        } else {
 
-            $active_actions = $active_actions_q->find_all()->as_array('id');
-
-            if ( ! is_null($cache_key)) Cache::instance()->set($cache_key, serialize($active_actions));
-        }
-        else
-        {
             $active_actions = unserialize($active_actions_cache);
         }
 
-        return $active_actions;
+        $return = [];
+        if ( ! empty($funded)) { // надо отсеять только накопительные
+            if ($active_actions) {
+                foreach($active_actions as $id => $a) {
+                    if ($a->count_from) $return[$id] = $a;
+                }
+            }
+        } else {
+            $return = $active_actions;
+        }
+
+        return $return;
     }
 
     /**
@@ -996,16 +956,14 @@ class Model_Action extends ORM
     /**
      * Получить список активных акций, относящихся к товарам
      * @param $good_ids
-     * @param int $vitrina ID витрины
-     * @param array|null $type
      * @return Model_Action[] массив акций с заполненным $good_ids для каждой акции
      */
-    public static function by_goods($good_ids, $vitrina = Conf::VITRINA_ALL, $type = [])
+    public static function by_goods($good_ids)
     {
         if (empty($good_ids)) return [];
 
         $return = $not_total_ids = $ab_ids = [];
-        $active_actions = self::get_active($vitrina, $type);
+        $active_actions = self::get_active();
         if (empty($active_actions)) return [];
 
         foreach($active_actions as $action)
@@ -1019,7 +977,7 @@ class Model_Action extends ORM
                 $return[$action->id] = $action;
                 $not_total_ids[] = $action->id;
             }
-            elseif (FALSE !== in_array($action->type, array(self::TYPE_PRICE_QTY_AB,  self::TYPE_PRICE_SUM_AB)))
+            elseif (FALSE !== in_array($action->type, [self::TYPE_PRICE_QTY_AB,  self::TYPE_PRICE_SUM_AB]))
             {
                 $ab_ids[]        = $action->id; // Чтобы потом проверить вхождение товаров Б
                 $not_total_ids[] = $action->id; // Но и товары А надо проверить
@@ -1069,7 +1027,7 @@ class Model_Action extends ORM
 
     /**
      * Получить список активных акций, относящихся к товарам, для показа иконок акций у товаров
-     * сюда не попадают акции, в которых учавствуют все товары и не попадают акции без флага show_gifticon
+     * сюда не попадают акции, в которых учавствуют все товары
      * @param $good_ids
      * @return array массив ид товара => акции в которых он учавствует
      */

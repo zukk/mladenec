@@ -2751,7 +2751,7 @@ class Controller_Admin extends Controller_Authorised {
     }
     
     /**
-     * Обработчик для баннеров
+     * Список акций
      * @return array
      */
     function action_action_list()

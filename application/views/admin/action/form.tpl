@@ -155,7 +155,7 @@
         <p class="forms-inline">
             <label>
                 Товары, участвующие в&nbsp;акции<br />
-                <a onclick="$('#goods_a tr.del').click()" class="no">удалить все</a>
+                <a onclick="$('#goods_a .trdel').click()" class="no">удалить все</a>
             </label>
 
             <div class="area" id="goods_a">
@@ -166,7 +166,7 @@
             <p class="forms-inline">
                 <label>
                     Товары Б<br />
-                    <a onclick="$('#goods_b tr.del').click()" class="no">удалить все</a>
+                    <a onclick="$('#goods_b .trdel').click()" class="no">удалить все</a>
                 </label>
                 <div class="area" id="goods_b">
                     {include file='admin/good/chosen.tpl' goods=$i->get_b_goods() mode=b}
@@ -261,7 +261,7 @@
                             </b>
                         </td>
                         <td>
-                            <input class="text" id="gift_id" name="misc[warn_on_qtys][{$id}]" value="{$p.warn_on_qty|default:10}" size="3" />
+                            <input class="text" id="gift_id" name="misc[warn_on_qtys][{$p.good_id}]" value="{$p.warn_on_qty|default:10}" size="3" />
                         </td>
                         <td><input type="button" class="btn btn-small btn-red trdel" value="удалить" /></td>
                     </tr>

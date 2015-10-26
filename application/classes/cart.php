@@ -417,57 +417,53 @@ class Cart {
      */
     protected function check_price_actions( & $goods, $base_price)
     {
-        $active_actions = Model_Action::by_goods(array_keys($this->goods), Conf::VITRINA_ALL, [
-            Model_Action::TYPE_PRICE_QTY,
-            Model_Action::TYPE_PRICE_QTY_AB,
-            Model_Action::TYPE_PRICE_SUM,
-            Model_Action::TYPE_PRICE_SUM_AB
-        ]);
+        $active_actions = Model_Action::by_goods(array_keys($this->goods));
 
-        foreach($active_actions as $a)
-        {
-            $discount_percent = 0;
-            $ordered_value = 0;     // Сколько товаров или сумма на которую лежит в корзине
-
-            switch ($a->type) {
-                case Model_Action::TYPE_PRICE_QTY: // скидки от количества на процент
-                case Model_Action::TYPE_PRICE_QTY_AB: // скидки от количества A на процент для Б
-                    $values         = array_map('trim', explode('|', $a->quantity));
-                    $percents       = array_map('trim', explode('|', $a->sum));
-                    $ordered_value  = $this->count_ordered_qty($a, $goods);
-                    break;
-                
-                case Model_Action::TYPE_PRICE_SUM: // скидки от cуммы на процент
-                case Model_Action::TYPE_PRICE_SUM_AB: // скидки от cуммы А на процент для Б
-                    $percents       = array_map('trim', explode('|', $a->quantity));
-                    $values         = array_map('trim', explode('|', $a->sum));
-                    $ordered_value  = $this->count_ordered_sum($a, $goods, $base_price);
-                    break;
-            }
-
-            if (empty($values)) return; // нет скидочных акций
-
-            foreach($values as $k => $val) { // Выбираем самое большое условие по кол-ву
-                
-                if ($ordered_value >= $val) $discount_percent = $percents[$k]; // акция сработала, перебираем пока не найдем самое большое
-                else break;
-            }
-            
-            if ($discount_percent > 0) { // применить нулевую скидку = сбросить цену без учета ЛК!
+        foreach($active_actions as $a) {
+            if ($a->is_price_type()) {
+                $discount_percent = 0;
+                $ordered_value = 0;     // Сколько товаров или сумма на которую лежит в корзине
 
                 switch ($a->type) {
-
-                    case Model_Action::TYPE_PRICE_QTY:
-                    case Model_Action::TYPE_PRICE_SUM:
-
-                        $this->apply_discount($goods, $base_price, $discount_percent, $a->good_ids);
+                    case Model_Action::TYPE_PRICE_QTY: // скидки от количества на процент
+                    case Model_Action::TYPE_PRICE_QTY_AB: // скидки от количества A на процент для Б
+                        $values = array_map('trim', explode('|', $a->quantity));
+                        $percents = array_map('trim', explode('|', $a->sum));
+                        $ordered_value = $this->count_ordered_qty($a, $goods);
                         break;
 
-                    case Model_Action::TYPE_PRICE_QTY_AB:
-                    case Model_Action::TYPE_PRICE_SUM_AB:
-
-                        $this->apply_discount($goods, $base_price, $discount_percent, $a->good_b_idz());
+                    case Model_Action::TYPE_PRICE_SUM: // скидки от cуммы на процент
+                    case Model_Action::TYPE_PRICE_SUM_AB: // скидки от cуммы А на процент для Б
+                        $percents = array_map('trim', explode('|', $a->quantity));
+                        $values = array_map('trim', explode('|', $a->sum));
+                        $ordered_value = $this->count_ordered_sum($a, $goods, $base_price);
                         break;
+                }
+
+                if (empty($values)) return; // нет скидочных акций
+
+                foreach ($values as $k => $val) { // Выбираем самое большое условие по кол-ву
+
+                    if ($ordered_value >= $val) $discount_percent = $percents[$k]; // акция сработала, перебираем пока не найдем самое большое
+                    else break;
+                }
+
+                if ($discount_percent > 0) { // применить нулевую скидку = сбросить цену без учета ЛК!
+
+                    switch ($a->type) {
+
+                        case Model_Action::TYPE_PRICE_QTY:
+                        case Model_Action::TYPE_PRICE_SUM:
+
+                            $this->apply_discount($goods, $base_price, $discount_percent, $a->good_ids);
+                            break;
+
+                        case Model_Action::TYPE_PRICE_QTY_AB:
+                        case Model_Action::TYPE_PRICE_SUM_AB:
+
+                            $this->apply_discount($goods, $base_price, $discount_percent, $a->good_b_idz());
+                            break;
+                    }
                 }
             }
         }

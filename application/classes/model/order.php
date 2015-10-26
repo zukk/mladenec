@@ -179,7 +179,7 @@ class Model_Order extends ORM {
         
         // Пересчитаем накопления по активным накопительным акцииям
         // Накопления пересчитываются при всех сменах статусов, чтобы корректно отображались накопленные баллы
-        $actions = Model_Action::get_active(Conf::VITRINA_ALL, [], TRUE);
+        $actions = Model_Action::get_active(TRUE);
         $user_action_credits = [];
         foreach($actions as $id => $a) {
             $user_action_credits[$id] = $this->user->get_funded($a);

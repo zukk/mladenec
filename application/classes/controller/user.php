@@ -378,7 +378,7 @@ class Controller_User extends Controller_Frontend
     public function action_action()
     {
         if ( ! $this->user) throw new HTTP_Exception_403;
-        $this->tmpl['actions'] = Model_Action::get_active(0, [], 1);
+        $this->tmpl['actions'] = Model_Action::get_active(TRUE); // накопительные
     }
 	
 	protected function _get_user_goods($limit)
