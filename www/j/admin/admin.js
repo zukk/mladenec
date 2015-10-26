@@ -62,7 +62,7 @@ $(document).ready(function() {
         }
         return false;
     });
-    
+
     $('#menu-toggle').click(function(event){
         $('nav#menu > blockquote').toggle();
         event.preventDefault();
@@ -71,178 +71,189 @@ $(document).ready(function() {
     $(document).click(function(){$('nav#menu > blockquote').hide();});
 
     $(document)
-            .on('click', '#goodz input[name=search]', function(ev) { // подбор товаров
-                $.post('/od-men/goods', $('input, textarea, select', '#goodz').serialize(), function(data) {
-                    $('#goodz').parent().html(data);
-                });
+        .on('click', '#goodz input[name=search]', function(ev) { // подбор товаров
+            $.post('/od-men/goods', $('input, textarea, select', '#goodz').serialize(), function(data) {
+                $('#goodz').parent().html(data);
+            });
+            return false;
+        })
+        .on('click', 'input[alt="list"]', function() {
+            var sq = $('#search_query').detach();
+            $(this).closest('form').append(sq);
+        })
+        .on('click', '#goodz input[name=all]', function() {
+            var t = parseInt($('#qty').text(), 10), rel = $(this).attr('rel');
+            if (isNaN(t)) {
+                alert('Нет отобранных товаров');
                 return false;
-            })
-            .on('click', 'input[alt="list"]', function() {
-                var sq = $('#search_query').detach();
-                $(this).closest('form').append(sq);
-            })
-            .on('click', '#goodz input[name=all]', function() {
-                var t = parseInt($('#qty').text(), 10), rel = $(this).attr('rel');
-                if (isNaN(t)) {
-                    alert('Нет отобранных товаров');
-                    return false;
-                }
-                if (t > 200 && ! confirm('Будет добавлено более 200 товаров, вы уверены?')) {
-                    return false;
-                }
-                var send = $('input, select, textarea', '#goodz').serialize();
-                send += '&action_id=' + $('#action_id').val();
-                send += '&mode=' + ($('#chose' + rel).hasClass('goods_b') ? 'b' : '');
+            }
+            if (t > 200 && ! confirm('Будет добавлено более 200 товаров, вы уверены?')) {
+                return false;
+            }
+            var send = $('input, select, textarea', '#goodz').serialize();
+            send += '&action_id=' + $('#action_id').val();
+            send += '&mode=' + ($('#chose' + rel).hasClass('goods_b') ? 'b' : '');
 
-                $.post(
-                    '/od-men/chosen',
-                    send,
-                    function(data) {
-                        $('#chose' + rel).closest('.area').append(data);
-                        $.fancybox.close();
-                    }
-                );
-            })
-            .on('click', '#goodz input[name=marked]', function() {
-                var inputs = $('#goodz input:checked'), choice = [], rel = $(this).attr('rel');
-                if (inputs.length < 1) {
-                    alert('Товаров не выбрано');
-                    return;
-                }
-                for(var i = 0; i < inputs.length; i++) {
-                    choice.push($(inputs[i]).attr('name').replace('choice[', '').replace(']', ''));
-                }
-                $.post('/od-men/chosen', {
-                    choice:       choice,
-                    action_id: $('#action_id').val(),
-                    mode: $('#chose' + rel).hasClass('goods_b') ? 'b' : ''
-                }, function(data) {
+            var discount = $('#chose' + rel).attr('data-discount');
+            if (typeof(discount) != 'undefined' && discount != "") send+= '&discount=' + discount;
+
+            $.post(
+                '/od-men/chosen',
+                send,
+                function(data) {
                     $('#chose' + rel).closest('.area').append(data);
                     $.fancybox.close();
-                });
+                }
+            );
+        })
+        .on('click', '#goodz input[name=marked]', function() {
+            var inputs = $('#goodz input:checked'), choice = [], rel = $(this).attr('rel');
+            if (inputs.length < 1) {
+                alert('Товаров не выбрано');
+                return;
+            }
+            for(var i = 0; i < inputs.length; i++) {
+                choice.push($(inputs[i]).attr('name').replace('choice[', '').replace(']', ''));
+            }
 
-            })
-            .on('click', '#goodz + .pager a', function() { // товары по страницам
-                var page = $(this).text();
-                $.post('/od-men/goods?page=' + page, $('input, textarea, select', '#goodz').serialize(), function(data) {
-                    $('#goodz').parent().html(data);
-                    $.fancybox.update();
-                });
-                return false;
-            })
-            .on('click', '#add_zone_time', function() {
-                var clone = $(this).closest('tr').clone();
-                $('input:text', clone).val('');
-                $(this).closest('tbody').append(clone);
-                $(this).remove();
-                return false;
-            })
-            .on('click', 'input[type=button].trdel', function() {
-                var t = parseInt($('.area > strong').text(), 10);
-                $(this).closest('tr').remove();
-                t--;
-                $('.area > strong').text(t);
-            })
-            .on('submit', 'form.ajax', function() { // формы обрабатываются ажаксом
+            var post = {
+                choice:       choice,
+                action_id: $('#action_id').val(),
+                mode: $('#chose' + rel).hasClass('goods_b') ? 'b' : ''
+            };
 
-                var f = $(this), fancy = false;
-                if (f.hasClass('proceed')) return false; // do not work with form already proceeded
-                f.addClass('proceed');
+            var discount = $('#chose' + rel).attr('data-discount');
+            if (typeof(discount) != 'undefined' && discount != "") post.discount = discount;
 
-                if (f.parent().hasClass('fancybox-inner')) fancy = true;
-                $('input[type=submit]', this).after('<i class="load"></i>');
 
-                $.post($(this).attr('action'), $('input', this).serialize(), function(data) {
-                    var redir = function(){};
+            $.post('/od-men/chosen', post, function(data) {
+                $('#chose' + rel).closest('.area').append(data);
+                $.fancybox.close();
+            });
 
-                    if (data.redirect){
-                        redir = function(){
-                            location.href = data.redirect;
-                        }
+        })
+        .on('click', '#goodz + .pager a', function() { // товары по страницам
+            var page = $(this).text();
+            $.post('/od-men/goods?page=' + page, $('input, textarea, select', '#goodz').serialize(), function(data) {
+                $('#goodz').parent().html(data);
+                $.fancybox.update();
+            });
+            return false;
+        })
+        .on('click', '#add_zone_time', function() {
+            var clone = $(this).closest('tr').clone();
+            $('input:text', clone).val('');
+            $(this).closest('tbody').append(clone);
+            $(this).remove();
+            return false;
+        })
+        .on('click', 'input[type=button].trdel', function() {
+            var cnt = $(this).closest('.area').children('strong'),
+                t = parseInt(cnt.text(), 10);
+            $(this).closest('tr').remove();
+            t--;
+            $(cnt).text(t);
+        })
+        .on('submit', 'form.ajax', function() { // формы обрабатываются ажаксом
 
-                        if( Object.keys(data).length == 1 )
-                            redir();
+            var f = $(this), fancy = false;
+            if (f.hasClass('proceed')) return false; // do not work with form already proceeded
+            f.addClass('proceed');
+
+            if (f.parent().hasClass('fancybox-inner')) fancy = true;
+            $('input[type=submit]', this).after('<i class="load"></i>');
+
+            $.post($(this).attr('action'), $('input', this).serialize(), function(data) {
+                var redir = function(){};
+
+                if (data.redirect){
+                    redir = function(){
+                        location.href = data.redirect;
                     }
 
-                    if (data.reload) location.reload();
+                    if( Object.keys(data).length == 1 )
+                        redir();
+                }
 
-                    if( data.fancybox ){
-                        $.fancybox.open([{
-                            content:data.fancybox,
-                            type: 'html',
-                            beforeClose: redir
-                        }]);
-                    }
-                    if (data.error) {
-                        $('input.txt, input.wtxt, textarea.txt, textarea.wtxt', f).each(function() { // сообщения об ошибках на инпутах
-                            if ( ! $(this).hasClass('misc')) {
-                                var n = $(this).attr('name');
-                                if (data.error[n]) {
-                                    $(this)
-                                        .removeClass('ok')
-                                        .addClass('error')
-                                        .attr('error', data.error[n]);
-                                } else {
-                                    $(this)
-                                        .addClass('ok')
-                                        .removeClass('error')
-                                        .removeAttr('error');
-                                }
+                if (data.reload) location.reload();
+
+                if( data.fancybox ){
+                    $.fancybox.open([{
+                        content:data.fancybox,
+                        type: 'html',
+                        beforeClose: redir
+                    }]);
+                }
+                if (data.error) {
+                    $('input.txt, input.wtxt, textarea.txt, textarea.wtxt', f).each(function() { // сообщения об ошибках на инпутах
+                        if ( ! $(this).hasClass('misc')) {
+                            var n = $(this).attr('name');
+                            if (data.error[n]) {
+                                $(this)
+                                    .removeClass('ok')
+                                    .addClass('error')
+                                    .attr('error', data.error[n]);
+                            } else {
+                                $(this)
+                                    .addClass('ok')
+                                    .removeClass('error')
+                                    .removeAttr('error');
                             }
-                        });
-                        $('select', f).each(function() { // ошибки на селектах
+                        }
+                    });
+                    $('select', f).each(function() { // ошибки на селектах
 
-                        })
-                    }
-                    if (data.ok) {
+                    })
+                }
+                if (data.ok) {
+                    $('input.txt, textarea.txt, input.wtxt, textarea.wtxt', f).each(function(i, item) {
+                        $(item)
+                            .addClass('ok')
+                            .removeClass('error')
+                            .removeAttr('error');
+                    });
+                }
+                if (data.html) {
+                    if (fancy) {
+                        f.parent().html(data.html);
+                        $.fancybox.update();
+                    } else {
                         $('input.txt, textarea.txt, input.wtxt, textarea.wtxt', f).each(function(i, item) {
                             $(item)
+                                .prop('readonly', 'readonly')
                                 .addClass('ok')
                                 .removeClass('error')
                                 .removeAttr('error');
                         });
+                        $('input[type=submit]', f).replaceWith(data.html);
                     }
-                    if (data.html) {
-                        if (fancy) {
-                            f.parent().html(data.html);
-                            $.fancybox.update();
-                        } else {
-                            $('input.txt, textarea.txt, input.wtxt, textarea.wtxt', f).each(function(i, item) {
-                                $(item)
-                                    .prop('readonly', 'readonly')
-                                    .addClass('ok')
-                                    .removeClass('error')
-                                    .removeAttr('error');
-                            });
-                            $('input[type=submit]', f).replaceWith(data.html);
-                        }
-                    }
-                    $('i.load', f).remove();
-                    f.removeClass('proceed');
-                }, 'json')
+                }
+                $('i.load', f).remove();
+                f.removeClass('proceed');
+            }, 'json')
                 .error(function (xhr, status, errorThrown) {
                     alert('Произошла ошибка:' + errorThrown +'\n' + status + '\n' + xhr.statusText);
                     f.removeClass('proceed');
                 });
 
-                return false;
-            });
-    
+            return false;
+        });
+
     /* SEO url validation */
     $('#translit').keyup(function(){
-    var sef = $(this).val()
-    if (sef.search(/[^a-z0-9-]/) != -1) {
-        $(this).addClass('input-error');
-        if ( $(this).next().is('.descr')) {
-            $(this).next().addClass('error').html('Недопустимые символы в ЧПУ!');
+        var sef = $(this).val()
+        if (sef.search(/[^a-z0-9-]/) != -1) {
+            $(this).addClass('input-error');
+            if ( $(this).next().is('.descr')) {
+                $(this).next().addClass('error').html('Недопустимые символы в ЧПУ!');
+            } else {
+                $(this).after('<div class="descr error">Недопустимые символы в ЧПУ!</div>');
+            }
         } else {
-            $(this).after('<div class="descr error">Недопустимые символы в ЧПУ!</div>');
+            $(this).removeClass('input-error').next().removeClass('error').html('Данные верны');
         }
-    } else {
-        $(this).removeClass('input-error').next().removeClass('error').html('Данные верны');
-    }
-});
-    
+    });
+
     /* Добавление товаров в акции, кнопка отметить все */
     $('#check_all').click(function(){
         if($(this).hasClass('do_uncheck')) {
@@ -253,8 +264,8 @@ $(document).ready(function() {
             $(this).addClass('do_uncheck');
         }
     });
-	
-	$('.datepicker-jqui').datepicker({
-		dateFormat: 'yy-mm-dd'
-	});
+
+    $('.datepicker-jqui').datepicker({
+        dateFormat: 'yy-mm-dd'
+    });
 });

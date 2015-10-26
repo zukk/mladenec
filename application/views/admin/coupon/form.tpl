@@ -1,14 +1,14 @@
-    {if $i->id}
-        <h1 class="unit-80">Купон {$i->id}</h1>
-    {else}
-        <h1>Создание купона</h1>
-    {/if}
+{if $i->id}
+    <h1 class="unit-80">Купон {$i->id}</h1>
+{else}
+    <h1>Создание купона</h1>
+{/if}
 
 <form action="" method="post" class="forms forms-columnar" enctype="multipart/form-data">
     <p>
         <label for="type">Тип купона</label>
         <select name="type" id="type">
-        {html_options options=Model_Coupon::type() selected=$i->type}
+            {html_options options=Model_Coupon::type() selected=$i->type}
         </select>
     </p>
 
@@ -26,41 +26,36 @@
 
     <div id="type1" {if not $i->id OR $i->type != Model_Coupon::TYPE_PERCENT}class="hide"{/if}>
         {if $i->id}
-            <label>
-                Товары, на которые даётся скидка<br />
-                <a onclick="$('tr.del').click()" class="no">удалить все</a>
-            </label>
-
-            <table class="area">
             {foreach from=$i->get_goods() key=discount item=goods}
-                {foreach from=$goods item=g}
-                <tr>
-                    <td class="nowrap">
-                        <input type="text" name="discount[]" value="{$discount}" maxlength="2" size="2" class="left"/>%
-                    </td>
-                    <td>
-                        <input type="text" class="width-80 left" value="{$g->id1c} {$g->group_name|escape:html} {$g->name|escape:html}" />
-                        <input type="hidden" name="good_id[]" value="{$g->id}" />
-                    </td>
-                </tr>
-                {/foreach}
+                <label>
+                    Товары со скидкой {$discount}%<br />
+                    <a onclick="$('#goods{$discount} .trdel').click()" class="no">удалить все</a>
+                </label>
+
+                <div class="area" id="goods{$discount}">
+                    {include file='admin/good/chosen.tpl' goods=$goods discount=$discount}
+                </div>
             {/foreach}
-            </table>
+
+            <label>Скидка (%)<input type="text" value="1" name="misc[discount]"/></label>
+            <div class="area" id="goods{$discount}">
+                {include file='admin/good/chosen.tpl' goods=[] discount=0}
+            </div>
         {/if}
     </div>
 
-	<p>
-		<label for="min_sum">Минимальная сумма заказа</label>
-		<input type="text" id="min_sum" name="min_sum" value="{$i->min_sum}" class="width-25" />
-	</p>
+    <p>
+        <label for="min_sum">Минимальная сумма заказа</label>
+        <input type="text" id="min_sum" name="min_sum" value="{$i->min_sum}" class="width-25" />
+    </p>
     <p>
         <label for="active">Активность</label>
         <input type="checkbox" id="active" name="active"{if $i->active} checked="checked"{/if} value="1" />
     </p>
-	<p>
-		<label for="per_user">Использований на человека</label>
-		<input type="text" id="per_user" name="per_user" value="{$i->per_user}" class="width-25" />
-	</p>
+    <p>
+        <label for="per_user">Использований на человека</label>
+        <input type="text" id="per_user" name="per_user" value="{$i->per_user}" class="width-25" />
+    </p>
     <p>
         <label for="uses">Использований</label>
         <input type="text" id="uses" name="uses" value="{$i->uses}" class="width-25" /> {if $i->used}(уже использовано {$i->used} раз){/if}
@@ -74,7 +69,7 @@
     <p class="forms-inline">
         <label class="unit-40">Окончание</label>
         {html_select_date time=$i->to field_array=to field_order=DMY all_empty='' end_year="+1"}
-            {html_select_time minute_interval=30 display_seconds=0 time=$i->to field_array=to all_empty=''}
+        {html_select_time minute_interval=30 display_seconds=0 time=$i->to field_array=to all_empty=''}
     </p>
 
     <div class="units-row">

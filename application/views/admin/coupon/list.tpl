@@ -7,30 +7,36 @@
     <tr>
         <th>#</th>
         <th>Код</th>
-        <th>Сроки</th>
+        <th>Тип</th>
         <th>Активность</th>
-        <th>Сумма</th>
-	    <th>Сумма заказа, от</th>
+        <th>Условия работы</th>
         <th>Использований</th>
-	    <th>На человека</th>
-        <th>Работает</th>
+	    <th>Работает</th>
     </tr>
     {foreach from=$list item=i}
     <tr {cycle values='class="odd",'}>
         <td>{$i->id}</td>
         <td><a href="{Route::url('admin_edit', ['model' => 'coupon', 'id' => $i->id])}">{$i->name}</a></td>
-        <td>c {$i->from}<br /><span{if $i->is_expired()} class="red"{/if}>по {$i->to}</span></td>
+        <td>{Model_Coupon::type($i->type)}</td>
         <td>{if $i->active}
                 <span class="green">вкл</span>
             {else}
                 <span class="red">откл</span>
             {/if}
         </td>
-        <td>{$i->sum}</td>
-	    <td>{$i->min_sum}</td>
-        <td>{$i->uses} (уже использовано {$i->used})</td>
-	    <td>{$i->per_user}</td>
-        <td>{if $i->is_usable()}
+        <td>
+            {if $i->from}<span class="nowrap">c {$i->from}</span><br />{/if}
+            {if $i->to}<span{if $i->is_expired()} class="red nowrap"{/if}>по {$i->to}</span><br />{/if}
+            {if $i->min_sum}при сумме заказа от {$i->min_sum}р.<br />{/if}
+            <br />
+            {if $i->type eq Model_Coupon::TYPE_SUM}
+                Дает скидку {$i->sum}руб
+            {/if}
+        </td>
+        <td>{$i->uses} (использовано {$i->used})
+            <br />{$i->per_user} раз на аккаунт
+        </td>
+	    <td>{if $i->is_usable()}
                 <span class="green">да</span>
             {else}
                 <span class="red">нет</span>

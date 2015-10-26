@@ -2927,10 +2927,6 @@ class Controller_Admin extends Controller_Authorised {
      */
     public function action_chosen()
     {
-        if ( ! $this->request->post('action_id')) throw new HTTP_Exception_404;
-        $action = new Model_Action($this->request->post('action_id'));
-        if ( ! $action->loaded()) throw new HTTP_Exception_404;
-
         if ($choice = $this->request->post('choice')) { // есть отобранные галочками
 
             $query = ORM::factory('good')->where('id', 'IN', $choice);
@@ -2973,16 +2969,11 @@ class Controller_Admin extends Controller_Authorised {
 
         $add = $query->find_all()->as_array('id'); // добавочные
 
-        /*
-        foreach($add as $k => $v) {
-            if ( ! empty($already[$k])) unset($add[$k]);
-        }
-        */
-
         $tmpl = array(
             'goods' => $add,
             'total' => count($add),
-            'mode'  => $this->request->post('mode')
+            'mode'  => $this->request->post('mode'),
+            'discount' => $this->request->post('discount')
         );
 
         exit(View::factory('smarty:admin/good/chosen', $tmpl)->render());

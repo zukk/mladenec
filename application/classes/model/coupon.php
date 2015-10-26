@@ -166,7 +166,7 @@ class Model_Coupon extends ORM {
      */
     public function flag()
     {
-        return array('active', 'in1c');
+        return ['active', 'in1c'];
     }
 
     /**
@@ -208,4 +208,53 @@ class Model_Coupon extends ORM {
         return $return;
     }
 
+    /**
+     * Прикрепить товары к купону типа TYPE_PERCENT
+     */
+    function admin_save()
+    {
+        if ($this->type == self::TYPE_PERCENT) {
+            $goods = Request::current()->post('goods');
+            if ( ! is_array($goods)) $goods = [];
+
+            $old_good_idz = [];
+            $old_goods = $this->get_goods();
+
+            foreach($old_goods as $discount => $goodz) {
+                foreach($goodz as $id => $good) $old_good_idz[$id] = $discount; // запоминаем скидку и товар
+            }
+
+            $add_disc = Request::current()->post('misc');
+
+            // чистим все товары и добавляем согласно списку, заодно собираем id => discount для полученных из POST
+            DB::delete('z_coupon_good')->where('coupon_id', '=', $this->id)->execute();
+            $new_good_idz = [];
+            foreach($goods as $discount => $goodz) {
+                $idz = array_unique($goodz);
+                if ( ! empty($idz)) {
+                    $ins = DB::insert('z_coupon_good')->columns(['good_id', 'coupon_id', 'discount']);
+                    if ($discount == 0) $discount = ! empty($add_disc['discount']) ? $add_disc['discount'] : 0;
+                    foreach($idz as $id) {
+                        $ins->values([
+                            'good_id' => $id,
+                            'coupon_id' => $this->id,
+                            'discount' => $discount,
+                        ]);
+                        $new_good_idz[$id] = $discount;
+                    }
+                    DB::query(Database::INSERT, str_replace('INSERT', 'INSERT IGNORE ', $ins))->execute();
+                }
+            }
+
+            $goods_del = array_diff_assoc($old_good_idz, $new_good_idz); // Удалены товары или смена скидки
+            $goods_new = array_diff_assoc($new_good_idz, $old_good_idz); // Добавлены товары или смена скидки
+            if ( ! empty($goods_new)) {
+                Model_History::log('coupon', $this->id, 'Добавлено товаров: '.count($goods_new), $goods_new);
+            }
+            if ( ! empty($goods_del)) {
+                Model_History::log('coupon', $this->id, 'Удалено товаров: '.count($goods_del), $goods_del);
+            }
+        }
+        return;
+    }
 }

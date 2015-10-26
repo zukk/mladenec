@@ -1,5 +1,6 @@
 <form action="" id="goodz" method="post">
     <input type="hidden" name="rand" value="{$smarty.request.rand}" />
+    <input type="hidden" name="discount" value="{$smarty.request.discount|default:''}" />
     Витрина:
     <select name="vitrina">
         {foreach from=Kohana::$hostnames item=config key=k}
