@@ -5,7 +5,7 @@
 {/if}
 
 <form action="" method="post" class="forms forms-columnar" enctype="multipart/form-data">
-    <p>
+    <p style="clear:both;">
         <label for="type">Тип купона</label>
         <select name="type" id="type">
             {html_options options=Model_Coupon::type() selected=$i->type}

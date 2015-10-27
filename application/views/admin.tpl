@@ -28,7 +28,7 @@
     <script src="/j/redactor/ru.js"></script>
 
     <script src="/j/admin/filemanager.js"></script>
-    <script src="/j/admin/admin.js"></script>
+    <script src="/j/admin/admin.js?{$smarty.now|date_format:'%y%m%d'}"></script>
 
     <link rel="shortcut icon" href="/i/favicon.ico" type="image/x-icon" />
     <link rel="icon" href="/i/favicon.ico" type="image/x-icon" />
