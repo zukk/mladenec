@@ -116,11 +116,10 @@ class Model_Spam extends ORM {
             $sheet = $excel->getActiveSheet();
             $column = PHPExcel_Cell::columnIndexFromString($sheet->getHighestColumn());
             $row = $sheet->getHighestRow();
-
             $mails = [];
             for ($x = 0; $x <= $column; $x++) {
-                for ($y = 1; $y <= $row; $y++) {
-                    $data = strval($sheet->getCellByColumnAndRow($x, $y)->getValue());
+                for ($y = 0; $y <= $row; $y++) {
+                    $data = trim(strval($sheet->getCellByColumnAndRow($x, $y)->getValue()));
                     if (Valid::email($data)) {
                         $mails[$data] = $data;
                     }
