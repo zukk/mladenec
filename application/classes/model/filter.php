@@ -6,6 +6,7 @@ class Model_Filter extends ORM {
     const MUMS_BIG_TYPE = 2099; // фильтр Категорий для всё для мам
     const CARE_BIG_TYPE = 2102; // фильтр Категорий для Косметики
     const FEED_BIG_TYPE = 2086; // фильтр Вид (средства для кормления)
+    const HEALTH_BIG_TYPE = 1985; // фильтр Подкатегория в Здоровье малыша
 
     const PURE_SOSTAV = 2068; // фильтр состава в пюре
 
@@ -217,7 +218,7 @@ class Model_Filter extends ORM {
      */
     static function big($fid)
     {
-        return in_array($fid, [self::CLOTH_BIG_TYPE, self::TOYS_BIG_TYPE, self::MUMS_BIG_TYPE, self::CARE_BIG_TYPE, self::FEED_BIG_TYPE]);
+        return in_array($fid, [self::CLOTH_BIG_TYPE, self::TOYS_BIG_TYPE, self::MUMS_BIG_TYPE, self::CARE_BIG_TYPE, self::FEED_BIG_TYPE, self::HEALTH_BIG_TYPE]);
     }
 
     /**
