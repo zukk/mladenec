@@ -325,7 +325,7 @@ class Mail {
         fputs($this->smtp_conn,"QUIT\r\n");
 
         err:	fclose($this->smtp_conn);
-        if ($this->smtp_error !== FALSE) $this->smtp_error = "\n".$subject."\n".$to;
+        if ($this->smtp_error !== FALSE) $this->smtp_error = $this->smtp_error."\n".$subject."\n".$to;
 
         return $this->smtp_error === FALSE;
     }
