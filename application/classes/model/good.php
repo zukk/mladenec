@@ -265,7 +265,7 @@ class Model_Good extends ORM {
 
         DB::query(Database::INSERT, '
             INSERT IGNORE INTO z_group(id, active, min_price, max_price, image, good_id, brand_id, qty)
-            SELECT group_id, MAX(IF(active = 1, 1, 0)), MIN(price), MAX(price), img255, MAX(IF(`show`, z_good.id, 0)), MAX(IF(active = 1, z_good.brand_id, 0)), SUM(active)
+            SELECT group_id, MAX(IF(active != 0, 1, 0)), MIN(price), MAX(price), img255, MAX(IF(`show`, z_good.id, 0)), MAX(IF(active != 0, z_good.brand_id, 0)), SUM(active)
               FROM `z_good`
               JOIN z_good_prop ON (z_good.id = z_good_prop.id)
             WHERE price > 0
