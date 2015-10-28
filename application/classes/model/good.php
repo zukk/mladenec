@@ -339,7 +339,14 @@ class Model_Good extends ORM {
             WHERE new_till IS NOT NULL AND new_till < now() AND g.id = gp.id
         ')->execute();
 
-        // обновить флаг одежды в товарах из одежды
+        // обновить флаг одежды в товарах из одежды (и наоборот)
+        DB::query(Database::UPDATE, 'UPDATE z_group
+          SET good = 0 WHERE section_id NOT IN (
+            SELECT id
+            FROM z_section
+            WHERE parent_id = 29690)
+        ')->execute();
+
         DB::query(Database::UPDATE, 'UPDATE z_group
           SET good = 1 WHERE section_id IN (
             SELECT id
