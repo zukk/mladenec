@@ -28,7 +28,7 @@
             <tr {if $active}class="a"{/if}>
                 <td class="vt"><a name="{$g->id}"></a></td>
                 <td class="qty">{$g|qty:0}</td>
-                <td class="name"><a href="{$g->get_link(0)}?ajax=1" rev="{$g->group_id}" rel="buy">{$g->name}</a>{if $g->qty == -1}<small class="wait">Доставка в течение 2-х дней</small>{/if}</td>
+                <td class="name"><a href="{$g->get_link(0)}?ajax=1" rev="{$g->group_id}" rel="buy">{$g->name}</a></td>
 
                 <td class="price">
 					{if $active}
