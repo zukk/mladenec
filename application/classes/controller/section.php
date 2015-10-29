@@ -151,7 +151,7 @@ class Controller_Section extends Controller_Frontend
 
             } elseif ( $section->settings['list'] == Model_Section::LIST_FILTER) {  // это страница с меню по фильтру
 
-                $sphinx = new Sphinx('section', $section->id, FALSE); // понадобится для меню
+                $sphinx = new Sphinx('section', $section->id); // понадобится для меню, нужно чтение параметров на случай редиректа в фильтр-категорию
                 $stats = $sphinx->stats();
 
                 $this->tmpl['filter_values'] = $values = ORM::factory('filter_value')

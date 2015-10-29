@@ -694,7 +694,6 @@ class Sphinx {
             18687 => 18688,
         ];
 
-
         $request = Request::current();
         $redir = FALSE;
         $stats = $this->stats();
@@ -837,6 +836,19 @@ class Sphinx {
             foreach ($this->_params['f'] as $fid => $vals) { // выкидываем некорректные фидьтры
 
                 if ($fid == Model_Filter::TASTE || $fid == Model_Filter::STROLLER_SHASSI || $fid == Model_Filter::STROLLER_WEIGHT) continue; // { // только выбранные вкусы - собираем все доступные вкусы
+
+                // в урле категории один подфильтр от фильтра-категории - редирект на страницу фильтра-категории
+                if ($this->_mode == 'section'
+                    && $this->_section->settings['list'] == Model_Section::LIST_FILTER
+                    && $fid == $this->_section->settings['sub_filter']
+                    && count($vals) == 1
+                ) {
+                    $fv = current($vals);
+                    $this->_mode = 'section_filter';
+                    $this->_query = $fid.'_'.$fv;
+                    $redir = TRUE;
+                    unset($this->_params['f'][$fid]);
+                };
 
                 foreach ($vals as $key => $fv) {
                     if (empty($stats['vals'][$fid][$fv]) && $fid != Model_Filter::TASTE) {  // выбран фильтр которого нет в категории
