@@ -44,6 +44,13 @@
         {/if}
     </div>
 
+    {if $i->type eq Model_Coupon::TYPE_PERCENT}
+    <p>
+        <label for="max_sku">Число товаров одного наименования на которые дается скидка (0 - без ограничения)</label>
+        <input type="text" id="max_sku" name="max_sku" value="{$i->max_sku}" class="width-25" />
+    </p>
+    {/if}
+
     <p>
         <label for="min_sum">Минимальная сумма заказа</label>
         <input type="text" id="min_sum" name="min_sum" value="{$i->min_sum}" class="width-25" />

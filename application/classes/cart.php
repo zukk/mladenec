@@ -540,11 +540,10 @@ class Cart {
                         if ( ! empty($goods[$good_id])) {  // купон сработал! @note проверить другие акции?
 
                             $qty = $this->goods[$good_id];
-                            $max_qty = 1; // макс число одинаковых товаров на которое дают скидку
-                            if ($qty > $max_qty) {
-                                // считаем скидку в процентах за каждый, при учете что даём скидку не более чем на два товара
-                                $gprice = round($base_price[$g->id] * (1 - $discount / 100) * 10) / 10; // цену округляем до 10 коп
-                                $total = $base_price[$good_id] * ($qty - $max_qty) + $gprice * $max_qty;
+                            if ($coupon->max_sku > 0 && $qty > $coupon->max_sku) {
+                                // считаем скидку в процентах за каждый, при учете что даём скидку не более чем на max_sku товаров
+                                $gprice = round($base_price[$g->id] * (1 - $discount / 100)); // цену округляем до 1 коп
+                                $total = $base_price[$good_id] * ($qty - $coupon->max_sku) + $gprice * $coupon->max_sku;
                                 $each = $total / $qty;
                                 $percent = (1 - $each / $base_price[$good_id]) * 100;
                                 $this->apply_discount($goods, $base_price, $percent, [$good_id => $good_id]);
