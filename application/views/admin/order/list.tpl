@@ -37,15 +37,19 @@
                 <a href="{Route::url('admin_order_card')}">Проблемный безнал</a-->
             </div>
             <div class="unit-50 datepicker">
-                <b>Создан:</b><br />
+                <b>Отправлен:</b><br />
 
-                <nobr><b>С:</b><br />{html_select_date time=$from|default:null field_array=from field_order=DMY all_empty='' start_year="-2" end_year="+1"}
-                    <input type="text" name="from[Time_Hour]" value="{$smarty.get.from['Time_Hour']|default:'00'}" style="width: 20px; display: inline" /> :
-                    <input type="text" name="from[Time_Minute]" value="{$smarty.get.from['Time_Minute']|default:'00'}" style="width: 20px; display: inline" /></nobr><br />
+                <div class="nowrap" style="overflow: hidden;">
+                    <b class="fl">С: </b>
+                    <input class="fl" type="date" name="from[date]" value="{$from.date|default:''}" />
+                    <input class="fl" type="time" name="from[time]" value="{$from.time|default:''}" />
+                </div><br />
 
-                <nobr><b>По:</b><br />{html_select_date time=$to|default:null field_array=to field_order=DMY all_empty='' end_year="+1"}
-                    <input type="text" name="to[Time_Hour]" value="{$smarty.get.to['Time_Hour']|default:'00'}" style="width: 20px; display: inline" /> :
-                    <input type="text" name="to[Time_Minute]" value="{$smarty.get.to['Time_Minute']|default:'00'}" style="width: 20px; display: inline" /></nobr>
+                <div class="nowrap cl" style="overflow: hidden;">
+                    <b class="fl">По: </b>
+                    <input class="fl" type="date" name="to[date]" value="{$to.date|default:''}" />
+                    <input class="fl" type="time" name="to[time]" value="{$to.time|default:''}" />
+                </div>
             </div>
         </div>
         <div class="units-row">

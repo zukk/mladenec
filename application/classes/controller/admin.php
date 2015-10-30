@@ -1700,42 +1700,13 @@ class Controller_Admin extends Controller_Authorised {
         }
 		
         $from = $this->request->query('from');
-        
-        if (is_array($from) AND ! (empty($from['Date_Day']) AND empty($from['Date_Month']) AND empty($from['Date_Year']))) {
-            
-            if (empty($from['Date_Year'])) {
-                $from['Date_Year']  = date('Y');
-            } elseif (empty($from['Date_Day']) AND empty($from['Date_Month'])) {
-                $from['Date_Month'] = 1;
-            }
-            if (empty($from['Date_Month'])) $from['Date_Month'] = date('n');
-            if (empty($from['Date_Day']))   $from['Date_Day']   = 1;
-        
-            $return['from'] = $from_date = $this->read_date($from);
-            
-            $query->where('sent', '>=' , $from_date);
+        if ( ! empty($from)) {
+            $query->where('sent', '>=' , $from['date'].' '.$from['time']);
         }
+
         $to = $this->request->query('to');
-
-		if (is_array($from) AND ! (empty($to['Date_Day']) AND empty($to['Date_Month']) AND empty($to['Date_Year']))) {
-            
-            if (empty($to['Date_Year'])) {
-                $to['Date_Year']  = date('Y');
-            } elseif(empty($to['Date_Month']) AND empty($to['Date_Day'])) {
-                $to['Date_Month'] = 12;
-                $to['Date_Day']   = 31;
-            }
-			
-            if (empty($to['Date_Month'])) $to['Date_Month'] = date('n');
-            if (empty($to['Date_Day']))   $to['Date_Day']   = date('t');
-            
-            $to_timestamp = strtotime($this->read_date($to));
-			
-			// Зачем?
-            $to_timestamp = $to_timestamp + 86399;
-
-            $return['to'] = $to_date = date("Y-m-d H:i:s",$to_timestamp);
-            $query->where('sent', '<=' , $to_date);
+        if ( ! empty($to)) {
+            $query->where('sent', '<=' , $to['date'].' '.$to['time']);
         }
 
         $query->reset(FALSE);
@@ -1744,8 +1715,9 @@ class Controller_Admin extends Controller_Authorised {
         $return['list'] = $query->order_by('order.id', 'desc')->offset($pager->offset)->limit($pager->per_page)->find_all();
 
 		$countAll = $query->where('status', '!=', 'C')->count_all();
-
 		$return['oformlennikh'] = $countAll;
+        $return['from'] = $from;
+        $return['to'] = $to;
 		
         return $return;
     }
