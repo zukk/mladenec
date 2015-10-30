@@ -1700,12 +1700,12 @@ class Controller_Admin extends Controller_Authorised {
         }
 		
         $from = $this->request->query('from');
-        if ( ! empty($from)) {
+        if ( ! empty($from['date'])) {
             $query->where('sent', '>=' , $from['date'].' '.$from['time']);
         }
 
         $to = $this->request->query('to');
-        if ( ! empty($to)) {
+        if ( ! empty($to['date'])) {
             $query->where('sent', '<=' , $to['date'].' '.$to['time']);
         }
 

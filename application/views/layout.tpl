@@ -90,9 +90,9 @@
 {include file="layout/$vitrina.tpl"}
 
 <script>
-{if not empty($user)}
-    executeGoodsTopBar();
-{/if}
+{*if not empty($user)}
+    // executeGoodsTopBar();
+{/if*}
     if (typeof(impressionsObject) == "undefined" ){
         window.dataLayer = window.dataLayer || [];
         dataLayer.push({
