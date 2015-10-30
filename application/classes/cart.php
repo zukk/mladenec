@@ -440,7 +440,7 @@ class Cart {
                         break;
                 }
 
-                if (empty($values)) return; // нет скидочных акций
+                if (empty($values)) continue; // нет скидочных акций
 
                 foreach ($values as $k => $val) { // Выбираем самое большое условие по кол-ву
 
@@ -637,10 +637,10 @@ class Cart {
     {
         $this->save_clear(); // Удаляем все вычисляемые позже данные
         $this->reset_status(); // Устанавливаем статус в тот, что стоит у самого клиента
-        
+
         $goods = []; // [id=>qty]
         $this->goods = array_filter(array_map('abs', $this->goods)); // без отрицательных и 0
-		
+
         if (isset($this->goods['blago'])) {
             $this->blago = abs($this->goods['blago']);
             unset($this->goods['blago']);

@@ -641,27 +641,6 @@ class Controller_Product extends Controller_Frontend {
             }
             $cart->add($qty, FALSE); // recount inside!
         }
-        
-        if ( ! empty($goods)) {
-
-            $presents = $cart->check_actions($goods); // подарки по акциям - пересчитываем
-            if ( ! empty($presents)) {
-                $vars['present_goods'] = ORM::factory('good')->where('id', 'IN', array_keys($presents))->find_all()->as_array('id');
-            }
-            if ( ! empty($cart->promo)) {
-                $vars['promo'] = $cart->promo;
-            }
-
-            $prices = [];
-            foreach ($goods as $id => $g) $prices[$id] = $g->price;
-            $prices['blago'] = 1; // благотворительность - по рублю
-
-            $goods = $cart->goods;
-            $goods['blago'] = $cart->blago;
-
-            $totals = [];
-            foreach ($goods as $goodId => $count) $totals[$goodId] = $count * $prices[$goodId];            
-        }
 
         if ($comments = $this->request->post('comment')) { // если были комментарии - прикрепим обратно, мы их стёрли в cart::clean
             $cart->set_comments($comments);
