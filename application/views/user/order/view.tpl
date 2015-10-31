@@ -179,7 +179,7 @@
 
     {if $o->pay_type == Model_Order::PAY_CARD}
 
-        {if $o->pay1 gt 0}
+        {if $o->pay1 != '0.00'}
             <dt>Доплата наличными:</dt><dd>{$o->pay1|price}</dd>
         {/if}
 

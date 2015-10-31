@@ -69,24 +69,16 @@
 
                         <img src="/i/cards.png" alt="Виза, Мастеркард" /><br />
 
-                        {*if $i->call_card}
-                            <span class="green">Отзвонили</span>
-                        {else}
-                            <input id="call_{$i->id}" name="call[{$i->id}]" value="Отзвонили" type="button" />
-                        {/if*}
-
                         {if not $i->can_pay}
                             Оплата ещё не разрешена
-                            <!--input id="can_pay_{$i->id}" name="can_pay[{$i->id}]" value="Разрешить" type="button" /-->
 
                         {else}
                             {assign var=payment value=$i->payment()}
-                            {if $payment and $payment->status gt Model_Payment::STATUS_New}
+                            {if $payment->status gt Model_Payment::STATUS_New}
                                 {$payment->status_info()} <small>({$payment->status_time})</small>
                             {else}
                                 Клиент нe начинал оплату
                             {/if}
-                            <!--input id="cash_{$i->id}" name="cash[{$i->id}]" value="НАЛ" type="button" /-->
 
                         {/if}
                     {/if}

@@ -574,38 +574,38 @@ class Controller_Odinc extends Controller {
 
                         if (in_array($order->status, ['F', 'X'])) {
                             $authz = $order->payments->where('status', '=', Model_Payment::STATUS_Authorized)->find_all()->as_array('id');
-                        }
 
-                        if ($order->status == 'F') { // order delivered - charge money
+                            if ($order->status == 'F') { // order delivered - charge money
 
-                            $charged = 0;
-                            $to_charge = intval($order->pay8 * 100); // в копейках!
-                            foreach($authz as $card) {
-                                if ($charged < $to_charge) { // ещё надо снимать деньги
-                                    $sum = min($card->sum, $to_charge);
-                                    if ($card->charge($sum)) {
-                                        $charged += $sum;
+                                $charged = 0;
+                                $to_charge = intval($order->pay8 * 100); // в копейках!
+                                foreach ($authz as $card) {
+                                    if ($charged < $to_charge) { // ещё надо снимать деньги
+                                        $sum = min($card->sum, $to_charge);
+                                        if ($card->charge($sum)) {
+                                            $charged += $sum;
+                                        }
                                     }
                                 }
-                            }
-                            if ($charged != $to_charge) {
-                                mail('m.zukk@ya.ru, a.sergeev@mladenec.ru', 'Снятая сумма не совпадает с запрошенной '.$order->id, "$charged != $to_charge");
-                            }
+                                if ($charged != $to_charge) {
+                                    mail('m.zukk@ya.ru, a.sergeev@mladenec.ru', 'Снятая сумма не совпадает с запрошенной ' . $order->id, "$charged != $to_charge");
+                                }
 
-                        } elseif ($order->status == 'X') { // order cancelled - unblock money
+                            } elseif ($order->status == 'X') { // order cancelled - unblock money
 
-                            $voided = 0;
-                            $to_void = intval($order->pay8 * 100); // в копейках!
-                            foreach($authz as $card) {
-                                if ($voided < $to_void) { // пытаемся разблокировать пока не наберем нужную сумму
-                                    $sum = min($card->sum, $to_void);
-                                    if ($card->unblock($sum)) {
-                                        $voided += $sum;
+                                $voided = 0;
+                                $to_void = intval($order->pay8 * 100); // в копейках!
+                                foreach ($authz as $card) {
+                                    if ($voided < $to_void) { // пытаемся разблокировать пока не наберем нужную сумму
+                                        $sum = min($card->sum, $to_void);
+                                        if ($card->unblock($sum)) {
+                                            $voided += $sum;
+                                        }
                                     }
                                 }
-                            }
-                            if ($voided != $to_void) {
-                                //mail('m.zukk@ya.ru', 'Разблокированная сумма не совпадает с запрошенной '.$order->id, "$voided != $to_void");
+                                if ($voided != $to_void) {
+                                    //mail('m.zukk@ya.ru', 'Разблокированная сумма не совпадает с запрошенной '.$order->id, "$voided != $to_void");
+                                }
                             }
                         }
                     }

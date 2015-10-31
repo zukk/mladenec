@@ -5,12 +5,7 @@
 {else}
     {assign var=payment value=$o->payment()}
 
-    {if in_array($o->status, ['F', 'X']) && not empty($payment)}
-
-        {$payment->status_info()}
-        <br />{$payment->sum/100|price}&nbsp;р. <small>[{$payment->status_time}]</small>
-
-    {elseif empty($payment) or $payment->status neq Model_Payment::STATUS_Authorized}
+    {if $payment->status neq Model_Payment::STATUS_Authorized}
 
         <a href="{Route::url('pay', ['id' => $o->id])}" class="butt small">оплатить</a>
 
