@@ -73,6 +73,14 @@ class Model_Payment extends ORM {
     }
 
     /**
+     * Платеж находится в статусе когда дальше платить нельзя
+     */
+    function status_final()
+    {
+        return in_array($this->status, [self::STATUS_Authorized, self::STATUS_Charged, self::STATUS_ChargeApproved]);
+    }
+
+    /**
      * Вернуть все возможные шлюзы оплаты
      */
     public static function gates()

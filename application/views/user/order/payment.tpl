@@ -5,7 +5,8 @@
 {else}
     {assign var=payment value=$o->payment()}
 
-    {if $payment->status neq Model_Payment::STATUS_Authorized}
+
+    {if not $payment->status_final()}
 
         <a href="{Route::url('pay', ['id' => $o->id])}" class="butt small">оплатить</a>
 

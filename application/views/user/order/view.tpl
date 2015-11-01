@@ -175,7 +175,7 @@
             Оплата наличными курьеру
         {/if}
     </dd>
-    <dt>Сумма к&nbsp;оплате:</dt><dd>{if $o->pay8 == '0.00'}{$o->get_total()|price}{else}{$o->pay8|price}{/if}</dd>
+    <dt>Сумма к&nbsp;оплате</dt><dd>{if $o->pay8 == '0.00'}{$o->get_total()|price}{else}{$o->pay8|price}{/if}</dd>
 
     {if $o->pay_type == Model_Order::PAY_CARD}
 
