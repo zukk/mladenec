@@ -1795,7 +1795,7 @@ class Controller_Admin extends Controller_Authorised {
                 $from['Date_Day'] = 1;
 
             $from_date = $this->read_date($from);
-            $query->where('created', '>=', $from_date);
+            $query->where('user.created', '>=', $from_date);
         }
         $to = $this->request->query('to');
 
@@ -1814,7 +1814,7 @@ class Controller_Admin extends Controller_Authorised {
                 $to['Date_Day'] = date('t');
 
             $to_date = $this->read_date($to);
-            $query->where('created', '<=', $to_date);
+            $query->where('user.created', '<=', $to_date);
         }
         $orders = $query->find_all();
 
@@ -2057,7 +2057,7 @@ class Controller_Admin extends Controller_Authorised {
                 $from['Date_Day'] = 1;
 
             $return['from'] = $from_date = strtotime($this->read_date($from));
-            $query->where('created', '>=', $from_date);
+            $query->where('user.created', '>=', $from_date);
         }
         $to = $this->request->query('to');
 
@@ -2078,7 +2078,7 @@ class Controller_Admin extends Controller_Authorised {
             $to_timestamp = strtotime($this->read_date($to));
             
             $return['to'] = $to_date = date("Y-m-d H:i:s", $to_timestamp);
-            $query->where('created', '<=', $to_timestamp);
+            $query->where('user.created', '<=', $to_timestamp);
         }
         if (($childs = $this->request->query('childs')) != "") {
             if($childs == 1) {
@@ -2161,7 +2161,7 @@ class Controller_Admin extends Controller_Authorised {
                 $from['Date_Day'] = 1;
 
             $from_date = strtotime($this->read_date($from));
-            $query->where('created', '>=', $from_date);
+            $query->where('user.created', '>=', $from_date);
         }
         $to = $this->request->query('to');
 
@@ -2180,7 +2180,7 @@ class Controller_Admin extends Controller_Authorised {
                 $to['Date_Day'] = date('t');
 
             $to_timestamp = strtotime($this->read_date($to));            
-            $query->where('created', '<=', $to_timestamp);
+            $query->where('user.created', '<=', $to_timestamp);
         }
         $is_childs = false;
         if (($is_childs = $this->request->query('childs')) != "") {            
