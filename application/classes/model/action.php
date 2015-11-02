@@ -528,22 +528,29 @@ class Model_Action extends ORM
         {
             if (isset($presents_stock[$act->id]) ) // подарочная акция!
             {
-
                 Log::instance()->add(Log::INFO, 'In action  ' . $act->id . ' presents changed');
 
                 if ($presents_stock[$act->id])
                 {
                     $act->presents_instock = '1';
-                    $reports[] = array('event' => 'presents_instock', 'msg' => 'Подарки появились на складе ','action' => $act);
+                    $reports[] = [
+                        'event' => 'presents_instock',
+                        'msg' => 'Подарки появились на складе ',
+                        'action' => $act
+                    ];
                 }
                 else
                 {
                     $act->presents_instock = '0';
-                    $reports[] = array('event' => 'presents_off', 'msg' => 'Закончились подарки ', 'action' => $act);
+                    $reports[] = [
+                        'event' => 'presents_off',
+                        'msg' => 'Закончились подарки ',
+                        'action' => $act
+                    ];
                 }
             }
 
-            $act->visible_goods = empty( $visible_goods[$act->id] ) ? 0 : $visible_goods[$act->id];
+            $act->visible_goods = empty($visible_goods[$act->id]) ? 0 : $visible_goods[$act->id];
 
             $act->save();
         }
