@@ -2,6 +2,9 @@
 
 class Cart {
 
+    const WEIGHT_RATE = 1.25; // увеличивающий коэф на объем
+    const VOLUME_RATE = 1.5; // увеличивающий коэф на вес
+
     const MAX_SIMPLE = 4500; // сумма заказа
     const BLAG_ID = 138549; // идентификатор товара благотворительности
 
@@ -27,6 +30,10 @@ class Cart {
     public $coupon_error    = FALSE;  // ошибка если код купона непуст и неприменим
     public $delivery_open   = FALSE; // открыть ли форму с адресом доставки?
 
+    public $weight          = 0; // вес корзины - в кг
+    public $width           = 1; // размеры корзины - в см
+    public $length          = 1; // длина
+    public $height          = 1; // высота
     public $ship_wrong = FALSE; // флаг проблемного веса / объёма в заказе
 
 	protected $_session_id  = NULL;
@@ -63,6 +70,13 @@ class Cart {
             $this->sborkable = ! empty($cart_s->sborkable) ? $cart_s->sborkable : [];
             $this->to_wait = ! empty($cart_s->to_wait) ? $cart_s->to_wait : [];
             $this->no_possible = ! empty($cart_s->no_possible) ? $cart_s->no_possible : [];
+
+            $this->weight = ! empty($cart_s->weight) ? $cart_s->weight : 0;
+            $this->width = ! empty($cart_s->width) ? $cart_s->width : 1;
+            $this->height = ! empty($cart_s->height) ? $cart_s->height : 1;
+            $this->length = ! empty($cart_s->length) ? $cart_s->length : 1;
+            $this->ship_wrong = ! empty($cart_s->ship_wrong);
+
             $this->coupon = [];
             if ( ! empty($cart_s->coupon)) {
                 if ( ! is_array($cart_s->coupon)) { // всегда массив ждём
@@ -535,26 +549,46 @@ class Cart {
                 if (empty($cgoods))  { $this->coupon_error = 'В корзине нет товаров, для которых активен купон'; return FALSE; };
 
                 $used = FALSE;
+
+                $couponed_goods = []; // сюда соберем товары из корзины, для которых работает купон
                 foreach($cgoods as $discount => $goodz) {
-                    foreach($goodz as $good_id => $g) {
-                        if ( ! empty($goods[$good_id])) {  // купон сработал! @note проверить другие акции?
-
-                            $qty = $this->goods[$good_id];
-                            if ($coupon->max_sku > 0 && $qty > $coupon->max_sku) {
-                                // считаем скидку в процентах за каждый, при учете что даём скидку не более чем на max_sku товаров
-                                $gprice = round($base_price[$g->id] * (1 - $discount / 100)); // цену округляем до 1 коп
-                                $total = $base_price[$good_id] * ($qty - $coupon->max_sku) + $gprice * $coupon->max_sku;
-                                $each = $total / $qty;
-                                $percent = (1 - $each / $base_price[$good_id]) * 100;
-                                $this->apply_discount($goods, $base_price, $percent, [$good_id => $good_id]);
-                            } else {
-                                $this->apply_discount($goods, $base_price, $discount, [$good_id => $good_id]); // применяем скидку на все
-                            }
-
-                            $used = TRUE;
+                    foreach ($goodz as $good_id => $g) {
+                        if ( ! empty($goods[$good_id])) {  // купон сработал!
+                            $couponed_goods[$good_id] = $g;
                         }
                     }
                 }
+
+                // получаем все акции для товаров из купона, которые есть в корзине
+                // если на товар есть акция - скидка по перечеркиванию, то базовая цена = старая цена (купон выключает скидочные акции)
+                // все остальные типы акций уже отключены так как в расчетах используется base_price (цена розница)
+                $good_actions = Model_Action::by_goods($couponed_goods);
+                foreach($good_actions as $a) {
+                    if ($a->type == Model_Action::TYPE_PRICE) {
+                        foreach($a->good_ids as $gid) {
+                            if  ( ! empty($couponed_goods[$gid]->old_price)) {
+                                $base_price[$gid] = $couponed_goods[$gid]->old_price;
+                            }
+                        }
+                    }
+                }
+
+                foreach($couponed_goods as $good_id => $g) {
+                    $qty = $this->goods[$good_id];
+                    if ($coupon->max_sku > 0 && $qty > $coupon->max_sku) {
+                        // считаем скидку в процентах за каждый, при учете что даём скидку не более чем на max_sku товаров
+                        $gprice = round($base_price[$good_id] * (1 - $discount / 100)); // цену округляем до 1 коп
+                        $total = $base_price[$good_id] * ($qty - $coupon->max_sku) + $gprice * $coupon->max_sku;
+                        $each = $total / $qty;
+                        $percent = (1 - $each / $base_price[$good_id]) * 100;
+                        $this->apply_discount($goods, $base_price, $percent, [$good_id => $good_id]);
+                    } else {
+                        $this->apply_discount($goods, $base_price, $discount, [$good_id => $good_id]); // применяем скидку на все
+                    }
+
+                    $used = TRUE;
+                }
+
                 if ( ! $used ) { $this->coupon_error = 'В корзине нет товаров, для которых активен купон'; return FALSE; };
                 break;
 
@@ -648,19 +682,51 @@ class Cart {
 
         if ( ! empty($this->goods)) {
             $goods = ORM::factory('good') // попадают только товары с ненулевым количеством
-                ->where('id', 'IN', array_keys($this->goods))
+                ->with('prop')
+                ->where('good.id', 'IN', array_keys($this->goods))
                 //->where('show', '=', 1)
                 ->where('qty', '!=', 0)
                 ->find_all()
                 ->as_array('id');
 
-            foreach ($this->no_possible as $id => $good_arr) { // перепроверяем тут количество и переборы
+            foreach ($this->no_possible as $id => $good_arr) { // перепроверяем тут количество и переборы лимитов
 				$good = &$goods[$id];
 
 				if (empty($this->goods[$id]) || ($good instanceof Model_Good && $this->goods[$id] == $good->buy_limit($this->goods[$id]))) {
 					unset($this->no_possible[$id]);
 				}
 			}
+
+            // считаем вес и размер
+            $this->weight = 0;
+            $this->width = $this->height = $this->length = 1;
+            foreach($goods as $id => $g) {
+
+                // вес
+                $w = $g->prop->weight;
+                if ($w == '0.00') $this->ship_wrong = TRUE;
+                $this->weight += $w * $this->goods[$id];
+
+                // размер
+                $size = $g->prop->size;
+                if (preg_match('~^(\d+)x(\d+)x(\d+)$~', $size, $matches)) {
+                    if ($matches[1] * $matches[2] * $matches[3] == 1) $this->ship_wrong = TRUE;
+
+                    for($i = 0; $i < $this->goods[$id]; $i++) {
+                        $this->width += $matches[1]; // ширина - сумма ширин товаров
+                        $this->length = max($this->length, $matches[2]); // длина - максимум длин
+                        $this->height = max($this->height, $matches[3]); // высота - максимум высот
+                    }
+
+                } else {
+                    $this->ship_wrong = TRUE;
+                }
+            }
+
+            $this->weight *= self::WEIGHT_RATE; // к весу добавим упаковку
+            $this->width = ceil($this->width / 10); // размеры переведем в см
+            $this->height = ceil($this->height / 10);
+            $this->length = ceil($this->length / 10);
 
             $base_price = $this->check_qty_wait_lk($goods); // Пересчитываем цены, в т.ч. ЛК, убираем товары с 0 qty
 
@@ -691,7 +757,6 @@ class Cart {
 		
         return $this;
     }
-
     
     protected function save_clear() // Очищает данные, которые не надо хранить в сессии
     {
@@ -706,8 +771,8 @@ class Cart {
         $this->big              = [];
         $this->sborkable        = [];
         $this->discount         = NULL;
+
         $this->force_recount    = TRUE;
-        
     }
     
     /**
@@ -945,48 +1010,13 @@ class Cart {
     /* получить вес заказа в килограммах */
     public function weight()
     {
-        $return = 0;
-
-        if (empty($this->goods)) return $return;
-
-        $weight = DB::select('id', 'weight')
-            ->from('z_good_prop')
-            ->where('id', 'IN', array_keys($this->goods))
-            ->execute()
-            ->as_array('id', 'weight');
-
-        foreach ($weight as $id => $w) {
-            if ($w == '0.00') $this->ship_wrong = TRUE;
-            $return += $w * $this->goods[$id];
-        }
-
-        if ($this->ship_wrong) $this->save();
-        return $return * 1.25; // 1.25 на упаковку
+        return $this->weight;
     }
 
     /* получить объём заказа в кубометрах  */
     public function volume()
     {
-        $return = 0;
-
-        if (empty($this->goods)) return $return;
-
-        $size = DB::select('id', 'size')
-            ->from('z_good_prop')
-            ->where('id', 'IN', array_keys($this->goods))
-            ->execute()
-            ->as_array('id', 'size');
-
-        foreach ($size as $id => $s) {
-            if (empty($s)) $this->ship_wrong = TRUE;
-
-            if (preg_match('~^(\d+)x(\d+)x(\d+)$~', $s, $matches)) {
-                if ($matches[1] * $matches[2] * $matches[3] == 1) $this->ship_wrong = TRUE;
-                $return += $matches[1] * $matches[2] * $matches[3] * $this->goods[$id];
-            }
-        }
-        if ($this->ship_wrong) $this->save();
-        return $return * 1e-9 * 1.5; // 1.5 - на упаковку
+        return $this->width * $this->height * $this->length * 1e-6; // cм в кубометры
     }
 
     /**
