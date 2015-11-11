@@ -550,43 +550,32 @@ class Cart {
 
                 $used = FALSE;
 
-                $couponed_goods = []; // сюда соберем товары из корзины, для которых работает купон
                 foreach($cgoods as $discount => $goodz) {
                     foreach ($goodz as $good_id => $g) {
                         if ( ! empty($goods[$good_id])) {  // купон сработал!
-                            $couponed_goods[$good_id] = $g;
-                        }
-                    }
-                }
 
-                // получаем все акции для товаров из купона, которые есть в корзине
-                // если на товар есть акция - скидка по перечеркиванию, то базовая цена = старая цена (купон выключает скидочные акции)
-                // все остальные типы акций уже отключены так как в расчетах используется base_price (цена розница)
-                $good_actions = Model_Action::by_goods($couponed_goods);
-                foreach($good_actions as $a) {
-                    if ($a->type == Model_Action::TYPE_PRICE) {
-                        foreach($a->good_ids as $gid) {
-                            if  ( ! empty($couponed_goods[$gid]->old_price)) {
-                                $base_price[$gid] = $couponed_goods[$gid]->old_price;
+                            $qty = $this->goods[$good_id];
+
+                            // если на товар есть старая цена, то базовая цена = старая цена (купон выключает скидочные акции)
+                            // все остальные типы акций уже отключены так как в расчетах используется base_price (цена розница)
+                            if ($g->old_price > 0) {
+                                $base_price[$good_id] = $g->old_price;
                             }
+
+                            if ($coupon->max_sku > 0 && $qty > $coupon->max_sku) {
+                                // считаем скидку в процентах за каждый, при учете что даём скидку не более чем на max_sku товаров
+                                $gprice = round($base_price[$good_id] * (1 - $discount / 100)); // цену округляем до 1 коп
+                                $total = $base_price[$good_id] * ($qty - $coupon->max_sku) + $gprice * $coupon->max_sku;
+                                $each = $total / $qty;
+                                $percent = (1 - $each / $base_price[$good_id]) * 100;
+                                $this->apply_discount($goods, $base_price, $percent, [$good_id => $good_id]);
+                            } else {
+                                $this->apply_discount($goods, $base_price, $discount, [$good_id => $good_id]); // применяем скидку на все
+                            }
+
+                            $used = TRUE;
                         }
                     }
-                }
-
-                foreach($couponed_goods as $good_id => $g) {
-                    $qty = $this->goods[$good_id];
-                    if ($coupon->max_sku > 0 && $qty > $coupon->max_sku) {
-                        // считаем скидку в процентах за каждый, при учете что даём скидку не более чем на max_sku товаров
-                        $gprice = round($base_price[$good_id] * (1 - $discount / 100)); // цену округляем до 1 коп
-                        $total = $base_price[$good_id] * ($qty - $coupon->max_sku) + $gprice * $coupon->max_sku;
-                        $each = $total / $qty;
-                        $percent = (1 - $each / $base_price[$good_id]) * 100;
-                        $this->apply_discount($goods, $base_price, $percent, [$good_id => $good_id]);
-                    } else {
-                        $this->apply_discount($goods, $base_price, $discount, [$good_id => $good_id]); // применяем скидку на все
-                    }
-
-                    $used = TRUE;
                 }
 
                 if ( ! $used ) { $this->coupon_error = 'В корзине нет товаров, для которых активен купон'; return FALSE; };
