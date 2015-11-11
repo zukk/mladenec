@@ -59,7 +59,7 @@ class Pager {
         if ( ! $hash) 
         {
 			$this->base = '/' . Request::current()->uri();
-            $query = http_build_query($this->query_params);
+            $query = http_build_query($this->query_params, '', '&amp;');
             $this->link = '?' . ($query ?  $query.'&' : '');
         }
         else
