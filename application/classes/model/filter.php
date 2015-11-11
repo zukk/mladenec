@@ -16,6 +16,8 @@ class Model_Filter extends ORM {
     const WEIGHT = 100; // искусственный фильтр по весу в подгузах
     const TASTE = 101; // искусственный фильтр  - только выбранные вкусы
 
+    const TOYS_AGE = 2232; // фильтр для возраста в плашке игрушек
+
     protected $_table_name = 'z_filter';
 
     protected  $_has_many = [

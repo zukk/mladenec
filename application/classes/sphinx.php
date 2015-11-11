@@ -630,6 +630,7 @@ class Sphinx {
             }
         }
         $menu['hide'][Model_Filter::WEIGHT] = TRUE; // фильтр по весу - всегда скрыт
+        $menu['hide'][Model_Filter::TOYS_AGE] = TRUE; // фильтр в игрушках для плашки - всегда скрыт
 
         return $menu;
     }
