@@ -17,6 +17,7 @@ class Cart {
     public $blago           = 0;        // благотворительность
     public $added           = FALSE;    // флаг - было ли добавление только что - используется при отображении корзины
     public $presents        = [];  // [ $action_id => $good_id, ... ]
+    public $coupon_presents = [];  // ид товаров полученных как подарки за купон
     public $present_variants  = [];  // Подарки _на выбор_, $action_id => [$good_id1,$good_id2, ...]
     public $presents_selected = []; // Выбранные подарки [ $action_id => $good_id, ... ]
     public $no_presents     = [];  // [ $action_id => $action_id, ... ] ид акций в  которых человек отказался от подарка
@@ -206,23 +207,20 @@ class Cart {
     /**
      * Получить объекты подарков, возвращает вместе с вариантами, если возможен выбор
      *
-     * @param bool $with_variants
-     * @param bool $with_rejections
      * @return Model_Good
      */
-    public function get_present_goods($with_variants = TRUE, $with_rejections = TRUE)
+    public function get_present_goods()
     {
         $good_ids_to_load = $this->presents;
-        if ($with_variants) {
-            foreach ($this->present_variants as $sp) {
-                foreach($sp as $p) { $good_ids_to_load[] = $p; }
-            }
+
+        foreach ($this->present_variants as $sp) {
+            foreach($sp as $p) { $good_ids_to_load[] = $p; }
         }
-        if ( ! $with_rejections) {
-            foreach ($this->no_presents as $np) {
-                
-            }
+
+        foreach ($this->coupon_presents as $p) {
+            $good_ids_to_load[] = $p;
         }
+
         if ( ! empty($good_ids_to_load)) {
             return ORM::factory('good')->where('id', 'IN', $good_ids_to_load)->find_all()->as_array('id');
         }
@@ -240,7 +238,7 @@ class Cart {
     {
         if ($this->force_recount) 
         {
-            $this->recount ();
+            $this->recount();
             $this->presents = $this->check_actions();
         }
         
@@ -579,6 +577,20 @@ class Cart {
                 }
 
                 if ( ! $used ) { $this->coupon_error = 'В корзине нет товаров, для которых активен купон'; return FALSE; };
+                break;
+
+            case Model_Coupon::TYPE_PRESENT:
+                $cgoods = $coupon->get_goods();
+                if (empty($cgoods))  { $this->coupon_error = 'В корзине нет товаров, для которых активен купон'; return FALSE; };
+
+                $this->coupon_presents = [];
+                foreach($cgoods as $discount => $goodz) {
+                    foreach ($goodz as $good_id => $g) {
+                        $this->coupon_presents[] = $good_id;
+                    }
+                }
+                //print_r($this->coupon_presents);
+
                 break;
 
             case Model_Coupon::TYPE_LK;
@@ -1207,6 +1219,7 @@ class Cart {
             'promo' => $this->promo,
             'blago' => $this->blago,
             'presents' => $this->check_actions($goods),
+            'coupon_presents' => $this->coupon_presents,
             'present_goods' => $this->get_present_goods(),
             'comments' => $this->get_comments(),
             'session_params' => Session::instance()->get('cart_delivery'),

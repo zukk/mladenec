@@ -44,6 +44,39 @@
         {/if}
     </div>
 
+    <div id="type1" {if not $i->id OR $i->type != Model_Coupon::TYPE_PRESENT}class="hide"{/if}>
+        {if $i->id}
+            <table>
+                <tr>
+                    <th>Подарок</th>
+                    <th>На складе</th>
+                    <th></th>
+                </tr>
+
+                {foreach from=$i->get_goods() key=discount item=presents}
+                    {foreach from=$presents key=id item=p}
+                    <tr>
+                        <td>
+                            <input type="hidden" name="misc[presents][]" value="{$p->id}" />
+                            <a href="{Route::url('admin_edit', ['model' => 'good', 'id' => $p->id])}" target="_blank">#{$p->id}</a>,
+                            {$p->group_name} {$p->name}
+                        </td>
+                        <td>{$p->qty}&nbsp;шт.</td>
+                        <td><input type="button" class="btn btn-small btn-red trdel" value="удалить" /></td>
+                    </tr>
+
+                    {/foreach}
+                {/foreach}
+
+                <tr>
+                    <td><input class="text" id="gift_id" name="misc[presents][]" value="" class="width-100" /><br /><small>Введите ID подарка</small></td>
+                    <td></td>
+                    <th></th>
+                </tr>
+            </table>
+        {/if}
+    </div>
+
     {if $i->type eq Model_Coupon::TYPE_PERCENT}
     <p>
         <label for="max_sku">Число товаров одного наименования на которые дается скидка (0 - без ограничения)</label>

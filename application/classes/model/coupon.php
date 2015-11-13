@@ -5,6 +5,7 @@ class Model_Coupon extends ORM {
     const TYPE_SUM = 0; // купон со скидкой на сумму от суммы
     const TYPE_PERCENT = 1; // купон со скдкой на процент на часть товаров
     const TYPE_LK = 2; // купон даёт ЛК
+    const TYPE_PRESENT = 2; // купон даёт подарок
 
     const CHILD_DISCOUNT = 'kidz'; // скрытый купон со скидкой за данные о детях/беременности
 
@@ -69,9 +70,10 @@ class Model_Coupon extends ORM {
     public static function type($type = FALSE)
     {
         $types = [
-            0 => 'Купон со скидкой на сумму',
-            1 => 'Купон со скидкой на процент на товары',
-            2 => 'Купон дающий статус Любимый Клиент навсегда',
+            self::TYPE_SUM      => 'Купон со скидкой на сумму',
+            self::TYPE_PERCENT  => 'Купон со скидкой на процент на товары',
+            self::TYPE_LK       => 'Купон дающий статус Любимый Клиент навсегда',
+            self::TYPE_PRESENT  => 'Купон дающий подарок',
         ];
 
         if ($type === FALSE) return $types;
@@ -210,11 +212,11 @@ class Model_Coupon extends ORM {
     }
 
     /**
-     * Прикрепить товары к купону типа TYPE_PERCENT
+     * сохранение купона в админке - надо крепить товары или подарки
      */
     function admin_save()
     {
-        if ($this->type == self::TYPE_PERCENT) {
+        if ($this->type == self::TYPE_PERCENT) { //Прикрепить товары к купону типа TYPE_PERCENT
             $goods = Request::current()->post('goods');
             if ( ! is_array($goods)) $goods = [];
 
@@ -254,6 +256,45 @@ class Model_Coupon extends ORM {
             }
             if ( ! empty($goods_del)) {
                 Model_History::log('coupon', $this->id, 'Удалено товаров: '.count($goods_del), $goods_del);
+            }
+        }
+        if ($this->type == self::TYPE_PRESENT) {
+            $presents = Request::current()->post('misc');
+            if ( ! empty($presents['presents'])) {
+                $presents = array_unique($presents['presents']);
+            } else {
+                $presents = [];
+            }
+            $presents = array_filter($presents);
+
+            // старый список подарков
+            $old_presents = DB::select('good_id')
+                ->from('z_coupon_good')
+                ->where('coupon_id', '=', $this->id)
+                ->execute()
+                ->as_array('good_id', 'good_id');
+
+            $old_presents = array_values($old_presents);
+            sort($old_presents);
+            sort($presents);
+
+            if ($old_presents != $presents) {
+                // чистим все подарки и потом добавляем заново
+                DB::delete('z_coupon_good')->where('coupon_id', '=', $this->id)->execute();
+
+                if ( ! empty($presents)) {
+                    $ins = DB::insert('z_coupon_good')->columns(['good_id', 'coupon_id', 'discount']);
+                    foreach ($presents as $id) {
+                        $ins->values([
+                            'good_id' => $id,
+                            'coupon_id' => $this->id,
+                            'discount' => 1,
+                        ]);
+                    }
+                    DB::query(Database::INSERT, str_replace('INSERT', 'INSERT IGNORE ', $ins))->execute();
+                }
+
+                Model_History::log('coupon', $this->id, 'Подарки ' . count($presents), $presents);
             }
         }
         return;

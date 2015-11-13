@@ -60,3 +60,19 @@
         <td></td>
 	</tr>
 {/foreach}
+
+{foreach from=$coupon_presents item=good_id}
+    {assign var=current_present value=$present_goods[$good_id]}
+    <tr class="cart-gift-row">
+        <td></td>
+        <td colspan="2"><img src="/i/averburg/gift.png" alt="" title="Подарок за промокод" class="img70" /></td>
+        <td class="txt-lft">
+            {$current_present->name}
+        </td>
+        <td>Подарок<br />за&nbsp;промокод</td>
+        <td>1</td>
+        <td class="total"><span>0</span> р.</td>
+        <td></td>
+    </tr>
+
+{/foreach}

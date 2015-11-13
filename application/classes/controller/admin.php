@@ -1753,16 +1753,13 @@ class Controller_Admin extends Controller_Authorised {
     /*
      * Экспорт списка заказов в Excel
      */
-    function action_order_excel() {
-        header('Content-Description: File Transfer');
-        header('Content-Type: text/csv');
-        header('Content-Disposition: attachment; filename=orders.csv');
+    function action_order_excel()
+    {
         $content = '';
         
         $this->model = ORM::factory('order');
         $query = $this->model->with('data');
-
-        $query->reset(false);
+        $query->reset(FALSE);
 
         if ($order_id = $this->request->query('order_id')) {
             $query->where('order.id', '=', $order_id);
@@ -1781,49 +1778,51 @@ class Controller_Admin extends Controller_Authorised {
         }
 
         $from = $this->request->query('from');
-
-        if (is_array($from) AND !(empty($from['Date_Day']) AND empty($from['Date_Month']) AND empty($from['Date_Year']))) {
-
-            if (empty($from['Date_Year'])) {
-                $from['Date_Year'] = date('Y');
-            } elseif (empty($from['Date_Day']) AND empty($from['Date_Month'])) {
-                $from['Date_Month'] = 1;
-            }
-            if (empty($from['Date_Month']))
-                $from['Date_Month'] = date('n');
-            if (empty($from['Date_Day']))
-                $from['Date_Day'] = 1;
-
-            $from_date = $this->read_date($from);
-            $query->where('user.created', '>=', $from_date);
+        if ( ! empty($from['date'])) {
+            $query->where('sent', '>=' , $from['date'].' '.$from['time']);
         }
+
         $to = $this->request->query('to');
-
-        if (is_array($from) AND !(empty($to['Date_Day']) AND empty($to['Date_Month']) AND empty($to['Date_Year']))) {
-
-            if (empty($to['Date_Year'])) {
-                $to['Date_Year'] = date('Y');
-            } elseif (empty($to['Date_Month']) AND empty($to['Date_Day'])) {
-                $to['Date_Month'] = 12;
-                $to['Date_Day'] = 31;
-            }
-
-            if (empty($to['Date_Month']))
-                $to['Date_Month'] = date('n');
-            if (empty($to['Date_Day']))
-                $to['Date_Day'] = date('t');
-
-            $to_date = $this->read_date($to);
-            $query->where('user.created', '<=', $to_date);
+        if ( ! empty($to['date'])) {
+            $query->where('sent', '<=' , $to['date'].' '.$to['time']);
         }
+
         $orders = $query->find_all();
 
-        $content .= '"№ заказа";' . '"Сумма";' . '"Статус";' . "\n";        
+        include(APPPATH.'classes/PHPExcel.php');
+        $excel = new PHPExcel();
+        $sheet = $excel->getActiveSheet();
+        $columns = [
+            'id'        => '№ заказа',
+            'price'     => 'Сумма',
+            'user_id'   => '№ клиента',
+            'sent'      => 'Отправлен',
+            'status'    => 'Статус'
+        ];
+        $i = 0;
+        foreach($columns as $name => $title) {
+            $sheet->setCellValueByColumnAndRow($i++, 1, $title);
+        }
+        $row = 2;
         foreach($orders  as $order) {
-            $content .= $order->id . '; ' . $order->price . '; ' . $order->status() . ';' . "\n";
+            $i = 0;
+            foreach($columns as $name => $title) {
+                $value = $order->{$name};
+                if ($name == 'status') $value = $order->status();
+                $sheet->setCellValueByColumnAndRow($i++, $row, $value);
+            }
+            $row++;
         }
 
-        echo iconv("utf-8", "windows-1251//TRANSLIT", $content);
+        $fname = 'orders.xlsx';
+        $io = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+        $io->save('/tmp/'.$fname);
+
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename='.$fname);
+        echo file_get_contents('/tmp/'.$fname);
+
         exit;
     }
 
