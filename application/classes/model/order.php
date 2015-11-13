@@ -331,6 +331,21 @@ class Model_Order extends ORM {
                 }
             }
         }
+
+        // крепим призы по купону
+        if ( ! empty($cart->coupon['id']) && $cart->coupon['type'] == Model_Coupon::TYPE_PRESENT && ! empty($cart->coupon_presents)) {
+
+            foreach ($cart->coupon_presents as $present_id) {
+                $ins->values([
+                    'order_id' => $this->id,
+                    'good_id' => $present_id,
+                    'price' => 0,
+                    'quantity' => 1,
+                    'comment' => 'Приз по купону',
+                    'action_id' => $cart->coupon['id'],
+                ]);
+            }
+        }
         
         if ( ! empty($cart->blago)) {
             $ins->values([

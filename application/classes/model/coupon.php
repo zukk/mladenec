@@ -5,7 +5,7 @@ class Model_Coupon extends ORM {
     const TYPE_SUM = 0; // купон со скидкой на сумму от суммы
     const TYPE_PERCENT = 1; // купон со скдкой на процент на часть товаров
     const TYPE_LK = 2; // купон даёт ЛК
-    const TYPE_PRESENT = 2; // купон даёт подарок
+    const TYPE_PRESENT = 3; // купон даёт подарок
 
     const CHILD_DISCOUNT = 'kidz'; // скрытый купон со скидкой за данные о детях/беременности
 
