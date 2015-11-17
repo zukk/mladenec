@@ -213,11 +213,12 @@ class Controller_Product extends Controller_Frontend {
         $filters = []; // {{{ показ фильтров в карточке товара
         $filter_data = $good->filters_data();
         foreach($filter_data as $vid => $data) {
-            if (Model_Filter::big($data['filter_id'])) {
+            if (Model_Filter::big($data['filter_id'])) { // большие фильтры - отдельно
                 $this->tmpl['big_filter'] = ['id' => $vid, 'value' => $data['value_name']];
+            } else {
+                if (empty($filters[$data['filter_name']])) $filters[$data['filter_name']] = [];
+                $filters[$data['filter_name']][] = $data['value_name'];
             }
-            if (empty($filters[$data['filter_name']])) $filters[$data['filter_name']] = [];
-            $filters[$data['filter_name']][] = $data['value_name'];
         }
         $this->tmpl['filters'] = $filters;  // }}}
 

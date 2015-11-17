@@ -222,7 +222,15 @@ class Model_Filter extends ORM {
      */
     static function big($fid)
     {
-        return in_array($fid, [self::CLOTH_BIG_TYPE, self::TOYS_BIG_TYPE, self::MUMS_BIG_TYPE, self::CARE_BIG_TYPE, self::FEED_BIG_TYPE, self::HEALTH_BIG_TYPE]);
+        return in_array($fid, [
+            self::CLOTH_BIG_TYPE,
+            self::TOYS_BIG_TYPE,
+            self::MUMS_BIG_TYPE,
+            self::CARE_BIG_TYPE,
+            self::FEED_BIG_TYPE,
+            self::HEALTH_BIG_TYPE,
+            self::TOYS_AGE,
+        ]);
     }
 
     /**

@@ -107,10 +107,10 @@ $(document).ready(function() {
 <script>
     // all parameters are optional, but we recommend to set at minimum productSKU and productName
     _paq.push(['setEcommerceView',
-        "{$cgood->code}",                                // (required) SKU: Product unique identifier; e.g. "a-123"
-        "{$good_name|escape}",                                      // (optional) Product name; e.g. "Брюки"
-        ["{$section->name}"], // (optional) Product category, or array of up to 5 categories; e.g. article`s first category-path "Мужская одежда -> Брюки": ["Мужская одежда", "Брюки"]
-        {$cgood->price}                                        // (optional) Product Price as displayed on the page; e.g. 1.23
+        "{$cgood->code}",       // (required) SKU: Product unique identifier; e.g. "a-123"
+        "{$good_name|escape}",  // (optional) Product name; e.g. "Брюки"
+        ["{$section->name}"],   // (optional) Product category, or array of up to 5 categories; e.g. article`s first category-path "Мужская одежда -> Брюки": ["Мужская одежда", "Брюки"]
+        {$cgood->price}         // (optional) Product Price as displayed on the page; e.g. 1.23
     ]);
     _paq.push(['trackPageView']);
 </script>

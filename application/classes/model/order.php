@@ -109,13 +109,12 @@ class Model_Order extends ORM {
 
     /**
      * Получить крайний сеанс оплаты для заказа
-     * Если заказ ещё не оплачивали - FALSE
-     * @return Model_Payment|FALSE
+     * Если заказ ещё не оплачивали будет пустой объект
+     * @return Model_Payment
      */
     public function payment()
     {
         $payment = $this->payments->order_by('id', 'DESC')->find();
-        if (empty($payment)) return FALSE;
         return $payment;
     }
 
