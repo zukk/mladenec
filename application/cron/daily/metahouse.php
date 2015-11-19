@@ -2,6 +2,7 @@
 
 require('../../../www/preload.php');
 
+// TODO - переписать так чтобы сам логинился если кончилась авторизация
 $url = "https://dashboard.metacommerce.ru/api/products?file=true"; //
 //$url = "﻿http://passport.metahouse.ru/login.html?appId=dashboard&returnUrl=https%253A%252F%252Fdashboard.metacommerce.ru%252Fapi%252Fproducts%253Ffile%253Dtrue&companyId=";
 
@@ -12,7 +13,7 @@ $post = [
 
 $cookie = [
     'exportColumns-mc.desktop.search.ProductGrid' => '["name","availability","sku.item.name","marketId","price.online.value","price.online.currency","sku.item.article","collectDate","source","url"]',
-    'mc.dashboard.authCookie' => 'e397ba9e-0569-4361-b749-5d7652f1cf0a',
+    'mc.dashboard.authCookie' => '981245ab-793b-49ad-85b7-d7985f97074a',
     'mh.socketsConfig.authCookieName' => 'mc.dashboard.authCookie',
     'mh.socketsConfig.port' => '8181',
 ];
