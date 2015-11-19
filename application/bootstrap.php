@@ -760,6 +760,8 @@ if ( ! empty($_SERVER['REQUEST_URI'])) {
 		$hh[] = "track.dumedia.ru";
 		$hh[] = "display.intencysrv.com";
 		$hh[] = "content.adriver.ru";
+		$hh[] = "https://p.tpm.pw";
+		$hh[] = "p.tpm.pw";
 
 		$hh[] = "https://ulogin.ru"; // ulogin
         $hh[] = "ulogin.ru";
@@ -779,6 +781,7 @@ if ( ! empty($_SERVER['REQUEST_URI'])) {
         $hh[] = "http://tracking.findologic.com";
 
 		$hh[] = "http://code.directadvert.ru"; // пиксель
+
 
 		$contentPolicy =
 			"Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data: ".implode(' ', $hh)
