@@ -140,12 +140,11 @@
             window.ad_order = "{$o->id}";    // required
             window.ad_amount = "{$o->price}";
             window.ad_products = [
-
                 {foreach from=$order_goods item=g name=n}
                 {
                     "id": "{$g->id}",
                     "number": "{$g->quantity}"
-                }{if !$smarty.foreach.n.last},{/if}
+                }{if ! $smarty.foreach.n.last},{/if}
                 {/foreach}
             ];
         </script>
@@ -153,49 +152,56 @@
         {include file='common/retag.tpl' level=4}
 
         {* admitad counter *}
-        <script>
-            (function (d, w) {
-                w._admitadPixel = {
-                    response_type: 'img',
-                    action_code: '1',
-                    campaign_code: '773f9c05f3'
-                };
-                w._admitadPositions = w._admitadPositions || [];
+        {assign var=admitad_uid value=Cookie::get('admitad_uid')}
+        {if $admitad_uid}
+            <script>
+                (function (d, w) {
+                    w._admitadPixel = {
+                        response_type: 'img',
+                        action_code: '1',
+                        campaign_code: '773f9c05f3'
+                    };
+                    w._admitadPositions = w._admitadPositions || [];
 
+                    {foreach from=$order_goods item=g name=n}
+                    {if $g->price > 1}
+                        w._admitadPositions.push({
+                            uid: '{$admitad_uid}',
+                            order_id: '{$o->id}',
+                            position_id: '{$smarty.foreach.n.iteration}',
+                            client_id: '{$o->user_id}',
+                            tariff_code: '1',
+                            currency_code: 'RUB',
+                            position_count: '{$smarty.foreach.n.total}',
+                            price: '{$g->price}',
+                            quantity: '{$g->quantity}',
+                            product_id: '{$g->id}',
+                            screen: '',
+                            tracking: '',
+                            old_customer: '{if $user->sum gt 0}1{else}0{/if}',
+                            coupon: '{if $o->coupon_id}1{else}0{/if}',
+                            payment_type: 'sale'
+                        });
+                    {/if}
+                    {/foreach}
+                    var id = '_admitad-pixel';
+                    if (d.getElementById(id)) { return; }
+                    var s = d.createElement('script');
+                    s.id = id;
+                    var r = (new Date).getTime();
+                    var protocol = (d.location.protocol === 'https:' ? 'https:' : 'http:');
+                    s.src = protocol + '//cdn.asbmit.com/static/js/pixel.min.js?r=' + r;
+                    d.head.appendChild(s);
+                })(document, window)
+            </script>
+            <noscript>
                 {foreach from=$order_goods item=g name=n}
-                w._admitadPositions.push({
-                    uid: '{Cookie::get('admitad_uid')}',
-                    order_id: '{$o->id}',
-                    position_id: '{$smarty.foreach.n.iteration}',
-                    client_id: '{$o->user_id}',
-                    tariff_code: '1',
-                    currency_code: 'RUB',
-                    position_count: '{$smarty.foreach.n.total}',
-                    price: '{$g->price}',
-                    quantity: '{$g->quantity}',
-                    product_id: '{$g->id}',
-                    screen: '',
-                    tracking: '',
-                    old_customer: '{if $user->sum gt 0}1{else}0{/if}',
-                    coupon: '{if $o->coupon_id}1{else}0{/if}',
-                    payment_type: 'sale'
-                });
+                    {if $g->price > 1}
+                        <img src="//ad.admitad.com/r?campaign_code=773f9c05f3&action_code=1&response_type=img&uid={$admitad_uid}&order_id={$o->id}&client_id={$o->user_id}&position_id={$smarty.foreach.n.iteration}&tariff_code=1&currency_code=RUB&position_count={$smarty.foreach.n.total}&price={$g->price}&quantity={$g->quantity}&product_id={$g->id}&coupon={if $o->coupon_id}1{else}0{/if}&payment_type=sale&old_customer={if $user->sum gt 0}1{else}0{/if}" width="1" height="1" alt="" />
+                    {/if}
                 {/foreach}
-                var id = '_admitad-pixel';
-                if (d.getElementById(id)) { return; }
-                var s = d.createElement('script');
-                s.id = id;
-                var r = (new Date).getTime();
-                var protocol = (d.location.protocol === 'https:' ? 'https:' : 'http:');
-                s.src = protocol + '//cdn.asbmit.com/static/js/pixel.min.js?r=' + r;
-                d.head.appendChild(s);
-            })(document, window)
-        </script>
-        <noscript>
-            {foreach from=$order_goods item=g name=n}
-                <img src="//ad.admitad.com/r?campaign_code=773f9c05f3&action_code=1&response_type=img&uid={Cookie::get('admitad_uid')}&order_id={$o->id}&client_id={$o->user_id}&position_id={$smarty.foreach.n.iteration}&tariff_code=1&currency_code=RUB&position_count={$smarty.foreach.n.total}&price={$g->price}&quantity={$g->quantity}&product_id={$g->id}&coupon={if $o->coupon_id}1{else}0{/if}&payment_type=sale&old_customer={if $user->sum gt 0}1{else}0{/if}" width="1" height="1" alt="" />
-            {/foreach}
-        </noscript>
+            </noscript>
+        {/if}
 
         {* google adwords remarketing params *}
         <script>

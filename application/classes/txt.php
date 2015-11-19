@@ -520,7 +520,7 @@ class Txt {
      */
     public static function escapeSphinx($q)
     {
-        return str_replace(['(', ')'], ' ', $q);
+        return str_replace(['(', ')', '/', 'SENTENCE', '"'], ' ', $q);
     }
     
     /**
