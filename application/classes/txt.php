@@ -517,10 +517,14 @@ class Txt {
 
     /**
      * Чистка строки для сфинкса
+     * Убираем все символы кроме букв и цифр
+     * А также спецслова sphinx-а
      */
     public static function escapeSphinx($q)
     {
-        return str_replace(['(', ')', '/', 'SENTENCE', '"'], ' ', $q);
+        $return = ' '.preg_replace('~[^a-zа-я0-9]+~i', ' ', $q).' ';
+        $return = str_replace([' SENTENCE ', ' NEAR ', ' PARAGRAPH ', ' MAYBE ', ' ZONE ', ' ZONESPAN '], ' ', $return);
+        return trim($return);
     }
     
     /**

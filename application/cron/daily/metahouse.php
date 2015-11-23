@@ -13,7 +13,7 @@ $post = [
 
 $cookie = [
     'exportColumns-mc.desktop.search.ProductGrid' => '["name","availability","sku.item.name","marketId","price.online.value","price.online.currency","sku.item.article","collectDate","source","url"]',
-    'mc.dashboard.authCookie' => '981245ab-793b-49ad-85b7-d7985f97074a',
+    'mc.dashboard.authCookie' => '6e07aa87-1795-41a1-b02d-1588f5b3ffbc',
     'mh.socketsConfig.authCookieName' => 'mc.dashboard.authCookie',
     'mh.socketsConfig.port' => '8181',
 ];
