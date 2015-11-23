@@ -764,6 +764,7 @@ if ( ! empty($_SERVER['REQUEST_URI'])) {
 		$hh[] = "p.tpm.pw";
         $hh[] = "www.mainadv.com";
         $hh[] = "https://www.mainadv.com";
+        $hh[] = "uaadcodedsp.rontar.com";
 
 		$hh[] = "https://ulogin.ru"; // ulogin
         $hh[] = "ulogin.ru";
