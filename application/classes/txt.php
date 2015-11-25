@@ -522,7 +522,7 @@ class Txt {
      */
     public static function escapeSphinx($q)
     {
-        $return = ' '.preg_replace('~[^a-zа-я0-9]+~i', ' ', $q).' ';
+        $return = ' '.preg_replace('~[^a-zа-я0-9]+~iu', ' ', $q).' ';
         $return = str_replace([' SENTENCE ', ' NEAR ', ' PARAGRAPH ', ' MAYBE ', ' ZONE ', ' ZONESPAN '], ' ', $return);
         return trim($return);
     }
