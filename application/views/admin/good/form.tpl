@@ -40,6 +40,7 @@ $(document).ready(function() {
                 <tr><td><b>Артикул:</b></td><td><a href="{Route::url('product_1c',['code'=>$i->code])}" target="_blank">{$i->code}</a></td></tr>
                 <tr><td><b>Артикул 1c:</b></td><td>{$i->code1c|default:'&mdash;'}</td></tr>
                 <tr><td><b>Код 1С:</b></td><td>{$i->id1c|default:'&mdash;'}</td></tr>
+                <tr><td><b>Штрихкод:</b></td><td>{$i->barcode|default:'&mdash;'}</td></tr>
             </table>
         </div>
         <div class="unit-50">
