@@ -629,4 +629,9 @@ class Controller_Admin_Ajax extends Controller_Authorised {
         exit('ok');
     }
 
+    public function action_tag_recount()
+    {
+        Model_Tag::count();
+        $this->return_reload();
+    }
 }

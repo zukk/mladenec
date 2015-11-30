@@ -11,7 +11,7 @@ class Controller_Smarty extends Controller {
     protected $tmpl = array(); // array for template variables
     
     protected $force_profiling = FALSE;
-
+	
     public function before()
     {
         $host = empty($_SERVER['HTTP_HOST']) ? 'default' : $_SERVER['HTTP_HOST'];
@@ -51,7 +51,7 @@ class Controller_Smarty extends Controller {
         // Profiler:
         if ( Request::initial() === Request::current() // No profiling in a subqueries
                 AND ! empty($this->user->login)
-                AND  in_array($this->user->login, ['puchkovk@gmail.com', 'zukk'])
+                AND  in_array($this->user->login, ['zukk'])
         ) {
             $this->layout->force_profiling = $this->force_profiling;
             $this->layout->profile = View::factory('profiler/stats');

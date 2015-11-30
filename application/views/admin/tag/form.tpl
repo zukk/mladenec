@@ -90,8 +90,8 @@
         <div class="units-row">
             <div class="unit-50">
                 <p>
-                    <label for="params">Параметры отбора:</label>
-                    <input name="params" id="params" readonly="readonly" value="{$i->params}"  size="50" />
+                    <label for="section_id">Категория:</label>
+                    <input name="section_id" id="section_id" readonly="readonly" value="{$i->section_id|default:'0'}"  size="50" />
                 </p>
             </div>
             <div class="unit-50">

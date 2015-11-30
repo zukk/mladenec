@@ -155,11 +155,11 @@ class Model_Order extends ORM {
 
         if (in_array($this->status, ['T', 'X', 'F'])) {
 
-            
             if ('F' == $this->status) { // заказ доставлен 
 
                 // пересчитаем сумму для юзера
                 $this->user->sum += $this->get_total();
+                $this->user->qty ++;
 
                 if (($this->user->status_id == 0) AND ($this->user->sum >= Model_User::STATUS_CHANGE)) { // меняем статус
 

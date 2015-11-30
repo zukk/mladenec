@@ -426,7 +426,7 @@ class Model_Section extends ORM {
 
                 $file = Model_File::image('img');
                 $file->MODULE_ID = __CLASS__;
-                $file->DESCRIPTION = $this->id;
+                $file->item_id = $this->id;
                 $file->save(); // save original file
 
                 if ($this->image) ORM::factory('file', $this->image)->delete(); // delete old
@@ -446,7 +446,7 @@ class Model_Section extends ORM {
 
                 $file = Model_File::image('img93');
                 $file->MODULE_ID = __CLASS__;
-                $file->DESCRIPTION = $this->id;
+                $file->item_id = $this->id;
                 $file->save(); // save original file
 
                 if ($this->image93) ORM::factory('file', $this->image93)->delete(); // delete old
@@ -466,9 +466,8 @@ class Model_Section extends ORM {
 
                 $file = Model_File::image('img_menu');
                 $file->MODULE_ID = __CLASS__;
-                $file->DESCRIPTION = $this->id;
+                $file->item_id = $this->id;
                 $file->save(); // save original file
-
 
                 if ($this->img_menu) ORM::factory('file', $this->img_menu)->delete(); // delete old
 

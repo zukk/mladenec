@@ -1,1 +1,7 @@
-{if isset($delivery_cost)}{$delivery_cost}{else}-1{/if}
+{if not empty($return.error)}
+{$return.error}
+{else}
+{foreach from=$return item=r}
+{$r.company}©{$r.tariff}©{$r.price}©{$r.days}
+{/foreach}
+{/if}

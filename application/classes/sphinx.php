@@ -158,7 +158,10 @@ class Sphinx {
      */
     function __construct($mode, $q = NULL, $read_query = TRUE)
     {
-        if ( ! in_array($mode, array('section', 'section_filter', 'word', 'suggest', 'discount', 'superprice', 'pampers', 'tag', 'new', 'hitz', 'action'))) {
+        if ( ! in_array($mode, [
+            'section', 'section_filter', 'word', 'suggest', 'discount', 'superprice',
+            'pampers', 'tag', 'new', 'hitz', 'action', 'brand'
+        ])) {
             throw new SphinxException('Not supported mode: '.$mode);
         }
 
@@ -166,7 +169,7 @@ class Sphinx {
         $this->_query = $q;
 
         $this->_params['sorts'] = ['rating', 'new', 'price', 'pricedesc']; // def(aut params
-        $this->_params['per_page'] = [20, 40, 80];
+        $this->_params['per_page'] = [30, 60, 90];
         $this->_params['pp'] = $this->_params['per_page'][0];
         $this->_params['s'] = 'rating';
 
@@ -223,7 +226,7 @@ class Sphinx {
                 $this->_tag = $tag = new Model_Tag($this->_query);
                 if ( ! $tag->loaded()) return FALSE;
 
-                $tag_params = $tag->parse_params();
+                $tag_params = $tag->parse_query();
                 $this->_params += $tag_params;
 
                 if ($tag->section_id) { // новые теговые - меню как у категории
@@ -243,9 +246,9 @@ class Sphinx {
                     ///print_r($this->_menu_params);
 
                 } else { // старые теговые - меню из условий
-
                     $this->_menu_params = $tag_params; // старые теговые
                 }
+
                 break;
 
             case 'action':
@@ -256,13 +259,20 @@ class Sphinx {
 
                 break;
 
+            case 'brand':
+                $brand = new Model_Brand($this->_query);
+                if ( ! $brand->loaded() || ! $brand->active) return FALSE; //throw new HTTP_Exception_404;
+                $this->_params['b'] = $this->_menu_params['b'] = [intval($this->_query)];
+
+                break;
+
             case 'pampers':
                 $this->_read_section(Model_Good::PAMPERS_SECTION);
                 $this->_params['b'] = $this->_menu_params['b'] = [Model_Good::PAMPERS_BRAND];
                 $this->_params['c'] = $this->_menu_params['c'] = [Model_Good::PAMPERS_SECTION];
+
                 break;
         }
-
         if ($read_query) $this->read_params();
     }
 
@@ -306,7 +316,6 @@ class Sphinx {
             $prices = $sphinx_db->query(Database::SELECT, str_replace('###', 'MAX(price) as `max`, MIN(price) as `min`, COUNT(*) as `total`', $q))->as_array();
             if ( ! empty($prices)) extract($prices[0]); // max, min, total
 
-
             $brands = $sections = $countries = $fvals = [];
             if ($total > 0) {
 
@@ -323,12 +332,12 @@ class Sphinx {
                     $sections = [$this->_section->id => $total];
                 }
 
-                if ( ! empty($this->_section)) { // для одной категории получаем ещё фильтры
+                // if ( ! empty($this->_section)) { // для одной категории получаем ещё фильтры
                     $cloneq = clone $q;
                     $fvals = $sphinx_db
                         ->query(Database::SELECT, str_replace('###', '@groupby as fvalue, COUNT(*) as qty', $cloneq->group_by('fvalue')->limit(250)))
                         ->as_array('fvalue', 'qty');
-                }
+                //}
 
                 // всегда получаем страны
                 $cloneq = clone $q;
@@ -354,7 +363,7 @@ class Sphinx {
             }
 
             if ( ! empty($fvals)){
-                list($filters, $vals, $roditi ) = Model_Filter_Value::filter_val(array_keys($fvals));
+                list($filters, $vals, $roditi) = Model_Filter_Value::filter_val(array_keys($fvals));
 			    foreach($vals as $fid => $values) {
                     foreach($values as $vid => $name) {
                         $vals[$fid][$vid] = [
@@ -565,18 +574,30 @@ class Sphinx {
             }
         }
 
-        $vals = [];
-        foreach(array_keys($menu['vals']) as $fid) { // для каждого фильтра делаем тоже самое
+        $vals = $fids = $filters = $filter_sections = [];
+        if ($this->_mode == 'tag' and empty($this->_section) and ! empty($this->_menu_params['f'])) { // перекрестная теговая - показываем и считаем только упомянутые в отборе фильтры
+            $fids = array_intersect_key($this->_params, $this->_menu_params['f']);
+        } else {
+            $fids = array_keys($menu['vals']);
+        }
+        if ( ! empty($fids)) {
+            $filters = ORM::factory('filter')
+                ->where('id', 'IN', $fids)
+                ->find_all()
+                ->as_array('id', 'section_id');
+            foreach($filters as $id => $section_id) {
+                $filter_sections[$section_id][$id] = $id;
+            }
+        }
+
+        foreach($fids as $fid) { // для каждого фильтра делаем тоже самое
             $params_copy = $params;
             $cloneq = clone $q;
-            if ( ! empty($params_copy['f'])) {
-                /*
-                foreach ($params_copy['f'] as $f_id => $data) {
-                    if ( Model_Filter::binded_to($f_id)) {
-                        // unset($params_copy['f'][$f_id]);
-                    }
-                }*/
-                unset($params_copy['f'][$fid]);
+            if ( ! empty($params_copy['f'][$fid])) { // сбрасываем текущий фильтр если есть другие этой же категории
+                $section_id = $filters[$fid];
+                if (count($filter_sections[$section_id]) >= 1) {
+                    unset($params_copy['f'][$fid]);
+                }
             }
 
             $this->_apply_params($cloneq, $params_copy + $this->_menu_params);
@@ -624,9 +645,10 @@ class Sphinx {
                     } else {
                         unset($menu['filters'][$fid]);
                     }
-                } else {
-                    unset($menu['filters'][$fid]);
                 }
+            } elseif($this->_mode == 'tag' and empty($this->_section) and empty($this->_menu_params['f'][$fid])) { // или если в теговой они не из тега
+               //echo 'unset'.$fid;
+                unset($menu['filters'][$fid]);
             }
         }
         $menu['hide'][Model_Filter::WEIGHT] = TRUE; // фильтр по весу - всегда скрыт
@@ -928,9 +950,7 @@ class Sphinx {
         if ( ! empty($params['c'])) $q->where('section_id', 'IN', array_map('intval', $params['c']));
 
         // брэнды
-        if ( ! empty($params['b'])) {
-            $q->where('brand_id', 'IN', array_map('intval', $params['b']));
-        }
+        if ( ! empty($params['b'])) $q->where('brand_id', 'IN', array_map('intval', $params['b']));
 
         // страна
         if ( ! empty($params['co'])) $q->where('country_id', 'IN', array_map('intval', $params['co']));
@@ -947,8 +967,16 @@ class Sphinx {
         }
 
         // значения фильтров
-        $binded_values = []; // параметры от связанных фильтров собираем в одну группу where, иначе условия поиска будут взаимоисключающими
+        $filter_groups = $binded_values = $filter_section = []; // параметры от связанных фильтров собираем в одну группу where, иначе условия поиска будут взаимоисключающими
         if ( ! empty($params['f'])) {
+
+            // для всех фильтров найдем их категории, фильтры в разных категориях нужно соединять в одном запросе (нужно для перекрестных теговых)
+            $filters = ORM::factory('filter')
+                ->where('id', 'IN', array_keys($params['f']))
+                ->find_all()
+                ->as_array('id');
+
+
             foreach($params['f'] as $fid => $values) {
 
                 if ($fid == Model_Filter::TASTE) { // только выбранные вкусы
@@ -1054,13 +1082,24 @@ class Sphinx {
                                 }
                             }
                             if ( ! empty($values)) {
-                                $q->where('fvalue', 'IN', array_map('intval', $values));
+                                if ($filters[$fid]->section_id && empty($filter_section[$filters[$fid]->section_id]) && ! empty($filter_groups)) {
+                                    $last_group = count($filter_groups) - 1;
+                                    $filter_groups[$last_group] = array_merge($filter_groups[$last_group], array_map('intval', $values)); // добавляем в последнюю группу
+                                } else { // эта категория уже была, добавляем новую
+                                    $filter_groups[] = array_map('intval', $values); // добавляем в последнюю группу
+                                }
+                                $filter_section[$filters[$fid]->section_id] = $filters[$fid]->section_id;
                             } // обычные фильтры, группируем значения по фильтрам - будет поиск (vid OR vid) AND (vid OR vid)
                         }
                     }
                 }
             }
         }
+
+        foreach($filter_groups as $values) {
+            $q->where('fvalue', 'IN', array_map('intval', $values));
+        }
+
         if ( ! empty($binded_values)) {
             $q->where('fvalue', 'IN', array_map('intval', $binded_values)); // группируем собранные отдельно
         }

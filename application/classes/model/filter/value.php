@@ -87,7 +87,7 @@ class Model_Filter_Value extends ORM {
 
                 $file = Model_File::image('img');
                 $file->MODULE_ID = __CLASS__;
-                $file->DESCRIPTION = $this->id;
+                $file->item_id = $this->id;
                 $file->save(); // save original file
 
                 if ($this->img) ORM::factory('file', $this->img)->delete(); // delete old

@@ -311,6 +311,7 @@ class Controller_Odinc extends Controller {
     {
         $this->view->orders = ORM::factory('order')
             ->with('card')
+            ->with('data')
             ->where('in1c', '=', 0)
             ->order_by('id', 'ASC')
             ->find_all();
@@ -569,7 +570,7 @@ class Controller_Odinc extends Controller {
 
                     $status_changed = $order->changed('status');
 
-                    // смена статуса у заказа с карточной оплатой
+                    // смена статуса у заказа с карточной оплатой - может быть снятие или возврат
                     if ($status_changed && $order->pay_type == Model_Order::PAY_CARD) {
 
                         if (in_array($order->status, ['F', 'X'])) {
@@ -643,9 +644,10 @@ class Controller_Odinc extends Controller {
                         }
 
                         $order_data->save();
-
-                        // Отправляем письмо о новом статусе заказа и обновляем сумму заказов пользователя, в т.ч. по акциям
+                        
+                        // обработка смены статуса (письма, размещение в транспортной компании, пересчет накоплений по акциям и т.п.)
                         if ($status_changed) $order->on_status_change();
+
                         // письмо о смене типа оплаты
                         if ( ! empty($payment_changed)) $order->on_payment_change();
 
@@ -705,12 +707,12 @@ class Controller_Odinc extends Controller {
             try 
             {
                 list(
-                        $id,    // 1
-                        $fio,   // 2
-                        $phone, // 3
-                        $email, // 4
-                        $status // 5
-                        ) = Txt::parse_explode('©', $s, 5);
+                    $id,    // 1
+                    $fio,   // 2
+                    $phone, // 3
+                    $email, // 4
+                    $status // 5
+                ) = Txt::parse_explode('©', $s, 5);
                 
                 list($phone, $phone2) = Txt::parse_explode('|', $phone, 2);
 
@@ -877,16 +879,31 @@ class Controller_Odinc extends Controller {
                         $s = trim($s);
                         if (empty($s)) continue;
                         list(
-                                $code,   // 1
-                                $name,   // 2
-                                $active, // 3
-                                $sort    // 4
-                                ) = $this->parse('©', $s, 4,array(0,1,2));
+                            $code,   // 1
+                            $name,   // 2
+                            $active, // 3
+                            $sort    // 4
+                            ) = $this->parse('©', $s, 4, array(0,1,2));
                         $b = $brand->clear()->where('code', '=', intval($code))->find();
                         $b->code = $code;
                         $b->name = $name;
-                        $b->sort = $sort;
                         $b->active = ($active == 'Y') ? '1' : '0';
+
+                        // создаём транслит только для новых брендов, для старых сохраняем. потому что за транслит цепляются урлы!
+                        if (empty($b->translit)) {
+                            $clear_translit = $translit = Txt::translit($b->name);
+                            // транслит должен быть уникальным
+                            $i = 1;
+                            do {
+                                $dup = clone $brand;
+                                $dup_count = $dup->clear()->where('translit', '=', $translit)->count_all();
+                                $translit = $clear_translit.'-'.$i;
+                                $i++;
+                            } while ($dup_count != 0);
+
+                            $b->translit = $translit;
+                        }
+
                         $b->save();
                     }
                     catch (Txt_Exception $ex)
@@ -938,29 +955,29 @@ class Controller_Odinc extends Controller {
                     if (empty($s)) continue;
 
                     list(
-                            $code,        // 1
-                            $name,        // 2
-                            $bcode,       // 3
-                            $gcode,       // 4
-                            $price,       // 5
-                            $has,         // 6
-                            $big,         // 7
-                            $new,         // 8
-                            $old_price,   // 9
-                            $best,        // 10
-                            $off,         // 11
-                            $recommended, // 12
-                            $ccode,       // 13
-                            $pack,        // 14
-                            $weight,      // 15
-                            $active,      // 16
-                            $barcode,     // 17
-                            $move,        // 18
-                            $code1c,      // 19
-                            $size,        // 20 - пока не используется, но передается из 1С
-                            $id1c,        // 21 - Уникальный код в 1C
-                            $nds          // 22 - НДС товара
-                            ) = $this->parse('©', $s, 22);
+                        $code,        // 1
+                        $name,        // 2
+                        $bcode,       // 3
+                        $gcode,       // 4
+                        $price,       // 5
+                        $has,         // 6
+                        $big,         // 7
+                        $new,         // 8
+                        $old_price,   // 9
+                        $best,        // 10
+                        $off,         // 11
+                        $recommended, // 12
+                        $ccode,       // 13
+                        $pack,        // 14
+                        $weight,      // 15
+                        $active,      // 16
+                        $barcode,     // 17
+                        $move,        // 18
+                        $code1c,      // 19
+                        $size,        // 20 - пока не используется, но передается из 1С
+                        $id1c,        // 21 - Уникальный код в 1C
+                        $nds          // 22 - НДС товара
+                        ) = $this->parse('©', $s, 22);
 
                     $grid = 0;
                     if ($gcode != '30006296') { // это услуги - не искать группу
@@ -1133,11 +1150,11 @@ class Controller_Odinc extends Controller {
                     $glue = FALSE;
 
                     list(
-                            $code,  // 1
-                            $scode, // 2
-                            $name,  // 3
-                            $values // 4
-                            ) = $this->parse('©', $s, 4);
+                        $code,  // 1
+                        $scode, // 2
+                        $name,  // 3
+                        $values // 4
+                        ) = $this->parse('©', $s, 4);
 
                     $sec = $section->clear()->where('code', '=', $scode)->find();
                     if ( ! $sec->loaded()) {
@@ -1160,10 +1177,10 @@ class Controller_Odinc extends Controller {
                             $val = trim($val);
                             if (empty($val)) continue;
                             list(
-                                    $code, // 1
-                                    $name, // 2
-                                    $sort  // 3
-                                    ) = $this->parse('|', $val, 3);
+                                $code, // 1
+                                $name, // 2
+                                $sort  // 3
+                                ) = $this->parse('|', $val, 3);
 
                             if ( ! empty($cur_v[$code])) { // has this code - update
                                 $cur_v[$code]->name      = $name;
@@ -1261,10 +1278,10 @@ class Controller_Odinc extends Controller {
 //            Log::instance()->add(Log::INFO, $s);
 
             list(
-                    $id,    // 1
-                    $name,  // 2
-                    $active // 3
-                    ) = $this->parse('©', $s, 3);
+                $id,    // 1
+                $name,  // 2
+                $active // 3
+                ) = $this->parse('©', $s, 3);
 
             $c = $courier->clear()->where('id', '=', $id)->find();
             $c->name = $name;
@@ -1484,46 +1501,160 @@ class Controller_Odinc extends Controller {
     /**
      * Выгрузка терминалов озона для 1С 
      */
-    public function action_ozon_terminals()            
+    public function action_terminals()
     {
-        $this->view->terminals = ORM::factory('ozon_terminal')->where('is_active', '=', 1)->find_all();
-    }    
-    
+        $this->view->terminals = ORM::factory('terminal')
+            ->where('is_active', '=', 1)
+            ->find_all();
+    }
+
+    /**
+     * Выгрузка нас пунктов для 1С
+     */
+    public function action_cities()
+    {
+        $this->view->cities = ORM::factory('city')
+            ->with('region')
+            ->find_all();
+    }
+
     /**
      * Просчет стоимости доставки
      */
     public function action_calculate_delivery()
     {
         $strings = explode("\n", $this->body);
+        $return = FALSE;
+
         foreach($strings as $s) {
             $s = trim($s);
             if (empty($s)) continue;
-            if (mb_strpos($s, 'ДОСТАВКА:') === 0)
-            {                
-                $delivery_pos = mb_strpos($s, ':');
-                list(
-                    $delivery_id,    // 1
-                    $params          // 2
-                ) = Txt::parse_explode('©', mb_substr($s, $delivery_pos + 1), 2);
-                switch ($delivery_id) {
-                    case Model_Order::SHIP_OZON:
-                        list(
-                            $delivery_variant_id,    // 1
-                            $weight                  // 2 - вес в кг
-                        ) = explode('|', $params);
-                        $ozon = new OzonDelivery();
-                        $price = $ozon->get_price($delivery_variant_id, $weight);
-                        if($price) $this->view->delivery_cost = $price;
-                        break;
 
-                    default:
+            // компания-город/терминал-вес(кг)-высота-ширина-длина-стоимость-Д/Т
+            list(
+                $ship_code, // 1
+                $city_id,   // 2
+                $weight,    // 3
+                $height,    // 4
+                $width,     // 5
+                $length,    // 6
+                $price,     // 7
+                $ship_type  // 8
+                ) = Txt::parse_explode('©', $s, 8);
+
+            switch ($ship_code) {
+
+                case Model_Order::SERVICE_OZON:
+
+                    if ($weight > OzonDelivery::MAX_WEIGHT) {
+                        $return['error'] = 'Максимальный вес не более '.OzonDelivery::MAX_WEIGHT;
                         break;
-                }
-                break;
+                    }
+                    if ($ship_type != 'T') {
+                        $return['error'] = 'Для озона можно только терминал';
+                        break;
+                    }
+                    $terminal = new Model_Terminal($city_id);
+                    if ( ! $terminal->loaded()) {
+                        $return['error'] = 'Терминал не найден';
+                        break;
+                    }
+                    if ($terminal->type != Model_Terminal::TYPE_OZON) {
+                        $return['error'] = 'Запрошенный терминал - не ОЗОН';
+                        break;
+                    }
+
+                    $ozon = new OzonDelivery();
+                    $price = $ozon->get_price($terminal->code, $weight);
+                    if ( ! $price) {
+                        $return['error'] = 'Не удалось рассчитать цену';
+                        break;
+                    }
+                    $return[] = [
+                        'company' => $ship_code,
+                        'tariff'  => $ship_code,
+                        'price'   => $price,
+                        'days'    => 0,
+                    ];
+
+                    break;
+
+                case Model_Order::SERVICE_DPD:
+
+                    if ($ship_type == 'D') {
+                        $city = new Model_City($city_id);
+                        if ( ! $city->loaded()) {
+                            $return['error'] = 'Город не найден';
+                            break;
+                        }
+                    } else {
+                        $terminal = new Model_Terminal($city_id);
+                        if ( ! $terminal->loaded()) {
+                            $return['error'] = 'Терминал не найден';
+                            break;
+                        }
+                        // но в запрос мы должны передать ид города!
+                        $city_id = $terminal->city_id;
+                    }
+                    $dpd = new DpdSoap();
+
+                    // serviceCode, serviceName, cost, days
+                    $resp = $dpd->ship_price($city_id, $price, $weight, $height * $length * $width * 1e-6, $ship_type == 'D');
+
+                    if ( ! empty($resp)) {
+                        foreach($resp as $v) {
+                            $return[] = [
+                                'company' => $ship_code,
+                                'tariff'  => $v->serviceCode,
+                                'price'   => $v->cost,
+                                'days'    => $v->days,
+                            ];
+                        }
+                    } else {
+                        $return['error'] = 'Не удалось рассчитать цену';
+                        break;
+                    }
+                    break;
+
+                case Model_Order::SERVICE_YA:
+
+                    $city = new Model_City($city_id);
+                    if ( ! $city->loaded()) {
+                        $return['error'] = 'Город не найден';
+                        break;
+                    }
+                    $city_to = $city->name.', '.$city->region->name;
+
+                    $resp = yadost::searchDeliveryList($city_to, $weight, $height, $width, $length, $price, $ship_type == 'D');
+
+                    // "tariffName": "Standart",
+                    // "tariffId": "6",
+                    // "isPublic": true,
+                    // "type": "TODOOR",
+                    // "cost": "350",
+                    if ( ! empty($resp)) {
+                        foreach($resp as $v) {
+                            $return[] = [
+                                'company' => $ship_code.'_'.$v->delivery->unique_name,
+                                'tariff'  => $v->tariffId,
+                                'price'   => $v->cost,
+                                'days'    => $v->maxDays,
+                            ];
+                        }
+                    } else {
+                        $return['error'] = 'Не удалось рассчитать цену';
+                        break;
+                    }
+                    break;
+
+                default:
+                    $return['error'] = 'Неправильный код компании '.$ship_code;
+                    break;
             }
-        } 
+            break;
+        }
+        // компания-ид тарифа-стоимость-срок в днях
+        $this->view->return = $return;
+        //Log::instance()->add(Log::INFO, print_r($return, TRUE));
     }
-    
 }
-
-

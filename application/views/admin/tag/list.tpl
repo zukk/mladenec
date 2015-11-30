@@ -65,6 +65,7 @@
                 <label><i class="tr{$smarty.get.not_redirected|default:''}"></i><span>Без 301 редиректа</span><input type="hidden" name="not_redirected" value="{$smarty.get.not_redirected|default:''}" /></label>
             </div>
             <input type="submit" class="btn" name="search" value="Показать" />
+
         </div>
         {if $log_exists}<a href="?log">Лог теговых, которые стали пустыми</a>{/if}
     </fieldset>
@@ -72,22 +73,18 @@
 
     <div class="units-row">
         <div class="unit-70">
-            <form action="" method="post" class="forms forms-inline" enctype="multipart/form-data">
             <fieldset>
                 <legend>Excel</legend>
-                <input type="file" name="excel" />
-                <input type="submit" value="Загрузить из Excel" />
+                <form action="" method="post" class="forms forms-inline" enctype="multipart/form-data">
+                    <input type="file" name="excel" />
+                    <input type="submit" value="Загрузить из Excel" />
+                </form>
+                {*<a href="{Route::url('admin_tag_excel')}">Получить в формате Excel</a>*}
             </fieldset>
-            </form>
         </div>
         <div class="unit-30">
-            <a class="btn" href="{*Route::url('admin_tag_excel')*}">Получить в формате Excel</a>
+            <a href="{Route::url('admin_tag_recount')}" class="do">Пересчитать товары</a>
         </div>
-        {*
-        <div class="unit-30">
-            <a href="{Route::url('admin_tagbylink')}" class="btn btn-big">Создать из ссылок</a>
-        </div>
-        *}
     </div>
 
 <form action="" class="cb">

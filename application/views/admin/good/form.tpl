@@ -258,6 +258,8 @@ $(document).ready(function() {
         <input type="file" name="img500" />
     </p>
     <h2 style="clear:left;">Картинки</h2>
+    {assign var=src_images value=$i->get_src_images()}
+
     <div class="good_imgs">
         <table class="tt">
             <thead>
@@ -343,6 +345,14 @@ $(document).ready(function() {
                         перезалейте картинку
                     </p>
                 {/if}
+                <br />
+                Оригинал:
+                {if isset($src_images[$im.1600->original])}
+                    {HTML::anchor($src_images[$im.1600->original]->get_url())}
+                    {$src_images[$im.1600->original]=0}
+                {else}
+                    <span class="red">не найден</span>
+                {/if}
             </td>
             <td><a class="no">удалить</a></td>
             </tr>
@@ -387,14 +397,6 @@ $(document).ready(function() {
         <label for="to_wikimart">Выгружать в&nbsp;Wikimart</label>
         <input type="checkbox" id="to_wikimart" name="prop[to_wikimart]" value="1" {if $i->prop->to_wikimart}checked="checked"{/if} />
     </p>
-    <p {if $i->big}style='opacity: 0.5'{/if}>
-        <label>Вид карточки:</label>
-		<select name="prop[view_type]">
-			<option value="1"{if $i->prop->view_type eq 1} selected{/if}>Общая карточка</option>
-			<option value="3"{if $i->prop->view_type eq 3} selected{/if}>Нестле</option>
-			<option value="4"{if $i->prop->view_type eq 4} selected{/if}>Одежда 80lvl</option>
-		</select>
-    </p>
 
     <div class="units-row">
         <div class="unit-80">
@@ -423,13 +425,14 @@ $(document).ready(function() {
 </form>
 <div class="units-row">
     <div class="unit-50">
-        <h3>Оригиналы изображений</h3>
+        <h3>Не привязанные оригиналы изображений</h3>
         <ul>
-            {foreach from=$i->get_src_images() item=si}
+            {foreach from=$src_images item=si}
+                {if $si}
                 <li><a href="/{$si->get_path()}" target="_blank">{$si->ID} &mdash; {$si->TIMESTAMP_X};</a></li>
-            {foreachelse}Оригиналы не найдены
+                {/if}
+            {foreachelse}не найдены
             {/foreach}
-            </span>
         </ul>   
     </div>
     <div class="unit-50">

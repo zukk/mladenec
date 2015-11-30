@@ -8,13 +8,17 @@ class Model_File extends ORM {
 
     protected $_primary_key = 'ID';
 
-    protected $_table_columns = array(
-        'ID' => '', 'TIMESTAMP_X' => '', 'MODULE_ID' => '', 'HEIGHT' => '', 'WIDTH' => '', 'FILE_SIZE' => '',
-        'CONTENT_TYPE' => '', 'SUBDIR' => '', 'FILE_NAME' => '', 'ORIGINAL_NAME' => '', 'DESCRIPTION' => '',
-    );
+    protected $_table_columns = [
+        'ID' => '',
+        'TIMESTAMP_X' => '', // дата загрузки
+        'MODULE_ID' => '', // модель для которой загружается картинка
+        'SUBDIR' => '', // путь к файлу
+        'FILE_NAME' => '', // имя файла
+        'original' => '', // ссылка на оригинал если картинка - обработанный оригинал
+        'item_id' => '', // ссылка на объект для которого картинка
+    ];
 
     const WATERMARK = 'config/watermark.png';
-
 
     /**
      * Сгенерить каталог и имя для файла
@@ -28,7 +32,7 @@ class Model_File extends ORM {
 
         if ( ! file_exists($dir)) mkdir($dir, 0777, TRUE); // создадим директорию для картинки
 
-        return array($dir, Text::random().'.'.$ext);
+        return [$dir, Text::random().'.'.$ext];
     }
 
     /**
@@ -93,15 +97,11 @@ class Model_File extends ORM {
         $dirname = preg_replace('~.*/'.Upload::$default_directory.'/~', '', $dirname);
 
         $f = new Model_File();
-        $f->values(array(
-            'HEIGHT' => $size[1],
-            'WIDTH'	=> $size[0],
-            'FILE_SIZE'	=> filesize($saved_as),
+        $f->values([
             'CONTENT_TYPE' => $size['mime'],
-            'SUBDIR' => $dirname,
-            'FILE_NAME'	=> $path['basename'],
-            'ORIGINAL_NAME' => $saved_as,
-        ));
+            'SUBDIR'    => $dirname,
+            'FILE_NAME' => $path['basename'],
+        ]);
         $f->save();
 
         return $f;
@@ -110,9 +110,10 @@ class Model_File extends ORM {
     /**
      * создать модельку из Imagick
      * @param $imagick Imagick
+     * @param $original - id оригинала картинки
      * @return \Model_File
      */
-    public static function from_imagick($imagick)
+    public static function from_imagick($imagick, $original = 0)
     {
         $format = $imagick->getimageformat();
 
@@ -123,15 +124,11 @@ class Model_File extends ORM {
         $subdir = str_replace(Upload::$default_directory.'/', '', $subdir);
         
         $f = new Model_File();
-        $f->values(array(
-            'HEIGHT' => $imagick->getimageheight(),
-            'WIDTH'	=> $imagick->getimagewidth(),
-            'FILE_SIZE'	=> $imagick->getimagelength(),
-            'CONTENT_TYPE' => strtolower('image/'.$format),
-            'SUBDIR' => $subdir ,
+        $f->values([
+            'SUBDIR'    => $subdir ,
             'FILE_NAME'	=> $name,
-            'ORIGINAL_NAME' => $filename,
-        ));
+            'original'  => $original,
+        ]);
         $f->save();
 
         return $f;
@@ -193,20 +190,18 @@ class Model_File extends ORM {
         
         $image->compositeimage($watermark_img, imagick::COMPOSITE_DEFAULT, $wm_pos_x, $wm_pos_y);
         
-        return self::from_imagick($image);
+        return self::from_imagick($image, $this->ID);
     }
 
     /**
      * Сгенерить тумбик для файла и сохранить в новый файл
      * @param $width
      * @param $height
+     * @param $original - id оригинальной картинки
      * @return \Model_File
      */
-    function resize($width, $height = 0)
+    function resize($width, $height = 0, $original = FALSE)
     {
-		if( $height == 0 )
-			$height = $width;
-		
 		$maxsize = max([$width, $height]);
 		
         $im = new Imagick($tmp_name = $this->get_path());
@@ -214,11 +209,12 @@ class Model_File extends ORM {
 		
 		if ($width < $maxsize) {
 			$im->cropimage($width, $height, intval(($maxsize - $width) / 2), 0);
-		} else if($height < $maxsize) {
+		} elseif ($height < $maxsize) {
 			$im->cropimage($width, $height, 0, intval(($maxsize - $height) / 2));
 		}
-		
-        return self::from_imagick($im);
+
+        if ($original == FALSE) $original = $this->ID;
+        return self::from_imagick($im, $original);
     }
 
     /**
@@ -233,7 +229,7 @@ class Model_File extends ORM {
     {
         $im = new Imagick($tmp_name = $this->get_path());
         $im->thumbnailimage($width, $height, TRUE);
-        return self::from_imagick($im);
+        return self::from_imagick($im, $this->ID);
     }
 
     /**

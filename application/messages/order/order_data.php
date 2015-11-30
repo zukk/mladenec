@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'email.not_empty' => 'Укажите email',
     'email.email' => 'Некорректный email',
     'email.unique' => 'Этот email уже занят другим пользователем',
@@ -22,4 +22,4 @@ return array(
 
     'latlong.not_empty' => 'Не определены координаты точки доставки',
     'mobile_phone.Txt::phone_is_mobile'=> 'Введите мобильный телефон, на который мы сможем прислать Вам СМС'
-);
+];

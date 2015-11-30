@@ -97,9 +97,9 @@ class Model_Good extends ORM {
         'review_qty'      => '', 
         'qty'             => '', 
         'popularity'      => '', 
-        'upc'             => '', 
+        'upc'             => '', // штрихкод для channel intelligence
         'old_price'       => '', 
-        'barcode'         => '', 
+        'barcode'         => '',  // штрихкод
         'big'             => '', 
         'promo_id'        => '',
         'show'            => 0,  // Отображать на сайте?
@@ -420,8 +420,13 @@ class Model_Good extends ORM {
      */
     public function get_src_images()
 	{
-        $imgs = ORM::factory('file')->where('MODULE_ID', '=', 'Model_Good')->where('DESCRIPTION','=',$this->id)->find_all()->as_array('ID');
-        
+        $imgs = ORM::factory('file')
+            ->where('MODULE_ID', '=', 'Model_Good')
+            ->where('item_id', '=', $this->id)
+            ->where('original', '=', 0)
+            ->find_all()
+            ->as_array('ID');
+
         return $imgs;
     }
     
@@ -444,17 +449,14 @@ class Model_Good extends ORM {
 
         if (empty($img2size)) return $return;
 
-        // Получить все объекты кучей
+        // Получить все объекты файлов кучей
 		$ids = array_keys($img2size);
-        $_imgs = ORM::factory('file')->where('ID', 'IN', $ids)->find_all()->as_array('ID');
+        $imgs = ORM::factory('file')
+            ->where('ID', 'IN', $ids)
+            ->find_all()
+            ->as_array('ID');
 		
-		$imgs = array();
-		foreach( $ids as $id ){
-			
-			$imgs[$id] = $_imgs[$id];
-		}
-
-        if (empty($imgs)) return $return;
+		if (empty($imgs)) return $return;
 
         // разложить по размерам array( $i => array(70 => ID,255 => ID,1600 => ID), $i+1 => array(70 => ID,255 => ID,1600 => ID))
         $sizes = array('70'=> 0, '255' => 0, '380' => 0, '1600' => 0, '380x560' => 0, '173x255' => 0);
@@ -474,21 +476,44 @@ class Model_Good extends ORM {
      */
     public static function many_images($sizes = [255], array $ids = [], $all_photos = FALSE)
     {
-
         $return = [];
         if (empty($ids)) return $return;
 
-        // получить только оригиналы картинок, могут быть в неправильном порядке (лицо не первое)
+        // получить только оригиналы картинок
         if (in_array('originals', $sizes)) {
-            $files = ORM::factory('file')
-                ->where('MODULE_ID', '=', 'Model_Good')
-                ->where('DESCRIPTION', 'IN', $ids) // в этом поле id товара к которому прикреплена картинка
-                ->find_all()
-                ->as_array('ID');
+            // сначала пробуем получить все 1600е картинки с оригиналами - в порядке как 1600-е
+            $_origs = DB::select('f1.ID', 'good_id')
+                ->from(['z_good_img', 'gi'])
+                ->join(['b_file', 'f'])
+                    ->on('file_id', '=', 'f.ID')
+                ->join(['b_file', 'f1'])
+                    ->on('f.original', '=', 'f1.ID')
+                ->where('size', '=', '1600')
+                ->where('good_id', 'IN', $ids)
+                //->where('good_id', '=', 197919)
+                ->order_by('good_id')
+                ->order_by('gi.id')
+                ->execute()
+                ->as_array('ID', 'good_id');
+
+            if ( ! empty($_origs)) { //
+
+                //print_r($_origs);
+
+                $files = ORM::factory('file')
+                    ->where('ID', 'IN', array_keys($_origs))// в этом поле id товара к которому прикреплена картинка
+                    ->find_all()
+                    ->as_array('ID');
+
+                foreach($_origs as $id => $good_id) { // упорядочить как было
+                    $_origs[$id] = $files[$id];
+                }
+                $files = $_origs;
+            }
 
             if ( ! empty($files)) {
                 foreach ($files as $file_id => $data) {
-                    $return[$data->DESCRIPTION]['originals'][] = $data;
+                    $return[$data->item_id]['originals'][] = $data;
                 }
             }
             
@@ -629,13 +654,18 @@ class Model_Good extends ORM {
     protected function bind_image(Model_File $_70, Model_File $_255, Model_File $_380, Model_File $_1600, Model_File $_380x560, Model_File $_173x255)
     {
         DB::insert('z_good_img')
-            ->columns(array('good_id', 'file_id', 'size'))
-            ->values(array($this->id, $_70->ID, 70))
-            ->values(array($this->id, $_255->ID, 255))
-            ->values(array($this->id, $_380x560->ID, '380x560'))
-            ->values(array($this->id, $_173x255->ID, '173x255'))
-            ->values(array($this->id, $_380->ID, 380))
-            ->values(array($this->id, $_1600->ID, 1600))
+            ->columns(['good_id', 'file_id', 'size'])
+            ->values([$this->id, $_70->ID, 70])
+            ->values([$this->id, $_255->ID, 255])
+            ->values([$this->id, $_380x560->ID, '380x560'])
+            ->values([$this->id, $_173x255->ID, '173x255'])
+            ->values([$this->id, $_380->ID, 380])
+            ->values([$this->id, $_1600->ID, 1600])
+            ->execute();
+
+        DB::update('b_file')
+            ->set(['MODULE_ID' => 'Model_Good', 'item_id' => $this->id])
+            ->where('ID', 'IN', [$_70->ID, $_255->ID, $_380x560->ID, $_173x255->ID, $_380->ID, $_1600->ID])
             ->execute();
     }
     
@@ -1177,15 +1207,15 @@ class Model_Good extends ORM {
 
 				$file = Model_File::image('img');
 				$file->MODULE_ID = __CLASS__;
-				$file->DESCRIPTION = $this->id;
+				$file->item_id = $this->id;
 				$file->save(); // save original file
 
 				$_1600 = $file->watermark();
-				$_255 = $_1600->resize(255);
-				$_380 = $_1600->resize(380);
-				$_380x560 = $_1600->resize(380, 560);
-				$_173x255 = $_1600->resize(173, 255);
-				$_70 = $_1600->resize(70);
+				$_255 = $_1600->resize(255, 255, $file->ID);
+				$_380 = $_1600->resize(380, 380, $file->ID);
+				$_380x560 = $_1600->resize(380, 560, $file->ID);
+				$_173x255 = $_1600->resize(173, 255, $file->ID);
+				$_70 = $_1600->resize(70, 70, $file->ID);
 				$this->bind_image($_70, $_255, $_380, $_1600, $_380x560, $_173x255);
 
 				Model_History::log('good', $this->id, 'image add', array(1600 => $_1600->ID, 255 => $_255->ID, 380 => $_380->ID, 70 => $_70->ID));
@@ -1204,7 +1234,7 @@ class Model_Good extends ORM {
 					$this->save();
 
 					if (empty($this->prop->img500)) {
-						$_500 = $file->resize(500);
+						$_500 = $file->resize(500, 500);
 						$this->prop->img500 = $_500; // save img500 if not any
 						$messages['messages'][] = Kohana::message('admin/good', 'img.added500');
 					}
@@ -1227,9 +1257,9 @@ class Model_Good extends ORM {
 
 				$file = Model_File::image('img500');
 				$file->MODULE_ID = __CLASS__;
-				$file->DESCRIPTION = $this->id;
+				$file->item_id = $this->id;
 
-				$_500 = $file->resize(500);
+				$_500 = $file->resize(500, 500);
 
 				$file->save(); // save original file
 

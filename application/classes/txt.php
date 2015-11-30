@@ -342,20 +342,7 @@ class Txt {
 		);
 	}
 
-	/**
-	 * Добавляет к ссылке параметры просмотра товаров
-	 * @param $href
-	 * @param $settings
-	 * @return string
-	 */
-	public static function view_params($href, $settings = array('s' => 'rating', 'pp' => 48, 'x' => 1, 'm' => 1))
-	{
-		$href .= '?'.http_build_query($settings, null, '&');
-		
-		return $href;
-	}
-
-	public static function link_params($link)
+    public static function link_params($link)
 	{
 		$param_markers = array('#!', ';', '?');
 		
@@ -589,4 +576,85 @@ class Txt {
 	{
 		return implode('-', array_reverse(explode('-', $txt)));
 	}
+
+	/**
+	 * Делает из даты yyyy-mm-dd дату 1.10.2015 (вт)
+	 * @param $date '2015-12-31'
+	 * @return string
+	 */
+	public static function ship_date($date)
+	{
+		$weekdays = [
+			0 => 'вс',
+			1 => 'пн',
+			2 => 'вт',
+			3 => 'ср',
+			4 => 'чт',
+			5 => 'пт',
+			6 => 'сб',
+		];
+		list($y, $m, $d, $w) = explode('-', date('Y-m-d-w', strtotime($date)));
+		return $d.'.'.$m.'.'.$y.' ('.$weekdays[$w].')';
+	}
+
+	/**
+	 * получить строку для краткого отображения адреса
+	 * @param Model_User_Address $a
+	 * @return string
+	 */
+	public static function addr(Model_User_Address $a)
+	{
+		return trim($a->city.', '.$a->street.', '.$a->house.($a->kv ? ', кв./оф. '.$a->kv : '').($a->correct_addr || $a->approved ? '.' : ''));
+	}
+
+    /**
+     * получить варианты сумм на сдачу
+     * (ближайшие суммы кратные банкнотам и больше данной)
+     */
+    public static function change($sum)
+    {
+        $banknotes = [100, 500, 1000, 5000]; // номиналы банкнот
+
+        $return = []; //
+
+        foreach($banknotes as $b) { // ищем
+            $return[] = ceil($sum / $b) * $b;
+        }
+        return array_unique($return);
+    }
+
+    /**
+     * Вывести список в excel согласно массиву полей
+     */
+    public static function as_excel($columns, $list, $fname, $callbacks = [])
+    {
+        include(APPPATH.'classes/PHPExcel.php');
+        $excel = new PHPExcel();
+        $sheet = $excel->getActiveSheet();
+
+        $x = 0;
+        foreach($columns as $name => $title) {
+            $sheet->setCellValueByColumnAndRow($x++, 1, $title);
+        }
+        $y = 2;
+        foreach($list as $row) {
+            $i = 0;
+            foreach($columns as $name => $title) {
+                $value = ! empty($callbacks[$name]) ? $callbacks[$name]($row) : $row->{$name};
+                $sheet->setCellValueByColumnAndRow($i++, $y, $value);
+            }
+            $y++;
+        }
+
+        $fname .= '.xlsx';
+        $io = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+        $io->save('/tmp/'.$fname);
+
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename='.$fname);
+        echo file_get_contents('/tmp/'.$fname);
+
+        exit();
+    }
 }

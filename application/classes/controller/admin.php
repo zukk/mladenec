@@ -673,7 +673,8 @@ class Controller_Admin extends Controller_Authorised {
         $this->return_json($result);
     }
     
-    public function action_good_sert_ajax_search() {
+    public function action_good_sert_ajax_search()
+    {
         // is a brand or section selected? 
         $section_id     = $this->request->post('section_id');
         $brand_id       = $this->request->post('brand_id');
@@ -732,7 +733,8 @@ class Controller_Admin extends Controller_Authorised {
      * Удаление экземпляра сущности
      * @throws HTTP_Exception_404
      */
-    public function action_del() {
+    public function action_del()
+    {
         $this->model($m = $this->request->param('model'), $this->request->param('id'));
         if (!$this->model->loaded()) throw new HTTP_Exception_404;
 
@@ -1789,39 +1791,13 @@ class Controller_Admin extends Controller_Authorised {
 
         $orders = $query->find_all();
 
-        include(APPPATH.'classes/PHPExcel.php');
-        $excel = new PHPExcel();
-        $sheet = $excel->getActiveSheet();
-        $columns = [
+        Txt::as_excel([
             'id'        => '№ заказа',
             'price'     => 'Сумма',
             'user_id'   => '№ клиента',
             'sent'      => 'Отправлен',
             'status'    => 'Статус'
-        ];
-        $i = 0;
-        foreach($columns as $name => $title) {
-            $sheet->setCellValueByColumnAndRow($i++, 1, $title);
-        }
-        $row = 2;
-        foreach($orders  as $order) {
-            $i = 0;
-            foreach($columns as $name => $title) {
-                $value = $order->{$name};
-                if ($name == 'status') $value = $order->status();
-                $sheet->setCellValueByColumnAndRow($i++, $row, $value);
-            }
-            $row++;
-        }
-
-        $fname = 'orders.xlsx';
-        $io = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
-        $io->save('/tmp/'.$fname);
-
-        header('Content-Description: File Transfer');
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment; filename='.$fname);
-        echo file_get_contents('/tmp/'.$fname);
+        ], $orders, 'orders', ['status' => function($row) { return $row->status(); }]);
 
         exit;
     }
@@ -1982,7 +1958,79 @@ class Controller_Admin extends Controller_Authorised {
         }
         return $return;
     }
-    
+
+    /**
+     * список пользователей - получение (общее с выдачей в ексель или в html
+     */
+    private function _user_list()
+    {
+        $query = $this->model;
+
+        if ($id = $this->request->query('id')) {
+            $query->where('id', '=', $id);
+        }
+        if ($name = $this->request->query('name')) {
+            $query->where('name', 'LIKE', '%'.$name.'%');
+        }
+        if ($email = $this->request->query('email')) {
+            $query->where('email', 'LIKE', $email.'%');
+        }
+        if ($phone = $this->request->query('phone')) {
+
+            $first_digit = substr($phone, 0,1);
+            if ($first_digit != 8 AND $first_digit != 7) $phone = '+7' . $phone;
+            if (0 !== strpos($phone,'+'))  $phone = '+' . $phone;
+            if (0 !== strpos($phone,'+7')) $phone = str_replace ('+8', '+7', $phone);
+
+            $query->where_open()
+                ->where('phone',     'LIKE', $phone.'%')
+                ->or_where('phone2', 'LIKE', $phone.'%')
+                ->where_close();
+        }
+        if (($sub = $this->request->query('sub')) != "") {
+            $query->where('sub', $sub == 0 ? '=' : '!=', 0);
+        }
+        if (($lk = $this->request->query('lk')) != "") {
+            $query->where('status_id', '=', $lk);
+        }
+
+        if ($admin = $this->request->query('admin')) {
+            $query->distinct('id')->join('z_user_admin')->on('z_user_admin.user_id','=','user.id');
+
+            $access_res = DB::select()->from('z_user_admin')->execute()->as_array();
+            $return['access'] = array();
+            foreach ($access_res as $a_res) {
+                $return['access'][$a_res['user_id']][$a_res['module']] = $a_res['module'];
+            }
+        }
+
+        if (($childs = $this->request->query('childs')) != "") {
+            if ($childs == 1) {
+                $query->join('z_user_child')
+                    ->on('z_user_child.user_id', '=', 'user.id')
+                    ->group_by('user.id');
+            } else {
+                $query->join('z_user_child','left')
+                    ->on('z_user_child.user_id', '=', 'user.id')
+                    ->where('z_user_child.user_id', '=', NULL)
+                    ->group_by('user.id');
+            }
+        }
+
+        $from = $this->request->query('from');
+        if ( ! empty($from['date'])) {
+            $query->where('created', '>=' , strtotime($from['date'].' '.$from['time']));
+        }
+
+        $to = $this->request->query('to');
+        if ( ! empty($to['date'])) {
+            $query->where('created', '<=' , strtotime($to['date'].' '.$to['time']));
+        }
+
+        $query->reset(FALSE);
+        return $query;
+    }
+
     /**
      * Список пользователей - извратный обработчик
      * @return array
@@ -2001,101 +2049,46 @@ class Controller_Admin extends Controller_Authorised {
             }
         }
 
-        $query = $this->model;
-
-        if ($id = $this->request->query('id')) {
-            $query->where('id', '=', $id);
-        }
-        if ($name = $this->request->query('name')) {
-            $query->where('name', 'LIKE', '%'.$name.'%');
-        }
-        if ($email = $this->request->query('email')) {
-            $query->where('email', 'LIKE', $email.'%');
-        }
-        if ($phone = $this->request->query('phone')) {
-            
-            $first_digit = substr($phone, 0,1);
-            if ($first_digit != 8 AND $first_digit != 7) $phone = '+7' . $phone;
-            if (0 !== strpos($phone,'+'))  $phone = '+' . $phone;
-            if (0 !== strpos($phone,'+7')) $phone = str_replace ('+8', '+7', $phone);
-            
-            $query->where_open()
-                    ->where('phone',     'LIKE', $phone.'%')
-                    ->or_where('phone2', 'LIKE', $phone.'%')
-                   ->where_close();
-        }
-        if (($sub = $this->request->query('sub')) != "") {
-            $query->where('sub', $sub == 0 ? '=' : '!=', 0);
-        }
-        if (($lk = $this->request->query('lk')) != "") {
-            $query->where('status_id', '=', $lk);
-        }
-        
-        if ($admin = $this->request->query('admin')) {
-            $query->distinct('id')->join('z_user_admin')->on('z_user_admin.user_id','=','user.id');
-            
-            $access_res = DB::select()->from('z_user_admin')->execute()->as_array();
-            $return['access'] = array();
-            foreach ($access_res as $a_res) {
-                $return['access'][$a_res['user_id']][$a_res['module']] = $a_res['module'];
-            }
-        }
-        
-        $from = $this->request->query('from');
-
-        if (is_array($from) AND !(empty($from['Date_Day']) AND empty($from['Date_Month']) AND empty($from['Date_Year']))) {
-
-            if (empty($from['Date_Year'])) {
-                $from['Date_Year'] = date('Y');
-            } elseif (empty($from['Date_Day']) AND empty($from['Date_Month'])) {
-                $from['Date_Month'] = 1;
-            }
-            if (empty($from['Date_Month']))
-                $from['Date_Month'] = date('n');
-            if (empty($from['Date_Day']))
-                $from['Date_Day'] = 1;
-
-            $return['from'] = $from_date = strtotime($this->read_date($from));
-            $query->where('user.created', '>=', $from_date);
-        }
-        $to = $this->request->query('to');
-
-        if (is_array($from) AND !(empty($to['Date_Day']) AND empty($to['Date_Month']) AND empty($to['Date_Year']))) {
-
-            if (empty($to['Date_Year'])) {
-                $to['Date_Year'] = date('Y');
-            } elseif (empty($to['Date_Month']) AND empty($to['Date_Day'])) {
-                $to['Date_Month'] = 12;
-                $to['Date_Day'] = 31;
-            }
-
-            if (empty($to['Date_Month']))
-                $to['Date_Month'] = date('n');
-            if (empty($to['Date_Day']))
-                $to['Date_Day'] = date('t');
-
-            $to_timestamp = strtotime($this->read_date($to));
-            
-            $return['to'] = $to_date = date("Y-m-d H:i:s", $to_timestamp);
-            $query->where('user.created', '<=', $to_timestamp);
-        }
-        if (($childs = $this->request->query('childs')) != "") {
-            if($childs == 1) {
-                $query->join('z_user_child')
-                    ->on('z_user_child.user_id', '=', 'user.id')
-                    ->group_by('user.id');
-            } else {
-                $query->join('z_user_child','left')
-                    ->on('z_user_child.user_id', '=', 'user.id')
-                    ->where('z_user_child.user_id', '=', NULL)
-                    ->group_by('user.id');
-            }
-        }
-        
-        $query->reset(FALSE);
-        
+        $query = $this->_user_list();
         $return['pager'] = $pager = new Pager($query->find_all()->count(), 50);
-        $return['list'] = $query->order_by('user.id', 'desc')->offset($pager->offset)->limit($pager->per_page)->find_all();
+
+        $list = $query
+            ->order_by('user.id', 'desc')
+            ->offset($pager->offset)
+            ->limit($pager->per_page)
+            ->find_all()
+            ->as_array('id');
+
+        if ( ! empty($list)) {
+            $kids = $orders = [];
+            $user_id = array_keys($list);
+            $childs = ORM::factory('user_child')
+                ->where('user_id', 'IN', $user_id)
+                ->order_by('user_id')
+                ->order_by('birth')
+                ->find_all()
+                ->as_array('id');
+
+            if ($childs) {
+                foreach ($childs as $child) {
+                    $kids[$child->user_id][$child->id] = $child;
+                }
+                $return['kids'] = $kids;
+            }
+            foreach ($list as $row) {
+                if ($row->last_order) $orders[] = $row->last_order;
+            }
+            if ($orders) {
+                $orders = ORM::factory('order')
+                    ->where('id', 'IN', $orders)
+                    ->find_all()
+                    ->as_array('id');
+
+                $return['orders'] = $orders;
+            }
+        }
+
+        $return['list'] = $list;
 
         return $return;
     }
@@ -2103,137 +2096,48 @@ class Controller_Admin extends Controller_Authorised {
     /*
      * Экспорт списка пользователей в Excel
      */
-    function action_user_excel() {
-        header('Content-Description: File Transfer');
-        header('Content-Type: text/csv');
-        header('Content-Disposition: attachment; filename=users.csv');
-        $content = '';
-        
-        $this->model = ORM::factory('user');
-        $query = $this->model->with('data');
-
-        $query->reset(false);
-
-        if ($id = $this->request->query('id')) {
-            $query->where('id', '=', $id);
-        }
-        if ($name = $this->request->query('name')) {
-            $query->where('name', 'LIKE', '%'.$name.'%');
-        }
-        if ($email = $this->request->query('email')) {
-            $query->where('email', 'LIKE', $email.'%');
-        }
-        if ($phone = $this->request->query('phone')) {
-            
-            $first_digit = substr($phone, 0,1);
-            if ($first_digit != 8 AND $first_digit != 7) $phone = '+7' . $phone;
-            if (0 !== strpos($phone,'+'))  $phone = '+' . $phone;
-            if (0 !== strpos($phone,'+7')) $phone = str_replace ('+8', '+7', $phone);
-            
-            $query->where_open()
-                    ->where('phone',     'LIKE', $phone.'%')
-                    ->or_where('phone2', 'LIKE', $phone.'%')
-                   ->where_close();
-        }
-        if (($sub = $this->request->query('sub')) != "") {
-            $query->where('sub', $sub == 0 ? '=' : '!=', 0);
-        }
-        if (($lk = $this->request->query('lk')) != "") {
-            $query->where('status_id', '=', $lk);
-        }
-        if ($admin = $this->request->query('admin')) {
-            $query->distinct('id')->join('z_user_admin')->on('z_user_admin.user_id','=','user.id');
-        }
-        
-        $from = $this->request->query('from');
-
-        if (is_array($from) AND !(empty($from['Date_Day']) AND empty($from['Date_Month']) AND empty($from['Date_Year']))) {
-
-            if (empty($from['Date_Year'])) {
-                $from['Date_Year'] = date('Y');
-            } elseif (empty($from['Date_Day']) AND empty($from['Date_Month'])) {
-                $from['Date_Month'] = 1;
-            }
-            if (empty($from['Date_Month']))
-                $from['Date_Month'] = date('n');
-            if (empty($from['Date_Day']))
-                $from['Date_Day'] = 1;
-
-            $from_date = strtotime($this->read_date($from));
-            $query->where('user.created', '>=', $from_date);
-        }
-        $to = $this->request->query('to');
-
-        if (is_array($from) AND !(empty($to['Date_Day']) AND empty($to['Date_Month']) AND empty($to['Date_Year']))) {
-
-            if (empty($to['Date_Year'])) {
-                $to['Date_Year'] = date('Y');
-            } elseif (empty($to['Date_Month']) AND empty($to['Date_Day'])) {
-                $to['Date_Month'] = 12;
-                $to['Date_Day'] = 31;
-            }
-
-            if (empty($to['Date_Month']))
-                $to['Date_Month'] = date('n');
-            if (empty($to['Date_Day']))
-                $to['Date_Day'] = date('t');
-
-            $to_timestamp = strtotime($this->read_date($to));            
-            $query->where('user.created', '<=', $to_timestamp);
-        }
-        $is_childs = false;
-        if (($is_childs = $this->request->query('childs')) != "") {            
-            if($is_childs == 1) {
-                $query->join('z_user_child')
-                    ->on('z_user_child.user_id', '=', 'user.id');
-            } else {
-                $query->join('z_user_child', 'left')
-                    ->on('z_user_child.user_id', '=', 'user.id')
-                    ->where('z_user_child.user_id', '=', NULL);
-            }
-        }
-        $query->select( DB::expr('COUNT(z_user_order.order_id) as num_orders'), DB::expr('MAX(z_user_order.created) as last_order_date') )
-              ->join('z_user_order', 'left')
-              ->on('z_user_order.user_id', '=', 'user.id')
-              ->group_by('user.id');
-        
+    function action_user_excel()
+    {
+        $this->model = ORM::factory('user')->with('data');
+        $query = $this->_user_list();
         $users = $query->find_all();
 
-        $content .= '"ID";' . '"Email";' . '"Телефон";' . '"Имя";' . '"Фамилия";' . '"Отчество";' 
-                . '"Сумма заказов, руб.";' . '"Количество заказов";' . '"Дата последнего заказа";' 
-                . '"Любимый";' . '"Рассылка";' . '"Создан";' . '"Беременность";'. '"Срок (недель)";';         
-        if ($is_childs) {
-            $content .=  '"Дети";';
-        }        
-        $content .=  "\n";        
-        foreach($users  as $user) {
-            $content .= $user->id . ';'
-                    . '"' . $user->email . '";'
-                    . '"' . $user->phone . '";'
-                    . '"' . $user->name . '";'
-                    . '"' . $user->last_name . '";'
-                    . '"' . $user->second_name . '";'
-                    . $user->sum . ';'
-                    . $user->num_orders. ';'
-                    . $user->last_order_date. ';'
-                    . ($user->status_id ? 'Да' : '') . ';'
-                    . ($user->sub ? 'Да' : '') . ';'
-                    . date('d-m-Y H:i:s', $user->created) . ';';
-            $content .= ($user->pregnant ? 'Да' : 'Нет') . ';';
-            $content .= ($user->pregnant ? $user->get_pregnant_weeks() : '') . ';';
-            if ($is_childs) {
-                $kids = $user->kids->find_all()->as_array('id');
+        Txt::as_excel([
+            'id' => 'ID',
+            'email' => 'Email' ,
+            'phone' => 'Телефон',
+            'name' => 'Имя' ,
+            'last_name' => 'Фамилия',
+            'second_name' => 'Отчество',
+            'sum' => 'Сумма заказов, руб.',
+            'qty' => 'Количество заказов',
+            'avg_check' => 'Средний чек',
+            'last_order' => 'Дата последнего заказа',
+            'lk'    => 'Любимый',
+            'sub'   => 'Рассылка',
+            'created' =>  'Создан',
+            'pregnant' => 'Беременность',
+            'pregnant_week' => 'Срок (недель)',
+            'kids' => 'Дети'
+        ], $users, 'users', [
+            'avg_check' => function($row) { return $row->avg_check(); },
+            'created' => function($row) { return date('Y-m-d H:i:s', $row->created);},
+            'lk' => function($row) { return $row->status_id ? 'Да' : ''; },
+            'sub' => function($row) { return $row->sub ? 'Да' : ''; },
+            'pregnant' => function($row) { return $row->pregnant ? 'Да' : 'Нет'; },
+            'last_order' => function($row) { $order = ORM::factory('order', $row->last_order); return $order->loaded() ? $order->created : ''; },
+            'pregnant_week' => function($row) { return $row->pregnant ? $row->get_pregnant_weeks() : ''; },
+            'kids' => function($row) {
+                $return = '';
+                $kids = $row->kids->find_all()->as_array('id');
                 if ($kids) {
                     foreach ($kids as $child) {
-                        $content .= ($child->sex == 1 ? 'мальчик' : 'девочка') . '; ' . Txt::childAge($child->birth).';';
+                        $return .= ($child->sex == 1 ? 'мальчик' : 'девочка') . '; ' . Txt::childAge($child->birth).';';
                     }
                 }
+                return $return;
             }
-            $content .= "\n";
-        }
-
-        echo iconv("utf-8", "windows-1251//TRANSLIT", $content);
-        exit;
+        ]);
     }
 
     /**
@@ -2271,7 +2175,7 @@ class Controller_Admin extends Controller_Authorised {
         if ($tag->in_google != 1) {
             $json = json_decode(file_get_contents('http://www.google.com/uds/GwebSearch?v=1.0&q="' . $tag->code . '"%20site:www.mladenec-shop.ru'), true);
 
-            if (!empty($json['responseData'])) {
+            if ( ! empty($json['responseData'])) {
                 $tag->in_google = empty($json['responseData']['results']) ? 1 : 2;
             } else {
                 $tag->in_google = 3;
@@ -2280,21 +2184,25 @@ class Controller_Admin extends Controller_Authorised {
 
 		$returner['google_code'] = $tag->in_google;
 		
-		$blocks = explode(',', $tag->params);
-		
-		$filtersIds = [];
-		foreach($blocks as $block) {
+		parse_str($tag->query, $query);
 
-			list($name) = explode('=', $block);
-            // Это фильтр
-			if($name > 0) $filtersIds[(int)$name] = (int)$name;
-	    }
-		
+        $filtersIds = [];
+        foreach($query as $k => $v) {
+            if (strpos($k, 'f') === 0) {
+                $name = substr($k, 1);
+                if ($name > 0) $filtersIds[(int)$name] = (int)$name;
+            }
+        }
+
 		$notFound = [];
 		if ( ! empty($filtersIds)) {
-			$items = ORM::factory('filter')->select('id')->where('id', 'IN', $filtersIds )->find_all()->as_array('id');
+			$items = ORM::factory('filter')
+                ->select('id')
+                ->where('id', 'IN', $filtersIds)
+                ->find_all()
+                ->as_array('id');
 
-			foreach( $items as $id => $v) unset($filtersIds[$id]);
+			foreach($items as $id => $v) unset($filtersIds[$id]);
 		}
 
 		$returner['notFound'] = $notFound;
@@ -2462,140 +2370,6 @@ class Controller_Admin extends Controller_Authorised {
         $return['pager'] = $pager = new Pager($query->count_all(), 50);
         $return['list'] = $query->order_by('tag.name', 'desc')->offset($pager->offset)->limit($pager->per_page)->find_all();
         return $return;
-    }
-    
-    public function action_tagbylink()
-    {
-        $vars = array();
-        
-        $vars['links_txt'] = $links_txt = $this->request->post('links');
-       
-        $new_tags = $this->request->post('tags');
-        
-        if ( ! empty($links_txt))
-        {
-            $links = $links_arr = array();
-            
-            $translits  = DB::select('id','translit')->from('z_section')->where('active','=','1')->execute()->as_array('translit', 'id');
-            $names      = DB::select('id','name')->from('z_section')->where('active','=','1')->execute()->as_array('id','name');
-            
-            //var_dump($names['29150']);
-            
-            $translits_by_id = array_flip($translits);
-            
-            $exist_codes = DB::select('id','code')->from('z_tag')->execute()->as_array('code', 'id');
-            $brand_translits = DB::select('id','translit')->from('z_brand')->where('active','=','1')->execute()->as_array('id', 'translit');
-            $brand_names = DB::select('id','name')->from('z_brand')->where('active','=','1')->execute()->as_array('id', 'name');
-            $parents = DB::select('id','parent_id')->from('z_section')->where('active','=','1')->execute()->as_array('id', 'parent_id');
-            
-            $categories = array();
-            $brands = array();
-            $filters = array();
-            
-            $links_txt = preg_replace('/\s+/mu', "\n", trim($links_txt));
-            $links_txt = str_replace('http://www.mladenec-shop.ru/', '', $links_txt);
-            $links = array_map('trim',explode("\n",$links_txt));
-            
-            foreach($links as $l) 
-            {
-                $params = Txt::link_params($l);
-                $params['txt'] = $l;
-                
-                $match = array();
-                $translit = $title = '';
-                $section_id = 0;
-                
-                if ( ! empty($params['path']))
-                {
-                    if (preg_match('|catalog/([a-zA-Z0-9_-]+)|u', $params['path'], $match))
-                    {
-                        $translit = $match[1];
-                        if ( ! empty($translits[$translit])) $section_id = $translits[$translit];
-                    }
-                    elseif (preg_match('|catalog/[a-zA-Z0-9_-]+/([a-zA-Z0-9_-]+)\.html|u', $params['path'], $match))
-                    {
-                        $section_id = $match[1];
-                    }
-                }
-                else continue; // Пока отрабатываем только каталог
-                
-                if ( ! empty($section_id)) 
-                {
-                    $params['c'][] = $section_id;
-                    $parent_id = $parents[$section_id];
-                    
-                    if ( ! empty($names[$section_id])) $title = $names[$section_id];
-                    if ( ! empty($names[$parent_id])) $title = $names[$parent_id] . ' ' . $title;
-                }
-                
-                if ( ! empty($params['b']))
-                {
-                    $br_tr = array();
-                    foreach($params['b'] as $b)
-                    {
-                        if ( ! empty($brand_names[$b])) $title .= ' ' . $brand_names[$b];
-                    }
-                }
-                
-                if ( ! empty($params['f']))
-                {
-                    $br_tr = array();
-                    foreach($params['f'] as $f_id => $f)
-                    {
-                        $fname = DB::select('name')->from('z_filter')->where('id','=', $f_id)->execute()->get('name');
-                        $filter_names = DB::select('id', 'name')->from('z_filter_value')->where('id','IN', $f)->execute()->as_array('id','name');
-                        
-                        $title .= $fname . ' ' . implode(' ', $filter_names);
-                    }
-                        
-                }
-                $params['title']    = $title;
-                $params['translit'] = Txt::translit($title);
-                $links_arr[] = $params;
-            }
-            
-            $existed_tags = array();
-            
-            foreach ($links_arr as &$la)
-            {
-                $tag_q = DB::select('z_tag.id')->from('z_tag');
-                
-                if (! empty($la['c'])) $tag_q->join('z_tag_section')->on('z_tag.id','=','z_tag_section.tag_id')->where('z_tag_section.section_id','IN', $la['c']);
-                if (! empty($la['b'])) $tag_q->join('z_tag_brand')->on('z_tag.id','=','z_tag_brand.tag_id')->where('z_tag_brand.brand_id','IN', $la['b']);
-                if (! empty($la['f'])) 
-                {
-                    $tag_q->join('z_tag_filter_value')->on('z_tag.id','=','z_tag_filter_value.tag_id');
-                    foreach($la['f'] as $fv)
-                    {
-                        $tag_q->where('z_tag_filter_value.filter_value_id','IN', $fv);
-                    }
-                }
-                $la['tags'] = $tag_q->execute()->as_array('id','id');
-                
-                if ( ! empty($exist_codes['catalog/' . $la['translit']])) 
-                {
-                    $la['duplicate_code'] = $exist_codes['catalog/' . $la['translit']];
-                }
-            }
-            $vars['links'] = $links_arr;
-        }
-        
-        if ( ! empty($new_tags) AND is_array($new_tags))
-        {
-            foreach ($new_tags as $nt)
-            {
-                if ( isset($nt['go']))
-                {
-                    $sections = empty($nt['sections']) ? array() : array_map('trim', explode(',', $nt['sections']));
-                    $brands   = empty($nt['brands'])   ? array() : array_map('trim', explode(',', $nt['brands']));
-                    $filters  = empty($nt['filters'])  ? array() : array_map('trim', $nt['filters']);
-                    
-                    Model_Tag::make('catalog/' . $nt['translit'], $nt['title'], $nt['title'], $sections, $brands, $filters);
-                }
-            }
-        }
-        
-        $this->layout->body = View::factory('smarty:admin/tag/tagbylink', $vars)->render();
     }
     
     public function action_direct()

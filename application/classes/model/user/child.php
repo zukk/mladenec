@@ -14,6 +14,14 @@ class Model_User_Child extends ORM
         'user' => ['model' => 'user', 'foreign_key' => 'user_id'],
     ];
 
+    protected $_table_columns = [
+        'id' => '',
+        'name' => '',
+        'sex' => '',
+        'user_id' => '',
+        'birth' => '',
+    ];
+
     public function rules()
     {
         return [

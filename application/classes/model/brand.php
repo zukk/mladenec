@@ -9,30 +9,29 @@ class Model_Brand extends ORM {
 
     protected $_table_name = 'z_brand';
 
-    protected $_belongs_to = array(
-        'image225' => array('model' => 'file', 'foreign_key' => 'img225'),
-	);
+    protected $_belongs_to = [
+        'image' => ['model' => 'file', 'foreign_key' => 'img'],
+	];
 	
-    protected $_has_many = array(
-        'serts'   => array(
-                   'foreign_key' => 'brand_id',
-                   'model' => 'sert',
-                   'through' => 'z_sert_rel',
-                   'far_key' => 'sert_id'
-                   ),
-        'promos'   => array(
-                   'foreign_key' => 'brand_id',
-                   'model' => 'promo',
-                   'through' => 'z_promo_brand',
-                   'far_key' => 'promo_id'
-                   )
-    );
+    protected $_has_many = [
+        'serts'   => [
+           'foreign_key' => 'brand_id',
+           'model' => 'sert',
+           'through' => 'z_sert_rel',
+           'far_key' => 'sert_id'
+        ],
+        'promos'   => [
+           'foreign_key' => 'brand_id',
+           'model' => 'promo',
+           'through' => 'z_promo_brand',
+           'far_key' => 'promo_id'
+        ]
+    ];
     
-    protected $_has_many_though = array(
-        'section' => array('model' => 'section', 'foreign_key' => 'section_id')
-    );
-
-    protected $_table_columns = array('id' => '', 'name' => '', 'code' => '', 'section_id' => '', 'active' => '', 'sort' => '', 'description' => '', 'img225' => '', 'search_words' => '');
+    protected $_table_columns = [
+        'id' => '', 'name' => '', 'translit' => '', 'text' => '',
+        'code' => '', 'active' => '', 'img' => '', 'search_words' => ''
+    ];
 
     /**
      * Id - Name для чекбоксов
@@ -44,20 +43,26 @@ class Model_Brand extends ORM {
         return DB::select('id', 'name')
             ->from('z_brand')
             ->where('id', 'IN', $idz)
-            ->order_by('sort')
+            ->order_by('name')
             ->execute()
             ->as_array('id');
     }
 
-	public function get_img()
+    /**
+     * Получить картинку
+     * @return mixed
+     */
+    public function get_img()
     {
-		return ORM::factory('file', $this->img225)->get_url();
+		return ORM::factory('file', $this->img)->get_url();
 	}
-	
-	public function img()
+
+    /**
+     * Поле для админки
+     * @return array
+     */
+    public function img()
     {
-		return array(
-			'img225' => array( 225, 120 )
-		);
+		return ['img225'];
 	}
 }

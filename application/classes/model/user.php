@@ -1,26 +1,23 @@
 <?php
 
 class Model_User extends ORM {
-
     /* Username when working from CLI */
+
     const ROBOT_ID = 7;
-
     const STATUS_CHANGE = 20000; // сумма заказа для присвоения любимых клиентов
-
     const CHILD_DISCOUNT_NO = 0; // скидка за заполнение данных о детях - можно получить
     const CHILD_DISCOUNT_ON = 1; // - получена, но не использована
     const CHILD_DISCOUNT_USED = 2; // - использована
 
     protected $_table_name = 'z_user';
-
     protected static $current = NULL; // текущий залогиненный юзер
-
     protected $allow = FALSE; // кэш модулей, с которыми можно работать этому юзеру
-    
     protected $_table_columns = [
         'id' => '', 'status_id' => '', 'email' => '', 'login' => '', 'password' => '', 'checkword' => '', 'name' => '', 'second_name' => '', 'last_name' => '',
-        'phone' => '', 'phone_active' => '', 'phone2' => '', 'last_visit' => '', 'created' => '', 'sub' => '', 'in1c' => '', 'order_notify' => '', 
-        'sum' => '', // сумма заказов
+        'phone' => '', 'phone_active' => '', 'phone2' => '', 'last_visit' => '', 'created' => '', 'sub' => '', 'in1c' => '', 'order_notify' => '',
+        'sum' => 0, // сумма заказов
+        'qty' => 0, // число заказов
+        'last_order' => 0, // номер последнего заказа
         'segments_recount_ts' => 0, // timestamp последнего пересчета сегментов
         'pregnant' => 0, 
         'pregnant_terms' => '',
@@ -567,18 +564,39 @@ class Model_User extends ORM {
      * @return mixed
      */
     public function get_pregnant_weeks() {
-         $weeks = floor((time()-$this->pregnant_terms) / (7*24*60*60));
-         return $weeks = ($weeks<=41) ? $weeks : null;
-    }   
+        $weeks = floor((time() - $this->pregnant_terms) / (7 * 24 * 60 * 60));
+        return $weeks = ($weeks <= 41) ? $weeks : null;
+    }
+
+    /**
+     * Получить url аватарки
+     * @return string
+     */
+    public function get_avatar() {
+        if (empty($this->avatar_file_id))
+            return false;
+        $return = ORM::factory('file', $this->avatar_file_id)->get_url();
+        return $return;
+    }
+
+    /**
+     * Получить количество избранных
+     * @return string
+     */
+    public function get_deffered_count() {
+        return ORM::factory('deferred')
+                ->where('user_id', '=', $this->id)
+                ->count_all();
+    }
 
     /**
      * Определяет, может ли пользватель делать заказ в один клик
      * @param null $good
      * @return bool|void
      */
-    public static function can_one_click($good = NULL)
-    {
-        if (in_array(Request::$client_ip, ['127.0.0.1', '10.0.2.2'])) return TRUE;
+    public static function can_one_click($good = NULL) {
+        if (in_array(Request::$client_ip, ['127.0.0.1', '10.0.2.2']))
+            return TRUE;
 
         $region = Session::instance()->get('region'); // регион пользователя
         $return = in_array($region, ['RU-MOW', 'RU-MOS']);
@@ -674,4 +692,14 @@ class Model_User extends ORM {
 
         return $returner;
     }
+
+    /*
+     * Средний чек клиента
+     */
+    function avg_check()
+    {
+        if ($this->qty == 0) return 0;
+        return $this->sum/$this->qty;
+    }
+
 }

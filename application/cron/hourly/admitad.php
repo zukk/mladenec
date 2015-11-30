@@ -29,12 +29,12 @@ $catalog = Model_Section::get_catalog();
 $id2Catalog = [];
 
 foreach($catalog as $item) {
-	$id2Catalog[$item->id] = $item;
-	if ( ! empty($item->children)) {
-		foreach($item->children as $child) {
-			$id2Catalog[$child->id] = $child;
-		}
-	}
+    $id2Catalog[$item->id] = $item;
+    if ( ! empty($item->children)) {
+        foreach($item->children as $child) {
+            $id2Catalog[$child->id] = $child;
+        }
+    }
 }
 
 fwrite($fp, View::factory('smarty:page/export/yml/categories', ['catalog' => $catalog]));
@@ -48,47 +48,47 @@ define('EXPORTXML_SIZE', 1949);
 define('EXPORTXML_GROWTH', 1950);
 
 $goodFilters = [
-	Model_Section::EXPORTYML_CLOTHERS => [
-		EXPORTXML_GROWTH	=> 'Рост',
-		EXPORTXML_SIZE		=> 'Размер',
-		EXPORTXML_COLOR		=> 'Цвет',
-		EXPORTXML_SEX		=> 'Пол'
-	]
+    Model_Section::EXPORTYML_CLOTHERS => [
+        EXPORTXML_GROWTH	=> 'Рост',
+        EXPORTXML_SIZE		=> 'Размер',
+        EXPORTXML_COLOR		=> 'Цвет',
+        EXPORTXML_SEX		=> 'Пол'
+    ]
 ];
 
 $filterClosures = [
 
-	EXPORTXML_SEX => function($name) {
-		return ['name' => preg_match('#^девочка$#iu', $name) ? 'Женский' : 'Мужской'];
-	},
-			
-	EXPORTXML_GROWTH => function($name) {
-		if ( ! preg_match('#^([0-9\- ]+(см|м))$#iu', $name, $matches)) return FALSE;
-		return [
-			'name' => (int)$matches[1],
-			'unit' => $matches[2]
-		];
-	},
+    EXPORTXML_SEX => function($name) {
+        return ['name' => preg_match('#^девочка$#iu', $name) ? 'Женский' : 'Мужской'];
+    },
 
-	EXPORTXML_SIZE => function($name) {
-		
-		if( ! preg_match('#^([0-9\- ]+)$#iu', $name, $matches)) return FALSE;
-		return [
-			'name' => (int)$matches[1],
-			'unit' => 'RU'
-		];
-	},
+    EXPORTXML_GROWTH => function($name) {
+        if ( ! preg_match('#^([0-9\- ]+(см|м))$#iu', $name, $matches)) return FALSE;
+        return [
+            'name' => (int)$matches[1],
+            'unit' => $matches[2]
+        ];
+    },
 
-	EXPORTXML_COLOR => function($name) {
-		return ['name' => mb_convert_case($name, MB_CASE_TITLE)];
-	},
+    EXPORTXML_SIZE => function($name) {
+
+        if( ! preg_match('#^([0-9\- ]+)$#iu', $name, $matches)) return FALSE;
+        return [
+            'name' => (int)$matches[1],
+            'unit' => 'RU'
+        ];
+    },
+
+    EXPORTXML_COLOR => function($name) {
+        return ['name' => mb_convert_case($name, MB_CASE_TITLE)];
+    },
 ];
 
 $goodFiltersLabels = [];
 foreach($goodFilters as $type => $filters) {
-	foreach($filters as $id => $label) {
-		$goodFiltersLabels[$id] = $label;
-	}
+    foreach($filters as $id => $label) {
+        $goodFiltersLabels[$id] = $label;
+    }
 }
 
 $goodFiltersIds = [];
@@ -132,52 +132,42 @@ for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size, $heap_number); $
         }
     }
 
-	$filterValues = [];
-	if ( ! empty($filterValuesIds)) {
-		
-		$filterValuesIds = array_keys( $filterValuesIds );
-		
-		$result = DB::select('name', 'id')
+    $filterValues = [];
+    if ( ! empty($filterValuesIds)) {
+
+        $filterValuesIds = array_keys( $filterValuesIds );
+
+        $result = DB::select('name', 'id')
             ->from('z_filter_value')
             ->where('id', 'IN', $filterValuesIds)
             ->execute();
 
-		while ($row = $result->current()) {
-			$filterValues[$row['id']] = $row['name'];
-			$result->next();
-		}
-	}
+        while ($row = $result->current()) {
+            $filterValues[$row['id']] = $row['name'];
+            $result->next();
+        }
+    }
 
     $images = Model_Good::many_images([$image_types], $good_ids);
+
     foreach($goods as &$g) { // тут передаем по ссылке, иначе послдний элемент дублируется
-		// Если одновременно мальчик-девочка, то пол не передаем
-		if ( ! empty($goodFiltersV[$g['id']][EXPORTXML_SEX]) && count($goodFiltersV[$g['id']][EXPORTXML_SEX]) > 1) {
-			unset($goodFiltersV[$g['id']][EXPORTXML_SEX]);
-		}
-		
+        // Если одновременно мальчик-девочка, то пол не передаем
+        if ( ! empty($goodFiltersV[$g['id']][EXPORTXML_SEX]) && count($goodFiltersV[$g['id']][EXPORTXML_SEX]) > 1) {
+            unset($goodFiltersV[$g['id']][EXPORTXML_SEX]);
+        }
+
 
         if ( ! empty($goodFiltersV[$g['id']])) {
-			foreach($goodFiltersV[$g['id']] as $filter_id => $valuesIds) {
-				foreach($valuesIds as $key => $valueId) {
-					$rr = $filterClosures[$filter_id]($filterValues[$valueId]);
-					if ($rr !== FALSE) $valuesIds[$key] = $rr;
-					break; // Яндекс примет только первое значение
-				}
-			}
-		}
-        //подготовка изображений      
-        $good_images = isset($images[$g['id']][$image_types]) ? $images[$g['id']][$image_types] : [];        
-        if(count($good_images)>1) {        
-            $good_images = array_reverse($good_images);
-            foreach ($good_images as $key => $value) {
-                if ($g['img1600'] && $value->ID == $g['img1600']) {
-                    $main_img = $value;
-                    unset($good_images[$key]);
-                    $good_images = array_merge([$main_img], $good_images);
-                    break;
+            foreach($goodFiltersV[$g['id']] as $filter_id => $valuesIds) {
+                foreach($valuesIds as $key => $valueId) {
+                    $rr = $filterClosures[$filter_id]($filterValues[$valueId]);
+                    if ($rr !== FALSE) $valuesIds[$key] = $rr;
+                    break; // Яндекс примет только первое значение
                 }
             }
         }
+        //подготовка изображений      
+        $good_images = isset($images[$g['id']][$image_types]) ? $images[$g['id']][$image_types] : [];
 
         fwrite($fp, View::factory('smarty:page/export/yml/good', [
             'g'             => $g,
@@ -203,5 +193,4 @@ fclose($fp);
 exec('gzip -c '.$filename.' > '.$filename.'.gz'); // делаем gzip
 unlink($lock_file);
 $memory = memory_get_usage() - $start_memory;
-Log::instance()->add(Log::INFO, 'Admitad Yandex Market XML file generated ok. Memory used: ' . $memory . '. Heap size: ' . $heap_size . '. Exported ' . $goods_written . ' offers.');
-
+Log::instance()->add(Log::INFO, 'Admitad YML file generated ok. Memory used: ' . $memory . '. Heap size: ' . $heap_size . '. Exported ' . $goods_written . ' offers.');

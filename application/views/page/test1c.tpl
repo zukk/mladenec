@@ -38,6 +38,7 @@
             <option>call</option>
             <option>price</option>
             <option>sms</option>
+            <option>calculate_delivery</option>
             <option>testreply</option>
             <option>astra/routes_export</option>
             <option>astra/orders_import</option>
@@ -102,6 +103,10 @@ $code @ $qty @ $price
 0012_mufta©1©840
 systDOST©1©250
 КОНЕЦЗАКАЗА
+    </pre>
+    <p><b>Calc delivery</b></p>
+    <pre>
+$ship_date @ $id @ $user_id @ $status @ $tmp @ $total @ $manager @ $courier @ $from @ $to @ $tmp
     </pre>
 </body>
 </html>

@@ -3,7 +3,7 @@
     <ul class="blocks-5">
         {foreach from=$filters item=f name=ff}
         <li class="{if $smarty.foreach.ff.index mod 5 == 0}block-first{/if}">
-            <strong>{$f->name}</strong>
+            {$f->section->name} : <strong>{$f->name}</strong>
             <ul>
             {foreach from=$f->values->order_by('sort', 'ASC')->order_by('name', 'DESC')->find_all() item=v}
                 <li>
