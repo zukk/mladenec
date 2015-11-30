@@ -12,7 +12,7 @@
         <a class="checkbox aaa {if $params.a|default:0}checked{/if}" href="{$sphinx->href(['a' => 1])}">Акции <b>!!!</b><i></i></a>
     {/if}
 
-    {if ! empty($sections) and not in_array($mode, ['section', 'tag', 'section_filter', 'pampers'])}
+    {if ! empty($sections) and empty($sphinx->_section)}
         <strong>Категории <i class="toggler"></i></strong>
         <ul>
         {foreach from=$sections item=c name=c}
