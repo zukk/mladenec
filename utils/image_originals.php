@@ -2,21 +2,30 @@
 
 require('../www/preload.php');
 
-ob_flush();
-flush();
-$n = 0;
+$from = 0;
 // получим все картинки товаров в нужном порядке
 
 do {
-    echo $n;
+    ob_end_flush();
+    flush();
+
+    $good_ids = DB::select('id')
+        ->from('z_good')
+        ->where('id', '>', $from)
+        ->order_by('id', 'desc')
+        ->limit(1000)
+        ->execute()
+        ->as_array('id', 'id');
+
+    $from = max($good_ids);
+    echo $from."::";
 
     $imgs = DB::select()
         ->from('z_good_img')
         //->where('good_id', '=', 197919)
         ->order_by('good_id')
         ->order_by('id')
-        ->limit(1000)
-        ->offset($n)
+        ->where('good_id', 'IN', $good_ids)
         ->execute()
         ->as_array();
 
@@ -87,5 +96,5 @@ do {
 
         flush();
     }
-    $n += 1000;
-} while(count($imgs) == 1000);
+
+} while(count($good_ids) == 1000);
