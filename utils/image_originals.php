@@ -49,8 +49,9 @@ do {
 
         // оригиналы картинок
         $_origs = ORM::factory('file')
+            ->where('MODULE_ID', '=', 'Model_Good')
             ->where('item_id', '=', $good_id)
-            ->where('original', '=', 1)
+            ->where('ID',  'NOT IN', array_keys($_imgs))
             ->find_all()
             ->as_array('ID');
 
