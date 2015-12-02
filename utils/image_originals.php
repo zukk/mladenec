@@ -12,12 +12,12 @@ do {
     $good_ids = DB::select('id')
         ->from('z_good')
         ->where('id', '>', $from)
-        ->order_by('id', 'desc')
+        ->order_by('id')
         ->limit(1000)
         ->execute()
         ->as_array('id', 'id');
 
-    if (empty($good_ids)) exit('all goods');
+    if (empty($good_ids)) exit('all goods from '.$from);
 
     $from = max($good_ids);
     echo $from."::";
