@@ -89,100 +89,103 @@
         {if not empty($filters)}
             {assign var=shownf value=0}
 			{foreach from=$filters item=fname key=fid name=filterz}
+                {if ! Model_Filter::binded_to($fid)}{* не показывать привязанные в первом уровне *}
 
-                {if $fname and not Model_Filter::big($fid) and empty($hide[$fid])}
-
-                    {if $sid == 29293 && $shownf eq 1} {* в этой категории бренды после первого фильтра *}
-                        {$branda}
-                    {/if}
-
-                    {assign var=shownf value=$shownf+1}
-
-                {assign var=under value=$fname|strpos:'_'}
-                {if $under}{assign var=fname value=$fname|mb_substr:$under}{/if}
-	            <strong>{$fname} <i class="toggler"></i></strong>
-
-                {if $fid eq Model_Filter::STROLLER_WEIGHT or $fid eq Model_Filter::STROLLER_SHASSI}
-                    {include file="common/menu/begunok.tpl"}
-                {else}
-                <ul>
-                    {if $fid eq Model_Filter::PURE_SOSTAV and Model_Filter::taste_on($params)}
-
-                        {if ! empty($params.f[Model_Filter::TASTE])}
-                            {assign var=checked value=1}
-                        {else}
-                            {assign var=checked value=0}
+                    {if $fname and not Model_Filter::big($fid) and empty($hide[$fid])}
+                        {if $sid == 29293 && $shownf eq 1} {* в этой категории бренды после первого фильтра *}
+                            {$branda}
                         {/if}
 
-                        {if $checked}
-                            {assign var=change value=-1}
-                        {else}
-                            {assign var=change value=1}
-                        {/if}
+                        {assign var=shownf value=$shownf+1}
 
-                        <li><a href="{$sphinx->href(['f' => [Model_Filter::TASTE => [$change]]])}"
-                            class="checkbox {if $checked}checked{/if}"><i></i> <b>Только выбранный состав</b></a></li>
-                    {/if}
+                    {assign var=under value=$fname|strpos:'_'}
+                    {if $under}{assign var=fname value=$fname|mb_substr:$under}{/if}
+                    <strong>{$fname} <i class="toggler"></i></strong>
 
-                    {foreach from=$vals[$fid] item=val name=b key=vid}
-	                    <li {if empty($toggler[$sid][$fid]) and empty($toggler[$mode][$query][$fid]) and ($smarty.foreach.b.iteration gt $column
-	                        or ($smarty.foreach.b.iteration eq $column and $smarty.foreach.b.total gt $column))}class="hide"{/if}>
+                    {if $fid eq Model_Filter::STROLLER_WEIGHT or $fid eq Model_Filter::STROLLER_SHASSI}
+                        {* бегунок по весу коляски или ширине шасси *}
+                        {include file="common/menu/begunok.tpl"}
+                    {else}
+                    <ul>
+                        {* состав пюре - искусственный фильтр по вкусам *}
+                        {if $fid eq Model_Filter::PURE_SOSTAV and Model_Filter::taste_on($params)}
 
-	                        {if ! empty($params.f[$fid]) AND in_array($vid, $params.f[$fid])}
-	                            {assign var=checked value=1}
-	                        {else}
-	                            {assign var=checked value=0}
-	                        {/if}
+                            {if ! empty($params.f[Model_Filter::TASTE])}
+                                {assign var=checked value=1}
+                            {else}
+                                {assign var=checked value=0}
+                            {/if}
 
                             {if $checked}
-                                {assign var=change value=-$vid}
+                                {assign var=change value=-1}
                             {else}
-                                {assign var=change value=$vid}
+                                {assign var=change value=1}
                             {/if}
 
-                            <a href="{$sphinx->href(['f' => [$fid => [$change]]])}" class="checkbox  {if empty($val.qty)}empty{/if} {if $checked}checked{/if}"  title="{$val.name} ({$val.qty})"><i></i> {$val.name|trim}{*nospace!*}<small>{$val.qty}</small></a>
-
-                            {if not empty($binded['v'][$vid])} {* привязанный фильтр *}
-                                {assign var=myfid value=$binded['v'][$vid]}
-                                {include file='common/menu/filter.tpl' vals=$vals[$myfid] fid=$myfid}
-                            {/if}
-
-	                    </li>
-                    {/foreach}
-                    {if $smarty.foreach.b.total gt $column}
-                        {assign var=delta value=$smarty.foreach.b.total-$column+1}
-                        <li>
-                            <a rel="{$fid}" rev="{$delta}" class="toggler
-                            {if empty($toggler[$sid][$fid]) and empty($toggler[$mode][$query][$fid])}">+ Показать ещё {$delta}{else} up">- Скрыть {$delta}{/if}
-                            </a>
-                        </li>
-                    {/if}
-
-                    {if $fid eq 2198}{* бегунок по весу для подгузников *}
-                        {if ! empty($vals[Model_Filter::WEIGHT])}
-                            {assign var=first value=array_shift($vals[Model_Filter::WEIGHT])}
-                            {assign var=last value=array_pop($vals[Model_Filter::WEIGHT])}
+                            <li><a href="{$sphinx->href(['f' => [Model_Filter::TASTE => [$change]]])}"
+                                class="checkbox {if $checked}checked{/if}"><i></i> <b>Только выбранный состав</b></a></li>
                         {/if}
 
-                        {assign var=maxw value=$last->name|default:35}
-                        {assign var=minw value=$first->name|default:0}
+                        {* показ значений фильтров *}
+                        {foreach from=$vals[$fid] item=val name=b key=vid}
+                            <li {if empty($toggler[$sid][$fid]) and empty($toggler[$mode][$query][$fid]) and ($smarty.foreach.b.iteration gt $column
+                                or ($smarty.foreach.b.iteration eq $column and $smarty.foreach.b.total gt $column))}class="hide"{/if}>
 
-                        <li style="padding-top:10px;">
-                            <div class="range" rev="weight">
-                                <span class="range-ui">
-                                    <span class="line" rel="weight" rev="weight"><i class="min"></i><i class="max"></i></span>
-                                </span>
-                                от<input class="min" rel="{$minw}" value="{$params.weight.0|default:''}" placeholder="{$minw}" />
-                                до<input class="max" rel="{$maxw}" value="{$params.weight.1|default:''}" placeholder="{$maxw}" />кг
-                            </div>
+                                {if ! empty($params.f[$fid]) AND in_array($vid, $params.f[$fid])}
+                                    {assign var=checked value=1}
+                                {else}
+                                    {assign var=checked value=0}
+                                {/if}
 
-                            <input id="weight" name="weight" type="hidden" value="{$weight|default:'0-35'}" data-url="{$sphinx->href(['weight' => 1])}"/>{* weight *}
-                        </li>
+                                {if $checked}
+                                    {assign var=change value=-$vid}
+                                {else}
+                                    {assign var=change value=$vid}
+                                {/if}
+
+                                <a href="{$sphinx->href(['f' => [$fid => [$change]]])}" class="checkbox  {if empty($val.qty)}empty{/if} {if $checked}checked{/if}"  title="{$val.name} ({$val.qty})"><i></i> {$val.name|trim}{*nospace!*}<small>{$val.qty}</small></a>
+
+                                {if not empty($binded['v'][$vid])} {* привязанный фильтр *}
+                                    {assign var=myfid value=$binded['v'][$vid]}
+                                    {include file='common/menu/filter.tpl' vals=$vals[$myfid] fid=$myfid}
+                                {/if}
+                            </li>
+                        {/foreach}
+                        {if $smarty.foreach.b.total gt $column}
+                            {assign var=delta value=$smarty.foreach.b.total-$column+1}
+                            <li>
+                                <a rel="{$fid}" rev="{$delta}" class="toggler
+                                {if empty($toggler[$sid][$fid]) and empty($toggler[$mode][$query][$fid])}">+ Показать ещё {$delta}{else} up">- Скрыть {$delta}{/if}
+                                </a>
+                            </li>
+                        {/if}
+
+                        {if $fid eq 2198}{* бегунок по весу для подгузников *}
+                            {if ! empty($vals[Model_Filter::WEIGHT])}
+                                {assign var=first value=array_shift($vals[Model_Filter::WEIGHT])}
+                                {assign var=last value=array_pop($vals[Model_Filter::WEIGHT])}
+                            {/if}
+
+                            {assign var=maxw value=$last->name|default:35}
+                            {assign var=minw value=$first->name|default:0}
+
+                            <li style="padding-top:10px;">
+                                <div class="range" rev="weight">
+                                    <span class="range-ui">
+                                        <span class="line" rel="weight" rev="weight"><i class="min"></i><i class="max"></i></span>
+                                    </span>
+                                    от<input class="min" rel="{$minw}" value="{$params.weight.0|default:''}" placeholder="{$minw}" />
+                                    до<input class="max" rel="{$maxw}" value="{$params.weight.1|default:''}" placeholder="{$maxw}" />кг
+                                </div>
+
+                                <input id="weight" name="weight" type="hidden" value="{$weight|default:'0-35'}" data-url="{$sphinx->href(['weight' => 1])}"/>{* weight *}
+                            </li>
+                        {/if}
+
+                    </ul>
                     {/if}
 
-                </ul>
-                {/if}
-
+                    {/if}
                 {/if}
 	        {/foreach}
 		{/if}
