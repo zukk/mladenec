@@ -17,6 +17,8 @@ do {
         ->execute()
         ->as_array('id', 'id');
 
+    if (empty($good_ids)) exit('all goods');
+
     $from = max($good_ids);
     echo $from."::";
 
@@ -65,7 +67,7 @@ do {
         // для всех оригиналов ищем картинку 1600 (должен быть id = id оригинала + 1)
         $orig_links = [];
         foreach ($_origs as $file) {
-            if (!empty($_imgs[$file->ID + 1])) {
+            if ( ! empty($_imgs[$file->ID + 1])) {
                 $orig_links[$file->ID + 1] = $file->ID; // есть ссылка на оригинал
                 echo 'found original for ' . $file->ID . "\n";
             }
