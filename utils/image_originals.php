@@ -50,9 +50,14 @@ do {
         // оригиналы картинок
         $_origs = ORM::factory('file')
             ->where('MODULE_ID', '=', 'Model_Good')
-            ->where('item_id', '=', $good_id)
-            ->where('ID',  'NOT IN', array_keys($_imgs))
-            ->find_all()
+            ->where('item_id', '=', $good_id);
+        if ( ! empty($_imgs)) {
+            $_origs->where('ID',  'NOT IN', array_keys($_imgs));
+        } else {
+            // картинок нет - все считаем оригиналами - пропускаем ход
+            continue;
+        }
+        $_origs = $_origs->find_all()
             ->as_array('ID');
 
         echo count($_origs) . " origs\n";
