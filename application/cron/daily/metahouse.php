@@ -74,7 +74,7 @@ $translate = array_flip([ // не нужно
 
 $zip = new ZipArchive();
 $zip->open($zip_name, ZIPARCHIVE::OVERWRITE);
-$zip->addFile($tmp_name);
+$zip->addFile($tmp_name, basename($tmp_name));
 $zip->close();
 
 echo 'well done';
