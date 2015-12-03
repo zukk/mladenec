@@ -11,7 +11,7 @@ require('../../../www/preload.php');
 
 $api_key = 'd5d47415-866a-415b-a63d-df6f94a1d998';
 $url = "http://api.metacommerce.ru/products?apiKey=".$api_key."&format=csv&"
-    ."fields=name,availability,sku.item.name,marketId,price.online.value,price.online.currency,sku.item.article,collectDate,source,url";
+    ."fields=name,url,marketId,source,collectDate,price.online.value,availability,sku.item.name,sku.item.article,sku.matchings";
 
 $post = [
     'request' => '{"requestFacets":true,"filters":{"source":["origin"],"availability":["inStock"],"markdown":["none"],
@@ -74,7 +74,7 @@ $translate = array_flip([ // не нужно
 
 $zip = new ZipArchive();
 $zip->open($zip_name, ZIPARCHIVE::OVERWRITE);
-$zip->addFile($tmp_name, basename($tmp_name));
+$zip->addFile($tmp_name);
 $zip->close();
 
 echo 'well done';
