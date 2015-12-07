@@ -10,6 +10,247 @@ class Controller_Page extends Controller_Frontend {
         if ($this->menu) $this->layout->menu = Model_Menu::html();
         parent::after();
     }
+
+    public function action_test()
+    {
+        //$wiki_categories = Model_Wikicategories::getwikicategories();
+        //print_r($wiki_categories);
+        //die();
+
+        /*$wiki_categories = ORM::factory('wikicategories')->find_all();
+
+        $cat = array();
+        foreach($wiki_categories as $key => $categories){
+            $cat[$key]['name'] = $categories->name;
+            $cat[$key]['category_id'] = $categories->category_id;
+            $cat[$key]['parent_id'] = $categories->parent_id;
+        }
+
+        View::factory('smarty:admin/section/form', ['wiki_categories'=>$cat])->render();*/
+
+
+        /*$xmlURL = APPPATH . "classes".DS."controller".DS."xml_feed.xml";
+        $sxml = simplexml_load_file($xmlURL);
+
+        foreach($sxml->categories as $category) {
+            foreach($category as $cat) {
+                $category_id = stripslashes($cat->attributes()['id']);
+                $parent_id = stripslashes($cat->attributes()['parent_id']);
+                $name = stripslashes((string)$cat->name);
+
+                $wiki_categories = ORM::factory('wiki_categories');
+                $wiki_categories->category_id = $category_id;
+                $wiki_categories->parent_id = $parent_id;
+                $wiki_categories->name = $name;
+                $wiki_categories->save();
+            }
+        }*/
+
+
+
+
+        /*$start_memory = memory_get_usage();
+        $lock_file = APPPATH.'cache/wikimart_yml_on';
+
+        if (file_exists($lock_file)) exit('Already running, lock file found at '.$lock_file);
+        touch($lock_file);
+
+        $filename = APPPATH . 'cache/wikimart_yml.xml';
+        //$heap_size = 1000; // Сколько товаров писать в файл за 1 раз
+        $heap_size = 10; // Сколько товаров писать в файл за 1 раз
+
+        $fp = fopen($filename, 'w');
+
+        fwrite($fp, '<?xml version="1.0" encoding="utf-8"?>
+        <!DOCTYPE yml_catalog SYSTEM "shops.dtd">
+        <yml_catalog date="' . date('Y-m-d H:i') . '">
+            <shop>
+                <name>ООО &quot;TД Младенец.РУ&quot;</name>
+                <company>Младенец.РУ</company>
+                <url>http://www.mladenec-shop.ru/</url>
+                <currencies><currency id="RUR" rate="1" plus="0"/></currencies>
+                <categories>');
+
+                $catalog = Model_Section::get_catalog();
+                $id2Catalog = [];
+
+                foreach($catalog as $item) {
+                    $id2Catalog[$item->id] = $item;
+                    if ( ! empty($item->children)) {
+                        foreach($item->children as $child) {
+                            $id2Catalog[$child->id] = $child;
+                        }
+                    }
+                }
+
+                fwrite($fp, View::factory('smarty:page/export/yml/categories', ['catalog' => $catalog]));
+                fwrite($fp, View::factory('smarty:page/export/wikimart/categories', ['catalog' => $catalog]));
+
+                fwrite($fp, '</categories><local_delivery_cost>350</local_delivery_cost><offers>');
+                $goods_written = 0;
+
+                define('EXPORTXML_SEX', 1951);
+                define('EXPORTXML_COLOR', 1952);
+                define('EXPORTXML_SIZE', 1949);
+                define('EXPORTXML_GROWTH', 1950);
+
+                $goodFilters = [
+                    Model_Section::EXPORTYML_CLOTHERS => [
+                        EXPORTXML_GROWTH	=> 'Рост',
+                        EXPORTXML_SIZE		=> 'Размер',
+                        EXPORTXML_COLOR		=> 'Цвет',
+                        EXPORTXML_SEX		=> 'Пол'
+                    ]
+                ];
+
+                $filterClosures = [
+
+                    EXPORTXML_SEX => function($name) {
+                        return ['name' => preg_match('#^девочка$#iu', $name) ? 'Женский' : 'Мужской'];
+                    },
+
+                    EXPORTXML_GROWTH => function($name) {
+                        if ( ! preg_match('#^([0-9\- ]+(см|м))$#iu', $name, $matches)) return FALSE;
+                        return [
+                            'name' => (int)$matches[1],
+                            'unit' => $matches[2]
+                        ];
+                    },
+
+                    EXPORTXML_SIZE => function($name) {
+
+                        if( ! preg_match('#^([0-9\- ]+)$#iu', $name, $matches)) return FALSE;
+                        return [
+                            'name' => (int)$matches[1],
+                            'unit' => 'RU'
+                        ];
+                    },
+
+                    EXPORTXML_COLOR => function($name) {
+                        return ['name' => mb_convert_case($name, MB_CASE_TITLE)];
+                    },
+                ];
+
+                $goodFiltersLabels = [];
+                foreach($goodFilters as $type => $filters) {
+                    foreach($filters as $id => $label) {
+                        $goodFiltersLabels[$id] = $label;
+                    }
+                }
+
+                $goodFiltersIds = [];
+                $image_types = '500';
+                for ($heap_number = 0, $goods = Model_Good::for_yml($heap_size, $heap_number); $heap_number < $heap_size; $heap_number++) {
+                    $c = 0;
+                    $good_ids = [];
+                    foreach ($goods as &$g) {
+                        if ($id2Catalog[$g['section_id']]->parent_id > 0) {
+                            $section = $id2Catalog[$id2Catalog[$g['section_id']]->parent_id];
+                        } else {
+                            $section = $id2Catalog[$g['section_id']];
+                        }
+
+                        $g['real_section'] = $section->id;
+
+                        //if ($section->is_cloth()) {
+                            $goodFiltersIds[1][] = $g['id'];
+                        //}
+                        $good_ids[] = $g['id'];
+                    }
+
+                    $goodFiltersV = [];
+                    if ( ! empty($goodFiltersIds)) {
+                        foreach ($goodFiltersIds as $filterType => $ids) {
+
+                            $filtersIds = array_keys($goodFilters[$filterType]);
+
+                            $result = DB::select('value_id', 'good_id', 'filter_id')
+                                ->from('z_good_filter')
+                                ->where('filter_id', 'IN', $filtersIds)
+                                ->where('good_id', 'IN', $ids)
+                                ->execute();
+
+                            $filterValuesIds = [];
+                            while ($row = $result->current()) {
+                                $filterValuesIds[$row['value_id']] = 1;
+                                $result->next();
+                                $goodFiltersV[$row['good_id']][$row['filter_id']][] = $row['value_id'];
+                            }
+                        }
+                    }
+
+                    $filterValues = [];
+                    if ( ! empty($filterValuesIds)) {
+
+                        $filterValuesIds = array_keys( $filterValuesIds );
+
+                        $result = DB::select('name', 'id')
+                            ->from('z_filter_value')
+                            ->where('id', 'IN', $filterValuesIds)
+                            ->execute();
+
+                        while ($row = $result->current()) {
+                            $filterValues[$row['id']] = $row['name'];
+                            $result->next();
+                        }
+                    }
+
+                    $images = Model_Good::many_images([$image_types], $good_ids);
+                    foreach($goods as &$g) { // тут передаем по ссылке, иначе послдний элемент дублируется
+                        // Если одновременно мальчик-девочка, то пол не передаем
+                        if ( ! empty($goodFiltersV[$g['id']][EXPORTXML_SEX]) && count($goodFiltersV[$g['id']][EXPORTXML_SEX]) > 1) {
+                            unset($goodFiltersV[$g['id']][EXPORTXML_SEX]);
+                        }
+
+
+                        if ( ! empty($goodFiltersV[$g['id']])) {
+                            foreach($goodFiltersV[$g['id']] as $filter_id => $valuesIds) {
+                                foreach($valuesIds as $key => $valueId) {
+                                    $rr = $filterClosures[$filter_id]($filterValues[$valueId]);
+                                    if ($rr !== FALSE) $valuesIds[$key] = $rr;
+                                    break; // Яндекс примет только первое значение
+                                }
+                            }
+                        }
+                        //подготовка изображений
+                        $good_images = [];
+                        if (isset($images[$g['id']][$image_types]) && count($images[$g['id']][$image_types]) > 0) {
+                            //загрузка только 1 фото на товар
+                            $good_images[] = array_pop($images[$g['id']][$image_types]);
+
+                        } elseif ( ! empty($g['img1600'])) {
+                            $good_images[] = ORM::factory('file', $g['img1600']); // если нет картинок никаких, добавим 1600 - но она с вотермаркой
+                        }
+
+                        fwrite($fp, View::factory('smarty:page/export/wikimart/good', [
+                            'g'             => $g,
+                            'images'        => $good_images,
+                            'section'       => $id2Catalog[$g['real_section']],
+                            'filter_labels' => $goodFiltersLabels,
+                            'good_filter'   => ! empty($goodFiltersV[$g['id']]) ? $goodFiltersV[$g['id']] : [],
+                            'label'         => 'wikimart.ru'
+                        ]));
+                        $goods_written++;
+                    }
+
+                    gc_collect_cycles();
+                }
+
+                fwrite($fp,'</offers>
+        </shop>
+        </yml_catalog>
+        ');
+
+        fclose($fp);
+
+        exec('gzip -c '.$filename.' > '.$filename.'.gz'); // делаем gzip
+        unlink($lock_file);
+        $memory = memory_get_usage() - $start_memory;
+        Log::instance()->add(Log::INFO, 'Wikimart XML file generated ok. Memory used: ' . $memory . '. Heap size: ' .
+            $heap_size . '. Exported ' . $goods_written . ' offers.');*/
+    }
+
+
     /**
      * Зачистка откомпиленных смарти-шаблонов и кеша
      */
@@ -117,6 +358,8 @@ class Controller_Page extends Controller_Frontend {
 			
         $this->menu = FALSE;
 
+        Kohana::$server_name = 'mladenec';
+
         $vitrina = Kohana::$server_name;
 
         if (Kohana::$server_name == 'ogurchik') {
@@ -188,7 +431,7 @@ class Controller_Page extends Controller_Frontend {
             $this->layout->description = 'Товары для детей по выгодным ценам – интернет магазин Младенец.ру. Покупайте игрушки, детское питание, подгузники, детский транспорт и многое другое с доставкой по Москве, Санкт-Петербургу и другим городам России.';
             $this->layout->keywords = 'детские товары, товары для детей, товары для ребенка, детский интернет магазин, младенец ру, магазин младенец, москва, купить товары для детей, продажа детских товаров';
         }
-        
+
         // цены для любимых клиентов
         if ( ! empty($good_ids)) $this->tmpl['price']= Model_Good::get_status_price(1, $good_ids);
         // картинки для товаров - одним запросом
@@ -210,7 +453,7 @@ class Controller_Page extends Controller_Frontend {
         
         $active_action_ids = DB::select('id')->from('z_action')->where('active','=',1)->execute()->as_array('id','id');
         $active_action_ids[] = 0; // not binded to actions too
-        
+
         $this->tmpl['slider'] = ORM::factory('slider_banner')
             ->where('active', '=',  1)
             ->where('slider_id', '=',  $slider_id)
@@ -226,7 +469,7 @@ class Controller_Page extends Controller_Frontend {
             ->order_by('order','ASC')
             ->find_all()
             ->as_array();
-        
+
         $this->layout->body = View::factory('smarty:index/'.Kohana::$server_name, $this->tmpl);
     }
 
@@ -768,7 +1011,17 @@ class Controller_Page extends Controller_Frontend {
         $filename = APPPATH . 'cache/yml.xml';
         $this->return_xml(file_get_contents($filename));
     }
-    
+
+    /**
+     * YML для Wikimart
+     */
+    public function action_wikimart_yml()
+    {
+        $this->menu = FALSE;
+        $filename = APPPATH . 'cache/wikimart_yml.xml';
+        $this->return_xml(file_get_contents($filename));
+    }
+
      /**
      * YML для Findologic
      */

@@ -57,7 +57,8 @@ I18n::lang('en-us');
  * Note: If you supply an invalid environment name, a PHP warning will be thrown
  * saying "Couldn't find constant Kohana::<INVALID_ENV_NAME>"
  */
-Kohana::$environment = Kohana::PRODUCTION; // БОЕВОЙ САЙТ!!!
+//Kohana::$environment = Kohana::PRODUCTION; // БОЕВОЙ САЙТ!!!
+Kohana::$environment = Kohana::DEVELOPMENT; // САЙТ НА РАЗРАБОТКЕ !!!
 /**
  * Initialize Kohana, setting the default options.
  *
@@ -323,7 +324,7 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('search_suggest_help', 'suggest/example')
 		->defaults(array('controller' => 'search', 'action' => 'example'));
 
-	Route::set('search', 'search')
+	Route::set('search', 'search(/index.php)')
 		->defaults(array('controller' => 'product', 'action' => 'search'));
 
 	Route::set('cart', 'personal/basket.php')
@@ -399,12 +400,9 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 
 	/* Бренды */
 	Route::set('brands', 'about/brands')
-		->defaults(array('controller' => 'brand', 'action' => 'list'));
+		->defaults(array('controller' => 'brands', 'action' => 'list'));
 
-    Route::set('brand', 'brand/<translit>', array('translit' => '[a-z0-9_-]+'))
-        ->defaults(array('controller' => 'brand', 'action' => 'view'));
-
-    // отзывы
+	// отзывы                
 	Route::set('comment', 'about/review/<id>', array('id' => '\d+'))
 		->defaults(array('controller' => 'comments', 'action' => 'view')); 
 
@@ -471,16 +469,14 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 		->defaults(array('controller' => 'admin', 'action' => 'pricelab'));
 
 	Route::set('admin_tag_excel', 'od-men/tag/excel')
-		->defaults(array('controller' => 'admin', 'action' => 'tag_excel'));
-
-    Route::set('admin_tag_recount', 'od-men/tag/recount')
-        ->defaults(array('controller' => 'admin_ajax', 'action' => 'tag_recount'));
-
-    Route::set('admin_order_excel', 'od-men/order_excel')
+		->defaults(array('controller' => 'admin', 'action' => 'tag_excel'));        
+        
+	Route::set('admin_order_excel', 'od-men/order_excel')
 		->defaults(array('controller' => 'admin', 'action' => 'order_excel'));
         
-    Route::set('admin_user_excel', 'od-men/user_excel')
+        Route::set('admin_user_excel', 'od-men/user_excel')
 		->defaults(array('controller' => 'admin', 'action' => 'user_excel'));
+
 
     Route::set('admin_order_card', 'od-men/order_card')
         ->defaults(array('controller' => 'admin', 'action' => 'order_card'));
@@ -493,6 +489,9 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 
 	Route::set('admin_direct', 'od-men/direct')
 		->defaults(array('controller' => 'admin', 'action' => 'direct'));
+
+	Route::set('admin_tagbylink', 'od-men/tagbylink')
+		->defaults(array('controller' => 'admin', 'action' => 'tagbylink'));
 
 	Route::set('admin_tag_excel', 'od-men/tag_excel')
 		->defaults(array('controller' => 'admin', 'action' => 'tag_excel'));
@@ -601,7 +600,10 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	// статика
 	Route::set('yml', 'export/yml.xml')
 		->defaults(array('controller' => 'page', 'action' => 'yml'));
-        
+
+    Route::set('wikimart', 'export/wikimart.xml')
+		->defaults(array('controller' => 'page', 'action' => 'wikimart_yml'));
+
 	Route::set('findologic_yml', 'export/findologic_yml.xml')
 		->defaults(array('controller' => 'page', 'action' => 'findologic_yml'));
 
@@ -786,6 +788,7 @@ if ( ! empty($_SERVER['REQUEST_URI'])) {
         $hh[] = "http://tracking.findologic.com";
 
 		$hh[] = "http://code.directadvert.ru"; // пиксель
+
 
 		$contentPolicy =
 			"Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data: ".implode(' ', $hh)

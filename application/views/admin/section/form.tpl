@@ -24,6 +24,50 @@
                     <input type="file" name="img93" />
                 </p>
             </td></tr>
+            <tr>
+                <td colspan="2">
+                    <p>
+                        <label for="name">Wikimart_category</label>
+                    </p>
+                    {$wiki_categories = ORM::factory('wikicategories')->find_all()->as_array()}
+
+                    {assign var='res' value = array()}
+                    {foreach from=$wiki_categories key=k item=categories}
+                        {$res[$categories->parent_id][$categories->category_id] = $categories}
+                    {/foreach}
+
+                    {function build_tree res=0 parent_id=0 only_parent=false}
+                        {if $parent_id ==0}
+                            <div id="jstree" style="display:none">
+                        {/if}
+                        {if (is_array($res) and isset($res.$parent_id))}
+                            <ul>
+                                {if ($only_parent == false)}
+                                    {foreach $res.$parent_id as $cat}
+                                        <li class="level_{$cat->id}" id="{$cat->id}">
+                                            {$cat->name}
+                                            {build_tree res=$res parent_id=$cat->category_id}
+                                        </li>
+                                    {/foreach}
+                                {*elseif (is_numeric($only_parent))}
+                                    {$cat = $res.parent_id.only_parent}
+                                    <li>
+                                        {$cat->name}
+                                        {build_tree res=$res parent_id=$cat->category_id}
+                                    </li>
+                                    *}
+                                {/if}
+                            </ul>
+                        {/if}
+                        {if $parent_id ==0}
+                            </div>
+                        {/if}
+                    {/function}
+
+                    {build_tree res=$res parent_id=0}
+                </td>
+            </tr>
+
             {if $i->parent_id}
                 <tr><td><b>Родитель:</b></td><td><a href="{Route::url('admin_edit',['model' => 'section', 'id' => $i->parent_id])}" target="_blank">{$i->parent->name}</a></td></tr>
                 <tr><td colspan="2">
@@ -60,6 +104,7 @@ $(function() {
         $('> * > input[name^=sort]', ul).each(function(index, item) { $(this).val(index)});
     };
 
+
     $(".sortableItems").sortable({
         axis: "y",
         stop: resort
@@ -72,6 +117,65 @@ $(function() {
             $("#sub_filter").val($(this).attr('rel'));
         }
     });
+});
+$(function(){
+    // create an instance when the DOM is ready
+    $.jstree.defaults.core.themes.variant = "small";
+    $('#jstree').on('loaded.jstree', function() {
+        $('#jstree').jstree(true).select_node('#3');
+    });
+    $('#jstree').jstree({
+        "core" : {
+            "multiple" : false,
+            "load_open" : true
+        },
+        "checkbox" : {
+            "keep_selected_style" : false
+        },
+        "plugins" : [ "wholerow", "checkbox" ]
+    });
+
+    //$('#jstree').load_all();
+    // bind to events triggered on the tree
+    $('#jstree').on("changed.jstree", function (e, data) {
+        console.log(data.selected);
+        var id_ckecked = data.selected;
+        //alert(id_ckecked.length);
+
+        var wikimart_cat_id = $("#wikimart_cat_id"); // input field
+
+        if(id_ckecked.length == 0 || id_ckecked.length == 1) {
+            if(wikimart_cat_id.length) {
+                $("#wikimart_cat_id").val(id_ckecked);
+            } else {
+                $('<input>').attr({
+                    type: 'hidden',
+                    id: 'wikimart_cat_id',
+                    name: 'wikimart_cat_id',
+                    value: id_ckecked
+                }).appendTo('#jstree');
+            }
+        } else {
+            $("#wikimart_cat_id").val('');
+        }
+    });
+    $('#jstree').show();
+
+    var wikimart_cat_id_db = $("#3").find("li");
+    var test = wikimart_cat_id_db.attr('class');
+    //alert(test);
+
+    /*$('li').each(function(i, elem){
+        if($(this).hasClass("level_1")){
+            var te = $('li').children();
+            //console.log(te);
+            var test = elem.attr('id');
+            alert(test);
+            return false;
+        }
+    });*/
+
+
 });
 </script>
 

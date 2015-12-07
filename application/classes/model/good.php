@@ -998,15 +998,17 @@ class Model_Good extends ORM {
         $query = DB::select('good.*', 'file.SUBDIR', 'file.FILE_NAME','prop.img1600','prop.img500','prop.desc',
                 ['brand.name','brand_name'],
                 ['section.name','section_name'],
-                ['section.market_category','market_category']
+                ['section.market_category','market_category'],
+                ['country.name', 'country_name']
             )->from(['z_good', 'good'])
 
                 ->join(['z_good_prop',   'prop'])    ->on('good.id',         '=', 'prop.id')
                 ->join(['z_brand',       'brand'])   ->on('good.brand_id',   '=', 'brand.id')
                 ->join(['z_section',     'section']) ->on('good.section_id', '=', 'section.id')
                 ->join(['z_group',       'group'])   ->on('good.group_id',   '=', 'group.id')
-                ->join(['b_file',        'file'])    ->on('prop.img1600',     '=', 'file.id')
-                
+                ->join(['b_file',        'file'])    ->on('prop.img1600',    '=', 'file.id')
+                ->join(['z_country',     'country']) ->on('good.country_id', '=', 'country.id')
+
                 ->where('good.show',      '=', 1)
                 ->where('good.qty', '!=', '0')
                 ->where('good.section_id',  '>', 0)

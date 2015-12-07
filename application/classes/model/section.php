@@ -42,6 +42,7 @@ class Model_Section extends ORM {
         'empty_date' => '',
         'market_category' => '',
         'roditi' => '',
+        'wikimart_cat_id' => '',
     ];
 
     const SHOW_OUT_OF_STOCK 	     = 0;

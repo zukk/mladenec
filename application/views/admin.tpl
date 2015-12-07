@@ -7,9 +7,11 @@
     <link href="/c/admin/kube.min.css" rel="stylesheet" type="text/css" />
     <link href="/c/admin/admin.css" rel="stylesheet" type="text/css" />
     <link href="/c/admin/filemanager.css" rel="stylesheet" type="text/css" />
+    <link href="/c/admin/jstree/style.css" rel="stylesheet" type="text/css" />
     <link href="/c/admin/jquery-ui-redmond/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css" />
     <link href="/j/redactor/redactor.css" rel="stylesheet" type="text/css" />
 
+    <script src="/j/admin/jstree/jquery.js"></script>
     <script src="/j/jquery.min.js"></script>
     <script src="/j/admin/jquery-ui-1.10.4.custom.min.js"></script>
     <script src="/j/admin/jquery.ui.datepicker-ru.js"></script>
@@ -28,6 +30,8 @@
     <script src="/j/redactor/ru.js"></script>
 
     <script src="/j/admin/filemanager.js"></script>
+    <script src="/j/admin/jstree/jstree.min.js"></script>
+
     <script src="/j/admin/admin.js?{$smarty.now|date_format:'%y%m%d'}"></script>
 
     <link rel="shortcut icon" href="/i/favicon.ico" type="image/x-icon" />

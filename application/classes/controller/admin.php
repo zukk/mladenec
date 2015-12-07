@@ -56,6 +56,7 @@ class Controller_Admin extends Controller_Authorised {
      */
     public function before()
     {
+
         $this->layout = View::factory('smarty:admin', $this->tmpl);
         
         parent::before();
