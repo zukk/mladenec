@@ -1,0 +1,1 @@
+ALTER TABLE `z_section` ADD `wikimart_cat_id` INT(11) NOT NULL AFTER `roditi`;
