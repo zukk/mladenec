@@ -27,7 +27,7 @@
             <tr>
                 <td colspan="2">
                     <p>
-                        <label for="name">Wikimart_category</label>
+                        <label for="name">Викимарт категории</label>
                     </p>
                     {$wiki_categories = ORM::factory('wikicategories')->find_all()->as_array()}
 
@@ -49,13 +49,6 @@
                                             {build_tree res=$res parent_id=$cat->category_id}
                                         </li>
                                     {/foreach}
-                                {*elseif (is_numeric($only_parent))}
-                                    {$cat = $res.parent_id.only_parent}
-                                    <li>
-                                        {$cat->name}
-                                        {build_tree res=$res parent_id=$cat->category_id}
-                                    </li>
-                                    *}
                                 {/if}
                             </ul>
                         {/if}
@@ -65,6 +58,7 @@
                     {/function}
 
                     {build_tree res=$res parent_id=0}
+                    <input type="hidden" name="wikimart_cat_id" id="wikimart_cat_id" value="{$i->wikimart_cat_id}">
                 </td>
             </tr>
 
@@ -103,14 +97,11 @@ $(function() {
         var ul = $(ui.item).parent();
         $('> * > input[name^=sort]', ul).each(function(index, item) { $(this).val(index)});
     };
-
-
     $(".sortableItems").sortable({
         axis: "y",
         stop: resort
     });
     $(".sortableItems").disableSelection();
-
     $('input[name="settings[sub]"]').change(function() {
         $("#sub_menu").toggle($(this).val() != {Model_Section::SUB_NO});
         if ($(this).attr('rel')) {
@@ -121,13 +112,15 @@ $(function() {
 $(function(){
     // create an instance when the DOM is ready
     $.jstree.defaults.core.themes.variant = "small";
-    $('#jstree').on('loaded.jstree', function() {
-        $('#jstree').jstree(true).select_node('#3');
+    $('#jstree').on('loaded.jstree', function(e, data) {
+        var wikimart_cat_id =$("#wikimart_cat_id").val();
+        if(wikimart_cat_id) {
+            $('#jstree').jstree(true).select_node('#' + wikimart_cat_id);
+        }
     });
     $('#jstree').jstree({
         "core" : {
-            "multiple" : false,
-            "load_open" : true
+            "multiple" : false
         },
         "checkbox" : {
             "keep_selected_style" : false
@@ -135,45 +128,19 @@ $(function(){
         "plugins" : [ "wholerow", "checkbox" ]
     });
 
-    //$('#jstree').load_all();
     // bind to events triggered on the tree
     $('#jstree').on("changed.jstree", function (e, data) {
         console.log(data.selected);
         var id_ckecked = data.selected;
-        //alert(id_ckecked.length);
-
-        var wikimart_cat_id = $("#wikimart_cat_id"); // input field
 
         if(id_ckecked.length == 0 || id_ckecked.length == 1) {
-            if(wikimart_cat_id.length) {
-                $("#wikimart_cat_id").val(id_ckecked);
-            } else {
-                $('<input>').attr({
-                    type: 'hidden',
-                    id: 'wikimart_cat_id',
-                    name: 'wikimart_cat_id',
-                    value: id_ckecked
-                }).appendTo('#jstree');
-            }
+            $("#wikimart_cat_id").val(id_ckecked);
         } else {
-            $("#wikimart_cat_id").val('');
+            var id_ckecked_z = data.selected[0];
+            $("#wikimart_cat_id").val(id_ckecked_z);
         }
     });
     $('#jstree').show();
-
-    var wikimart_cat_id_db = $("#3").find("li");
-    var test = wikimart_cat_id_db.attr('class');
-    //alert(test);
-
-    /*$('li').each(function(i, elem){
-        if($(this).hasClass("level_1")){
-            var te = $('li').children();
-            //console.log(te);
-            var test = elem.attr('id');
-            alert(test);
-            return false;
-        }
-    });*/
 
 
 });

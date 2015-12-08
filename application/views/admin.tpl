@@ -11,7 +11,6 @@
     <link href="/c/admin/jquery-ui-redmond/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css" />
     <link href="/j/redactor/redactor.css" rel="stylesheet" type="text/css" />
 
-    <script src="/j/admin/jstree/jquery.js"></script>
     <script src="/j/jquery.min.js"></script>
     <script src="/j/admin/jquery-ui-1.10.4.custom.min.js"></script>
     <script src="/j/admin/jquery.ui.datepicker-ru.js"></script>

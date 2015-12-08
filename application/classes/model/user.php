@@ -117,8 +117,7 @@ class Model_User extends ORM {
 
             $user = new Model_User;
 
-            $user
-                //->password($password) // todo temp
+            $user->password($password)
                 ->where_open()
                     ->where('login', '=', $login)
                     ->or_where('email', '=', $login)
