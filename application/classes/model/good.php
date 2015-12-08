@@ -48,6 +48,7 @@ class Model_Good extends ORM {
     protected $_belongs_to = array(
         'group' => array('model' => 'group', 'foreign_key' => 'group_id'),
         'section' => array('model' => 'section', 'foreign_key' => 'section_id'),
+        //'wiki_categories' => array('model' => 'wikicategories', 'foreign_key' => 'wikimart_cat_id'),//???
         'brand' => array('model' => 'brand', 'foreign_key' => 'brand_id'),
         'country' => array('model' => 'country', 'foreign_key' => 'country_id'),
         'promo' => array('model' => 'promo', 'foreign_key' => 'promo_id'),
@@ -1005,8 +1006,8 @@ class Model_Good extends ORM {
                 ->join(['z_brand',       'brand'])   ->on('good.brand_id',   '=', 'brand.id')
                 ->join(['z_section',     'section']) ->on('good.section_id', '=', 'section.id')
                 ->join(['z_group',       'group'])   ->on('good.group_id',   '=', 'group.id')
-                ->join(['b_file',        'file'])    ->on('prop.img1600',     '=', 'file.id')
-                
+                ->join(['b_file',        'file'])    ->on('prop.img1600',    '=', 'file.id')
+
                 ->where('good.show',      '=', 1)
                 ->where('good.qty', '!=', '0')
                 ->where('good.section_id',  '>', 0)
@@ -1032,6 +1033,63 @@ class Model_Good extends ORM {
          // $query->where('prop.to_yandex', '!=', 0);
 		//	$query->where('good.big','=', 0);
         }
+        $goods = $query->execute()->as_array('id');
+
+        if (count($goods)) return $goods;
+        else return FALSE;
+    }
+
+    /**
+     * вытаскивает товары для XML пачками
+     *
+     * @param int $heap_size сколько товаров вытаскивать в 1 пачке
+     * @param int $heap_number сколько пачек уже вытащено
+     * @param array $where - доп условия
+     * @return boolean
+     */
+    public static function for_wikimart_yml($heap_size, $heap_number, $where = NULL)
+    {
+        $active_top_sections = DB::select('z_section.id')
+                ->from('z_section')
+                ->where('active','=',1)
+                ->where('wikimart_cat_id','>',0)
+                ->execute()->as_array();
+
+        $query = DB::select('good.*', 'file.SUBDIR', 'file.FILE_NAME','prop.img1600','prop.img500','prop.desc',
+                ['brand.name','brand_name'],
+                ['section.name','section_name'],
+                ['section.market_category','market_category'],
+                ['country.name', 'country_name']
+            )->from(['z_good', 'good'])
+
+                ->join(['z_good_prop',    'prop'])     ->on('good.id',         '=', 'prop.id')
+                ->join(['z_brand',        'brand'])    ->on('good.brand_id',   '=', 'brand.id')
+                ->join(['z_section',      'section'])  ->on('good.section_id', '=', 'section.id')
+                ->join(['z_group',        'group'])    ->on('good.group_id',   '=', 'group.id')
+                ->join(['b_file',         'file'])     ->on('prop.img1600',    '=', 'file.id')
+                ->join(['z_country',      'country'])  ->on('good.country_id', '=', 'country.id')
+
+                ->where('good.show',        '=', 1)
+                ->where('good.qty',         '!=', '0')
+                ->where('good.section_id',  '>', 0)
+                ->where('good.brand_id',    '>', 0)
+                ->where('good.group_id',    '>', 0)
+
+                ->where('prop.img1600',     '>', 0)
+                ->where('section.active',   '=', 1)
+                ->where_open()
+                    ->where('section.id',  'IN', $active_top_sections)
+                ->where_close()
+                ->where('group.active',     '=', 1)
+                ->where('brand.active',     '=', 1)
+                ->order_by('good.id')
+                ->offset($heap_number * $heap_size)
+                ->limit($heap_size);
+
+        if ( ! empty($where)) {
+            foreach($where as $w) $query->where($w[0], $w[1], $w[2]);
+        }
+
         $goods = $query->execute()->as_array('id');
 
         if (count($goods)) return $goods;

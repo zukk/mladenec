@@ -116,6 +116,7 @@ class Model_User extends ORM {
             $password = $data['password'];
 
             $user = new Model_User;
+
             $user->password($password)
                 ->where_open()
                     ->where('login', '=', $login)

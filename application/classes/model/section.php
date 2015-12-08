@@ -16,6 +16,7 @@ class Model_Section extends ORM {
         'img93' => ['model' => 'file', 'foreign_key' => 'image93'],
         'parent' => ['model' => 'section', 'foreign_key' => 'parent_id'],
         'menu_img' => ['model' => 'file', 'foreign_key' => 'img_menu'],
+        'wiki_categories' => ['model' => 'wikicategories', 'foreign_key' => 'wikimart_cat_id'],
     ];
 
     protected $_has_many = [
@@ -42,6 +43,7 @@ class Model_Section extends ORM {
         'empty_date' => '',
         'market_category' => '',
         'roditi' => '',
+        'wikimart_cat_id' => '',
     ];
 
     const SHOW_OUT_OF_STOCK 	     = 0;
@@ -191,7 +193,7 @@ class Model_Section extends ORM {
         $cache_key = self::CACHE_KEY_CATALOG.md5(DOCROOT).$sVitrina.intval($show_inactive);
         $catalog_cache = Cache::instance()->get($cache_key);  
         if ( ! empty($catalog_cache)) $catalog = unserialize($catalog_cache);
-        //$catalog = FALSE;
+        $catalog = FALSE;
         if (empty($catalog))
         {
             $return = ORM::factory('section')
@@ -250,6 +252,83 @@ class Model_Section extends ORM {
             }
 
             Cache::instance()->set($cache_key, serialize($catalog));
+        }
+
+        return $catalog;
+    }
+
+    public static function get_wikimart_catalog($show_inactive = FALSE, $sVitrina = null)
+    {
+        $catalog = [];
+
+        $sVitrina = (is_null($sVitrina) ? Kohana::$server_name : $sVitrina);
+        $cache_key = self::CACHE_KEY_CATALOG.md5(DOCROOT).$sVitrina.intval($show_inactive);
+        // $catalog_cache = Cache::instance()->get($cache_key);
+        //if ( ! empty($catalog_cache)) $catalog = unserialize($catalog_cache);
+        //$catalog = FALSE;
+        $catalog = '';
+        if (empty($catalog))
+        {
+            $return = ORM::factory('section')
+                ->with('wiki_categories')
+                ->with('menu_img')
+                ->order_by('parent_id')
+                ->order_by('sort');
+
+            if ( ! empty($sVitrina)) $return->where('vitrina', '=', $sVitrina);
+            if ($show_inactive === FALSE) $return->where('active', '=', 1);
+
+            $rarray = $return->find_all();
+            $catalog = $zombies = array();
+
+            foreach($rarray as $item) {
+                if ($item->wikimart_cat_id != 0) {
+                    if ($item->parent_id != 0) {
+                        if (!empty($catalog[$item->parent_id])) {
+                            $catalog[$item->parent_id]->children[$item->id] = $item;
+                            if ($item->settings['sub'] != Model_Section::SUB_NO) {
+                                $s = new Sphinx('section', $item->id, FALSE);
+                                $params = $s->stats();
+                                $item->sub = []; // массив данных подкатегорий
+
+                                if ($item->settings['sub'] == Model_Section::SUB_BRAND) { // третий уровень - бренды
+
+                                    foreach ($params['brands'] as $b) {
+                                        $item->sub[$b['id']] = ['href' => $s->href(['b' => [$b['id']]])] + $b;
+                                    }
+                                }
+                                if ($item->settings['sub'] == Model_Section::SUB_FILTER // третий уровень - фильтр
+                                    && !empty($item->settings['sub_filter'])
+                                    && !empty($params['vals'][$item->settings['sub_filter']])
+                                ) {
+
+                                    foreach ($params['vals'][$item->settings['sub_filter']] as $k => $v) {
+                                        if (Model_Filter::big($item->settings['sub_filter'])) { // для одежды по большому типу, для категорий всё для мам - свои ссылки (третий уровень)
+                                            $href = $item->get_link(0, $k);
+                                        } else {
+                                            $href = $s->href(['f' => [$item->settings['sub_filter'] => [$k]]]);
+                                        }
+                                        $item->sub[$k] = ['href' => $href] + $v;
+                                    }
+                                }
+                            }
+                        } else {
+                            $zombies[] = $item->parent_id;
+                        }
+                    } else {
+                        $catalog[$item->id] = $item;
+                    }
+                }
+            }
+            /*if ( ! empty($zombies)) {
+                foreach($zombies as $z) { // пишем в лог, что у нас появились потерянные каталоги верхнего уровня
+                    if( empty($catalog[$z])) {
+                        Log::instance()->add(Log::INFO,'Zombie top level section #' . $z);
+                    }
+                }
+            }*/
+
+            //Cache::instance()->set($cache_key, serialize($catalog));
         }
 
         return $catalog;

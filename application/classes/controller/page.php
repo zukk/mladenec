@@ -188,7 +188,7 @@ class Controller_Page extends Controller_Frontend {
             $this->layout->description = 'Товары для детей по выгодным ценам – интернет магазин Младенец.ру. Покупайте игрушки, детское питание, подгузники, детский транспорт и многое другое с доставкой по Москве, Санкт-Петербургу и другим городам России.';
             $this->layout->keywords = 'детские товары, товары для детей, товары для ребенка, детский интернет магазин, младенец ру, магазин младенец, москва, купить товары для детей, продажа детских товаров';
         }
-        
+
         // цены для любимых клиентов
         if ( ! empty($good_ids)) $this->tmpl['price']= Model_Good::get_status_price(1, $good_ids);
         // картинки для товаров - одним запросом
@@ -210,7 +210,7 @@ class Controller_Page extends Controller_Frontend {
         
         $active_action_ids = DB::select('id')->from('z_action')->where('active','=',1)->execute()->as_array('id','id');
         $active_action_ids[] = 0; // not binded to actions too
-        
+
         $this->tmpl['slider'] = ORM::factory('slider_banner')
             ->where('active', '=',  1)
             ->where('slider_id', '=',  $slider_id)
@@ -226,7 +226,7 @@ class Controller_Page extends Controller_Frontend {
             ->order_by('order','ASC')
             ->find_all()
             ->as_array();
-        
+
         $this->layout->body = View::factory('smarty:index/'.Kohana::$server_name, $this->tmpl);
     }
 
@@ -768,7 +768,17 @@ class Controller_Page extends Controller_Frontend {
         $filename = APPPATH . 'cache/yml.xml';
         $this->return_xml(file_get_contents($filename));
     }
-    
+
+    /**
+     * YML для Wikimart
+     */
+    public function action_wikimart_yml()
+    {
+        $this->menu = FALSE;
+        $filename = APPPATH . 'cache/wikimart_yml.xml';
+        $this->return_xml(file_get_contents($filename));
+    }
+
      /**
      * YML для Findologic
      */
