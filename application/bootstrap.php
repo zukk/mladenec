@@ -607,7 +607,7 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('yml', 'export/yml.xml')
 		->defaults(array('controller' => 'page', 'action' => 'yml'));
 
-    Route::set('wikimart', 'export/wikimart.xml')
+    Route::set('wikimart', 'yml/wikiYML.xml')
 		->defaults(array('controller' => 'page', 'action' => 'wikimart_yml'));
 
 	Route::set('findologic_yml', 'export/findologic_yml.xml')
