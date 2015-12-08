@@ -2,21 +2,32 @@
 
 require('../www/preload.php');
 
-ob_flush();
-flush();
-$n = 0;
+$from = 0;
 // получим все картинки товаров в нужном порядке
 
 do {
-    echo $n;
+    ob_end_flush();
+    flush();
+
+    $good_ids = DB::select('id')
+        ->from('z_good')
+        ->where('id', '>', $from)
+        ->order_by('id')
+        ->limit(1000)
+        ->execute()
+        ->as_array('id', 'id');
+
+    if (empty($good_ids)) exit('all goods from '.$from);
+
+    $from = max($good_ids);
+    echo $from."::";
 
     $imgs = DB::select()
         ->from('z_good_img')
         //->where('good_id', '=', 197919)
         ->order_by('good_id')
         ->order_by('id')
-        ->limit(1000)
-        ->offset($n)
+        ->where('good_id', 'IN', $good_ids)
         ->execute()
         ->as_array();
 
@@ -40,9 +51,15 @@ do {
 
         // оригиналы картинок
         $_origs = ORM::factory('file')
-            ->where('item_id', '=', $good_id)
-            ->where('original', '=', 1)
-            ->find_all()
+            ->where('MODULE_ID', '=', 'Model_Good')
+            ->where('item_id', '=', $good_id);
+        if ( ! empty($_imgs)) {
+            $_origs->where('ID',  'NOT IN', array_keys($_imgs));
+        } else {
+            // картинок нет - все считаем оригиналами - пропускаем ход
+            continue;
+        }
+        $_origs = $_origs->find_all()
             ->as_array('ID');
 
         echo count($_origs) . " origs\n";
@@ -50,7 +67,7 @@ do {
         // для всех оригиналов ищем картинку 1600 (должен быть id = id оригинала + 1)
         $orig_links = [];
         foreach ($_origs as $file) {
-            if (!empty($_imgs[$file->ID + 1])) {
+            if ( ! empty($_imgs[$file->ID + 1])) {
                 $orig_links[$file->ID + 1] = $file->ID; // есть ссылка на оригинал
                 echo 'found original for ' . $file->ID . "\n";
             }
@@ -87,5 +104,5 @@ do {
 
         flush();
     }
-    $n += 1000;
-} while(count($imgs) == 1000);
+
+} while(count($good_ids) == 1000);

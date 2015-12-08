@@ -57,8 +57,8 @@ I18n::lang('en-us');
  * Note: If you supply an invalid environment name, a PHP warning will be thrown
  * saying "Couldn't find constant Kohana::<INVALID_ENV_NAME>"
  */
-//Kohana::$environment = Kohana::PRODUCTION; // БОЕВОЙ САЙТ!!!
-Kohana::$environment = Kohana::DEVELOPMENT; // САЙТ НА РАЗРАБОТКЕ !!!
+Kohana::$environment = Kohana::PRODUCTION; // БОЕВОЙ САЙТ!!!
+//Kohana::$environment = Kohana::DEVELOPMENT; // САЙТ НА РАЗРАБОТКЕ !!!
 /**
  * Initialize Kohana, setting the default options.
  *
@@ -115,7 +115,7 @@ if ( ! empty($to_id)) {
             ->from('tag_redirect')
             ->where('id', '=', $to_id)
             ->execute()->get('url');
-    
+
     if ( ! empty($to_url)) {
         header("HTTP/1.1 301 Moved Permanently");
         header ('Location: http://' . $_SERVER['HTTP_HOST'] . '/' . $to_url);
@@ -137,7 +137,7 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	// проброс вызовов из GetResponse
 	Route::set('getresponse', 'user/getresponse_q9w8E7r6.php')
 		->defaults(array('controller' => 'page', 'action' => 'getresponse'));
-	
+
 	// проброс отписки из subscribe
 	Route::set('unsubscribe_pro', 'unsubscribe_q6jknPvOLDF8_<email>', array(
 		'email' => '.+@.+\..+'
@@ -270,7 +270,7 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 
 	Route::set('ajax_frequent', 'frequent/<id>', array('id' => '\d+'))
 		->defaults(array('controller' => 'ajax', 'action' => 'frequent'));
-        
+
     Route::set('ajax_cart_merge', 'cart_merge', array())
 		->defaults(array('controller' => 'ajax', 'action' => 'cart_merge'));
 
@@ -324,7 +324,7 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('search_suggest_help', 'suggest/example')
 		->defaults(array('controller' => 'search', 'action' => 'example'));
 
-	Route::set('search', 'search(/index.php)')
+	Route::set('search', 'search')
 		->defaults(array('controller' => 'product', 'action' => 'search'));
 
 	Route::set('cart', 'personal/basket.php')
@@ -400,11 +400,14 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 
 	/* Бренды */
 	Route::set('brands', 'about/brands')
-		->defaults(array('controller' => 'brands', 'action' => 'list'));
+		->defaults(array('controller' => 'brand', 'action' => 'list'));
 
-	// отзывы                
+    Route::set('brand', 'brand/<translit>', array('translit' => '[a-z0-9_-]+'))
+        ->defaults(array('controller' => 'brand', 'action' => 'view'));
+
+	// отзывы
 	Route::set('comment', 'about/review/<id>', array('id' => '\d+'))
-		->defaults(array('controller' => 'comments', 'action' => 'view')); 
+		->defaults(array('controller' => 'comments', 'action' => 'view'));
 
 	Route::set('comment_add', 'about/review/add')
 		->defaults(array('controller' => 'comments', 'action' => 'add'));
@@ -469,12 +472,15 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 		->defaults(array('controller' => 'admin', 'action' => 'pricelab'));
 
 	Route::set('admin_tag_excel', 'od-men/tag/excel')
-		->defaults(array('controller' => 'admin', 'action' => 'tag_excel'));        
-        
+		->defaults(array('controller' => 'admin', 'action' => 'tag_excel'));
+
+    Route::set('admin_tag_recount', 'od-men/tag/recount')
+        ->defaults(array('controller' => 'admin_ajax', 'action' => 'tag_recount'));
+
 	Route::set('admin_order_excel', 'od-men/order_excel')
 		->defaults(array('controller' => 'admin', 'action' => 'order_excel'));
-        
-        Route::set('admin_user_excel', 'od-men/user_excel')
+
+    Route::set('admin_user_excel', 'od-men/user_excel')
 		->defaults(array('controller' => 'admin', 'action' => 'user_excel'));
 
 
@@ -570,7 +576,7 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 
 	Route::set('admin_unbind', 'od-men/unbind/<model>/<id>/<alias>/<far_key>', array('model' => '[a-z_]+', 'id' => '\d+', 'alias' => '[a-z_]+', 'far_key' => '\d+'))
 		->defaults(array('controller' => 'admin', 'action' => 'unbind'));
-	/* 
+	/*
 	Route::set('admin_sert_edit', 'od-men/sert/<id>', array('id' => '\d+'))
 		->defaults(array('controller' => 'admin', 'action' => 'sert_edit'));
 	*/
@@ -589,7 +595,7 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 
 	Route::set('delivery_time', 'delivery/time')
 		->defaults(array('controller' => 'ajax', 'action' => 'time')); // загрузка данных времени доставки по дате
-        
+
         Route::set('delivery_ozon', 'delivery/ozon')
 		->defaults(array('controller' => 'ajax', 'action' => 'ozon_price')); // загрузка данных времени доставки по дате
 
@@ -656,7 +662,7 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 
 	Route::set('index', '<index>', array('index' => '(index\.php|)'))
 		->defaults(array('controller' => 'mobile', 'action' => 'index'));
-	
+
 	Route::set('section', 'catalog/<translit>', array(
 		'translit' => '[a-z0-9_-]+',
 	))->defaults(array('controller' => 'mobile', 'action' => 'section'));
@@ -673,7 +679,7 @@ set_exception_handler(array('Error', 'handler'));
 
 /* To prevent CLI errors */
 if ( ! empty($_SERVER['REQUEST_URI'])) {
-    
+
     Kohana_Session::$default = 'db';
     $conf = Kohana::$config->load('session')->get(Kohana_Session::$default);
 
@@ -710,7 +716,7 @@ if ( ! empty($_SERVER['REQUEST_URI'])) {
 
         $hh = [];
         foreach ($hosts as $h) $hh[] = (strpos($h['host'], '.') !== FALSE) ? '*.' . $h['host'] : 'http://'.$h['host'];
-		
+
 		$hh[] = "*.mladenec-shop.ru"; // mladenec main
 		$hh[] = "*.mladenec.ru"; // mladenec static
 
@@ -788,7 +794,6 @@ if ( ! empty($_SERVER['REQUEST_URI'])) {
         $hh[] = "http://tracking.findologic.com";
 
 		$hh[] = "http://code.directadvert.ru"; // пиксель
-
 
 		$contentPolicy =
 			"Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data: ".implode(' ', $hh)

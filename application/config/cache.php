@@ -2,8 +2,7 @@
 
 return [
     'memcache' => [
-        //'driver'             => 'memcache',
-        'driver'             => 'file',
+        'driver'             => 'memcache',
         'default_expire'     => 3600,
         'compression'        => FALSE,
         'servers'            => [

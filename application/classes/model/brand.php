@@ -29,8 +29,7 @@ class Model_Brand extends ORM {
     ];
     
     protected $_table_columns = [
-        //'id' => '', 'name' => '', 'translit' => '', 'text' => '',
-        'id' => '', 'name' => '', 'translit' => '',
+        'id' => '', 'name' => '', 'translit' => '', 'text' => '',
         'code' => '', 'active' => '', 'img' => '', 'search_words' => ''
     ];
 
