@@ -13,6 +13,10 @@ class Model_Order extends ORM {
     const SHIP_OZON = 5;
     const SHIP_UNKNOWN = 9;
 
+    const SERVICE_OZON = 'ozon';
+    const SERVICE_DPD = 'dpd';
+    const SERVICE_YA = 'ya';
+
     const SHIP_DOOR = 0; // доставка до двери
     const SHIP_TERMINAL = 1; // доставка до терминала
 

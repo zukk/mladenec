@@ -35,7 +35,7 @@
         </div>
         <div class="units-row">
             <div class="unit-80"><input type="submit" name="search" value="Показать" /></div>
-            <div class="unit-20"><a href="{Route::url('admin_user_excel')}?{$smarty.server.QUERY_STRING}">Скачать в Excel</a></div>
+            <div class="unit-20"><a href="{Route::url('admin_user_excel')}?{$smarty.server.QUERY_STRING}">Скачать CSV для GR (max 10000)</a></div>
         </div>
     </fieldset>
 </form>
