@@ -42,10 +42,10 @@
             <label class="l" for="name">ФИО мамы:&nbsp;<sup>*</sup></label>
             <input id="name" name="name" class="txt {if ! empty($errors.name)}error" error="{$errors.name}{/if}" value="{$smarty.post.name|default:$user->name|default:''}" />
 
-            <label class="l" for="weight">Вес малыша:&nbsp;<sup>*</sup></label>
+            <label class="l" for="weight">Вес малыша (кг):&nbsp;<sup>*</sup></label>
             <input id="weight" name="weight" class="txt {if ! empty($errors.weight)}error" error="{$errors.weight}{/if}" value="{$smarty.post.weight|default:''}" />
 
-            <label class="l" for="age">Возраст малыша:&nbsp;<sup>*</sup></label>
+            <label class="l" for="age">Возраст малыша (мес.):&nbsp;<sup>*</sup></label>
             <input id="age" name="age" class="txt {if ! empty($errors.age)}error" error="{$errors.age}{/if}" value="{$smarty.post.age|default:''}" />
 
             <label class="l" for="index">Почтовый индекс:&nbsp;<sup>*</sup></label>
