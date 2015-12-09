@@ -88,7 +88,7 @@ class Mail {
             }
         }
 
-        return $mail->send_smtp($to, 'Младенец.РУ: '.$subject); // через smtp - поменять как нас уберут из спам-листов
+        return $mail->send($to, 'Младенец.РУ: '.$subject);
     }
 
     public function attachUploaded($file)
