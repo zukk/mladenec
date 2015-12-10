@@ -99,6 +99,10 @@ for ($heap_number = 0; $goods = Model_Good::for_wikimart_yml($heap_size, $heap_n
             $section = $id2Catalog[$g['section_id']];
         }
 
+        if(!$section){
+            continue;
+        }
+
         $g['real_section'] = $section->id;
 
         if ($section->is_cloth()) {
