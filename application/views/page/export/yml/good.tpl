@@ -16,7 +16,7 @@
 
     <delivery>true</delivery>
     <delivery-options>
-        <option cost="{Model_Zone::min_price(Model_Zone::DEFAULT_ZONE, $g->price)}" days="{if $g->qty == -1}3-5{else}0{/if}" order-before="12"/>
+        <option cost="{Model_Zone::min_price(Model_Zone::DEFAULT_ZONE, $g.price)}" days="{if $g.qty == -1}3-5{else}0{/if}" order-before="12"/>
     </delivery-options>
     <sales_notes>Наличные, Visa/Mastercard</sales_notes>
 
