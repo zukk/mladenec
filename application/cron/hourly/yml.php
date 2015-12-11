@@ -39,7 +39,11 @@ foreach($catalog as $item) {
 
 fwrite($fp, View::factory('smarty:page/export/yml/categories', ['catalog' => $catalog]));
 
-fwrite($fp, '</categories><local_delivery_cost>350</local_delivery_cost><offers>');
+fwrite($fp, '</categories>
+    <delivery-options>
+        <option cost="'.Model_Zone::min_price(Model_Zone::DEFAULT_ZONE, 1).'" days="0" order-before="12"/>
+    </delivery-options><offers>');
+
 $goods_written = 0;
 
 define('EXPORTXML_SEX', 1951);
