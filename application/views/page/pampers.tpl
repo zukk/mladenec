@@ -35,7 +35,7 @@
         <form action="" method="post" class="cols">
             <div class="cl">
                 <h2>Извините.</h2>
-                <p>Прием заявок окончен.</p>
+                <p>Акция по&nbsp;семплированию закончилась, спасибо Вам за&nbsp;интерес к&nbsp;продукции Pampers..</p>
             </div>
 
         {*if ! empty($p)}
