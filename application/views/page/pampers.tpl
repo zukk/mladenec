@@ -33,7 +33,12 @@
     <h1>Заполните заявку на&nbsp;бесплатное получение упаковки подгузников Pampers</h1>
         <a href="http://www.mladenec-shop.ru/upload/mediafiles/1/0/6/2/4194.doc">правила акции</a>
         <form action="" method="post" class="cols">
-        {if ! empty($p)}
+            <div class="cl">
+                <h2>Извините.</h2>
+                <p>Прием заявок окончен.</p>
+            </div>
+
+        {*if ! empty($p)}
         <div class="cl">
             <h2>Спасибо</h2>
             <p>Ваша заявка принята.</p>
@@ -62,9 +67,9 @@
             <input id="email" name="email" class="txt {if ! empty($errors.email)}error" error="{$errors.email}{/if}" value="{$smarty.post.email|default:$user->email|default:''}" />
 
             {*<label class="l" for="site">Откуда вы о нас узнали:&nbsp;<sup>*</sup></label>
-            <input id="site" name="site" class="txt {if ! empty($errors.site)}error" error="{$errors.site}{/if}" value="{$smarty.post.site|default:''}" />*}
+            <input id="site" name="site" class="txt {if ! empty($errors.site)}error" error="{$errors.site}{/if}" value="{$smarty.post.site|default:''}" />}
 
             <input type="submit" value="Отправить заявку" class="butt" name="anketa" />
-        {/if}
+        {/if*}
         </form>
 </div>
