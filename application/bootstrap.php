@@ -277,8 +277,8 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('callback', 'callback')
 		->defaults(array('controller' => 'ajax', 'action' => 'callback'));
 
-	Route::set('pampers_anketa', 'pampers_anketa')
-		->defaults(array('controller' => 'page', 'action' => 'pampers'));
+//	Route::set('pampers_anketa', 'pampers_anketa')
+//		->defaults(array('controller' => 'page', 'action' => 'pampers'));
 
 	// section
 	Route::set('section_map', 'catalog')
