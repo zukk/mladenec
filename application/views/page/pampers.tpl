@@ -34,7 +34,7 @@
         <a href="http://www.mladenec-shop.ru/upload/mediafiles/1/0/6/2/4194.doc">правила акции</a>
         <form action="" method="post" class="cols">
             <div class="cl">
-                <h2>Извините.</h2>
+                {*<h2>Извините.</h2>*}
                 <p>Акция по&nbsp;семплированию закончилась, спасибо Вам за&nbsp;интерес к&nbsp;продукции Pampers..</p>
             </div>
 
