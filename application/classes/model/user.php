@@ -24,6 +24,9 @@ class Model_User extends ORM {
         'child_discount' => '',
     ];
 
+    protected $_has_one = [
+        'segment' => ['model' => 'user_segment', 'foreign_key' => 'user_id'],
+    ];
     protected $_has_many = [
         'phones' => ['model' => 'user_phone', 'foreign_key' => 'user_id'],
         'ulogins'   => ['model' => 'ulogin', 'foreign_key' => 'user_id'],
@@ -116,7 +119,6 @@ class Model_User extends ORM {
             $password = $data['password'];
 
             $user = new Model_User;
-
             $user->password($password)
                 ->where_open()
                     ->where('login', '=', $login)

@@ -33,7 +33,10 @@
         <label for="menu">Показывать в меню</label>
         <input type="checkbox" id="menu" name="menu" value="1" {if $i->menu}checked="checked"{/if} />
     </p>
-
+    <p>
+        <label for="show_menu">Показывать меню</label>
+        <input type="checkbox" id="show_menu" name="show_menu" value="1" {if $i->show_menu}checked="checked"{/if} />
+    </p>
     <p>
         <label for="show">Активность</label>
         <input type="checkbox" id="show" name="show" value="1" {if $i->show}checked="checked"{/if} />

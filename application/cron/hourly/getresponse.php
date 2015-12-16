@@ -2,57 +2,38 @@
 
 require('../../../www/preload.php');
 
-define ('CAMPAIGN_ID', 'j');
-define ('GR_API_KEY',  '515371d4780de0ed844e0ddd5079929a');
-define ('GR_API_URL',  'http://api.getresponse360.pl/mladenec');
-
-$client = new jsonRPCClient(GR_API_URL);
+$all = FALSE;
+if ( ! empty($argv[1]) && $argv[1] == '--all') { // обрабатываем всех юзеров
+    $all = TRUE;
+}
 
 // Unsubscribe
 $unsubscribe = DB::select('z_user.id', 'z_user.email')
-    ->from('z_user')
-    ->join('user_segment')->on('z_user.id','=','user_segment.user_id')
+    ->from('z_user');
+
+if ( ! $all) { // всех или только тех что есть в сегментах
+    $unsubscribe->join('user_segment')->on('z_user.id','=','user_segment.user_id');
+}
+
+$unsubscribe = $unsubscribe
     ->where('z_user.sub','=',0)
-    ->limit(1000)
-    ->execute()->as_array('id', 'email');
+    ->limit($all ? NULL : 1000)
+    ->execute()
+    ->as_array('id', 'email');
 
 if ( ! empty($unsubscribe)) {
 
-    $unsubscribed_ids = [];
-
+    $gr = new GetResponse();
     foreach ($unsubscribe as $id => $email) {
-
-        if (Valid::email($email)) {
-            try {
-                $exist = $client->get_contacts(
-                    GR_API_KEY,
-                    ['email' => ['EQUALS' => $email]]
-                );
-
-                if ( ! empty($exist)) {
-
-                    $arr = array_keys($exist);
-                    $contact_id = array_shift($arr);
-
-                    $res = $client->delete_contact(
-                        GR_API_KEY,
-                        ['contact' => $contact_id]
-                    );
-                }
-
-                $unsubscribed_ids[] = $id;
-
-            } catch (RuntimeException $e) {
-
-                Log::instance()->add(Log::ERROR, 'GetResponse communication error on: ' . $e->getLine() . ' line ' . $e->getMessage());
-            }
+        $resp = $gr->unsubscribe($email);
+        if ($resp === TRUE) {
+            $unsubscribed_ids[] = $id;
         }
-
     }
     
     if ( ! empty($unsubscribed_ids)) {
         DB::update('z_user')
-            ->set(['segments_recount_ts'=>0])
+            ->set(['segments_recount_ts' => 0])
             ->where('id', 'IN', $unsubscribed_ids)
             ->execute();
 
@@ -71,13 +52,19 @@ $user_ids = DB::select( 'z_user.id' )
     ->from('z_user')
     ->join('z_order')
         ->on('z_order.user_id', '=', 'z_user.id')
-    ->where('z_user.sub', '=', 1)
-    ->where_open()
-        ->where('z_user.segments_recount_ts', '=', 0)
-        ->or_where(DB::expr('UNIX_TIMESTAMP(z_order.created)'), '>', 'z_user.segments_recount_ts')
-    ->where_close()
-    ->order_by('z_user.id', 'DESC')
-    ->limit(1000)
+    ->where('z_user.sub', '=', 1);
+
+if ( ! $all) {
+
+    $user_ids
+        ->where_open()
+            ->where('z_user.segments_recount_ts', '=', 0)
+            ->or_where(DB::expr('UNIX_TIMESTAMP(z_order.created)'), '>', 'z_user.segments_recount_ts')
+        ->where_close()
+    ->limit(1000);
+}
+
+$user_ids->order_by('z_user.id', 'DESC')
     ->execute()->as_array('id', 'id');
 
 if ( ! empty($user_ids)) {
@@ -297,15 +284,15 @@ $childs =  DB::select( 'user_id', 'birth', 'sex')
         )->execute();
     }
 }
-
-
-
+if ($all) {
+    exit('ALL DONE, CHECK SEGMENTS');
+}
 $data = DB::select('z_user.id', 'z_user.name', 'z_user.email','user_segment.*' )
     ->from(  'z_user' )
     ->join(  'user_segment')->on('z_user.id','=','user_segment.user_id' )
     ->where( 'z_user.sub','=',1 )
     ->order_by('user_segment.upload_ts','ASC')
-    ->limit( 1000 )
+    ->limit( $all ? NULL : 1000)
     ->execute()->as_array();
 
 $uploaded_ids = [];
@@ -386,46 +373,9 @@ foreach ($data as $row) {
         'content' => empty($row['has_girl'])  ? 'нет' : 'да'
     ];
     
-    try {
-        $exist = $client->get_contacts(
-            GR_API_KEY,
-            [
-                'email'=> [ 'EQUALS' => $email ]
-            ]
-        );
-
-        if ( ! empty($exist) ) {
-
-            $arr = array_keys($exist);
-            $contact_id = array_shift($arr);
-
-            $client->set_contact_customs(
-                GR_API_KEY,
-                    [
-                        'contact' => $contact_id,
-                        'customs' => $customs
-                    ]
-            );
-            
-        } else {
-
-            $result = $client->add_contact(
-                GR_API_KEY,
-                [
-                    'campaign'  => CAMPAIGN_ID,
-                    'name'      => $name,
-                    'email'     => $email,
-                    'customs' => $customs
-                ]
-            );
-        }
-
+    $resp = $gr->upload($name, $email, $customs);
+    if ($resp === TRUE) {
         $uploaded_ids[] = $row['id'];
-        
-    } catch (RuntimeException $e) {
-        
-        Log::instance()->add(Log::ERROR, 'GetResponse communication error on: ' . $e->getLine() . ' line ' . $e->getMessage());
-
     }
 }
 

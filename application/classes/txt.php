@@ -657,4 +657,32 @@ class Txt {
 
         exit();
     }
+
+    /**
+     * Вывести список в csv согласно массиву полей
+     */
+    public static function as_csv($columns, $list, $fname, $callbacks = [])
+    {
+        set_time_limit(0);
+
+        $csv = fopen('/tmp/'.$fname.'.csv', 'w');
+        fputcsv($csv, $columns);
+
+        foreach($list as $row) {
+            $string = [];
+            foreach($columns as $name => $title) {
+                $value = ! empty($callbacks[$name]) ? $callbacks[$name]($row) : $row->{$name};
+                $string[$name] = $value;
+            }
+            fputcsv($csv, $string);
+        }
+        fclose($csv);
+
+        header('Content-Description: File Transfer');
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename='.$fname.'.csv');
+        echo file_get_contents('/tmp/'.$fname.'.csv');
+
+        exit();
+    }
 }

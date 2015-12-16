@@ -29,7 +29,7 @@ $payment = ORM::factory('payment')
         ->where('order.status', '=', 'F')
         ->where('order_id', '>', 400000)
     ->where('payment.session_id', '!=', '')
-    ->where('payment.status', 'NOT IN', [Model_Payment::STATUS_Rejected, Model_Payment::STATUS_ChargeApproved, Model_Payment::STATUS_Refunded])
+    ->where('payment.status', 'NOT IN', [Model_Payment::STATUS_Voided, Model_Payment::STATUS_Rejected, Model_Payment::STATUS_ChargeApproved, Model_Payment::STATUS_Refunded])
     ->find_all()
     ->as_array();
 

@@ -56,7 +56,6 @@ class Controller_Admin extends Controller_Authorised {
      */
     public function before()
     {
-
         $this->layout = View::factory('smarty:admin', $this->tmpl);
         
         parent::before();
@@ -2095,49 +2094,149 @@ class Controller_Admin extends Controller_Authorised {
     }
     
     /*
-     * Экспорт списка пользователей в Excel
+     * Экспорт списка пользователей в Excel (csv для GR)
+     * только подписчики, кто был на сайте
      */
     function action_user_excel()
     {
-        $this->model = ORM::factory('user')->with('data');
-        $query = $this->_user_list();
+        $this->model = ORM::factory('user')
+            ->with('segment');
+        $query = $this->_user_list()
+            ->where('user.last_visit', '>', 0)
+            ->where('user.sub', '=', 1)
+            ->limit(10000)
+            ;
         $users = $query->find_all();
 
-        Txt::as_excel([
+        Txt::as_csv([
             'id' => 'ID',
             'email' => 'Email' ,
-            'phone' => 'Телефон',
-            'name' => 'Имя' ,
-            'last_name' => 'Фамилия',
-            'second_name' => 'Отчество',
-            'sum' => 'Сумма заказов, руб.',
-            'qty' => 'Количество заказов',
-            'avg_check' => 'Средний чек',
+            //'phone' => 'Телефон',
+            'name' => 'name' ,
+            /*/'last_name' => 'Фамилия',
+            //'second_name' => 'Отчество',
+            //'sum' => 'Сумма заказов, руб.',
+            //'qty' => 'Количество заказов',
+            //'avg_check' => 'Средний чек',
             'last_order' => 'Дата последнего заказа',
             'lk'    => 'Любимый',
             'sub'   => 'Рассылка',
             'created' =>  'Создан',
             'pregnant' => 'Беременность',
             'pregnant_week' => 'Срок (недель)',
-            'kids' => 'Дети'
+            'kids' => 'Дети',
+            */
+            'last_visit' => 'last_visit',
+            'md5' => 'md5',
+            'register_date' => 'register_date',
+            'arpu' => 'arpu', 
+            'last_order_sum' => 'last_order_sum',
+            'last_order' => 'last_order',
+            'orders_count' => 'orders_count', 
+            'orders_sum' => 'orders_sum', 
+            'sum_big' => 'sum_big', 
+            'sum_diaper' => 'sum_diaper', 
+            'sum_eat' => 'sum_eat', 
+            'sum_toy' => 'sum_toy', 
+            'sum_care' => 'sum_care', 
+            'sum_dress' => 'sum_dress', 
+            'buy_big' => 'buy_big', 
+            'buy_diaper' => 'buy_diaper', 
+            'buy_eat' => 'buy_eat', 
+            'buy_toy' => 'buy_toy', 
+            'buy_care' => 'buy_care', 
+            'sert_use' => 'sert_use', 
+            'buy_dress' => 'buy_dress', 
+            'childs' => 'childs',
+            'child_birth_1' => 'child_birth_1',
+            'child_birth_2' => 'child_birth_2',
+            'child_birth_3' => 'child_birth_3',
+            'child_birth_4' => 'child_birth_4',
+            'child_birth_5' => 'child_birth_5',
+            'child_birth_6' => 'child_birth_6',
+            'has_boy' => 'has_boy', 
+            'has_girl' => 'has_girl', 
+            'child_birth_min' => 'child_birth_min', 
+            'child_birth_max' => 'child_birth_max', 
+            'pregnant_week' => 'pregnant_week',
+            'is_pregnant' => 'is_pregnant',
+
         ], $users, 'users', [
             'avg_check' => function($row) { return $row->avg_check(); },
-            'created' => function($row) { return date('Y-m-d H:i:s', $row->created);},
+            'md5' => function($row) { return md5(Cookie::$salt . $row->email);},
+            'register_date' => function($row) { return date('Y-m-d', $row->created);},
             'lk' => function($row) { return $row->status_id ? 'Да' : ''; },
             'sub' => function($row) { return $row->sub ? 'Да' : ''; },
-            'pregnant' => function($row) { return $row->pregnant ? 'Да' : 'Нет'; },
+            'is_pregnant' => function($row) { return $row->pregnant ? 'Да' : 'Нет'; },
             'last_order' => function($row) { $order = ORM::factory('order', $row->last_order); return $order->loaded() ? $order->created : ''; },
             'pregnant_week' => function($row) { return $row->pregnant ? $row->get_pregnant_weeks() : ''; },
-            'kids' => function($row) {
-                $return = '';
-                $kids = $row->kids->find_all()->as_array('id');
-                if ($kids) {
-                    foreach ($kids as $child) {
-                        $return .= ($child->sex == 1 ? 'мальчик' : 'девочка') . '; ' . Txt::childAge($child->birth).';';
-                    }
+
+            'childs' => function($row) { return $row->segment->childs ? count(explode(',', $row->segment->childs)) : 0; },
+            'child_birth_1' =>function($row) {
+                if (empty($row->segment->childs)) return '';
+                if ($births = explode(',', $row->segment->childs)) {
+                    if ( ! empty($births[0])) return $births[0];
                 }
-                return $return;
-            }
+                return '';
+            },
+            'child_birth_2' =>function($row) {
+                if (empty($row->segment->childs)) return '';
+                if ($births = explode(',', $row->segment->childs)) {
+                    if ( ! empty($births[1])) return $births[1];
+                }
+                return '';
+            },
+            'child_birth_3' =>function($row) {
+                if (empty($row->segment->childs)) return '';
+                if ($births = explode(',', $row->segment->childs)) {
+                    if ( ! empty($births[2])) return $births[2];
+                }
+                return '';
+            },
+            'child_birth_4' =>function($row) {
+                if (empty($row->segment->childs)) return '';
+                if ($births = explode(',', $row->segment->childs)) {
+                    if ( ! empty($births[3])) return $births[3];
+                }
+                return '';
+            },
+            'child_birth_5' =>function($row) {
+                if (empty($row->segment->childs)) return '';
+                if ($births = explode(',', $row->segment->childs)) {
+                    if ( ! empty($births[4])) return $births[4];
+                }
+                return '';
+            },
+            'child_birth_6' =>function($row) {
+                if (empty($row->segment->childs)) return '';
+                if ($births = explode(',', $row->segment->childs)) {
+                    if ( ! empty($births[5])) return $births[5];
+                }
+                return '';
+            },
+            'user_id' => function($row) { return $row->segment->user_id; },
+            'last_visit' => function($row) { return $row->segment->last_visit; },
+            'arpu' =>function($row) { return $row->segment->arpu; },
+            'last_order_sum' =>function($row) { return $row->segment->last_order_sum; },
+            'orders_count' =>function($row) { return $row->segment->orders_count; },
+            'orders_sum' =>function($row) { return $row->segment->orders_sum; },
+            'sum_big' =>function($row) { return $row->segment->sum_big; },
+            'sum_diaper' =>function($row) { return $row->segment->sum_diaper; },
+            'sum_eat' =>function($row) { return $row->segment->sum_eat; },
+            'sum_toy' =>function($row) { return $row->segment->sum_toy; },
+            'sum_care' =>function($row) { return $row->segment->sum_care; },
+            'sum_dress' =>function($row) { return $row->segment->sum_dress; },
+            'buy_big' =>function($row) { return $row->segment->buy_big; },
+            'buy_diaper' =>function($row) { return $row->segment->buy_diaper; },
+            'buy_eat' =>function($row) { return $row->segment->buy_eat; },
+            'buy_toy' =>function($row) { return $row->segment->buy_toy; },
+            'buy_care' =>function($row) { return $row->segment->buy_care; },
+            'sert_use' =>function($row) { return $row->segment->sert_use; },
+            'buy_dress' =>function($row) { return $row->segment->buy_dress; },
+            'has_boy' =>function($row) { return $row->segment->has_boy; },
+            'has_girl' =>function($row) { return $row->segment->has_girl; },
+            'child_birth_min' =>function($row) { return $row->segment->child_birth_min; },
+            'child_birth_max' =>function($row) { return $row->segment->child_birth_max; },
         ]);
     }
 
@@ -2146,7 +2245,8 @@ class Controller_Admin extends Controller_Authorised {
      * @param Model_User $user
      * @return array
      */
-    function action_user_edit($user) {
+    function action_user_edit($user)
+    {
         
         $sessions = DB::select()
                 ->from('z_session')

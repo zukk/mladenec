@@ -15,6 +15,10 @@
         {/if}
 
     <delivery>true</delivery>
+    <delivery-options>
+        <option cost="{Model_Zone::min_price(Model_Zone::DEFAULT_ZONE, $g.price)}" days="{if $g.qty == -1}3-5{else}0{/if}" order-before="12"/>
+    </delivery-options>
+    <sales_notes>Наличные, Visa/Mastercard</sales_notes>
 
     {if not empty($label) and $label eq 'ozon.yml'}{* количество - нужно только для озона *}
         <qty>{if $g['qty'] eq -1}10{else}{$g['qty']}{/if}</qty>

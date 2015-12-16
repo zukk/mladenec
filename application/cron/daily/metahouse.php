@@ -10,8 +10,8 @@
 require('../../../www/preload.php');
 
 $api_key = 'd5d47415-866a-415b-a63d-df6f94a1d998';
-$url = "http://api.metacommerce.ru/products?apiKey=".$api_key."&format=csv&"
-    ."fields=name,url,marketId,source,collectDate,price.online.value,availability,sku.item.name,sku.item.article,sku.matchings";
+$url = "http://api.metacommerce.ru/products?apiKey=".$api_key."&format=csv&source=origin"
+    ."&fields=name,url,marketId,source,collectDate,price.online.value,availability,sku.item.name,sku.item.article,sku.matchings";
 
 $post = [
     'request' => '{"requestFacets":true,"filters":{"source":["origin"],"availability":["inStock"],"markdown":["none"],
@@ -35,13 +35,16 @@ curl_setopt($ch, CURLOPT_COOKIE, implode('; ', $cookie));
 */
 
 $post = [
+    "requestFacets" => TRUE,
+    "request" => json_decode('{"requestFacets":true,"filters":{"source":["origin"],"availability":["inStock"],"markdown":["none"]}'),
     "marketIds" => [
         "mladenec-shop.ru", "esky.ru", "akusherstvo.ru", "dochkisinochki.ru", "babadu.ru",
         "utkonos.ru", "baby-country.ru", "detmir.ru", "wikimart.ru"
     ],
-    //"skuArticles" => ["30019899"],
+    "skuArticles" => ["30019899","30003690"],
     "onlyMatchedSkus" => TRUE,
 ];
+print_r($post);
 
 curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_POST, TRUE);
@@ -73,7 +76,7 @@ $translate = array_flip([ // не нужно
 ]);
 
 $zip = new ZipArchive();
-$zip->open($zip_name, ZIPARCHIVE::OVERWRITE);
+$zip->open($zip_name, ZIPARCHIVE::OVERWRITE | ZIPARCHIVE::CREATE);
 $zip->addFile($tmp_name, basename($tmp_name));
 $zip->close();
 

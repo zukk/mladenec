@@ -8,7 +8,16 @@ class Model_Menu extends ORM {
     );
 
     protected $_table_columns = array(
-        'id' => '', 'link' => '', 'parent_id' => '', 'name' => '', 'description' => '', 'text' => '', 'show' => '', 'menu' => '', 'sort' => '',
+        'id' => '',
+        'link' => '',
+        'parent_id' => '',
+        'name' => '',
+        'description' => '',
+        'text' => '',
+        'show' => '',
+        'show_menu' => 1,
+        'menu' => '',
+        'sort' => '',
     );
 
     /**
@@ -75,7 +84,7 @@ class Model_Menu extends ORM {
      */
     public function flag()
     {
-        return array('show', 'menu');
+        return array('show', 'show_menu', 'menu');
     }
 
     /**

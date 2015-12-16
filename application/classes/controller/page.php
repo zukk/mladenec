@@ -272,6 +272,7 @@ class Controller_Page extends Controller_Frontend {
 
         $this->layout->body = $text;
         $this->layout->title = $page->name;
+        $this->menu = $page->show_menu;
         if ($page->description)  $this->layout->description = $page->description;
     }
 
@@ -963,6 +964,9 @@ class Controller_Page extends Controller_Frontend {
     // страница с анкетой для памперса
     public function action_pampers()
     {
+        $this->menu = FALSE;
+        $this->layout->title = "Заявка на получение Pampers";
+
         if ($this->request->post('anketa')) {
 
             $p = new Model_Pampers();
@@ -970,7 +974,7 @@ class Controller_Page extends Controller_Frontend {
 
             if ($p->validation()->check()) {
 
-		        Mail::htmlsend('admin_pampers', array('o' => $p, 'time' => date('d.m.y H:59:59')), 'contest@new-point.ru,a.melnikov@mladenec.ru', 'анкета памперс');
+		        Mail::htmlsend('admin_pampers', array('o' => $p, 'time' => date('d.m.y H:59:59')), 'mladenec@new-point.ru,a.melnikov@mladenec.ru', 'анкета памперс');
 				
                 $p->save();
                 $this->tmpl['p'] = TRUE;
@@ -979,6 +983,6 @@ class Controller_Page extends Controller_Frontend {
                 $this->tmpl['errors'] = $p->validation()->errors('pampers');
             }
         }
-    }
 
+    }
 }
