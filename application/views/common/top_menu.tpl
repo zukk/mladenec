@@ -1,3 +1,18 @@
+<style>
+    #zima_menu {
+        background:none;
+    }
+    #zima_menu a {
+        letter-spacing: 1px;
+        height: 37px;
+        margin: 10px 8px 0 !important;
+        background: #fff url(/images/menu_zima.png) no-repeat 0 -13px;
+        border-radius: 5px;
+        line-height: 37px !important;
+        font-size: 15px  !important;
+        padding: 0 0 0 47px !important;
+    }
+</style>
 {assign var=td value=0}
 {assign var=half value=count($top_menu)/2}
 <table id="catalog">
@@ -26,8 +41,11 @@
 							{if $ch->img_menu}<a href="{$sublink}">{$ch->menu_img->get_img()}</a>{/if}</li>
                         </ul>
                     {/if}
-                </li>
+                    </li>
                 {/foreach}
+                {if $item->id eq 29890}
+                    <li id="zima_menu"><a href="/catalog/progulka-i-puteshestvie/zima">Зимние забавы</a></li>
+                {/if}
             </ul>
         </div>
         {/if}
