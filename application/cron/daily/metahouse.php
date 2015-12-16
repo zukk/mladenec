@@ -42,7 +42,7 @@ $post = [
         "utkonos.ru", "baby-country.ru", "detmir.ru", "wikimart.ru"
     ],
     "sources" => ["origin"],
-    "skuArticles" => ["30019899","30003690"],
+//    "skuArticles" => ["30019899","30003690"],
     "onlyMatchedSkus" => TRUE,
 ];
 
