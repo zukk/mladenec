@@ -10,7 +10,7 @@
 require('../../../www/preload.php');
 
 $api_key = 'd5d47415-866a-415b-a63d-df6f94a1d998';
-$url = "http://api.metacommerce.ru/products?apiKey=".$api_key."&format=csv&source=origin"
+$url = "http://api.metacommerce.ru/products?apiKey=".$api_key."&format=csv"
     ."&fields=name,url,marketId,source,collectDate,price.online.value,availability,sku.item.name,sku.item.article,sku.matchings";
 
 $post = [
@@ -36,15 +36,15 @@ curl_setopt($ch, CURLOPT_COOKIE, implode('; ', $cookie));
 
 $post = [
     "requestFacets" => TRUE,
-    "request" => json_decode('{"requestFacets":true,"filters":{"source":["origin"],"availability":["inStock"],"markdown":["none"]}'),
+    //"request" => json_decode('{"requestFacets":true,"filters":{"source":["origin"],"availability":["inStock"],"markdown":["none"]}'),
     "marketIds" => [
         "mladenec-shop.ru", "esky.ru", "akusherstvo.ru", "dochkisinochki.ru", "babadu.ru",
         "utkonos.ru", "baby-country.ru", "detmir.ru", "wikimart.ru"
     ],
+    "sources" => ["origin"],
     "skuArticles" => ["30019899","30003690"],
     "onlyMatchedSkus" => TRUE,
 ];
-print_r($post);
 
 curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_POST, TRUE);
