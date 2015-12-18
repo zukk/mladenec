@@ -20,6 +20,7 @@
             <label><i class="tr{$smarty.get._present|default:''}"></i><span>Подарок</span><input type="hidden" name="_present" value="{$smarty.get._present|default:''}" /></label>
             <label><i class="tr{$smarty.get.move|default:''}"></i><span>Продвигать</span><input type="hidden" name="move" value="{$smarty.get.move|default:''}" /></label>
             <label><i class="tr{$smarty.get.big|default:''}"></i><span>Крупногабаритка</span><input type="hidden" name="big" value="{$smarty.get.big|default:''}" /></label>
+            <label><i class="tr{$smarty.get.wiki_cat|default:''}"></i><span>Не в викикатегории</span><input type="hidden" name="wiki_cat" value="{$smarty.get.wiki_cat|default:''}" /></label>
         </div>
         <div class="cb"></div>
         <div class="units-row">

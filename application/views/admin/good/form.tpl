@@ -393,10 +393,10 @@ $(document).ready(function() {
         <label for="to_yandex">Выгружать в&nbsp;Yandex</label>
         <input type="checkbox" id="to_yandex" name="prop[to_yandex]" value="1" {if $i->prop->to_yandex}checked="checked"{/if} />
     </p>
-    <p>
+    {*<p>
         <label for="to_wikimart">Выгружать в&nbsp;Wikimart</label>
         <input type="checkbox" id="to_wikimart" name="prop[to_wikimart]" value="1" {if $i->prop->to_wikimart}checked="checked"{/if} />
-    </p>
+    </p>*}
 
     <div class="units-row">
         <div class="unit-80">

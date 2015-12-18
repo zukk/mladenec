@@ -21,7 +21,8 @@ fwrite($fp, '<?xml version="1.0" encoding="utf-8"?>
                 <currencies><currency id="RUR" rate="1" plus="0"/></currencies>
                 <categories>');
 
-$catalog = Model_Section::get_wikimart_catalog();
+//$catalog = Model_Section::get_wikimart_catalog();
+$catalog = Model_Good::get_wikimart_catalog();
 $id2Catalog = [];
 
 foreach($catalog as $item) {

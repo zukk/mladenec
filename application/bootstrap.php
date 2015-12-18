@@ -208,6 +208,12 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('cart_recount', 'personal/cart_recount.php')
 		->defaults(array('controller' => 'product', 'action' => 'cart_recount'));
 
+    Route::set('admin_getwikigoods', 'admin/getwikigoods.php')
+		->defaults(array('controller' => 'admin', 'action' => 'getwikigoods'));
+
+    Route::set('admin_valupd', 'admin/valupd.php')
+		->defaults(array('controller' => 'admin', 'action' => 'valupd'));
+
 	Route::set('cart_presents', 'ajax/cart_presents.php')
 		->defaults(array('controller' => 'product', 'action' => 'cart_presents'));
 

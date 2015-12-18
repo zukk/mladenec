@@ -249,3 +249,14 @@ label.wd { width:50px !important;}
 .childs {
     margin-left: 20px;
 }
+.wiki_area, .wiki_do {
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    display: none;
+    padding: 0;
+
+}
+.wiki_del {
+    float: right;
+}

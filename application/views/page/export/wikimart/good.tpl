@@ -6,7 +6,7 @@
         <oldprice>{$oldprice}</oldprice>
     {/if}
     <currencyId>RUR</currencyId>
-    <categoryId>{$g['section_wikimart_cat_id']}</categoryId>
+    <categoryId>{$g['wiki_cat_id']}</categoryId>
 
     {if not empty($images)}
         {foreach from=$images item=img name=i}
@@ -25,7 +25,7 @@
     <description><![CDATA[{Txt::clean_rude_symbols($g['desc']|strip_tags|escape:'html')}]]></description>
     <stock>{$g['qty']|escape:'html'}</stock>
 
-    {if not empty($section) and ($section->is_cloth() or $section->id eq Model_Section::CLOTHS_ROOT)}
+    {*if not empty($section) and ($section->is_cloth() or $section->id eq Model_Section::CLOTHS_ROOT)*}
         {if not empty( $good_filter )}
             {foreach from=$good_filter key=filter_id item=values_ids}
                 {foreach from=$values_ids item=value}
@@ -43,7 +43,7 @@
                 {/foreach}
             {/foreach}
         {/if}
-    {/if}
+    {*/if*}
 
     <manufacturer_warranty>true</manufacturer_warranty>
     <country_of_origin><![CDATA[{Txt::clean_rude_symbols($g['country_name']|escape:'html')}]]></country_of_origin>
