@@ -444,6 +444,41 @@ class Controller_Admin extends Controller_Authorised {
         $this->layout->body = View::factory('smarty:admin/'.$m.'/list', $tmpl_vars)->render();
     }
 
+    public function action_wikicategories_list(){
+        $goods_ids = $this->request->post('goods');
+        $wiki_cat_id = $this->request->post('wiki_cat_id');
+
+        $save_good = array();
+        if(!empty($goods_ids) && !empty($wiki_cat_id)){
+            $good = new Model_Good();
+            $good->goods_ids = $goods_ids;
+            $good->wiki_cat_id = $wiki_cat_id;
+            $save_good = $good->save_wikicat();
+        }
+        return array($save_good);
+    }
+
+    public function action_getwikigoods(){
+        $wiki_cat_id = $this->request->post('id');
+
+        $good = new Model_Good();
+        $all_goods = $good->get_goodswiki($wiki_cat_id);
+
+        $tmpl = array(
+            'goods' => $all_goods
+        );
+
+        exit(View::factory('smarty:admin/good/chosen', $tmpl)->render());
+    }
+
+    public function action_valupd(){
+        $good_id = $this->request->post('id');
+
+        $good = new Model_Good();
+        $good->valupd($good_id);
+        exit;
+    }
+
     /**
      * Добавление сущности
      */
@@ -1214,7 +1249,7 @@ class Controller_Admin extends Controller_Authorised {
 
         $code = $this->request->query('code');
         $code1c = $this->request->query('code1c');
-        
+
         if ( ! empty($code) OR ! empty($code1c))
         {
             if ( ! empty($code)) 
@@ -1296,6 +1331,11 @@ class Controller_Admin extends Controller_Authorised {
             {
                 $query->where('good.move', $move == 0 ? '=' : '>', 0);
             }
+            if (($wiki_cat = $this->request->query('wiki_cat')) != "")
+            {
+                $query->where('good.wiki_cat_id', '=',  0);
+            }
+
 
             $flags = array('_new_item', 'superprice', '_modify_item',  '_desc',  '_optim',  '_graf',  '_full_graf',  '_supervisor');
             

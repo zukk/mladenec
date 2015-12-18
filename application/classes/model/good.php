@@ -39,6 +39,8 @@ class Model_Good extends ORM {
     public $quantity = 0; // FOR CART количество штук заказано
     public $total = 0; // FOR CART сумма денег заказано
     public $order_comment = ''; // FOR CART комментарий к товару
+    public $goods_ids = ''; // список id для викимарта
+    public $wiki_cat_id = ''; // id викимарта
 
     public $grouped = 1; // for search - число товаров в группе падает в этот параметр для товаров - групп
 
@@ -48,7 +50,7 @@ class Model_Good extends ORM {
     protected $_belongs_to = array(
         'group' => array('model' => 'group', 'foreign_key' => 'group_id'),
         'section' => array('model' => 'section', 'foreign_key' => 'section_id'),
-        //'wiki_categories' => array('model' => 'wikicategories', 'foreign_key' => 'wikimart_cat_id'),//???
+        'wikicategories' => array('model' => 'wikicategories', 'foreign_key' => 'wiki_cat_id'),
         'brand' => array('model' => 'brand', 'foreign_key' => 'brand_id'),
         'country' => array('model' => 'country', 'foreign_key' => 'country_id'),
         'promo' => array('model' => 'promo', 'foreign_key' => 'promo_id'),
@@ -105,7 +107,8 @@ class Model_Good extends ORM {
         'promo_id'        => '',
         'show'            => 0,  // Отображать на сайте?
         'new'             => 0,  // флаг новинки
-        'zombie'          => 0   // флаг зомби
+        'zombie'          => 0,   // флаг зомби
+        'wiki_cat_id'     => 0   // id викимарт категории
     );
 
     protected $filters_data;
@@ -1039,6 +1042,39 @@ class Model_Good extends ORM {
         else return FALSE;
     }
 
+    public static function get_wikimart_catalog()
+    {
+        $catalog = '';
+        if (empty($catalog)) {
+            $rarray = DB::select('z_good.*', 'wiki_categories.id', 'wiki_categories.category_id',
+                'wiki_categories.parent_id', ['wiki_categories.name','wiki_name'])
+                ->distinct('z_good.wiki_cat_id')
+                ->from('z_good')
+                ->join('wiki_categories')
+                ->on('z_good.wiki_cat_id','=','wiki_categories.category_id')
+                ->where('z_good.qty',   '>', 0)
+                ->where('z_good.show',  '=', 1)
+                ->where('z_good.price', '>', 300)
+                ->execute()
+                ->as_array();
+
+            $catalog = $zombies = array();
+
+            foreach($rarray as $item) {
+                if ($item->parent_id != 0) {
+                    if (!empty($catalog[$item->parent_id])) {
+                        $catalog[$item['parent_id']]->children[$item['id']] = $item;
+                    } else {
+                        $zombies[] = $item['parent_id'];
+                    }
+                } else {
+                    $catalog[$item['id']] = $item;
+                }
+            }
+        }
+        return $catalog;
+    }
+
     /**
      * вытаскивает товары для XML пачками
      *
@@ -1049,39 +1085,25 @@ class Model_Good extends ORM {
      */
     public static function for_wikimart_yml($heap_size, $heap_number, $where = NULL)
     {
-        $active_top_sections = DB::select('z_section.id')
-            ->from('z_section')
-            ->where('active','=',1)
-            ->where('wikimart_cat_id','>',0)
-            ->execute()->as_array();
 
         $query = DB::select('good.*', 'file.SUBDIR', 'file.FILE_NAME','prop.img1600','prop.img500','prop.desc',
             ['brand.name','brand_name'],
-            ['section.name','section_name'],
-            ['section.market_category','market_category'],
-            ['country.name', 'country_name'],
-            ['section.wikimart_cat_id','section_wikimart_cat_id']
+            ['country.name', 'country_name']
         )->from(['z_good', 'good'])
 
             ->join(['z_good_prop',    'prop'])     ->on('good.id',         '=', 'prop.id')
             ->join(['z_brand',        'brand'])    ->on('good.brand_id',   '=', 'brand.id')
-            ->join(['z_section',      'section'])  ->on('good.section_id', '=', 'section.id')
             ->join(['z_group',        'group'])    ->on('good.group_id',   '=', 'group.id')
             ->join(['b_file',         'file'])     ->on('prop.img1600',    '=', 'file.id')
             ->join(['z_country',      'country'])  ->on('good.country_id', '=', 'country.id')
 
             ->where('good.show',        '=', 1)
             ->where('good.qty',         '>', 0)
-            ->where('good.section_id',  '>', 0)
             ->where('good.brand_id',    '>', 0)
             ->where('good.group_id',    '>', 0)
             ->where('good.price',       '>', 300)
-
             ->where('prop.img1600',     '>', 0)
-            ->where('section.active',   '=', 1)
-            ->where_open()
-            ->where('section.id',  'IN', $active_top_sections)
-            ->where_close()
+            ->where('wiki_cat_id',      '>', 0)
             ->where('group.active',     '=', 1)
             ->where('brand.active',     '=', 1)
             ->order_by('good.id')
@@ -1822,4 +1844,36 @@ class Model_Good extends ORM {
         ];
         return $opts;
     }
+
+    public function save_wikicat(){
+
+        $wiki_cat_id = $this->wiki_cat_id;
+        $goods_ids = $this->goods_ids;
+
+        $goods_q = DB::update(ORM::factory('good')->table_name())
+            ->set(array('wiki_cat_id' => $wiki_cat_id))
+            ->where('id', 'IN', $goods_ids)
+            ->execute();
+        return $goods_q;
+    }
+
+    public function get_goodswiki($wiki_cat_id){
+
+        $res = ORM::factory('good')
+            ->where('wiki_cat_id', '=', $wiki_cat_id)
+            ->find_all()
+            ->as_array('id');
+
+        return $res;
+    }
+
+    public function valupd($good_id){
+
+        $goods_q = DB::update(ORM::factory('good')->table_name())
+            ->set(array('wiki_cat_id' => 0))
+            ->where('id', '=', $good_id)
+            ->execute();
+        return $goods_q;
+    }
+
 }
