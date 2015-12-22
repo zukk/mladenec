@@ -2749,6 +2749,13 @@ class Controller_Admin extends Controller_Authorised {
             ->where('section_id', '>', '0')
             ->where('brand_id', '>', '0');
 
+        $not_wiki = $this->request->post('not_wiki'); // условие на викикатегорию
+
+        if($not_wiki == 1){
+            $query->where('wiki_cat_id', '=', '0');
+            $return['not_wiki'] = $not_wiki;
+        }
+
         $brands_q = ORM::factory('brand')->where('active', '=', 1)->order_by('name'); // запрос на бренды
 
         $id1c = array_unique(array_filter(preg_split('~\D+~isu', $this->request->post('id1c'))));  // если есть коды товаров - учитываем только их

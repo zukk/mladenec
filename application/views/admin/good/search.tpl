@@ -34,6 +34,11 @@
 
     <input type="text" name="name" class="width-100" value="{$name|default:''}" placeholder="Название" />
     <textarea name="id1c" class="width-100" placeholder="Коды 1с, можно много">{$id1c|default:[]|implode:"\n"}</textarea>
+    <div>
+        <label>Товары не в Викимарт категории
+            <input {if !empty($not_wiki)}checked="checked"{/if} type="checkbox" value="1" name="not_wiki">
+        </label>
+    </div>
     <input type="submit" name="search" value="Отобрать товары" rel="{$smarty.request.rand}" />
 
     <hr />
