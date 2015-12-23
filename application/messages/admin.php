@@ -44,4 +44,5 @@ return array(
     'stat_monthly'     => 'Статистика',
     'stat'     => 'Детализация статистики',
     'ozon'     => 'Условия выгрузки на озон',
+    'wikicategories' => 'Категории wikimart',
 );
