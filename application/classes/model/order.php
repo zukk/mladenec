@@ -179,7 +179,101 @@ class Model_Order extends ORM {
             
             $this->on_status_change_email($got_status);
         }
-        
+
+        /* обработка заказа озона TODO: переписать
+        //размещение заказа в озон
+        if ($status_changed &&
+            $order->delivery_type == Model_Order::SHIP_OZON)
+        {
+            // при смене статуса на "на палете" загружаем заказ
+            if( $order->status == 'T' ) {
+                $ozon = new OzonDelivery();
+                $terminal_id = Model_Ozon_Terminal::get_id_by_address($addr);
+                if($terminal_id) {
+                    if(!$ozon->upload_order($order, $order_data, $terminal_id)) {
+                        //ставим статус - не получилось разместить заказ в озон
+                        $order_data->ship_status = -1;
+                        $order_data->save();
+                        $order->in1c = 0;
+                        $order->save();
+
+                        mail('v.vinnikov@toogarin.ru', 'Не размещен заказ в озон '.$order->id, "Заказ не был загружен - подробности в логах");
+                    } elseif(!$order_data->ship_barcode) {
+                        //если заказ только размещен - получаем штрихкод и сохраняем в базу
+                        $order_data->ship_barcode = $ozon->get_barcode($order->id);
+                        $order_data->save();
+                        //сообщаем лайт-протоколу чтоб отдали штрихкод и статус размещено
+                        $order->in1c = 0;
+                        $order->save();
+                    }
+                } else  {
+                    //ставим статус - не найдет терминал озон
+                    $order_data->ship_status = -3;
+                    $order_data->save();
+                    $order->in1c = 0;
+                    $order->save();
+
+                    mail('v.vinnikov@toogarin.ru', 'Не найден терминал озон '.$order->id, "По адресу $addr не найден delivery id");
+                }
+            } elseif($order->status == 'X' && $order_data->ship_barcode) {
+                //при отмене заказа пробуем отменить заказ
+                $ozon = new OzonDelivery();
+                if(!$ozon->cancel_order($order->id)) {
+                    //ставим статус - не получилось отменить заказ в озон
+                    $order_data->ship_status = -2;
+                    $order_data->save();
+                    $order->in1c = 0;
+                    $order->save();
+
+                    mail('v.vinnikov@toogarin.ru', 'Не удалось отменить заказ в озон '.$order->id, "Смотрите логи");
+                } else {
+                    $order_data->ship_barcode = '';
+                    $order_data->ship_status = 0;
+                    $order_data->save();
+                }
+            }
+        } elseif($order_data->ship_barcode && $order->delivery_type == Model_Order::SHIP_OZON) {
+            //если статус не менялся, но состав заказа, способ оплаты или терминал поменялись
+            $ozon = new OzonDelivery();
+            $terminal_id = Model_Ozon_Terminal::get_id_by_address($addr);
+            if ($terminal_id) {
+                if (!$ozon->upload_order($order, $order_data, $terminal_id)) {
+                    //ставим статус - не получилось разместить заказ в озон
+                    $order_data->ship_status = -1;
+                    $order_data->save();
+                    $order->in1c = 0;
+                    $order->save();
+
+                    mail('v.vinnikov@toogarin.ru', 'Не обновлен заказ в озон ' . $order->id, "Заказ не был обновлен - подробности в логах");
+                }
+            } else {
+                //ставим статус - не найдет терминал озон
+                $order_data->ship_status = -3;
+                $order_data->save();
+                $order->in1c = 0;
+                $order->save();
+
+                mail('v.vinnikov@toogarin.ru', 'Не найден терминал озон '.$order->id, "По адресу $addr не найден delivery id");
+            }
+        } elseif($order_data->ship_barcode) {
+           //сменился способ доставки, отменяем заказ озона
+            $ozon = new OzonDelivery();
+            if(!$ozon->cancel_order($order->id)) {
+                //ставим статус - не получилось отменить заказ в озон
+                $order_data->ship_status = -2;
+                $order_data->save();
+                $order->in1c = 0;
+                $order->save();
+
+                mail('v.vinnikov@toogarin.ru', 'Не удалось отменить заказ в озон '.$order->id, "Смотрите логи");
+            } else {
+                $order_data->ship_barcode = '';
+                $order_data->ship_status = 0;
+                $order_data->save();
+            }
+        }
+        */
+
         // Пересчитаем накопления по активным накопительным акцииям
         // Накопления пересчитываются при всех сменах статусов, чтобы корректно отображались накопленные баллы
         $actions = Model_Action::get_active(TRUE);
@@ -646,4 +740,3 @@ class Model_Order extends ORM {
 
     }
 }
-

@@ -21,7 +21,7 @@
     <span>{$tag->name}</span>
     <i></i>
 </div>
-    <script>sphinx_location = '{$slink}';</script>
+
 {else}
 
 <div id="breadcrumb">          

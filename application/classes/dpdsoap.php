@@ -26,6 +26,7 @@ class DpdSoap {
             $this->_client = new SoapClient($this->_url['real'].$this->_service.'?wsdl', ['exceptions' => TRUE, 'trace' => FALSE]);
 
             $result = $this->_client->{$function}($params);
+            Log::instance()->add(Log::INFO, 'DPD request '.$function.print_r($params, TRUE).' result '.print_r($result, TRUE));
 
         } catch (SoapFault $fault) {
 
@@ -91,7 +92,7 @@ class DpdSoap {
     /**
      * @param int|string $city
      * @param int $price
-     * @param int $weight
+     * @param int $weight вес в килограммах
      * @param float $volume
      * @param bool $door - дверь или терминал
      * @return StdClass[] массив вариантов доставки {serviceCode, serviceName, cost, days}
@@ -105,7 +106,7 @@ class DpdSoap {
 
         if ($cached = Cache::instance()->get($cache_key)) {
 
-            $result = json_decode($cached);
+            $return = json_decode($cached);
 
         } else {
 
@@ -131,19 +132,21 @@ class DpdSoap {
                 'volume' => $volume,
                 'declaredValue' => $price,
             ]]);
-            if (floatval($result->cost) > 0) {
-                $result->cost += $price * 0.03; // добавляем в цену доставки 3% агентских
+
+            $return = $result->return;
+
+            if (floatval($return->cost) > 0) {
+                $return->cost += $price * 0.03; // добавляем в цену доставки 3% агентских
             } else {
-                $result->cost = FALSE;
+                $return->cost = FALSE;
             }
 
-            Cache::instance()->set($cache_key, json_encode($result));
+            Cache::instance()->set($cache_key, json_encode($return));
         }
 
-        if (empty($result)) return FALSE;
-
-        if ( ! is_array($result->return)) $result->return = [$result->return];
-
-        return $result->return;
+        if (empty($return)) return FALSE;
+        if ( ! is_array($return)) $return = [$return]; // если только один вариант - возвращает не массив, делаем всегда массив
+        //print_r($return);
+        return $return;
     }
 }

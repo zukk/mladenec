@@ -31,7 +31,6 @@ return array(
     'pricelab'      => 'История цен(pricelab)',
     'return'        => 'Претензии',
     'section'       => 'Категории',
-    'wikicategories'  => 'Викимарт категории',
     'sert'          => 'Сертификаты',
     'sert_group'    => 'Группы сертификатов',
     'slider_banner' => 'Баннеры в слайдерах',

@@ -58,7 +58,6 @@ I18n::lang('en-us');
  * saying "Couldn't find constant Kohana::<INVALID_ENV_NAME>"
  */
 Kohana::$environment = Kohana::PRODUCTION; // БОЕВОЙ САЙТ!!!
-//Kohana::$environment = Kohana::DEVELOPMENT; // САЙТ НА РАЗРАБОТКЕ !!!
 /**
  * Initialize Kohana, setting the default options.
  *
@@ -209,10 +208,10 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 		->defaults(array('controller' => 'product', 'action' => 'cart_recount'));
 
     Route::set('admin_getwikigoods', 'admin/getwikigoods.php')
-		->defaults(array('controller' => 'admin', 'action' => 'getwikigoods'));
+        ->defaults(array('controller' => 'admin', 'action' => 'getwikigoods'));
 
     Route::set('admin_valupd', 'admin/valupd.php')
-		->defaults(array('controller' => 'admin', 'action' => 'valupd'));
+        ->defaults(array('controller' => 'admin', 'action' => 'valupd'));
 
 	Route::set('cart_presents', 'ajax/cart_presents.php')
 		->defaults(array('controller' => 'product', 'action' => 'cart_presents'));
@@ -276,7 +275,7 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 
 	Route::set('ajax_frequent', 'frequent/<id>', array('id' => '\d+'))
 		->defaults(array('controller' => 'ajax', 'action' => 'frequent'));
-
+        
     Route::set('ajax_cart_merge', 'cart_merge', array())
 		->defaults(array('controller' => 'ajax', 'action' => 'cart_merge'));
 
@@ -489,7 +488,6 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
     Route::set('admin_user_excel', 'od-men/user_excel')
 		->defaults(array('controller' => 'admin', 'action' => 'user_excel'));
 
-
     Route::set('admin_order_card', 'od-men/order_card')
         ->defaults(array('controller' => 'admin', 'action' => 'order_card'));
 
@@ -501,9 +499,6 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 
 	Route::set('admin_direct', 'od-men/direct')
 		->defaults(array('controller' => 'admin', 'action' => 'direct'));
-
-	Route::set('admin_tagbylink', 'od-men/tagbylink')
-		->defaults(array('controller' => 'admin', 'action' => 'tagbylink'));
 
 	Route::set('admin_tag_excel', 'od-men/tag_excel')
 		->defaults(array('controller' => 'admin', 'action' => 'tag_excel'));

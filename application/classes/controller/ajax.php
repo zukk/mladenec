@@ -331,7 +331,7 @@ class Controller_Ajax extends Controller_Frontend {
                 ->where('z_brand.active', '=', '1')
             ->order_by('good.popularity', 'DESC')
             ->limit(100);
-
+        
         switch ($type) {
 
             case 'new':
@@ -835,7 +835,6 @@ class Controller_Ajax extends Controller_Frontend {
      */
     public function action_cart_merge()
     {
-		
 		$old_ids = $this->request->post('old_session');
 
 		$Session = Session::instance();
@@ -1013,5 +1012,204 @@ class Controller_Ajax extends Controller_Frontend {
             $mail->send('0099060msk@gmail.com, a.melnikov@mladenec.ru, m.zukk@ya.ru, zakaz@mladenec.ru, request@mladenec.ru, a.sergeev@mladenec.ru', 'Арбузная форма!');
         }
         exit('ok');
+    }
+
+    /**
+     * Автокомплит для города - свой, дает код региона и id города для точного расчета
+     */
+    public function action_city_suggest()
+    {
+        $city = $this->request->query('query');
+        $suggs = DB::select('city.id', ['city.name', 'cname'], ['region.name', 'rname'])
+            ->from('city')
+            ->join('region')
+                ->on('region.id', '=', 'city.region_id')
+            ->where('city.name', 'LIKE', $city.'%')
+            ->order_by('city.name')
+            ->order_by('region.name')
+            ->limit(30)
+            ->execute()
+            ->as_array();
+
+        $return['suggestions'] = [];
+        if ($suggs) {
+            foreach ($suggs as $n => $sugg) {
+
+                $val = $sugg['cname'];
+                if (( ! empty($suggs[$n - 1]['cname']) && $suggs[$n - 1]['cname'] == $val)
+                    || ( ! empty($suggs[$n + 1]['cname']) && $suggs[$n + 1]['cname'] == $val)
+                ) {
+                    $val .= ', '.$sugg['rname'];
+                }
+
+                $return['suggestions'][] = [
+                    'value' => $val,
+                    'data'  => $sugg['id'],
+                ];
+            }
+        }
+        $this->return_json($return);
+    }
+
+    /**
+     * Автокомплит при заполнении адреса
+     */
+    public function action_ya_autocomplete()
+    {
+        $city = $this->request->query('city');
+        $street = $this->request->query('street');
+
+        $suggs = yadost::autocomplete($this->request->query('query'), ! empty($city) ? ( ! empty($street) ? 'house' : 'street') : 'locality', $city, $street);
+        $return['suggestions'] = [];
+        if ($suggs) {
+            foreach ($suggs as $sugg) {
+                $return['suggestions'][] = $sugg->value;
+            }
+        }
+        $this->return_json($return);
+    }
+
+    /**
+     * получить варианты доставки от Яндекса
+     */
+    public function action_delivery_door_ya()
+    {
+        $cart = Cart::instance();
+
+        $addr_id = $this->request->query('address_id');
+
+        if (empty($addr_id)) throw new HTTP_Exception_404; // нет адреса
+        $addr = new Model_User_Address($addr_id);
+        if ( ! $addr->loaded()) throw new HTTP_Exception_404;
+        if ($addr->user_id != $this->user) throw new HTTP_Exception_404; // чужой адрес
+        $city = $addr->city;
+
+        $variants = yadost::searchDeliveryList($city, $cart->weight, $cart->height, $cart->width, $cart->length, $cart->get_total());
+
+        $return = [];
+        if ( ! empty($variants)) {
+            foreach ($variants as $k => $v) {
+                $return[$k]['tariffName'] = $v->tariffName;
+                $return[$k]['tariffId'] = $v->tariffId;
+                $return[$k]['cost'] = $v->cost;
+            }
+        }
+        //var_dump($variants);
+        $this->return_json($return);
+    }
+
+    /**
+     * получить варианты доставки от DPD
+     * @TODO сделать city_id обязательным
+     */
+    public function action_delivery_door_dpd()
+    {
+        $cart = Cart::instance();
+        $addr_id = $this->request->query('address_id');
+
+        if (empty($addr_id)) throw new HTTP_Exception_404; // нет адреса
+        $addr = new Model_User_Address($addr_id);
+        if ( ! $addr->loaded()) throw new HTTP_Exception_404;
+        if ($addr->user_id != $this->user) throw new HTTP_Exception_404; // чужой адрес
+        $city_id = $addr->city_id;
+
+        $return = [];
+        try {
+
+            $dpd = new DpdSoap(); // запрос цены доставки в dpd
+            $variants = $dpd->ship_price($city_id, $cart->get_total(), $cart->weight, $cart->volume());
+
+            if ( ! empty($variants)) {
+                foreach ($variants as $k => $v) {
+
+                    $return[$k]['tariffName'] = 'DPD'; //$v->tariffName;
+                    $return[$k]['tariffId'] = $v->serviceCode;
+                    $return[$k]['cost'] = ceil(floatval($v->cost));
+                    $return[$k]['days'] = $v->days;
+                }
+            }
+
+            /*
+            if ( ! $cart->ship_wrong && empty($cart->big) && ! empty($city_name)) { // в заказе кгт или кривые данные о размере-весе или нет города - не надо считать доставку
+
+
+
+                $city = new Model_City($city_id);
+                if ( ! $city->loaded()) { // не нашли город по id, поищем по названию
+                    $parts = array_filter(array_map('trim', explode(',', $city_name))); // название города может быть составным, с областью или районом
+                    $city = ORM::factory('city')->where('name', 'IN', $parts)->find();
+                }
+                if ($city->loaded()) { // есть город - запрос по id
+                } elseif ( ! empty($city_name)) {  // нет города - запрос по последней части, типа Республика Крым, Керчь
+                    $door = $dpd->ship_price($parts[count($parts) - 1], $cart->total, $weight, $volume);
+                }
+
+                // ищем ближайший терминал
+                $reverse_latlong = implode(' ', array_reverse(explode(',', $latlong)));
+
+                $closest_term = DB::select()
+                    ->from('terminal')
+                    ->where('latlong', 'LIKE', '%,%')
+                    ->order_by(DB::expr("geodist_pt(GeomFromText('Point(" . $reverse_latlong . ")'), point)"))
+                    ->limit(1)
+                    ->execute()
+                    ->as_array();
+
+                $closest_term = $closest_term[0];
+
+                $terminal = $dpd->ship_price($closest_term['city_id'], $cart->total, $cart->weight(), $cart->volume(), FALSE);
+
+                if ( ! empty($terminal)) {
+                    foreach ($terminal as &$v) {
+                        $v->cost = ceil(floatval($v->cost));
+                        if ( ! isset($min_param['cost'])) { // лучшая цена или время только если нет до двери
+                            $min_param = ['days' => $v->days, 'cost' => $v->cost, 'dt' => 'T'];
+                        }
+                    }
+                }
+                if (empty($min_param['cost'])) { // не определили цену
+                    $min_param = ['cost' => 0, 'dt' => ''];
+                }
+            }
+
+             $data = ['door' => $door, 'terminal' => $terminal, 'closest' => $closest_term, 'min_param' => $min_param];
+            */
+
+        } catch (DPDException $e) {
+
+            Log::instance()->add(Log::WARNING, $e->getMessage());
+        }
+
+        //$return['dpd'] = View::factory('smarty:cart/ship_date', $data)->render().View::factory('smarty:cart/ship_time', $data)->render();
+        $this->return_json($return);
+    }
+
+
+    /**
+     * Заведение нового адреса (из корзины)
+     */
+    public function action_new_address()
+    {
+        if ( ! $this->user) throw new HTTP_Exception_404;
+        $address = new Model_User_Address();
+        $address->values($this->request->post());
+        $address->user_id = $this->user->id;
+
+        $return = [];
+        if ($address->validation()->check()) {
+            $address->save();
+            $return = [
+                'id' => $address->id,
+                'name' => Txt::addr($address),
+                'correct_addr' => $address->correct_addr,
+                'latlong'   => $address->latlong,
+                'zone_id'   => $address->zone_id,
+            ];
+
+        } else {
+            $return['error'] = $address->validation()->errors('user/address');
+        }
+
+        $this->return_json($return);
     }
 }
