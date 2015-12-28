@@ -360,10 +360,12 @@ class Controller_User extends Controller_Frontend
             } else {
                 $this->return_reload();
             }
+
+            GetResponse::renew($this->user->id);
         }
 
-        // скидка за даные о детях
-        $this->user->child_discount( ! empty($user_kids) || ! empty($this->user->pregnant));
+        // скидка за даные о детях - включаем если надо
+        $this->tmpl['coupon'] = $this->user->child_discount( ! empty($user_kids) || ! empty($this->user->pregnant));
 
         //срок беременности
         $this->tmpl['pregnant_weeks'] = ($this->user->pregnant_terms) ? $this->user->get_pregnant_weeks() : NULL;

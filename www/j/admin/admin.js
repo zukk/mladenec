@@ -141,10 +141,9 @@ $(document).ready(function() {
             return false;
         })
         .on('click', '#add_zone_time', function() {
-            var clone = $(this).closest('tr').clone();
+            var table = $(this).prev('table'), clone = table.find('tr').last().clone();
             $('input:text', clone).val('');
-            $(this).closest('tbody').append(clone);
-            $(this).remove();
+            table.find('tbody').last().append(clone);
             return false;
         })
         .on('click', 'input[type=button].trdel', function() {

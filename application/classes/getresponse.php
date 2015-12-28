@@ -17,6 +17,18 @@ class GetResponse {
     }
 
     /**
+     * пометить юзера на синхронизацию с ГР
+     * @param $user_id
+     */
+    static function renew($user_id)
+    {
+        DB::update('getresponse')
+            ->set(['uploaded' => DB::expr('NULL')])
+            ->where('user_id', '=', $user_id)
+            ->execute();
+    }
+
+    /**
      * отписываем мыло
      */
     function unsubscribe($mail)

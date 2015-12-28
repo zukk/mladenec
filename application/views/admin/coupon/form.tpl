@@ -11,6 +11,11 @@
             {html_options options=Model_Coupon::type() selected=$i->type}
         </select>
     </p>
+    {if $i->user_id > 0}
+    <p>
+        <div class="tools-alert tools-alert-red">Купон автоматически сгенерирован для {HTML::anchor(Route::url('admin_edit', ['model' => 'user', 'id' => $i->user_id]), $i->user->name|default:$i->user_id)}</div>
+    </p>
+    {/if}
 
     <p>
         <label for="name">Код купона</label>

@@ -40,6 +40,7 @@ $(document).on('click','#pregnant-check', function(){
                 200&nbsp;рублей скидки к&nbsp;следующему заказу!</p>
         {else}
             <p>Я&nbsp;&mdash; Младенец. Ру, теперь точно знаю, что предложить Вам и&nbsp;Вашему ребёнку.<br />
+                {if $user->child_discount eq Model_User::CHILD_DISCOUNT_ON and ! empty($coupon)}Ваш промо-код за&nbsp;заполнение данных о&nbsp;детях&nbsp;&mdash; <strong>{$coupon->name|default:'kidz'}</strong><br />{/if}
                 Совсем скоро Вы&nbsp;получите от&nbsp;меня персональные предложения и&nbsp;подарки!</p>
         {/if}
 

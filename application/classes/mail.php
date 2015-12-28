@@ -236,7 +236,7 @@ class Mail {
         if (Kohana::$environment === Kohana::DEVELOPMENT)
         {
             $subject = 'Test: ' . $subject . ', to: ' . $to;
-            $to = 'm.zukk@ya.ru, v.vinnikov@toogarin.ru';
+            $to = 'm.zukk@ya.ru';
         }
         
         return mail($to, $this->getSubject($subject), $message, $add_header, '-f'.self::MAIL_FROM.' -F'.self::MAIL_PREFIX);

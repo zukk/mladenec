@@ -18,8 +18,7 @@ class Model_User extends ORM {
         'sum' => 0, // сумма заказов
         'qty' => 0, // число заказов
         'last_order' => 0, // номер последнего заказа
-        'segments_recount_ts' => 0, // timestamp последнего пересчета сегментов
-        'pregnant' => 0, 
+        'pregnant' => 0,
         'pregnant_terms' => '',
         'child_discount' => '',
     ];
@@ -260,25 +259,39 @@ class Model_User extends ORM {
      * Включить или выключить скидку за данные о детях для пользователя
      * Включает только если юзер ещё её не использовал
      * @param on bool - включить или выключить
+     * @return Model_Coupon|ORM
      */
     function child_discount($on = TRUE)
     {
         $cart = Cart::instance();
 
-        if ($on && ($this->child_discount == Model_User::CHILD_DISCOUNT_NO)) {
-            $this->child_discount = Model_User::CHILD_DISCOUNT_ON;
-            $cart->load_coupon(Model_Coupon::CHILD_DISCOUNT);
-            $cart->recount();
-        } else {
-            if ($this->child_discount == Model_User::CHILD_DISCOUNT_ON) {
-                $this->child_discount = Model_User::CHILD_DISCOUNT_NO;
+        if ($on) {
+            if ($this->child_discount == Model_User::CHILD_DISCOUNT_ON) { // возвращаем сгенеренный
+                $coupon = ORM::factory('coupon', ['user_id' => $this->id]);
+                if ( ! $coupon->loaded()) return FALSE;
+            }
+            if ($this->child_discount == Model_User::CHILD_DISCOUNT_NO) { // не получал
+
+                $coupon = Model_Coupon::generate(200, 201, 1, 1, $this->id); // генерим
+
+                $this->child_discount = Model_User::CHILD_DISCOUNT_ON;
+                $cart->load_coupon($coupon->name);
+                $cart->recount();
+                if (Valid::email($this->email) && $this->login == 'zukk') Mail::htmlsend('child_discount', ['user' => $this, 'coupon' => $coupon], $this->email, 'Ваш промо-код');
             }
 
-            if ( ! empty($cart->coupon['name']) && $cart->coupon['name'] == Model_Coupon::CHILD_DISCOUNT) {
-                $cart->remove_coupon();
+        } else {
+
+            if ($this->child_discount == Model_User::CHILD_DISCOUNT_ON) { // у него была возможность получить - убираем купон
+                $this->child_discount = Model_User::CHILD_DISCOUNT_NO;
+                $coupon = ORM::factory('coupon', ['user_id' => $this->id]);
+                if ($coupon->loaded()) $coupon->delete();
+                $coupon = FALSE;
             }
         }
         $this->save();
+
+        if ( ! empty($coupon)) return $coupon;
     }
 
     /**

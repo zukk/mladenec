@@ -2,6 +2,19 @@
 
 {$pager->html('Купоны')}
 
+<form action="" >
+    <fieldset class="fivesixth">
+        <legend>Поиск купонов</legend>
+
+        <div class="units-row">
+            <div class="unit-20"><b>Код:</b><br /><input type="text" name="name" class="width-100" value="{$smarty.get.name|default:''}" /></div>
+        </div>
+        <div class="units-row">
+            <div class="unit-80"><input type="submit" name="search" value="Показать" /></div>
+        </div>
+    </fieldset>
+</form>
+
 <form action="">
     <table id="list">
     <tr>

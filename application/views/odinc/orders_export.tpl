@@ -28,7 +28,15 @@
 {foreach from=$o->get_goods() item=g}
 {$g->code}©{$g->quantity}©{$g->price}©{$g->total}©{$g->order_comment}
 {/foreach}
-SystDost{if $o->delivery_type == Model_Order::SHIP_SERVICE}TR{/if}©{$o->price_ship-$o->data->mkad*Model_Order::PRICE_KM}{* тут цена без учета мкад!!! *}
+{assign var=clear_price value=$o->price_ship-$o->data->mkad*Model_Order::PRICE_KM}{* тут цена без учета мкад!!! *}
+{if $o->status == 'N' and $o->data->ship_time and $clear_price > 0}{* товары-доставка (услуги) - добавляем отдельным полем - показываем только в новых заказах *}
+{assign var=ship value=Model_Zone_Time::code_price($o->data->ship_time, $clear_price)}
+{if $ship}
+{$ship.code}©1©{$ship.price}©1©
+{assign var=clear_price value=$clear_price-$ship.price}
+{/if}
+{/if}
+SystDost{if $o->delivery_type == Model_Order::SHIP_SERVICE}TR{/if}©{$clear_price}
 {if $o->data->mkad}SystMKAD©{$o->data->mkad}
 {/if}
 КОНЕЦ ЗАКАЗА

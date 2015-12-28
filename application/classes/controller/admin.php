@@ -44,7 +44,7 @@ class Controller_Admin extends Controller_Authorised {
             'ids',              // Товары, отображаемые в акции
             'goods_show',       // Товары, отображаемые в акции
             'mail', 'spamit', 'clear_list',   // for spam
-            'week_day', 'prices', 'new_price', 'new_min_sum'// for zones
+            'week_day', 'prices', 'new_price', 'new_min_sum' // for zones
         ];
     }
     
@@ -1034,9 +1034,9 @@ class Controller_Admin extends Controller_Authorised {
      */
     public function action_section_list()
     {
-        $s = new Model_Section();
+        $s = ORM::factory('section');
         if ( ! ($v = $this->request->query('vitrina'))) $v = 'mladenec';
-        return array('list' => $s->get_catalog(TRUE, $v));
+        return ['list' => $s->get_catalog(TRUE, $v)];
     }
 
     /**
@@ -3061,5 +3061,29 @@ class Controller_Admin extends Controller_Authorised {
 		echo iconv("utf-8", "windows-1251//TRANSLIT", $content );
 		exit;
 	}
+
+    /**
+     * Список купонов - с поиском
+     * @return array
+     */
+    function action_coupon_list()
+    {
+        $query = ORM::factory('coupon');
+
+        if ($name = $this->request->query('name')) {
+            $query->where('name', 'LIKE', trim($name));
+        }
+
+        $query->reset(FALSE);
+        $return['pager'] = $pager = new Pager($query->count_all(), 50);
+        $return['list'] = $query
+            ->order_by('id', 'desc')
+            ->offset($pager->offset)
+            ->limit($pager->per_page)
+            ->find_all()
+            ->as_array();
+
+        return $return;
+    }
 }
 

@@ -9,6 +9,11 @@
         <small>это название увидят пользователи</small>
     </p>
     <p>
+        <label for="code">артикул товара</label>
+        <input type="text" id="code" name="code" value="{$i->code|default:''|escape:'html'}" class="width-50" />
+        <small>артикул товара-доставки в протоколе с 1с</small>
+    </p>
+    <p>
         <label for="name">Зона доставки</label>
         {Form::select('zone_id', ORM::factory('zone')->order_by('priority', 'DESC')->find_all()->as_array('id', 'name'), $i->zone_id)}
     </p>
@@ -22,49 +27,45 @@
         <label for="name">Стоимость</label>
         <div class="area hi">
             <table class="table-simple">
-                <tbody>
+            <tbody>
+                <tr>
+                    <td>
+                        <input type="text" id="price" name="price" size="5" value="{$i->price|default:''|escape:'html'}" />
+                    </td>
+                    <td>
+                        <small>при сумме заказа&nbsp;от</small>
+                    </td>
+                    <td>
+                        <small>0&nbsp;руб.</small>
+                    </td>
+                </tr>
+                {foreach from=$i->prices->order_by('min_sum')->find_all() item=ip}
                     <tr>
                         <td>
-                            <input type="text" id="price" name="price" size="5" value="{$i->price|default:''|escape:'html'}" />
+                            <input type="text" size="5" name="prices[{$ip->id}][price]" value="{$ip->price}" />
                         </td>
                         <td>
                             <small>при сумме заказа&nbsp;от</small>
                         </td>
                         <td>
-                            <small>0&nbsp;руб.</small>
+                            <input type="text" size="5" name="prices[{$ip->id}][min_sum]" value="{$ip->min_sum}" />
                         </td>
-                        <td></td>
                     </tr>
-                    {foreach from=$i->prices->order_by('min_sum')->find_all() item=ip}
-                        <tr>
-                            <td>
-                                <input type="text" size="5" name="prices[{$ip->id}][price]" value="{$ip->price}" />
-                            </td>
-                            <td>
-                                <small>при сумме заказа&nbsp;от</small>
-                            </td>
-                            <td>
-                                <small><input type="text" size="5" name="prices[{$ip->id}][min_sum]" value="{$ip->min_sum}" /></small>
-                            </td>
-                            <td>
-                                <small>руб.</small>
-                            </td>
-                        </tr>
-                    {/foreach}
-                </tbody>
-                <tr>
-                    <td>
-                        <input type="text" name="new_price[]" size="5" placeholder="цена" />
-                    </td>
-                    <td>
-                        <small>при сумме от </small>
-                    </td>
-                    <td>
-                        <small><input type="text" size="5" name="new_min_sum[]" placeholder="сумма" /></small>
-                    </td>
-                    <td><input class="btn btn-green" value="+ Добавить цену" type="button" id="add_zone_time"/></td>
-                </tr>
+                {/foreach}
+            </tbody>
+            <tr>
+                <td>
+                    <input type="text" name="new_price[]" size="5" placeholder="цена" />
+                </td>
+                <td>
+                    <small>при сумме от </small>
+                </td>
+                <td>
+                    <input type="text" size="5" name="new_min_sum[]" placeholder="сумма" />
+                </td>
+            </tr>
             </table>
+            <input class="btn btn-green" value="+ Добавить цену" type="button" id="add_zone_time"/>
         </div>
     </p>
     <p>

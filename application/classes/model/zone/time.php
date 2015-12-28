@@ -2,7 +2,7 @@
 class Model_Zone_Time extends ORM { // интервалы для зон доставки
 
     // двоичные коды для дней недели
-    static $week_days = array(
+    static $week_days = [
         'Пн' => 1, // 2^0
         'Вт' => 2,
         'Ср' => 4,
@@ -10,38 +10,46 @@ class Model_Zone_Time extends ORM { // интервалы для зон дост
         'Пт' => 16,
         'Cб' => 32,
         'Вс' => 64, // 2^6
-    );
+    ];
 
     protected $_table_name = 'z_zone_time';
 
-    protected $_belongs_to = array(
-        'zone' => array('model' => 'zone', 'foreign_key' => 'zone_id'),
-    );
+    protected $_belongs_to = [
+        'zone' => ['model' => 'zone', 'foreign_key' => 'zone_id'],
+    ];
 
-    protected $_has_many = array(
-        'prices' => array(
+    protected $_has_many = [
+        'prices' => [
             'model' => 'zone_time_price',
             'foreign_key'   => 'time_id',
-        )
-    );
+        ]
+    ];
 
-    protected $_table_columns = array(
-        'id' => '', 'zone_id' => '', 'name' => '', 'week_day' => '', 'morning' => '', 'active' => '', 'sort' => '', 'price' => ''
-    );
+    protected $_table_columns = [
+        'id' => '', 
+        'zone_id' => '', 
+        'name' => '', 
+        'week_day' => '', 
+        'morning' => '', 
+        'active' => '', 
+        'sort' => '', 
+        'price' => '', 
+        'code' => '',
+    ];
 
     /**
      * @return array
      */
     public function rules()
     {
-        return array(
-            'name' => array(
-                array('not_empty'),
-            ),
-            'week_day' => array(
-                array('not_empty'),
-            ),
-        );
+        return [
+            'name' => [
+                ['not_empty'],
+            ],
+            'week_day' => [
+                ['not_empty'],
+            ],
+        ];
     }
 
     /**
@@ -69,8 +77,27 @@ class Model_Zone_Time extends ORM { // интервалы для зон дост
         return $time->name;
     }
 
+    /**
+     * Определение артикула и стоимости доставки для показа в протоколе заказа для 1с
+     * @param $id - идентификатор интервала
+     * @return bool|array Массив - [code - артикул цены, price - цена]
+     */
+    static function code_price($id)
+    {
+        $time = new self($id);
+        if ( ! $time->loaded()) return FALSE;
+        if ( ! $time->code) return FALSE;
+        $g = ORM::factory('good', ['code' => $time->code]);
+        if ( ! $g->loaded()) return FALSE;
+
+        return [
+            'code' => $g->code,
+            'price'=> $g->price,
+        ];
+    }
+
     public function flag()
     {
-        return array('morning', 'active');
+        return ['morning', 'active'];
     }
 }

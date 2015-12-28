@@ -7,7 +7,7 @@ class Model_Coupon extends ORM {
     const TYPE_LK = 2; // купон даёт ЛК
     const TYPE_PRESENT = 3; // купон даёт подарок
 
-    const CHILD_DISCOUNT = 'kidz'; // скрытый купон со скидкой за данные о детях/беременности
+    //const CHILD_DISCOUNT = 'kidz'; // скрытый купон со скидкой за данные о детях/беременности
 
     protected $_table_name = 'z_coupon';
 
@@ -23,8 +23,9 @@ class Model_Coupon extends ORM {
         'from' => '',  // начало активности купoна (или null)
         'to' => '', // начало активности купона (или null)
         'uses' => '', // максимальное число использований купона
-        'used' => '', // число использований купона
-        'max_sku' => 0, // для купона со скидкой в %
+        'used' => '', // число использований купона (факт)
+        'user_id' => '', // пользователь
+        'max_sku' => 0, // для купона со скидкой в % - максимум товара одного наим, на который скидка
     ];
 
     protected $_has_many = [
@@ -33,6 +34,13 @@ class Model_Coupon extends ORM {
             'through'    => 'z_coupon_good',
             'foreign_key'   => 'coupon_id',
             'far_key'   => 'good_id',
+        ],
+    ];
+
+    protected $_belongs_to = [
+        'user' => [
+            'model' => 'user',
+            'foreign_key'   => 'user_id',
         ],
     ];
 
@@ -84,7 +92,7 @@ class Model_Coupon extends ORM {
     /**
      * Сгенерировать новый купон
      */
-    public static function generate($sum, $min_sum = 0, $per_user = 1, $uses = 1)
+    public static function generate($sum, $min_sum = 0, $per_user = 1, $uses = 1, $user_id = 0)
     {
         $c = new self;
         if ($min_sum == 0) $min_sum = $sum + 1;
@@ -95,6 +103,7 @@ class Model_Coupon extends ORM {
                 'name'      => $code,
                 'per_user'  => $per_user,
                 'uses'      => $uses,
+                'user_id'   => $user_id,
                 'sum'       => $sum,
                 'min_sum'   => $min_sum,
                 'active'    => 1
@@ -128,6 +137,10 @@ class Model_Coupon extends ORM {
     {
         if (Model_User::logged()) { // есть пользователь - посчитаем сколько купонов потратил
 
+            if ($this->user_id > 0 && $this->user_id != Model_User::current()->id) { // купон именной и не на текущего юзера
+                return FALSE;
+            }
+
             $uses = ORM::factory('order')
                 ->where('user_id', '=', Model_User::current()->id)
                 ->where('coupon_id', '=', $this->id)
@@ -147,7 +160,7 @@ class Model_Coupon extends ORM {
     {
         $this->used = $this->used + 1;
         Model_History::log('coupon', $this->id, 'использование', [], $user_id);
-        if (($user = Model_User::current()) && ($this->name == Model_Coupon::CHILD_DISCOUNT)) {
+        if (($user = Model_User::current()) && ($this->user_id == $user->id)) { // привязанный к юзеру купон - это за заполнение данных о детях
             $user->child_discount = Model_User::CHILD_DISCOUNT_USED;
             $user->save();
         }
