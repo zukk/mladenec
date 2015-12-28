@@ -101,8 +101,8 @@ class GetResponse {
                         'customs' => $customs
                     ]
                 );
-                print_r($result);
-                return TRUE;
+                if ($result['queued'] == 1) return TRUE;
+                return FALSE;
             }
         } catch (RuntimeException $e) {
 
