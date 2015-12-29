@@ -13,8 +13,8 @@
 ^www/bonuses/var/templates_compiled/
 ^www/bonuses/var/cache/
 ^sphinx/
-^www/upload/
-^www/export/
+^www/upload
+^www/export
 ^www/c/style.combined.css
 ^www/c/style.min.css
 ^www/j/script.combined.js
