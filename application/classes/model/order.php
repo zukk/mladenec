@@ -573,7 +573,6 @@ class Model_Order extends ORM {
 
             $return = $time->get_price($this->price);
             if ($od->ship_zone == Model_Zone::ZAMKAD) $return += $od->mkad * self::PRICE_KM;
-            if ($od->ship_date == '2015-12-31') $return += 500; // + 500 рублей 31 декабря
         }
 
         return $return;
