@@ -13,3 +13,10 @@
 ^www/bonuses/var/cache/
 ^sphinx/
 ^www/upload/
+^www/c/style.combined.css
+^www/c/style.min.css
+^www/export/
+^www/j/script.combined.js
+^www/j/script.min.js
+^www/sitemap.xml
+
