@@ -9,13 +9,14 @@
 ^application/config/domains.php$
 ^www/bonuses/plugins/
 ^www/bonuses/www/admin/plugins/
+^www/bonuses/www/images/
 ^www/bonuses/var/templates_compiled/
 ^www/bonuses/var/cache/
 ^sphinx/
 ^www/upload/
+^www/export/
 ^www/c/style.combined.css
 ^www/c/style.min.css
-^www/export/
 ^www/j/script.combined.js
 ^www/j/script.min.js
 ^www/sitemap.xml
