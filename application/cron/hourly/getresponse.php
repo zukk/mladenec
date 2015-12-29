@@ -192,4 +192,6 @@ foreach ($user_ids as $row) {
     }
 }
 
+unlink($lock_file);
+
 print( PHP_EOL . count($uploaded_ids) . " contacts uploaded" . PHP_EOL);
