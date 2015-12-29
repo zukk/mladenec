@@ -1,5 +1,5 @@
-Installation started 2015-12-28 11:50:31
-Attempting to connect to database revive with user zukk
+Installation started 2015-12-29 11:15:55
+Attempting to connect to database revive with user revive
 Connected to database revive
 Database settings and permissions are OK
 creating upgrade_action audit table
@@ -14,22 +14,35 @@ Preparing to set timezone preference...
 Found timezone preference ID of 16
 Found the admin account's timezone association, updating preference...
 Updated the admin account timezone preference to: 'Europe/Moscow'
-#! openXBannerTypes(): Permissions error
-#! openXDeliveryLimitations(): Permissions error
-#! openX3rdPartyServers(): Permissions error
-#! openXReports(): Permissions error
-#! openXDeliveryCacheStore(): Permissions error
-#! openXMaxMindGeoIP(): Permissions error
-#! openXInvocationTags(): Permissions error
-#! openXDeliveryLog(): Permissions error
-#! openXVideoAds(): Permissions error
-=========================================================================
-Attempting to detect an existing Openads (aka. phpAdsNew) installation...
-PAN not detected
-Attempting to detect an existing Openads (aka. Max Media Manager 0.1) installation...
-MMM v0.1 not detected
-Attempting to detect an existing Openads (aka. Max Media Manager 0.3) installation...
-MMM v0.3 not detected
-Attempting to detect an existing Revive Adserver installation...
-Revive Adserver 3.2.2 detected
-This version is up to date.
+#! openXDeliveryLog(): Invalid source path to plugin dataobjects /home/admin/sites/mladenec/www/bonuses/var/plugins/DataObjects/
+#! openXDeliveryLog(): Failed to implement dataobjects for oxDeliveryDataPrepare
+#! openXDeliveryLog(): Task failed _registerSchema
+#! openXDeliveryLog(): Failed to write /home/admin/sites/mladenec/www/bonuses/var/plugins/DataObjects/db_schema.ini
+#! openXDeliveryLog(): Failed to recreate old dataobject cache
+#! openXDeliveryLog(): Invalid source path to plugin dataobjects /home/admin/sites/mladenec/www/bonuses/var/plugins/DataObjects/ for oxDeliveryDataPrepare
+#! openXDeliveryLog(): Failed to remove dataobjects for oxDeliveryDataPrepare
+#! openXDeliveryLog(): Failed to install oxDeliveryDataPrepare
+#! openXDeliveryLog(): Failed to install plugins for package openXDeliveryLog
+#! openXDeliveryLog(): Failed to initialise table class for oxDeliveryDataPrepare
+#! openXDeliveryLog(): Failed to drop tables for oxDeliveryDataPrepare
+#! openXDeliveryLog(): Task failed _unregisterSchema
+#! openXDeliveryLog(): Failed to uninstall oxDeliveryDataPrepare
+#! openXVideoAds(): Invalid source path to plugin dataobjects /home/admin/sites/mladenec/www/bonuses/var/plugins/DataObjects/
+#! openXVideoAds(): Failed to implement dataobjects for vastInlineBannerTypeHtml
+#! openXVideoAds(): Task failed _registerSchema
+#! openXVideoAds(): Failed to write /home/admin/sites/mladenec/www/bonuses/var/plugins/DataObjects/db_schema.ini
+#! openXVideoAds(): Failed to recreate old dataobject cache
+#! openXVideoAds(): Invalid source path to plugin dataobjects /home/admin/sites/mladenec/www/bonuses/var/plugins/DataObjects/ for vastInlineBannerTypeHtml
+#! openXVideoAds(): Failed to remove dataobjects for vastInlineBannerTypeHtml
+#! openXVideoAds(): Failed to install vastInlineBannerTypeHtml
+#! openXVideoAds(): Failed to install plugins for package openXVideoAds
+#! openXVideoAds(): Failed to initialise table class for vastInlineBannerTypeHtml
+#! openXVideoAds(): Failed to drop tables for vastInlineBannerTypeHtml
+#! openXVideoAds(): Task failed _unregisterSchema
+#! openXVideoAds(): Failed to uninstall vastInlineBannerTypeHtml
+Starting file-check for plugins...
+Finished file-check for plugins
+Starting file-check for plugins...
+Finished file-check for plugins
+Starting file-check for plugins...
+Finished file-check for plugins
