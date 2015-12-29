@@ -479,6 +479,14 @@ class Controller_Admin extends Controller_Authorised {
         exit;
     }
 
+    public function action_actiontags(){
+
+        $actiontag = new Model_Actiontag();
+        $res = $actiontag->actiontags();
+
+        return $this->return_json($res);
+    }
+
     /**
      * Добавление сущности
      */

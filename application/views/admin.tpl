@@ -6,6 +6,7 @@
 
     <link href="/c/admin/kube.min.css" rel="stylesheet" type="text/css" />
     <link href="/c/admin/admin.css" rel="stylesheet" type="text/css" />
+    <link href="/c/admin/tags/magicsuggest.css" rel="stylesheet" type="text/css" />
     <link href="/c/admin/filemanager.css" rel="stylesheet" type="text/css" />
     <link href="/c/admin/jstree/style.css" rel="stylesheet" type="text/css" />
     <link href="/c/admin/jquery-ui-redmond/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css" />
@@ -27,6 +28,7 @@
     <script src="/j/redactor/fontcolor.js"></script>
 	<script src="/j/redactor/goods.js"></script>
     <script src="/j/redactor/ru.js"></script>
+    <script src="/j/admin/tags/magicsuggest-min.js"></script>
 
     <script src="/j/admin/filemanager.js"></script>
     <script src="/j/admin/jstree/jstree.min.js"></script>

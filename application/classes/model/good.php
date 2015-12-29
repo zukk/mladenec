@@ -263,8 +263,6 @@ class Model_Good extends ORM {
      */
     public static function refresh()
     {
-//        passthru('indexer --rotate --all', $return); // переиндексация
-
 //        Database::instance()->begin();
 
         DB::query(Database::INSERT, '
@@ -371,9 +369,13 @@ class Model_Good extends ORM {
 
 //        Database::instance()->commit();
 
+        passthru('indexer --rotate --all', $return); // переиндексация
+        echo '<pre>'.$return.'</pre>';
+
         // Перерасчет данных акций
         $current_user = Model_User::i_robot();
         Model_Action::activator($current_user);
+
     }
 
     /**
@@ -1095,13 +1097,13 @@ class Model_Good extends ORM {
             ->join(['z_brand',        'brand'])    ->on('good.brand_id',   '=', 'brand.id')
             ->join(['z_group',        'group'])    ->on('good.group_id',   '=', 'group.id')
             ->join(['b_file',         'file'])     ->on('prop.img1600',    '=', 'file.id')
-            ->join(['z_country',      'country'])  ->on('good.country_id', '=', 'country.id')
+            ->join(['z_country',      'country'], 'LEFT')  ->on('good.country_id', '=', 'country.id')
 
             ->where('good.show',        '=', 1)
-            ->where('good.qty',         '>', 0)
+            ->where('good.qty',         '>=', 1)
             ->where('good.brand_id',    '>', 0)
             ->where('good.group_id',    '>', 0)
-            ->where('good.price',       '>', 300)
+            ->where('good.price',       '>=', 500)
             ->where('prop.img1600',     '>', 0)
             ->where('wiki_cat_id',      '>', 0)
             ->where('group.active',     '=', 1)

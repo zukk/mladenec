@@ -19,7 +19,9 @@ class Model_Action extends ORM
     protected $_reload_on_wakeup = FALSE;
 
     public $pq = 0; // число полученных подарков в акции
-    public $good_ids = []; // [gid => gid] id товаров, попавших в акцию (для by_goods) 
+    public $good_ids = []; // [gid => gid] id товаров, попавших в акцию (для by_goods)
+    public $actiontag_id = []; //
+    public $action_id = ''; //
 
     protected $_table_name = 'z_action';
 
@@ -70,6 +72,12 @@ class Model_Action extends ORM
             'through'       => 'z_action_present',
             'foreign_key'   => 'action_id',
             'far_key'       => 'good_id'
+        ),
+        'actiontag' => array(
+            'model'         => 'actiontag',
+            'through'       => 'z_actiontag_ids',
+            'foreign_key'   => 'action_id',
+            'far_key'       => 'actiontag_id'
         )
     );
 
@@ -799,6 +807,25 @@ class Model_Action extends ORM
 
     public function save(Validation $validation = NULL)
     {
+        $actiontag_id = Request::current()->post('actiontag_id');
+
+        if(isset($actiontag_id) && !empty($actiontag_id)){
+
+            DB::delete('z_actiontag_ids')
+                ->where('action_id', '=', $this->id)
+                ->execute();
+
+            $ins = DB::insert('z_actiontag_ids')->columns(array('action_id','actiontag_id'));
+
+            foreach ($actiontag_id as $id) {
+                $ins->values(array(
+                    'action_id' => $this->id,
+                    'actiontag_id' => $id
+                ));
+            }
+            $ins->execute();
+        }
+
         $current_user = Model_User::current();
         if ( ! $current_user) $current_user_name = '#Robot';
         else $current_user_name = '#Robot' . $current_user->id . $current_user->name;

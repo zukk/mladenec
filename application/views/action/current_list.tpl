@@ -11,6 +11,22 @@
 </div>
 <div id="simple">
     <h1>{$config->actions_header|default:'Акции месяца'}</h1>
+
+    <div id="bg_actiontags">
+        {foreach from=$actiontags item=actiontag}
+            {if in_array($actiontag->url, $tag)}
+                <span class="active">
+                    {$actiontag->title}
+                    <a href="/{$actiontags->url[$actiontag->url]}/{$actiontag->url}" class="delete_tag_link">&#10006;
+                    </a>
+                </span>
+            {else}
+                <a href="/{$actiontags->url[$actiontag->url]}" class="tag_link">{$actiontag->title}</a>
+            {/if}
+        {/foreach}
+    </div>
+    <br />
+
     <ul id="action_banner_list">
         {include file='action/current_list_item.tpl' actions=$actions}
     </ul>

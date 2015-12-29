@@ -363,3 +363,34 @@
             <span class="forms-desc">Чем больше число, тем выше акция в списке</span>
         </p>
     {/if}
+
+<script>
+    $(function() {
+        var action_id = $("#action_id").val();
+        $.ajax({
+            url: '/admin/actiontags.php',
+            method: 'POST',
+            data: {
+                id: action_id
+            },
+            dataType: 'json',
+            success: function(data){
+
+                var obj = data.ids;
+                var arr = [];
+
+                $.each(obj, function(value, index){
+                    arr.push(index.id);
+                });
+
+                $('#magicsuggest').magicSuggest({
+                    style: 'border: 1px solid #A9A9A9 !important',
+                    value: arr,
+                    name: 'actiontag_id',
+                    data: data.items
+                });
+            }
+        });
+
+    });
+</script>

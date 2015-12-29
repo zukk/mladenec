@@ -1193,12 +1193,15 @@ class Cart {
             }
         }
         $return['times'] = [];
-        $price = ($date == '2016-12-31') ? 500 : 0; // +500 рублей 31.12
+        //$price = ($date == '2016-12-31') ? 500 : 0; // +500 рублей 31.12
 
         foreach($times as $time) {
+            if ($date == '2015-12-31' && ! in_array($time->id, [2, 3, 32, 33])) { // оставить только 2 интервала - 14-18 и 15-19
+                continue;
+            }
             $return['times'][$time->id] = [
                 'name' => $time->name,
-                'price' => $time->get_price($sum === FALSE ? $this->total : $sum) + $price
+                'price' => $time->get_price($sum === FALSE ? $this->total : $sum),
             ];
         }
         return $return;

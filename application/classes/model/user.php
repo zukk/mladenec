@@ -364,7 +364,7 @@ class Model_User extends ORM {
             ->where('email', '=', $mail)
             ->execute();
 
-        self::_subscribe_api('member.delete', array('email' => $mail));
+        rrapi::unsubscribe($mail);
 
         return $return;
     }
@@ -659,14 +659,6 @@ class Model_User extends ORM {
             'sub'       => 1, // подписка на рассылку - по умолчанию
         ])->create();
 
-        self::_subscribe_api('member.set', [
-            'email' => $v['email'],
-            'addr_type' => 'email',
-            'newbie.confirm' => '0',
-            'if_exists' => 'error',
-            'source' => Request::$client_ip
-        ]);
-
         Mail::htmlsend('register', array('user' => $this, 'passwd' => $v['password']), $v['email'], 'Добро пожаловать!'); // письмо о регистрации
 
         if ($phone && Txt::phone_is_mobile($v['phone'])) {
@@ -717,6 +709,18 @@ class Model_User extends ORM {
     {
         if ($this->qty == 0) return 0;
         return $this->sum/$this->qty;
+    }
+
+    /**
+     * Сохранение юзера - синхрон с ГР
+     */
+    function save($validation = NULL)
+    {
+        if ($this->changed('sub') || $this->changed('last_order') || $this->changed('sum') || $this->changed('qty') || $this->changed('pregnant')) {
+            GetResponse::renew($this->id);
+            if ($this->sub == 0) rrapi::unsubscribe($this->email);
+        }
+        parent::save($validation);
     }
 
 }

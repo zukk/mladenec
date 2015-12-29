@@ -49,6 +49,21 @@ class rrapi
         return $return;
     }
 
+    /**
+     * отписка пользователя от retailrocket
+     * @param $email
+     * @return bool|string
+     */
+    static function unsubscribe($email)
+    {
+        if ( ! Valid::email($email)) return FALSE;
+        $query = [
+            'email'     => $email,
+            'apiKey'    => '55cb27211e994737e4ab339c',
+        ];
+        return file_get_contents("http://api.retailrocket.ru/api/1.0/partner/".self::KEY."/unsubscribe/?".http_build_query($query));
+    }
+
     static function CategoryToItems($cat_id)
     {
         return self::_query(__FUNCTION__, $cat_id);
@@ -61,12 +76,12 @@ class rrapi
 
     function CrossSellItemToItems($item_ids)
     {
-        return self::_query(__FUNCTION__, implode(',', $item_ids));
+        return self::_query(__FUNCTION__, implode(',', array_slice($item_ids, 0, 20)));
     }
 
     function RelatedItems($item_ids)
     {
-        return self::_query(__FUNCTION__, implode(',', $item_ids));
+        return self::_query(__FUNCTION__, implode(',', array_slice($item_ids, 0, 20)));
     }
 
     function SearchToItems($query)

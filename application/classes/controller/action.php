@@ -108,52 +108,116 @@ class Controller_Action extends Controller_Frontend
      */
     public function action_current_list()
     {
-        $q = ORM::factory('action')
-                ->where('show_wow', '=', 1)
+
+        $actiontags = new Model_Actiontag();
+
+        $param = $this->request->param();
+        $pop = array_pop($param);
+        $repeat_el = array_search($pop, $param);
+
+        if(isset($repeat_el) && !empty($repeat_el)){
+            unset($param[$repeat_el]);
+            $this->request->redirect(Route::url('action_list', $param));
+        } else {
+            $param = $this->request->param();
+        }
+
+        for($i=1; $i<=count($param); $i++){
+            $tag[] = $param['tag'.$i];
+        }
+        $uri = $this->request->uri();
+
+        if(isset($param) && !empty($param)){
+            $urltags = $actiontags->get_urltags($param);
+        }
+
+        $res = $actiontags->get_actiontags();
+
+        foreach($res as $res_url){
+            if(!empty($param)) {
+                for ($i = 1; $i <= count($param); $i++) {
+                    if ($param['tag'.$i] == $res_url->url) {
+                        $res->url[$res_url->url] = $uri;
+                    } else {
+                        if(empty($res->url[$res_url->url])) {
+                            $res->url[$res_url->url] = $uri . '/' . $res_url->url;
+                        }
+                    }
+                }
+            } else {
+                $res->url[$res_url->url] = $uri . '/' . $res_url->url;
+            }
+        }
+
+        $q = ORM::factory('action');
+        if(!empty($param)) {
+            if (isset($urltags) && !empty($urltags)) {
+                $q->where('action.id', 'IN', $urltags)
+                    ->where('show_wow', '=', 1)
+                    ->where('active', '=', 1)
+                    ->where('show', '=', 1)
+                    ->where_open()
+                    ->where('vitrina_show', '=', 'all')
+                    ->or_where('vitrina_show', '=', Kohana::$server_name)
+                    ->where_close()
+                    ->reset(FALSE)
+                    ->order_by('order', 'desc')
+                    ->order_by('main', 'desc')
+                    ->order_by('id', 'desc');
+                $actions = $q->find_all();
+            } else{
+                $actions = array();
+                $this->tmpl['actions'] = $actions;
+            }
+        } else {
+            $q->where('show_wow', '=', 1)
                 ->where('active', '=', 1)
                 ->where('show', '=', 1)
                 ->where_open()
-                    ->where('vitrina_show', '=', 'all')
-                    ->or_where('vitrina_show', '=', Kohana::$server_name)
+                ->where('vitrina_show', '=', 'all')
+                ->or_where('vitrina_show', '=', Kohana::$server_name)
                 ->where_close()
-                ->reset(FALSE);        
-
-        $q->order_by('order', 'desc')
-            ->order_by('main', 'desc')
-            ->order_by('id', 'desc');
-        
+                ->reset(FALSE)
+                ->order_by('order', 'desc')
+                ->order_by('main', 'desc')
+                ->order_by('id', 'desc');
+            $actions = $q->find_all();
+        }
         $all = $this->request->query('all');
         $_offset = $offset = $this->request->query('offset');
-        
-		$iPerPageQty = @Kohana::$hostnames[Kohana::$server_name]['per_page_elements'] ?: 10;
-		$this->tmpl['perPage'] = $iPerPageQty;
+
+        $iPerPageQty = @Kohana::$hostnames[Kohana::$server_name]['per_page_elements'] ?: 10;
+        $this->tmpl['perPage'] = $iPerPageQty;
+
+        //$actions = $q->find_all();
+        $this->tmpl['actions'] = $actions;
+        $this->tmpl['actiontags'] = $res;
+        $this->tmpl['tag'] = $tag;
+
         if (empty($all)) {
-			
-			if( empty( $offset ) ){
-				
-				$this->tmpl['pager'] = $pager = Pager::factory($q->count_all(), $iPerPageQty);
-				$offset = $pager->offset;
-				$per_page = $pager->per_page;
-			}
-			else{
-				$per_page = $iPerPageQty;
-			}
+
+            if( empty( $offset ) ){
+
+                $this->tmpl['pager'] = $pager = Pager::factory($q->count_all(), $iPerPageQty);
+                $offset = $pager->offset;
+                $per_page = $pager->per_page;
+            }
+            else{
+                $per_page = $iPerPageQty;
+            }
 
             $q->limit($per_page)
                 ->offset($offset);
         }
 
-		$this->tmpl['count'] = $q->reset(false)->count_all();
-        $actions = $q->find_all();
+        $this->tmpl['count'] = $q->reset(false)->count_all();
 
-        $this->tmpl['actions'] = $actions;
+        if( !empty( $_offset ) ){
+            $v = View::factory('smarty:action/current_list_item',$this->tmpl);
+            echo ($v->render());
+            exit;
+        }
 
-		if( !empty( $_offset ) ){
-			$v = View::factory('smarty:action/current_list_item',$this->tmpl);
-			echo ($v->render());
-			exit;
-		}
-		
         $this->layout->title = 'Акции';
         $this->layout->menu = FALSE; // Model_Menu::html();
     }

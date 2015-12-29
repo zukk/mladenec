@@ -26,7 +26,14 @@ function smarty_modifier_qty($data, $text = TRUE, $only_data = FALSE)
     if ($big) { // крупногабаритка
         if ($qty == -1) { // специальное значение - есть на складе поставщика, используется только для крупногабаритки
             $class = 'wait';
-            $txt = 'Доставка в течение <strong>2-5 дней</strong>';
+            $date_start = "31-12-2015";
+            $date_end = "11-01-2016";
+            $date_now = strtotime('now');
+            if(strtotime($date_start) <= $date_now && $date_now < strtotime($date_end)){
+                $txt = 'Доставка после <strong>11 января</strong>';
+            } else {
+                $txt = 'Доставка в течение <strong>2-5 дней</strong>';
+            }
         } elseif ($qty == 0) {
             $class = 'no';
             $txt = 'Товар закончился';

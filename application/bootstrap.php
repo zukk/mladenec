@@ -137,12 +137,6 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('getresponse', 'user/getresponse_q9w8E7r6.php')
 		->defaults(array('controller' => 'page', 'action' => 'getresponse'));
 
-	// проброс отписки из subscribe
-	Route::set('unsubscribe_pro', 'unsubscribe_q6jknPvOLDF8_<email>', array(
-		'email' => '.+@.+\..+'
-	))
-		->defaults(array('controller' => 'user', 'action' => 'unsubscribe_pro'));
-
 	// работа с 1c - Астра
 	Route::set('odinc_astra', '1c/astra/<action>.php')
 		->defaults(array('controller' => 'odinc_astra', 'action' => 'index'));
@@ -431,8 +425,8 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	//Route::set('action_list', 'actions')
 	//	->defaults(array('controller' => 'action', 'action' => 'list'));
 
-	Route::set('action_list', 'actions(/current)')
-		->defaults(array('controller' => 'action', 'action' => 'current_list'));
+    Route::set('action_list', 'actions(/current)(/<tag1>)(/<tag2>)(/<tag3>)(/<tag4>)(/<tag5>)(/<tag6>)(/<tag7>)')
+        ->defaults(array('controller' => 'action', 'action' => 'current_list'));
 
 	Route::set('action_arhive', 'actions/arhive')
 		->defaults(array('controller' => 'action', 'action' => 'arhive'));

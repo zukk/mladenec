@@ -6986,3 +6986,21 @@ td.select-present {
     padding:10px;
     border-left-width:1px !important;
 }
+#bg_actiontags{
+    padding: 10px;
+    background: #f2f2f2;
+}
+#bg_actiontags a.tag_link{
+    border-bottom: 1px dashed #515151;
+    margin: 10px;
+    color: #515151;
+    line-height: 25px;
+}
+
+#bg_actiontags span.active{
+    background: #b4f8f7;
+    border-bottom: none;
+    padding: 4px;
+    margin: 2px;
+    white-space: nowrap;
+}

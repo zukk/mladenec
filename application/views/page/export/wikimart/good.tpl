@@ -46,7 +46,9 @@
     {*/if*}
 
     <manufacturer_warranty>true</manufacturer_warranty>
-    <country_of_origin><![CDATA[{Txt::clean_rude_symbols($g['country_name']|escape:'html')}]]></country_of_origin>
+    {if !empty($g['country_name'])}
+        <country_of_origin><![CDATA[{Txt::clean_rude_symbols($g['country_name']|escape:'html')}]]></country_of_origin>
+    {/if}
 
     {if  not empty($label) and $label eq 'findologic'}
         <param name="cat_url">{$section->get_link(0)}</param>
