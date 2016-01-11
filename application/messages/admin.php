@@ -3,6 +3,7 @@
 return array(
     'admin'         => 'Полный доступ',
     'action'        => 'Акции',
+    'actiontag'     => 'Теги для Акции',
     'ad'            => 'Баннеры',
     'article'       => 'Статьи',
     'astra_order'   => 'Заказы для Астры',

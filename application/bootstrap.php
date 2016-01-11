@@ -422,25 +422,24 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 		->defaults(array('controller' => 'page', 'action' => 'article'));
 
 	// акции
-	//Route::set('action_list', 'actions')
-	//	->defaults(array('controller' => 'action', 'action' => 'list'));
-
-    Route::set('action_arhive', 'actions/arhive')
-		->defaults(array('controller' => 'action', 'action' => 'arhive'));
+	Route::set('action', 'actions/(<id>)', array('id' => '\d+'))
+		->defaults(array('controller' => 'action', 'action' => 'view'));
 
 	Route::set('action_goods_ajax', 'actions/<id>/goods', array('id' => '\d+'))
 		->defaults(array('controller' => 'ajax', 'action' => 'action_goods'));
 
-	Route::set('action', 'actions/(<id>)', array('id' => '\d+'))
-		->defaults(array('controller' => 'action', 'action' => 'view'));
-
-    Route::set('action_list', 'actions(/current)(/<tag1>)(/<tag2>)(/<tag3>)(/<tag4>)(/<tag5>)(/<tag6>)(/<tag7>)')
+    Route::set('action_list', 'actions(/<tag1>)(/<tag2>)(/<tag3>)(/<tag4>)(/<tag5>)(/<tag6>)(/<tag7>)')
         ->defaults(array('controller' => 'action', 'action' => 'current_list'));
 
-    // капча
+    Route::set('admin_actiontags', 'admin/actiontags.php')
+        ->defaults(array('controller' => 'admin', 'action' => 'actiontags'));
+
+	Route::set('action_arhive', 'actions/arhive')
+		->defaults(array('controller' => 'action', 'action' => 'arhive'));
+
+	// капча
 	Route::set('captcha', 'captcha')
 		->defaults(array('controller' => 'page', 'action' => 'captcha'));
-
 
 	// aдмин
 	Route::set('admin', 'od-men')

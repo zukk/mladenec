@@ -13,6 +13,11 @@
     <h1>{$config->actions_header|default:'Акции месяца'}</h1>
 
     <div id="bg_actiontags">
+
+        {foreach from=$tag item=t}
+            <input type="hidden" id="tag" name="tag[]" value="{$t}">
+        {/foreach}
+
         {foreach from=$actiontags item=actiontag}
             {if in_array($actiontag->url, $tag)}
                 <span class="active">
@@ -41,6 +46,12 @@
 			var offset = 0;
 			var perPage = {$perPage};
 			var working = false;
+
+            var tags='';
+            $('input[name="tag[]"]').each(function(){
+                tags+='/'+$(this).val();
+            });
+
 			$(window).scroll(function(e){
 				var sc = window.scrollY ? window.scrollY: document.documentElement.scrollTop;
 				
@@ -56,8 +67,8 @@
 				if( offset >= {$count} )
 					return false;
 				$footer.after($loading);
-				
-				$.get('{Route::url('action_list')}?offset=' + offset, function(data) {
+
+                $.get('{Route::url('action_list')}'+tags+'/?offset=' + offset, function(data) {
 					$loading.remove();
 					working = false;
 					var d = $(data);

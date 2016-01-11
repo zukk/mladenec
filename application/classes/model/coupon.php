@@ -6,6 +6,7 @@ class Model_Coupon extends ORM {
     const TYPE_PERCENT = 1; // купон со скдкой на процент на часть товаров
     const TYPE_LK = 2; // купон даёт ЛК
     const TYPE_PRESENT = 3; // купон даёт подарок
+    const TYPE_CHILD = 4; // купон на день рождения ребенка - скидка 10% на все кроме подгузов и питания
 
     //const CHILD_DISCOUNT = 'kidz'; // скрытый купон со скидкой за данные о детях/беременности
 
@@ -82,6 +83,7 @@ class Model_Coupon extends ORM {
             self::TYPE_PERCENT  => 'Купон со скидкой на процент на товары',
             self::TYPE_LK       => 'Купон дающий статус Любимый Клиент навсегда',
             self::TYPE_PRESENT  => 'Купон дающий подарок',
+            self::TYPE_CHILD    => 'Купон со скидкой на ДР ребенка',
         ];
 
         if ($type === FALSE) return $types;
@@ -92,7 +94,7 @@ class Model_Coupon extends ORM {
     /**
      * Сгенерировать новый купон
      */
-    public static function generate($sum, $min_sum = 0, $per_user = 1, $uses = 1, $user_id = 0)
+    public static function generate($sum, $min_sum = 0, $per_user = 1, $uses = 1, $user_id = 0, $type = self::TYPE_SUM, $from = '', $to = '')
     {
         $c = new self;
         if ($min_sum == 0) $min_sum = $sum + 1;
@@ -106,6 +108,9 @@ class Model_Coupon extends ORM {
                 'user_id'   => $user_id,
                 'sum'       => $sum,
                 'min_sum'   => $min_sum,
+                'type'      => $type,
+                'from'      => $from,
+                'to'        => $to,
                 'active'    => 1
             ));
         } while ( ! $c->validation()->check());

@@ -444,6 +444,28 @@ class Controller_Admin extends Controller_Authorised {
         $this->layout->body = View::factory('smarty:admin/'.$m.'/list', $tmpl_vars)->render();
     }
 
+    public function action_actiontag_list(){
+
+        $actiontagArr = array();
+
+        $title = $this->request->post('title');
+        $url = $this->request->post('url');
+
+        if(!empty($title) && !empty($url)){
+            $actiontag = new Model_Actiontag();
+            $actiontag->title = $title;
+            $actiontag->url = $url;
+            $actiontag->save_actiontag();
+        }
+
+        $query = $this->model;
+        $actiontagArr['pager'] = $pager = new Pager($query->count_all(), 3);
+        $actiontagArr['actiontag'] = $query->order_by('id', 'desc')->offset($pager->offset)->limit($pager->per_page)
+            ->find_all();
+
+        return $actiontagArr;
+    }
+
     public function action_wikicategories_list(){
         $goods_ids = $this->request->post('goods');
         $wiki_cat_id = $this->request->post('wiki_cat_id');

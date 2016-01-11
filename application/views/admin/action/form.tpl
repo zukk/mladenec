@@ -1,6 +1,7 @@
 <form action="" xmlns="http://www.w3.org/1999/html" method="post" class="forms forms-columnar" enctype="multipart/form-data">
     {if $i->id}
         <input type="hidden" name="misc[id]" id="action_id" value="{$i->id}" />
+        <input type="hidden" name="action_id" id="action_id" value="{$i->id}" />
         <div class="units-row">
             <h1 class="unit-80">#{$i->id} {$i->name}</h1>
             <div class="unit-20"><a href="{$i->get_link(0)}" class="btn" target="_blank">Посмотреть на сайте</a></div>
@@ -29,6 +30,10 @@
                 <input type="text" id="name" name="name" value="{$i->name|escape:html}" class="width-50" />
             </p>
 			{include file='admin/seo/widget.tpl'}
+            <p>
+                <label>Теги для акций</label>
+            <div id="magicsuggest"></div>
+            </p>
             <p>
                 <label>Тип акции</label>
                 {html_options name=type id=type selected=$i->type options=$i->types()}

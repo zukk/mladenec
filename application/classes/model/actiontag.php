@@ -28,8 +28,8 @@ class Model_Actiontag extends ORM
         $title = $this->title;
         $url = $this->url;
 
-        $query = DB::insert('z_actiontag', array('id', 'title', 'url'))
-            ->values(array('', $title, $url))
+        $query = DB::insert('z_actiontag', array('title', 'url'))
+            ->values(array($title, $url))
             ->execute();
 
         return $query;

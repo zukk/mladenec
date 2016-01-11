@@ -82,6 +82,20 @@ class Controller_Daemon extends Controller
         $quest->save();
     }
   
+    /************************************************************ задания **********************************************/
+
+    /**
+     * Задание: Обновление данных в GR
+     * @return bool
+     */
+    protected function quest_getresponse($params)
+    {
+        $gr = new GetResponse();
+        $gr->upload($params['user'], $params['customs']);
+
+        return TRUE;
+    }
+
     /**
      * Задание: Отправка смс
      * @return bool

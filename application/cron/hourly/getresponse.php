@@ -187,8 +187,6 @@ foreach ($user_ids as $row) {
     $resp = $gr->upload($name, $email, $customs);
     if ($resp === TRUE) {
         $uploaded_ids[] = $row['id'];
-        $ins = DB::insert('getresponse', ['user_id', 'uploaded'])->values(['user_id' => $row['id'], 'uploaded' => DB::expr('now()')]);
-        DB::query(Database::INSERT, $ins.' ON DUPLICATE KEY UPDATE uploaded = VALUES(uploaded)')->execute();
     }
 }
 
