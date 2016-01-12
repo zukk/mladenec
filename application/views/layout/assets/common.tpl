@@ -10,8 +10,8 @@
         <link href="/{$css}" rel="stylesheet" type="text/css" />
     {/foreach}
 {else}
-    <script src="/j/script.min.js?61"></script>
-    <link href="/c/style.min.css?61" rel="stylesheet" type="text/css" />
+    <script src="/j/script.min.js?$SVN$"></script>
+    <link href="/c/style.min.css?$SVN$" rel="stylesheet" type="text/css" />
 {/if}
 
 {if empty($user)}

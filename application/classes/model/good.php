@@ -1847,20 +1847,26 @@ class Model_Good extends ORM {
         return $opts;
     }
 
-    public function save_wikicat(){
-
-        $wiki_cat_id = $this->wiki_cat_id;
-        $goods_ids = $this->goods_ids;
-
-        $goods_q = DB::update(ORM::factory('good')->table_name())
-            ->set(array('wiki_cat_id' => $wiki_cat_id))
+    /**
+     * Сохранить wikimart-категорию для набора товаров
+     * @return object
+     */
+    public static function save_wikicat($wiki_cat_id, $goods_ids)
+    {
+        return DB::update(ORM::factory('good')->table_name())
+            ->set(['wiki_cat_id' => $wiki_cat_id])
             ->where('id', 'IN', $goods_ids)
             ->execute();
-        return $goods_q;
     }
 
-    public function get_goodswiki($wiki_cat_id){
-
+    /**
+     * получить товары по wikimart-категории
+     * @param $wiki_cat_id
+     * @return array
+     * @throws Kohana_Exception
+     */
+    public function get_goodswiki($wiki_cat_id)
+    {
         $res = ORM::factory('good')
             ->where('wiki_cat_id', '=', $wiki_cat_id)
             ->find_all()
@@ -1868,14 +1874,4 @@ class Model_Good extends ORM {
 
         return $res;
     }
-
-    public function valupd($good_id){
-
-        $goods_q = DB::update(ORM::factory('good')->table_name())
-            ->set(array('wiki_cat_id' => 0))
-            ->where('id', '=', $good_id)
-            ->execute();
-        return $goods_q;
-    }
-
 }

@@ -129,10 +129,6 @@ if ( ! empty($to_id)) {
 
 if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST'] ) ){
 
-	// арбузы
-	Route::set('arbuz', 'arbuz.php')
-		->defaults(array('controller' => 'ajax', 'action' => 'arbuz'));
-
 	// проброс вызовов из GetResponse
 	Route::set('getresponse', 'user/getresponse_q9w8E7r6.php')
 		->defaults(array('controller' => 'page', 'action' => 'getresponse'));
@@ -145,7 +141,7 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('odinc', '1c/<action>.php')
 		->defaults(array('controller' => 'odinc', 'action' => 'index'));
 
-	// поищу
+	// синхронизация кук между доменами
 	Route::set('sync', 'sync')
 		->defaults(array('controller' => 'page', 'action' => 'sync'));
 
@@ -200,12 +196,6 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 
 	Route::set('cart_recount', 'personal/cart_recount.php')
 		->defaults(array('controller' => 'product', 'action' => 'cart_recount'));
-
-    Route::set('admin_getwikigoods', 'admin/getwikigoods.php')
-        ->defaults(array('controller' => 'admin', 'action' => 'getwikigoods'));
-
-    Route::set('admin_valupd', 'admin/valupd.php')
-        ->defaults(array('controller' => 'admin', 'action' => 'valupd'));
 
 	Route::set('cart_presents', 'ajax/cart_presents.php')
 		->defaults(array('controller' => 'product', 'action' => 'cart_presents'));
@@ -425,17 +415,14 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('action', 'actions/(<id>)', array('id' => '\d+'))
 		->defaults(array('controller' => 'action', 'action' => 'view'));
 
-	Route::set('action_goods_ajax', 'actions/<id>/goods', array('id' => '\d+'))
-		->defaults(array('controller' => 'ajax', 'action' => 'action_goods'));
+    Route::set('action_goods_ajax', 'actions/<id>/goods', array('id' => '\d+'))
+        ->defaults(array('controller' => 'ajax', 'action' => 'action_goods'));
 
-    Route::set('action_list', 'actions(/<tag1>)(/<tag2>)(/<tag3>)(/<tag4>)(/<tag5>)(/<tag6>)(/<tag7>)')
+    Route::set('action_arhive', 'actions/arhive')
+        ->defaults(array('controller' => 'action', 'action' => 'arhive'));
+
+    Route::set('action_list', 'actions(/<tags>)', array('tags' => '.*'))
         ->defaults(array('controller' => 'action', 'action' => 'current_list'));
-
-    Route::set('admin_actiontags', 'admin/actiontags.php')
-        ->defaults(array('controller' => 'admin', 'action' => 'actiontags'));
-
-	Route::set('action_arhive', 'actions/arhive')
-		->defaults(array('controller' => 'action', 'action' => 'arhive'));
 
 	// капча
 	Route::set('captcha', 'captcha')
@@ -444,6 +431,15 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	// aдмин
 	Route::set('admin', 'od-men')
 		->defaults(array('controller' => 'admin', 'action' => 'index'));
+
+    Route::set('admin_actiontags', 'admin/actiontags.php')
+        ->defaults(array('controller' => 'admin', 'action' => 'actiontags'));
+
+    Route::set('admin_getwikigoods', 'admin/getwikigoods.php')
+        ->defaults(array('controller' => 'admin', 'action' => 'getwikigoods'));
+
+    Route::set('admin_valupd', 'admin/valupd.php')
+        ->defaults(array('controller' => 'admin', 'action' => 'valupd'));
 
     Route::set('admin_ajax_call', 'od-men/ajax/card_call')
         ->defaults(array('controller' => 'admin_ajax', 'action' => 'card_call'));

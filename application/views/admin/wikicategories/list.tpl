@@ -56,14 +56,12 @@
             $(document).on('click', 'input[type=button].trdel', function() {
                 var val_del = $(this).closest('input[type=button]').prev().val();
                 $.ajax({
-                    url: '/admin/valupd.php',
+                    url: {Route::url('admin_valupd')},
                     method: 'POST',
                     data: {
                         id: val_del
                     },
-                    dataType: 'json',
-                    success: function(data){
-                    }
+                    dataType: 'json'
                 });
             });
 

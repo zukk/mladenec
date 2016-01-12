@@ -77,17 +77,21 @@ class Controller_Action extends Controller_Frontend
         $this->layout->title = 'Акции';
         $this->layout->menu = FALSE;
     }
-    
+
+    /**
+     * Архив акций
+     * @throws Kohana_Exception
+     */
     public function action_arhive()
     {
         $q = ORM::factory('action')
-                ->where('active','=','0')
-                ->where('show', '=', 1)
-                ->where_open()
-                    ->where('vitrina_show', '=', 'all')
-                    ->or_where('vitrina_show', '=', Kohana::$server_name)
-                ->where_close()
-                ->reset(FALSE);
+            ->where('active','=','0')
+            ->where('show', '=', 1)
+            ->where_open()
+                ->where('vitrina_show', '=', 'all')
+                ->or_where('vitrina_show', '=', Kohana::$server_name)
+            ->where_close()
+            ->reset(FALSE);
 
         $this->tmpl['pager'] = $pager = Pager::factory($q->count_all(), 10);
         
@@ -104,121 +108,69 @@ class Controller_Action extends Controller_Frontend
     }
     
     /**
-     * показ списка акций, к которым есть прикреплённые товары
+     * показ списка акций, возможно отобранных по тегам
      */
     public function action_current_list()
     {
-
         $actiontags = new Model_Actiontag();
 
-        $param = $this->request->param();
-        $pop = array_pop($param);
-        $repeat_el = array_search($pop, $param);
+        $tags = $this->request->param('tags');
 
-        if (isset($repeat_el) && !empty($repeat_el)) {
-            unset($param[$repeat_el]);
-            $this->request->redirect(Route::url('action_list', $param));
-        } else {
-            $param = $this->request->param();
+        if ($tags == 'current') { // редирект на полный список
+            $this->request->redirect(Route::url('action_list'));
         }
 
-        for ($i = 1; $i <= count($param); $i++) {
-            $tag[] = $param['tag' . $i];
-        }
-        $uri = $this->request->uri();
+        if ( ! empty($tags)) { // запрошены какие-то теги
+            $tags = explode('/', $tags);
+            $unique_tags = array_unique($tags);
 
-        if (isset($param) && !empty($param)) {
-            $urltags = $actiontags->get_urltags($param);
-        }
-
-        $res = $actiontags->get_actiontags();
-
-        foreach ($res as $res_url) {
-            if (!empty($param)) {
-                for ($i = 1; $i <= count($param); $i++) {
-                    if ($param['tag' . $i] == $res_url->url) {
-                        $res->url[$res_url->url] = $uri;
-                    } else {
-                        if (empty($res->url[$res_url->url])) {
-                            $res->url[$res_url->url] = $uri . '/' . $res_url->url;
-                        }
-                    }
-                }
-            } else {
-                $res->url[$res_url->url] = $uri . '/' . $res_url->url;
+            if (count($unique_tags) < count($tags)) { // дубли тегов - редирект
+                $this->request->redirect(Route::url('action_list', ['tags' => implode('/', $unique_tags)]));
             }
         }
 
-        $q = ORM::factory('action');
-        if (!empty($param)) {
-            if (isset($urltags) && !empty($urltags)) {
-                $q->where('action.id', 'IN', $urltags)
-                    ->where('show_wow', '=', 1)
-                    ->where('active', '=', 1)
-                    ->where('show', '=', 1)
-                    ->where_open()
-                    ->where('vitrina_show', '=', 'all')
-                    ->or_where('vitrina_show', '=', Kohana::$server_name)
-                    ->where_close()
-                    ->reset(FALSE)
-                    ->order_by('order', 'desc')
-                    ->order_by('main', 'desc')
-                    ->order_by('id', 'desc');
-                $actions = $q->find_all();
+        $all_tags = $actiontags->get_actiontags(); // все возможные теги
+
+        foreach ($all_tags as &$tag) { // оформим для списка тегов
+            if (empty($tags)) {
+                $tag->url = Route::url('action_list', ['tags' => $tag->url]);
+            } elseif (in_array($tag->url, $tags)) { // активный тег
+                $tag->active = TRUE;
+                $tag->url = Route::url('action_list', ['tags' => implode('/', array_diff($tags, [$tag->url]))]);
             } else {
-                $actions = array();
-                $this->tmpl['actions'] = $actions;
+                $tag->active = FALSE;
+                $tag->url = Route::url('action_list', ['tags' => implode('/', array_merge($tags, [$tag->url]))]);
             }
-        } else {
-            $q->where('show_wow', '=', 1)
-                ->where('active', '=', 1)
-                ->where('show', '=', 1)
-                ->where_open()
+        }
+
+        // запрос на получение списка акций
+        $q = ORM::factory('action')
+            ->where('show_actions', '=', 1)
+            ->where('active', '=', 1)
+            ->where('show', '=', 1)
+            ->where_open()
                 ->where('vitrina_show', '=', 'all')
                 ->or_where('vitrina_show', '=', Kohana::$server_name)
-                ->where_close()
-                ->reset(FALSE)
-                ->order_by('order', 'desc')
-                ->order_by('main', 'desc')
-                ->order_by('id', 'desc');
+            ->where_close()
+            ->order_by('order', 'desc')
+            ->order_by('main', 'desc')
+            ->order_by('id', 'desc');
 
-            $all = $this->request->query('all');
-            $_offset = $offset = $this->request->query('offset');
+        if ( ! empty($tags)) { // условие на теги (любой из списка, если есть)
 
-            $iPerPageQty = @Kohana::$hostnames[Kohana::$server_name]['per_page_elements'] ?: 10;
-            $this->tmpl['perPage'] = $iPerPageQty;
-
-            //$actions = $q->find_all();
-
-            if (empty($all)) {
-
-                if (empty($offset)) {
-
-                    $this->tmpl['pager'] = $pager = Pager::factory($q->count_all(), $iPerPageQty);
-                    $offset = $pager->offset;
-                    $per_page = $pager->per_page;
-                } else {
-                    $per_page = $iPerPageQty;
-                }
-
-                $q->limit($per_page)
-                    ->offset($offset);
-            }
-
-            $this->tmpl['count'] = $q->reset(false)->count_all();
-            $actions = $q->find_all();
+            $q->join('z_actiontag_ids')
+                    ->on('action.id', '=', 'z_actiontag_ids.action_id')
+                ->join('z_actiontag')
+                    ->on('z_actiontag.id', '=', 'z_actiontag_ids.actiontag_id')
+                ->where('z_actiontag.url', 'IN', $tags);
         }
-        $this->tmpl['actions'] = $actions;
-        $this->tmpl['actiontags'] = $res;
-        $this->tmpl['tag'] = $tag;
 
-        if( !empty( $_offset ) ){
-            $v = View::factory('smarty:action/current_list_item',$this->tmpl);
-            echo ($v->render());
-            exit;
-        }
+        $this->tmpl['actions'] = $actions = $q->find_all()->as_array();
+        if (count($actions) == 0) throw new HTTP_Exception_404;
+
+        $this->tmpl['tags'] = $all_tags;
 
         $this->layout->title = 'Акции';
-        $this->layout->menu = FALSE; // Model_Menu::html();
+        $this->layout->menu = FALSE;
     }
 }

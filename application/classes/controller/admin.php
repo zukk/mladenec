@@ -444,43 +444,50 @@ class Controller_Admin extends Controller_Authorised {
         $this->layout->body = View::factory('smarty:admin/'.$m.'/list', $tmpl_vars)->render();
     }
 
-    public function action_actiontag_list(){
-
-        $actiontagArr = array();
+    /**
+     * Добавление/список тегов для акций
+     * @return array
+     * @throws Kohana_Exception
+     */
+    public function action_actiontag_list()
+    {
+        $actiontagArr = [];
 
         $title = $this->request->post('title');
         $url = $this->request->post('url');
 
-        if(!empty($title) && !empty($url)){
-            $actiontag = new Model_Actiontag();
-            $actiontag->title = $title;
-            $actiontag->url = $url;
-            $actiontag->save_actiontag();
+        if ( ! empty($title) && ! empty($url)) {
+            $tag = new Model_Actiontag();
+
+            $tag->values(['title' => $title, 'url' => $url])
+                ->save();
         }
 
         $query = $this->model;
         $actiontagArr['pager'] = $pager = new Pager($query->count_all(), 3);
-        $actiontagArr['actiontag'] = $query->order_by('id', 'desc')->offset($pager->offset)->limit($pager->per_page)
+        $actiontagArr['actiontag'] = $query
+            ->order_by('id', 'DESC')
+            ->offset($pager->offset)
+            ->limit($pager->per_page)
             ->find_all();
 
         return $actiontagArr;
     }
 
-    public function action_wikicategories_list(){
+    public function action_wikicategories_list()
+    {
         $goods_ids = $this->request->post('goods');
         $wiki_cat_id = $this->request->post('wiki_cat_id');
 
-        $save_good = array();
-        if(!empty($goods_ids) && !empty($wiki_cat_id)){
-            $good = new Model_Good();
-            $good->goods_ids = $goods_ids;
-            $good->wiki_cat_id = $wiki_cat_id;
-            $save_good = $good->save_wikicat();
+        $return = [];
+        if ( ! empty($goods_ids) && ! empty($wiki_cat_id)) {
+            $return = Model_Good::save_wikicat($wiki_cat_id, $goods_ids);
         }
-        return array($save_good);
+        return array($return);
     }
 
-    public function action_getwikigoods(){
+    public function action_getwikigoods()
+    {
         $wiki_cat_id = $this->request->post('id');
 
         $good = new Model_Good();
@@ -493,20 +500,23 @@ class Controller_Admin extends Controller_Authorised {
         exit(View::factory('smarty:admin/good/chosen', $tmpl)->render());
     }
 
-    public function action_valupd(){
-        $good_id = $this->request->post('id');
+    public function action_valupd()
+    {
+        $good = ORM::factory('good', $this->request->post('id'));
 
-        $good = new Model_Good();
-        $good->valupd($good_id);
+        if ($good->loaded()) {
+            $good->wiki_cat_id = 0;
+            $good->save();
+        }
         exit;
     }
 
-    public function action_actiontags(){
-
+    public function action_actiontags()
+    {
         $actiontag = new Model_Actiontag();
         $res = $actiontag->actiontags();
 
-        return $this->return_json($res);
+        $this->return_json($res);
     }
 
     /**
