@@ -23,6 +23,7 @@ class Controller_Frontend extends Controller_Smarty
 		'plugins/mladenecradio/jquery.mladenecradio.js',
 		'plugins/mladenecradiotabs/jquery.mladenecradiotabs.js',
 		'plugins/mladenecdateslider/jquery.mladenecdateslider.js',
+        'j/ss.min.js'//стопсоветник stopsovetnik.ru
     ];
 
     public static $css = [
