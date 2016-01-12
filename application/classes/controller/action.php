@@ -145,7 +145,6 @@ class Controller_Action extends Controller_Frontend
 
         // запрос на получение списка акций
         $q = ORM::factory('action')
-            ->where('show_actions', '=', 1)
             ->where('active', '=', 1)
             ->where('show', '=', 1)
             ->where_open()
@@ -166,7 +165,7 @@ class Controller_Action extends Controller_Frontend
         }
 
         $this->tmpl['actions'] = $actions = $q->find_all()->as_array();
-        //if (count($actions) == 0) throw new HTTP_Exception_404;
+        if (count($actions) == 0) throw new HTTP_Exception_404;
 
         $this->tmpl['tags'] = $all_tags;
 
