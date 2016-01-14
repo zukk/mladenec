@@ -191,7 +191,7 @@ class Model_Section extends ORM {
         $cache_key = self::CACHE_KEY_CATALOG.md5(DOCROOT).$sVitrina.intval($show_inactive);
         $catalog_cache = Cache::instance()->get($cache_key);  
         if ( ! empty($catalog_cache)) $catalog = unserialize($catalog_cache);
-        $catalog = FALSE;
+        //$catalog = FALSE;
         if (empty($catalog))
         {
             $return = ORM::factory('section')
