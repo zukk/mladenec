@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml-stylesheet type="text/xsl" href="xsl/mdb2_changeset.xsl"?>
+<instructionset>
+  <name>openads</name>
+  <version>621</version>
+  <comments>add activate and expire date to banners </comments>
+  <constructive>
+    <changeset>
+      <name>openads</name>
+      <version>621</version>
+      <change>
+        <table>
+          <name>banners</name>
+          <add>
+            <field>
+              <name>activate_time</name>
+              <type>openads_datetime</type>
+              <notnull></notnull>
+              <default></default>
+              <was>activate_time</was>
+            </field>
+              <field>
+                <name>expire_time</name>
+                <type>openads_datetime</type>
+                <notnull></notnull>
+                <was>expire_time</was>
+                <default></default>
+              </field>
+            </add>
+          </table>
+        </change>
+      </changeset>
+    </constructive>
+    <destructive>
+      <changeset>
+        <name>openads</name>
+        <version>621</version>
+      </changeset>
+    </destructive>
+  </instructionset>
