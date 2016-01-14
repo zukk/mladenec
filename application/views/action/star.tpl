@@ -1,3 +1,23 @@
+{if !empty($action->from)}
+    {assign var=from value=" "|explode:$action->from}
+{/if}
+{if !empty($action->to)}
+    {assign var=to value=" "|explode:$action->to}
+{/if}
+<p>
+{if !empty($action->to) || !empty($action->from)}
+    Акция действует
+{/if}
+
+{if !empty($action->from)}
+    с {date("d.m.Y", strtotime($from.0))}
+{/if}
+
+{if !empty($action->to)}
+    до {date("d.m.Y", strtotime($to.0))}
+{/if}
+</p>
+
 <p class="cb" style="text-indent:-1em !important">
     * Акции действуют до&nbsp;окончания подарков.<br />
     Количество товаров ограничено.<br />

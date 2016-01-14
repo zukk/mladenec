@@ -197,6 +197,24 @@
                                 <th>{t str=Weight}</th>
                                 <td>{$banner.weight}</td>
                             </tr>
+                            <tr>
+                                <th>{t str=Date}</th>
+                                <td>
+                                    {if !empty($banner.activate_time)}
+                                        {t str=From}
+                                       <b>{$banner.activate_time}</b> й
+                                    {else}
+                                        {t str=ActivateNow}
+                                    {/if}
+                                    {if !empty($banner.expire_time)}
+                                        {t str=To}
+                                        <b>{$banner.expire_time}</b>
+                                    {else}
+                                        {t str=DontExpire}
+                                    {/if}
+
+                                </td>
+                            </tr>
                         </table>
 
                         <div class='corner top-left'></div>

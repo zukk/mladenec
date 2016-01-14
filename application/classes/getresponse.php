@@ -6,6 +6,7 @@
  * Time: 23:19
  */
 class GetResponse {
+
     const CAMPAIGN_ID = 'j';
     const GR_API_KEY = '515371d4780de0ed844e0ddd5079929a';
     const GR_API_URL = 'http://api.getresponse360.pl/mladenec';
@@ -60,19 +61,18 @@ class GetResponse {
 
     /**
      * Update инфы по контакту/создание нового контакта
-     * @param $name
-     * @param $email
-     * @param $customs - настраиваемые поля
+     * @param $user - массив из Mode_User
+     * @param $customs - настраиваемые поля в формате [['name' => , 'content' => ]]
      * @return bool
      */
-    function upload($name, $email, $customs)
+    function upload($user, $customs)
     {
-        if ( ! Valid::email($email)) return FALSE;
+        if ( ! Valid::email($user['email'])) return FALSE;
         try {
             $exist = $this->_client->get_contacts(
                 self::GR_API_KEY,
                 [
-                    'email'=> [ 'EQUALS' => $email ]
+                    'email'=> [ 'EQUALS' => $user['email'] ]
                 ]
             );
 
@@ -88,7 +88,7 @@ class GetResponse {
                         'customs' => $customs
                     ]
                 );
-                return TRUE;
+                $return = TRUE;
 
             } else {
 
@@ -96,18 +96,23 @@ class GetResponse {
                     self::GR_API_KEY,
                     [
                         'campaign'  => self::CAMPAIGN_ID,
-                        'name'      => $name,
-                        'email'     => $email,
+                        'name'      => $user['name'],
+                        'email'     => $user['email'],
                         'customs' => $customs
                     ]
                 );
-                if ($result['queued'] == 1) return TRUE;
-                return FALSE;
+                $return = $result['queued'] == 1;
             }
         } catch (RuntimeException $e) {
 
             Log::instance()->add(Log::ERROR, 'GetResponse communication error on: ' . $e->getLine() . ' line ' . $e->getMessage());
-            return FALSE;
+            $return = FALSE;
         }
+
+        if ($return === TRUE) { // был upload - обновим инфу
+            $ins = DB::insert('getresponse', ['user_id', 'uploaded'])->values(['user_id' => $user['id'], 'uploaded' => DB::expr('now()')]);
+            DB::query(Database::INSERT, $ins.' ON DUPLICATE KEY UPDATE uploaded = VALUES(uploaded)')->execute();
+        }
+        return $return;
     }
 }

@@ -38,7 +38,28 @@
         <div class="action_info">
 
             {if not empty($action->banner)}
-                <a href="{$action->get_link(0)}" class="banner"><img alt="{$action->name}" title="{$action->name}" src="{$action->banner}" /></a>
+                <a href="{$action->get_link(0)}" class="banner">
+                    <img alt="{$action->name}" title="{$action->name}" src="{$action->banner}" />
+                </a>
+                    {if !empty($action->from)}
+                        {assign var=from value=" "|explode:$action->from}
+                    {/if}
+                    {if !empty($action->to)}
+                        {assign var=to value=" "|explode:$action->to}
+                    {/if}
+                    <span style="margin-left: 5px">
+                        {if !empty($action->to) || !empty($action->from)}
+                            Акция действует
+                        {/if}
+
+                        {if !empty($action->from)}
+                            с {date("d.m.Y", strtotime($from.0))}
+                        {/if}
+
+                        {if !empty($action->to)}
+                            до {date("d.m.Y", strtotime($to.0))}
+                        {/if}
+                    </span>
                 <div>{$action->text}</div>
             {else}
                 <div>{$action->text}</div>

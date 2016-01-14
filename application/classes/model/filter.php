@@ -10,8 +10,11 @@ class Model_Filter extends ORM {
 
     const PURE_SOSTAV = 2068; // фильтр состава в пюре
 
-    const STROLLER_WEIGHT = 2329;
-    const STROLLER_SHASSI = 2324;
+    const STROLLER_WEIGHT = 2329; // бегунок по весу - коляски
+    const STROLLER_SHASSI = 2324; // бегунок по ширине шасси - коляски
+
+    const VOLUME_KG = 2352; // вес в кг - быт хим
+    const VOLUME_LITR = 2348; // объем в л - быт хим
 
     const WEIGHT = 100; // искусственный фильтр по весу в подгузах
     const TASTE = 101; // искусственный фильтр  - только выбранные вкусы
@@ -204,6 +207,16 @@ class Model_Filter extends ORM {
             'name' => 'от 61 см',
         ],
     ];
+
+    /**
+     * бегунок
+     * @param $fid
+     * @return bool
+     */
+    public static function begunok($fid)
+    {
+        return in_array($fid, [self::STROLLER_SHASSI, self::STROLLER_WEIGHT, self::VOLUME_KG, self::VOLUME_LITR]);
+    }
 
     /**
      * @param int $fid

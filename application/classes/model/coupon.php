@@ -94,14 +94,14 @@ class Model_Coupon extends ORM {
     /**
      * Сгенерировать новый купон
      */
-    public static function generate($sum, $min_sum = 0, $per_user = 1, $uses = 1, $user_id = 0, $type = self::TYPE_SUM, $from = '', $to = '')
+    public static function generate($sum, $min_sum = 0, $per_user = 1, $uses = 1, $user_id = 0, $type = self::TYPE_SUM, $from = NULL, $to = NULL)
     {
         $c = new self;
         if ($min_sum == 0) $min_sum = $sum + 1;
         do {
             $code = Text::random('distinct');
 
-            $c->values(array(
+            $c->values([
                 'name'      => $code,
                 'per_user'  => $per_user,
                 'uses'      => $uses,
@@ -112,7 +112,7 @@ class Model_Coupon extends ORM {
                 'from'      => $from,
                 'to'        => $to,
                 'active'    => 1
-            ));
+            ]);
         } while ( ! $c->validation()->check());
 
         $c->save();

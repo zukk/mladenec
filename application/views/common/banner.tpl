@@ -5,72 +5,38 @@
 {if $code eq 'banner_950X60_1'}
 
     <!--Тип баннера: №1-->
-    <script type="text/javascript">
-        <!--
-        if ('undefined' !== typeof(AdFox_Write)) var pr1 = AdFox_Write();
-        if ('undefined' !== typeof(AdFox_Scroll)) AdFox_Scroll(pr1,'http://ads.adfox.ru/213263/prepareCode?pp=g&amp;ps=bkmw&amp;p2=esyl&amp;pct=a&amp;plp=a&amp;pli=a&amp;pop=a&amp;pr=' + prr + pr1);
-        // -->
-    </script>
+    <ins data-revive-zoneid="2" data-revive-id="29016e7d9b30a769a1972ae7a3f063b0"></ins>
 
 {elseif $code eq 'banner_360X256_2'}
 
     <!--Тип баннера: №2-->
-    <script type="text/javascript">
-        <!--
-        if ('undefined' !== typeof(AdFox_Write)) var pr1 = AdFox_Write();
-        if ('undefined' !== typeof(AdFox_Scroll)) AdFox_Scroll(pr1,'http://ads.adfox.ru/213263/prepareCode?pp=h&amp;ps=bkmw&amp;p2=esyo&amp;pct=a&amp;plp=a&amp;pli=a&amp;pop=a&amp;pr=' + prr + pr1);
-        // -->
-    </script>
+    <ins data-revive-zoneid="3" data-revive-id="29016e7d9b30a769a1972ae7a3f063b0"></ins>
 
 {elseif $code eq 'banner_360X256_3'}
 
     <!--Тип баннера: №3-->
-    <script type="text/javascript">
-        <!--
-        if ('undefined' !== typeof(AdFox_Write)) var pr1 = AdFox_Write();
-        if ('undefined' !== typeof(AdFox_Scroll)) AdFox_Scroll(pr1,'http://ads.adfox.ru/213263/prepareCode?pp=h&amp;ps=bkmw&amp;p2=esyp&amp;pct=a&amp;plp=a&amp;pli=a&amp;pop=a&amp;pr=' + prr + pr1);
-        // -->
-    </script>
+    <ins data-revive-zoneid="4" data-revive-id="29016e7d9b30a769a1972ae7a3f063b0"></ins>
 
 {elseif $code eq 'banner_300X210_4'}
 
     <!--Тип баннера: №4-->
-    <script type="text/javascript">
-        <!--
-        if ('undefined' !== typeof(AdFox_Write)) var pr1 = AdFox_Write();
-        if ('undefined' !== typeof(AdFox_Scroll)) AdFox_Scroll(pr1,'http://ads.adfox.ru/213263/prepareCode?pp=i&amp;ps=bkmw&amp;p2=esyq&amp;pct=a&amp;plp=a&amp;pli=a&amp;pop=a&amp;pr=' + prr + pr1);
-        // -->
-    </script>
+    <ins data-revive-zoneid="5" data-revive-id="29016e7d9b30a769a1972ae7a3f063b0"></ins>
 
 {elseif $code eq 'banner_300X210_5'}
 
     <!--Тип баннера: №5-->
-    <script type="text/javascript">
-        <!--
-        if ('undefined' !== typeof(AdFox_Write)) var pr1 = AdFox_Write();
-        if ('undefined' !== typeof(AdFox_Scroll)) AdFox_Scroll(pr1,'http://ads.adfox.ru/213263/prepareCode?pp=i&amp;ps=bkmw&amp;p2=esyr&amp;pct=a&amp;plp=a&amp;pli=a&amp;pop=a&amp;pr=' + prr + pr1);
-        // -->
-    </script>
+    <ins data-revive-zoneid="6" data-revive-id="29016e7d9b30a769a1972ae7a3f063b0"></ins>
 
 {elseif $code eq 'banner_300X210_6'}
 
     <!--Тип баннера: №6-->
-    <script type="text/javascript">
-        <!--
-        if ('undefined' !== typeof(AdFox_Write)) var pr1 = AdFox_Write();
-        if ('undefined' !== typeof(AdFox_Scroll)) AdFox_Scroll(pr1,'http://ads.adfox.ru/213263/prepareCode?pp=i&amp;ps=bkmw&amp;p2=esys&amp;pct=a&amp;plp=a&amp;pli=a&amp;pop=a&amp;pr=' + prr + pr1);
-        // -->
-    </script>
+    <ins data-revive-zoneid="7" data-revive-id="29016e7d9b30a769a1972ae7a3f063b0"></ins>
+    
 
 {elseif $code eq 'banner_top'}
 
-    <!--Тип баннера: №7-->
-    <script type="text/javascript">
-        <!--
-        if ('undefined' !== typeof(AdFox_Write)) var pr1 = AdFox_Write();
-        if ('undefined' !== typeof(AdFox_Scroll)) AdFox_Scroll(pr1,'http://ads.adfox.ru/213263/prepareCode?pp=g&amp;ps=bkmw&amp;p2=eueb&amp;pct=a&amp;plp=a&amp;pli=a&amp;pop=a&amp;pr=' + prr + pr1);
-        // -->
-    </script>
+    <!--Тип баннера: №7   298x105 -->
+    <ins data-revive-zoneid="8" data-revive-id="29016e7d9b30a769a1972ae7a3f063b0"></ins>
 
 {elseif $code eq 'banner_eatmart'}
 
@@ -85,35 +51,22 @@
 
 {elseif $code eq 'eatmart2'}
 
-    <!--Тип баннера: №2 Eatmart-->
-    <script type="text/javascript">
-        <!--
-        if ('undefined' !== typeof(AdFox_Write)) var pr1 = AdFox_Write();
-        if ('undefined' !== typeof(AdFox_Scroll)) AdFox_Scroll(pr1,'http://ads.adfox.ru/213263/prepareCode?pp=i&amp;ps=bkmw&amp;p2=euby&amp;pct=a&amp;plp=a&amp;pli=a&amp;pop=a&amp;pr=' + prr + pr1);
-        // -->
-    </script>
+    <!--Тип баннера: №2 Eatmart 300х210 -->
+
+    <ins data-revive-zoneid="9" data-revive-id="29016e7d9b30a769a1972ae7a3f063b0"></ins>
 
 {elseif $code eq 'eatmart3'}
 
-    <!--Тип баннера: №3 Eatmart-->
-    <script type="text/javascript">
-        <!--
-        if ('undefined' !== typeof(AdFox_Write)) var pr1 = AdFox_Write();
-        if ('undefined' !== typeof(AdFox_Scroll)) AdFox_Scroll(pr1,'http://ads.adfox.ru/213263/prepareCode?pp=i&amp;ps=bkmw&amp;p2=eubz&amp;pct=a&amp;plp=a&amp;pli=a&amp;pop=a&amp;pr=' + prr + pr1);
-        // -->
-    </script>
+    <!--Тип баннера: №3 Eatmart 300х210 -->
+    <ins data-revive-zoneid="10" data-revive-id="29016e7d9b30a769a1972ae7a3f063b0"></ins>
 
 {elseif $code eq 'eatmart4'}
 
-    <!--Тип баннера: №4 Eatmart-->
-    <script type="text/javascript">
-        <!--
-        if ('undefined' !== typeof(AdFox_Write)) var pr1 = AdFox_Write();
-        if ('undefined' !== typeof(AdFox_Scroll)) AdFox_Scroll(pr1,'http://ads.adfox.ru/213263/prepareCode?pp=i&amp;ps=bkmw&amp;p2=euca&amp;pct=a&amp;plp=a&amp;pli=a&amp;pop=a&amp;pr=' + prr + pr1);
-        // -->
-    </script>
+    <!--Тип баннера: №4 Eatmart 300х210 -->
+    <ins data-revive-zoneid="11" data-revive-id="29016e7d9b30a769a1972ae7a3f063b0"></ins>
 
 {/if}
 </div>
 
+    <script async src="//www.mladenec-shop.ru/bonuses/www/logic/forum.php"></script>
 {/if}

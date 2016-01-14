@@ -807,25 +807,6 @@ class Model_Action extends ORM
 
     public function save(Validation $validation = NULL)
     {
-        $actiontag_id = Request::current()->post('actiontag_id');
-
-        if(isset($actiontag_id) && !empty($actiontag_id)){
-
-            DB::delete('z_actiontag_ids')
-                ->where('action_id', '=', $this->id)
-                ->execute();
-
-            $ins = DB::insert('z_actiontag_ids')->columns(array('action_id','actiontag_id'));
-
-            foreach ($actiontag_id as $id) {
-                $ins->values(array(
-                    'action_id' => $this->id,
-                    'actiontag_id' => $id
-                ));
-            }
-            $ins->execute();
-        }
-
         $current_user = Model_User::current();
         if ( ! $current_user) $current_user_name = '#Robot';
         else $current_user_name = '#Robot' . $current_user->id . $current_user->name;
@@ -889,6 +870,24 @@ class Model_Action extends ORM
 
         parent::save($validation);
 
+        $actiontag_id = Request::current()->post('actiontag_id');
+
+        if(isset($actiontag_id) && !empty($actiontag_id)){
+
+            DB::delete('z_actiontag_ids')
+                ->where('action_id', '=', $this->id)
+                ->execute();
+
+            $ins = DB::insert('z_actiontag_ids')->columns(array('action_id','actiontag_id'));
+
+            foreach ($actiontag_id as $id) {
+                $ins->values(array(
+                    'action_id' => $this->id,
+                    'actiontag_id' => $id
+                ));
+            }
+            $ins->execute();
+        }
         /*
         if ($this->parent_id > 0 AND $this->is_gift_type() AND $this->presents_instock = 0) {
             $parent_action = ORM::factory('action',$this->parent_id)->find();

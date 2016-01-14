@@ -282,7 +282,28 @@ class Model_User extends ORM {
                 $this->child_discount = Model_User::CHILD_DISCOUNT_ON;
                 $cart->load_coupon($coupon->name);
                 $cart->recount();
-                if (Valid::email($this->email) && $this->login == 'zukk') Mail::htmlsend('child_discount', ['user' => $this, 'coupon' => $coupon], $this->email, 'Ваш промо-код');
+                if (Valid::email($this->email) && $this->sub == 1 && $this->login == 'zukk') { // оповещение getresponse
+
+                    $quest = new Model_Daemon_Quest();
+                    $quest->values([
+                        'action'    => 'getresponse',
+                        'params'    => json_encode([
+                            'user' => $this->as_array(),
+                            'customs' => [
+                                [
+                                    'name' => 'coupon',
+                                    'contents' => $coupon->name,
+                                ],
+                                [
+                                    'name' => 'child_discount',
+                                    'contents' => $this->child_discount,
+                                ],
+                            ],
+                        ])
+                    ]);
+                    $quest->save();
+                    Daemon::new_task();
+                }
             }
 
         } else {

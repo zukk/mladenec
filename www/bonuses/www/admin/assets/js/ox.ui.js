@@ -960,6 +960,65 @@ function formUnFormat(field)
 	}
 }
 
+// BANNER PROPERTIES FUNCTIONS
+function initBannerForm(formId)
+{
+    //setup calendars
+    Calendar.setup({
+        showsTime: true,
+        inputField : 'start',
+        ifFormat   : '%d.%m.%Y %H:%M',
+        button     : 'start_button',
+        align      : 'Bl',
+        weekNumbers: false,
+        firstDay   : 1,
+        electric   : true,
+        onUpdate   : function() {
+            $("#start").change();
+        }
+    });
+
+    Calendar.setup({
+        showsTime: true,
+        inputField : 'end',
+        ifFormat : '%d.%m.%Y %H:%M',
+        button : 'end_button',
+        align : 'Bl',
+        weekNumbers: false,
+        firstDay : 1,
+        electric : true,
+        onUpdate : function() {
+            $("#end").change();
+        }
+    });
+
+
+    //listeners
+    $("#startSet_immediate, #startSet_specific, #endSet_immediate, #endSet_specific")
+        .click(updateCampaignDateSection);
+
+
+    $("#startSet_immediate").click(function() {
+        campaignFormDateReset('start');
+    });
+
+    $("#endSet_immediate").click(function() {
+        campaignFormDateReset('end');
+    });
+
+    $("#start")
+        .change(function() {
+            campaignFormDateCheck('start');
+        });
+
+    $("#end")
+        .change(function() {
+            campaignFormDateCheck('end');
+        });
+
+    updateCampaignDateSection();
+}
+
 (function($) {
   $.fn.expandableContainer = function() {
     return this.each(function() {

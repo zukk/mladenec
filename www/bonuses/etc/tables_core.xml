@@ -5,7 +5,7 @@
  <name>openads</name>
  <create>true</create>
  <overwrite>false</overwrite>
- <version>620</version>
+ <version>621</version>
  <status>final</status>
 
  <table>
@@ -1440,6 +1440,20 @@
     <length>1</length>
     <notnull>true</notnull>
     <default>1</default>
+   </field>
+
+   <field>
+    <name>activate_time</name>
+    <type>openads_datetime</type>
+    <notnull>false</notnull>
+    <default></default>
+   </field>
+
+   <field>
+    <name>expire_time</name>
+    <type>openads_datetime</type>
+    <notnull>false</notnull>
+    <default></default>
    </field>
 
    <index>

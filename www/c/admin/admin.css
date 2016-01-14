@@ -259,3 +259,11 @@ label.wd { width:50px !important;}
 .wiki_del {
     float: right;
 }
+a.edit_action_tag, a.del_action_tag{
+    font-size: 20px;
+    text-decoration: none;
+}
+a.del_action_tag{
+    color: red !important;
+}
+

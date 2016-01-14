@@ -90,8 +90,9 @@ class Controller_Daemon extends Controller
      */
     protected function quest_getresponse($params)
     {
+        $decoded = json_decode($params, TRUE);
         $gr = new GetResponse();
-        $gr->upload($params['user'], $params['customs']);
+        $gr->upload($decoded['user'], $decoded['customs']);
 
         return TRUE;
     }

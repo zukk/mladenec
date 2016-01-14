@@ -634,7 +634,7 @@ class Sphinx {
 
                     $found = FALSE;
                     foreach ($this->_params['f'] as $f_id => $values) {
-                        if (in_array($id, $values)) {
+                        if (is_array($values) && in_array($id, $values)) {
                             $found = $f_id;
                             break;
                         }

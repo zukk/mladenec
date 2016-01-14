@@ -10,7 +10,7 @@
   
 -->*}
 {if !$bannerId}
-<form action='banner-edit.php' method='POST'>
+<form action='banner-edit.php' method='POST' id="bannerEditFormId">
     <input type='hidden' name='clientid' value='{$clientId}'>
     <input type='hidden' name='campaignid' value='{$campaignId}'>
     <input type='hidden' name='bannerid' value='{$bannerId}'>
@@ -116,6 +116,10 @@
         if (obj) { obj.style.display = 'none'; }
     }
 {/literal}
+
+    $(document).ready(function() {ldelim}
+    initBannerForm('bannerEditFormId');
+    {rdelim});
 //-->
 </script>
 

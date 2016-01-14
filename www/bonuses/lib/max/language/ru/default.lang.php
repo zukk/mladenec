@@ -220,6 +220,7 @@ $GLOBALS['strDontExpire']				= "Не деактивировать";
 $GLOBALS['strActivateNow'] 				= "Немедленно активировать";
 $GLOBALS['strExpirationDate']			= "Дата окончания";
 $GLOBALS['strActivationDate']			= "Дата начала";
+$GLOBALS['strSetSpecificDate']			= "Настроить дату";
 
 $GLOBALS['strMailClientDeactivated'] 	= "Ваши баннеры бли выключены, так как";
 $GLOBALS['strMailNothingLeft'] 			= "Если бы вы хотели продолжать размещать рекламу на нашем сайте, пожалуйста, свяжитесь с нами.";

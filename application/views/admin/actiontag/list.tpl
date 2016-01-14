@@ -28,13 +28,33 @@
         <th>#</th>
         <th>Название</th>
         <th>URL</th>
+        <th>&nbsp;</th>
     </tr>
     {foreach from=$actiontag item=i}
         <tr>
             <td>{$i->id}</td>
             <td>{$i->title}</td>
             <td>{$i->url}</td>
+            <td>
+                <a href="{Route::url("admin_edit", ["model" => "actiontag", "id" => $i->id])}"
+                   class="edit_action_tag">&#9998;
+                </a>
+                &nbsp;&nbsp;
+                <a href='javascript:void(0)' class="del_action_tag" onclick="delActionTag({$i->id}); return false">&#10006;</a>
+            </td>
         </tr>
     {/foreach}
 </table>
 {$pager->html('Теги')}
+
+<script>
+    function delActionTag(id){
+        if( confirm('Действительно удалить тег?') ){
+            $.post('/od-men/actiontag/'+id+'/del',{
+                id: id
+            }, function(data){
+                $("#list").html($('#list', data));
+            });
+        }
+    }
+</script>

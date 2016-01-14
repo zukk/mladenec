@@ -464,7 +464,7 @@ class Controller_Admin extends Controller_Authorised {
         }
 
         $query = $this->model;
-        $actiontagArr['pager'] = $pager = new Pager($query->count_all(), 3);
+        $actiontagArr['pager'] = $pager = new Pager($query->count_all(), 20);
         $actiontagArr['actiontag'] = $query
             ->order_by('id', 'DESC')
             ->offset($pager->offset)
@@ -519,11 +519,28 @@ class Controller_Admin extends Controller_Authorised {
         $this->return_json($res);
     }
 
+    public function action_actiontag_edit(Model_Actiontag $data){
+
+        $edit_id = $this->request->post('id');
+
+        $tag = new Model_Actiontag();
+        if(isset($edit_id) && !empty($edit_id)){
+            $form_vars['res'] = $tag->edit_actiontag($edit_id, $data);
+            $this->request->redirect(Route::url('admin_list', array('model' => 'actiontag')));
+        } else {
+            $id = $data->id;
+            $form_vars['res'] = $tag->get_actiontag($id);
+        }
+
+        return $form_vars;
+    }
+
     /**
      * Добавление сущности
      */
     public function action_add()
     {
+
         $this->model($m = $this->request->param('model'));
 
         $errors = array();
@@ -534,6 +551,7 @@ class Controller_Admin extends Controller_Authorised {
                 $this->model = $this->save_form_images($this->model);
             }
             $post = $this->request->post();
+
             if (isset($post['week_day']) && is_array($post['week_day'])) {
                 $post['week_day'] = array_reduce($post['week_day'], function($a, $b) {return $a | $b;});
             }
@@ -562,7 +580,7 @@ class Controller_Admin extends Controller_Authorised {
         // собственный метод add есть?
         $f = 'action_'.$m.'_add'; 
         if (method_exists($this, $f)) $form_vars = $this->{$f}($this->model);
-        
+
         $form_vars['i'] = $this->model;
         
         $this->layout->body = View::factory('smarty:admin/add', array(

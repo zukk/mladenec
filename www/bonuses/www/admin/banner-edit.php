@@ -24,6 +24,9 @@ require_once MAX_PATH . '/lib/OA/Maintenance/Priority.php';
 
 require_once LIB_PATH . '/Plugin/Component.php';
 
+require_once MAX_PATH . '/lib/pear/Date.php';
+
+
 $htmltemplate = MAX_commonGetValueUnslashed('htmltemplate');
 
 // Register input variables
@@ -58,6 +61,7 @@ phpAds_registerGlobalUnslashed(
     ,'url'
     ,'weight'
     ,'width'
+    ,'start', 'startSet','end', 'endSet'
 );
 
 /*-------------------------------------------------------*/
@@ -458,6 +462,8 @@ function buildBannerForm($type, $aBanner, &$oComponent=null, $formDisabled=false
         //TODO $form->addRule("size", 'Please enter a number', 'numeric'); //this should make all fields in group size are numeric
     }
 
+    buildDateFormSection($form);
+
     //external banners
     if ($type == "url") {
         $header = $form->createElement('header', 'header_txt', $GLOBALS['strURLBanner']);
@@ -534,7 +540,7 @@ function buildBannerForm($type, $aBanner, &$oComponent=null, $formDisabled=false
 
     //we want submit to be the last element in its own separate section
     $form->addElement('controls', 'form-controls');
-    $form->addElement('submit', 'submit', 'Save changes');
+    $form->addElement('submit', 'submit', $GLOBALS['strSaveChanges']);
 
     //validation rules
     if (OA_Permission::isAccount(OA_ACCOUNT_ADMIN) || OA_Permission::isAccount(OA_ACCOUNT_MANAGER)) {
@@ -542,6 +548,27 @@ function buildBannerForm($type, $aBanner, &$oComponent=null, $formDisabled=false
         $form->addRule('description', $urlRequiredMsg, 'required');
     }
 
+    if (!empty($aBanner['activate_time'])) {
+        $oDate = new Date($aBanner['activate_time']);
+        $startDateSet = 't';
+        $startDateStr = $oDate->format('%d.%m.%Y %H:%M');
+    } else {
+        $startDateSet = 'f';
+        $startDateStr = '';
+    }
+
+    if (!empty($aBanner['expire_time'])) {
+        $oDate = new Date($aBanner['expire_time']);
+        $endDateSet = 't';
+        $endDateStr = $oDate->format('%d.%m.%Y %H:%M');
+    } else {
+        $endDateSet = 'f';
+        $endDateStr = '';
+    }
+    $aBanner['startSet'] = $startDateSet;
+    $aBanner['endSet'] = $endDateSet;
+    $aBanner['start'] = $startDateStr;
+    $aBanner['end'] = $endDateStr;
     //set banner values
     $form->setDefaults($aBanner);
 
@@ -566,6 +593,41 @@ function buildBannerForm($type, $aBanner, &$oComponent=null, $formDisabled=false
 
     return $form;
 }
+
+function buildDateFormSection(&$form)
+{
+    $form->addElement ( 'header', 'h_date', $GLOBALS ['strDate'] );
+    //section decorator to allow hiding of the section
+    $form->addDecorator ( 'h_date', 'tag', array ('attributes' => array ('id' => 'sect_date', 'class' =>  '' ) ) );
+
+    //activation date
+    $actDateGroup ['radioNow'] = $form->createElement ( 'radio', 'startSet', null, $GLOBALS ['strActivateNow'], 'f', array ('id' => 'startSet_immediate' ) );
+    $actDateGroup ['radioSpecific'] = $form->createElement ( 'radio', 'startSet', null, $GLOBALS ['strSetSpecificDate'], 't', array ('id' => 'startSet_specific' ) );
+
+    $specificStartDateGroup ['date'] = $form->createElement ( 'text', 'start', null, array ('id' => 'start', 'class' => 'small' ) );
+    $specificStartDateGroup ['cal_img'] = $form->createElement ('html', 'start_button', "<a href='#' id='start_button'><img src='".OX::assetPath () . "/images/icon-calendar.gif' align= 'absmiddle' /></a>");
+//    $specificStartDateGroup ['note'] = $form->createElement ( 'html', 'activation_note', $GLOBALS ['strActivationDateComment'] );
+    $actDateGroup ['specificDate'] = $form->createElement ( 'group', 'g_specificStartDate', null, $specificStartDateGroup, null, false );
+    $form->addDecorator ( 'g_specificStartDate', 'tag', array ('tag' => 'span', 'attributes' => array ('id' => 'specificStartDateSpan', 'style' => 'display:none' ) ) );
+
+    $form->addGroup ( $actDateGroup, 'act_date', $GLOBALS ['strActivationDate'], array ("<BR>", '' ) );
+
+    //expiriation date
+    $expDateGroup ['radioNow'] = $form->createElement ( 'radio', 'endSet', null, $GLOBALS ['strDontExpire'], 'f', array ('id' => 'endSet_immediate' ) );
+    $expDateGroup ['radioSpecific'] = $form->createElement ( 'radio', 'endSet', null, $GLOBALS ['strSetSpecificDate'], 't', array ('id' => 'endSet_specific' ) );
+    //add warning note when disabled
+    $expDateGroup ['disablednote'] = $form->createElement ( 'custom', 'date-campaign-date-limit-set-note', null, null, false );
+    $form->addDecorator ( 'date-campaign-date-limit-set-note', 'tag', array ('attributes' => array ('id' => 'date-section-limit-date-set', 'class' => 'hide' ) ) );
+
+    $specificEndDateGroup ['date'] = $form->createElement ( 'text', 'end', null, array ('id' => 'end', 'class' => 'small' ) );
+    $specificEndDateGroup ['cal_img'] = $form->createElement ( 'html', 'end_button',    "<a href='#' id='end_button'><img src='".OX::assetPath () . "/images/icon-calendar.gif' align='absmiddle' /></a>");
+//    $specificEndDateGroup ['note'] = $form->createElement ( 'html', 'expiration_note', $GLOBALS ['strExpirationDateComment'] );
+    $expDateGroup ['specificDate'] = $form->createElement ( 'group', 'g_specificEndDate', null, $specificEndDateGroup, null, false );
+    $form->addDecorator ( 'g_specificEndDate', 'tag', array ('tag' => 'span', 'attributes' => array ('id' => 'specificEndDateSpan', 'style' => 'display:none' ) ) );
+
+    $form->addGroup ( $expDateGroup, 'exp_date', $GLOBALS ['strExpirationDate'], array ("<BR>", '', '' ) );
+}
+
 
 
 function addUploadGroup($form, $aBanner, $vars)
@@ -620,6 +682,27 @@ function processForm($bannerid, $form, &$oComponent, $formDisabled=false)
     }
 
     $aVariables = array();
+
+    // Activation and expiration
+    if (!empty($aFields['start'])) {
+        $oDate = new Date(date('Y-m-d H:i:s', strtotime($aFields['start'])));
+//        $oDate->toUTC();
+        $activate = $oDate->getDate();
+    } else {
+        $activate = null;
+    }
+
+    if (!empty($aFields['end'])) {
+        $oDate = new Date(date('Y-m-d H:i:s', strtotime($aFields['end'])));
+//        $oDate->toUTC();
+        $expire = $oDate->getDate();
+    } else {
+        $expire = null;
+    }
+    $doBanners->activate_time = isset($activate) ? $activate : OX_DATAOBJECT_NULL;
+    $doBanners->expire_time = isset($expire) ? $expire : OX_DATAOBJECT_NULL;
+
+    //other
     $aVariables['campaignid']      = $aFields['campaignid'];
     $aVariables['target']          = isset($aFields['target']) ? $aFields['target'] : '';
     $aVariables['height']          = isset($aFields['height']) ? $aFields['height'] : 0;
