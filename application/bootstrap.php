@@ -705,7 +705,7 @@ if ( ! empty($_SERVER['REQUEST_URI'])) {
         $hosts = Kohana::$config->load('domains')->as_array();
 
         $hh = [];
-        foreach ($hosts as $h) $hh[] = (strpos($h['host'], '.') !== FALSE) ? '*.' . $h['host'] : 'http://'.$h['host'];
+        foreach ($hosts as $h) $hh[] = (strpos($h['host'], '.') !== FALSE) ? $h['host'] : 'http://'.$h['host'];
 
 		$hh[] = "*.mladenec-shop.ru"; // mladenec main
 		$hh[] = "*.mladenec.ru"; // mladenec static
@@ -724,7 +724,7 @@ if ( ! empty($_SERVER['REQUEST_URI'])) {
 		$hh[] = "top-fwz1.mail.ru";
 		$hh[] = "https://cts-secure.channelintelligence.com"; // pampers + nutricia
 
-		$hh[] = "*.vk.com"; // socials and youtube
+		$hh[] = "vk.com"; // socials and youtube
 		$hh[] = "https://*.vk.com";
 		$hh[] = "*.facebook.net";
 		$hh[] = "*.facebook.com";
