@@ -44,7 +44,7 @@ class Controller_Admin_Ajax extends Controller_Authorised {
         
         // Profiler:
         if (Kohana::$environment === Kohana::DEVELOPMENT ||
-            ( ! empty($this->user->login) && in_array($this->user->login, array('puchkovk@gmail.com', 'zukk')))
+            ( ! empty($this->user->login) && in_array($this->user->login, ['zukk']))
         ) {
             $this->layout->profile = View::factory('profiler/stats');
         }
