@@ -463,22 +463,44 @@ class Controller_Admin extends Controller_Authorised {
                 ->as_array('id');
 
             $text = $good->text->find_all()->as_array('name', 'content');
+            $photos = $good->get_images();
 
             foreach ($clones as $id => $clone) {
 
+                // описания
                 $ins_text = DB::insert('z_good_text', ['good_id', 'name', 'content']);
                 foreach ($text as $name => $content) {
                     if ($name == 'Полное описание') { // сгенерим текст для клона
-                        $content = preg_replace('~^(<p>.*</p>)(.*)$~isuU', '<p><strong>'.$clone->group_name.' '.$clone->name.'</strong></p>$2', $content);
+                        $content = preg_replace('~^(<p>.*</p>)(.*)$~isuU', '<p><strong>' . $clone->group_name . ' ' . $clone->name . '</strong></p>$2', $content);
                     }
                     $ins_text->values(['good_id' => $clone->id, 'name' => $name, 'content' => $content]);
                 }
                 DB::query(Database::INSERT, $ins_text . ' ON DUPLICATE KEY UPDATE content = VALUES(content)')->execute();
 
                 $clone->prop->_desc = 1;
+
+                // фотки
+                $clone_photo = DB::insert('z_good_img')
+                    ->columns(['good_id', 'file_id', 'size']);
+
+                foreach ($photos as $n => $imgs) {
+                    foreach ($imgs as $size => $id) {
+                        $prop = 'img' . $size;
+                        $clone->prop->{$prop} = $id;
+                        $clone_photo->values(['good_id' => $clone->id, 'file_id' => $id, 'size' => $size]);
+
+                    }
+                    $clone->image = $clone->prop->img255;
+                }
+                $clone_photo->execute();
+
+                $clone->prop->img500 = $good->prop->img500;
+
+                $clone->save();
+
+                $clone->prop->_graf = 1;
                 $clone->prop->save();
             }
-
         }
 
         exit('ok');
