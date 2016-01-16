@@ -90,9 +90,6 @@
 {include file="layout/$vitrina.tpl"}
 
 <script>
-{*if not empty($user)}
-    // executeGoodsTopBar();
-{/if*}
     if (typeof(impressionsObject) == "undefined" ){
         window.dataLayer = window.dataLayer || [];
         dataLayer.push({
@@ -101,6 +98,11 @@
         });
     }
 </script>
+
+{if Kohana::$environment eq Kohana::PRODUCTION}{* revive ad server *}
+<script async src="//www.mladenec-shop.ru/bonuses/www/logic/forum.php"></script>
+{/if}
+
 </body>
 </html>
 

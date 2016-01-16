@@ -6,13 +6,13 @@ class Model_User extends ORM {
     const ROBOT_ID = 7;
     const STATUS_CHANGE = 20000; // сумма заказа для присвоения любимых клиентов
 
-    const CHILD_DISCOUNT_NO = 0; // скидка за заполнение данных о детях - можно получить
-    const CHILD_DISCOUNT_ON = 1; // - получена, но не использована
-    const CHILD_DISCOUNT_USED = 2; // - использована
+    const CHILD_DISCOUNT_NO = "0"; // скидка за заполнение данных о детях - можно получить
+    const CHILD_DISCOUNT_ON = "1"; // - получена, но не использована
+    const CHILD_DISCOUNT_USED = "2"; // - использована
 
-    const CHILD_BIRTH_BEFORE = 1; // письмо за неделю до ДР
-    const CHILD_BIRTH_TODAY = 2; // письмо в ДР
-    const CHILD_BIRTH_AFTER = 3; // письмо через 5 дней после ДР
+    const CHILD_BIRTH_BEFORE = "1"; // письмо за неделю до ДР
+    const CHILD_BIRTH_TODAY = "2"; // письмо в ДР
+    const CHILD_BIRTH_AFTER = "3"; // письмо через 5 дней после ДР
 
     protected $_table_name = 'z_user';
     protected static $current = NULL; // текущий залогиненный юзер
@@ -26,6 +26,7 @@ class Model_User extends ORM {
         'pregnant' => 0,
         'pregnant_terms' => '',
         'child_discount' => '',
+        'child_birth_discount' => '', // счетчик использования скидок за ДР ребенка
     ];
 
     protected $_has_one = [
@@ -292,11 +293,11 @@ class Model_User extends ORM {
                             'customs' => [
                                 [
                                     'name' => 'coupon',
-                                    'contents' => $coupon->name,
+                                    'content' => $coupon->name,
                                 ],
                                 [
                                     'name' => 'child_discount',
-                                    'contents' => $this->child_discount,
+                                    'content' => $this->child_discount,
                                 ],
                             ],
                         ])

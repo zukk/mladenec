@@ -155,7 +155,7 @@
                                         {assign var=delta value=$smarty.foreach.b.total-$column+1}
                                         <li>
                                             <a rel="{$fid}" rev="{$delta}" class="toggler
-                                {if empty($toggler[$sid][$fid]) and empty($toggler[$mode][$query][$fid])}">+ Показать ещё {$delta}{else} up">- Скрыть {$delta}{/if}
+                                            {if empty($toggler[$sid][$fid]) and empty($toggler[$mode][$query][$fid])}">+ Показать ещё {$delta}{else} up">- Скрыть {$delta}{/if}
                                             </a>
                                         </li>
                                     {/if}

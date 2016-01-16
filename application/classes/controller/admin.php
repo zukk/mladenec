@@ -445,6 +445,46 @@ class Controller_Admin extends Controller_Authorised {
     }
 
     /**
+     * клон описания размазать по группе
+     */
+    public function action_clone_group_txt()
+    {
+        $id =  $this->request->param('id');
+        $good = ORM::factory('good', $id);
+
+        if ($good->loaded()) {
+            $clones = ORM::factory('good')
+                ->with('prop')
+                ->where('_desc', '=', 0)
+                ->where('_optim', '=', 0)
+                ->where('group_id', '=', $good->group_id)
+                ->where('qty', '!=', 0)
+                ->find_all()
+                ->as_array('id');
+
+            $text = $good->text->find_all()->as_array('name', 'content');
+
+            foreach ($clones as $id => $clone) {
+
+                $ins_text = DB::insert('z_good_text', ['good_id', 'name', 'content']);
+                foreach ($text as $name => $content) {
+                    if ($name == 'Полное описание') { // сгенерим текст для клона
+                        $content = preg_replace('~^(<p>.*</p>)(.*)$~isuU', '<p><strong>'.$clone->group_name.' '.$clone->name.'</strong></p>$2', $content);
+                    }
+                    $ins_text->values(['good_id' => $clone->id, 'name' => $name, 'content' => $content]);
+                }
+                DB::query(Database::INSERT, $ins_text . ' ON DUPLICATE KEY UPDATE content = VALUES(content)')->execute();
+
+                $clone->prop->_desc = 1;
+                $clone->prop->save();
+            }
+
+        }
+
+        exit('ok');
+
+    }
+    /**
      * Добавление/список тегов для акций
      * @return array
      * @throws Kohana_Exception
@@ -519,7 +559,8 @@ class Controller_Admin extends Controller_Authorised {
         $this->return_json($res);
     }
 
-    public function action_actiontag_edit(Model_Actiontag $data){
+    public function action_actiontag_edit(Model_Actiontag $data)
+    {
 
         $edit_id = $this->request->post('id');
 

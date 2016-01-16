@@ -68,5 +68,4 @@
 {/if}
 </div>
 
-    <script async src="//www.mladenec-shop.ru/bonuses/www/logic/forum.php"></script>
 {/if}

@@ -17,5 +17,3 @@
 {if empty($user)}
     <script src="//ulogin.ru/js/ulogin.js"></script>
 {/if}
-
-<script src="/j/adfox.js"></script>{* вынес отдельно чтобы избежать частичной блокировки при включенном adblock *}

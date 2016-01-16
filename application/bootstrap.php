@@ -432,6 +432,9 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('admin', 'od-men')
 		->defaults(array('controller' => 'admin', 'action' => 'index'));
 
+    Route::set('admin_clone_group_txt', 'od-men/clone_group_txt/<id>', array('id' => '\d+'))
+        ->defaults(array('controller' => 'admin', 'action' => 'clone_group_txt'));
+
     Route::set('admin_actiontags', 'admin/actiontags.php')
         ->defaults(array('controller' => 'admin', 'action' => 'actiontags'));
 

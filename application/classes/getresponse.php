@@ -38,7 +38,10 @@ class GetResponse {
         try {
             $exist = $this->_client->get_contacts(
                 self::GR_API_KEY,
-                ['email' => ['EQUALS' => $mail]]
+                [
+                    'campaigns' => [ self::CAMPAIGN_ID ],
+                    'email' => [ 'EQUALS' => $mail ]
+                ]
             );
 
             if ( ! empty($exist)) {
@@ -69,9 +72,11 @@ class GetResponse {
     {
         if ( ! Valid::email($user['email'])) return FALSE;
         try {
+
             $exist = $this->_client->get_contacts(
                 self::GR_API_KEY,
                 [
+                    'campaigns' => [ self::CAMPAIGN_ID ],
                     'email'=> [ 'EQUALS' => $user['email'] ]
                 ]
             );

@@ -220,34 +220,25 @@ $(document).ready(function() {
 			</p>
 		{/if}
 	{/foreach}
+
+    {if in_array($user->login, ['zukk', 'olga.tarass@gmail.com'])}
+        {if $i->prop->_desc}
+
+            {assign var=empty value=ORM::factory('good')
+            ->with('prop')
+            ->where('_desc', '=', 0)
+            ->where('_optim', '=', 0)
+            ->where('group_id', '=', $i->group_id)
+            ->where('qty', '!=', 0)->count_all()}
+
+            <p><a onclick="return confirm('Размножить?')" href="{Route::url('admin_clone_group_txt', ['id' => $i->id])}">Кнопка {$empty}</a></p>
+        {/if}
+    {/if}
     <p>
         <label for="search">Поисковые слова</label>
         <textarea name="prop[search]" rows="15" cols="50" style="height:100px;">{$i->prop->search}</textarea>
     </p>
-    {*<p>
-        <label>Заголовок спойлера</label>
-        <input id="price" name="prop[spoiler_title]" value="{$i->prop->spoiler_title}" size="40" />
-    </p>
-    <p>
-        <label>Спойлер</label>
-        <textarea class="html" name="prop[spoiler]" rows="15" cols="50">{$i->prop->spoiler}</textarea>
-    </p>
-    <p>
-        <label>Заголовок спойлера 2</label>
-        <input id="price" name="prop[spoiler2_title]" value="{$i->prop->spoiler2_title}" size="40" />
-    </p>
-    <p>
-        <label>Спойлер 2</label>
-        <textarea class="html" name="prop[spoiler2]" rows="15" cols="50">{$i->prop->spoiler2}</textarea>
-    </p>
-    <p>
-        <label>Заголовок спойлера 3</label>
-        <input id="price" name="prop[spoiler3_title]" value="{$i->prop->spoiler3_title}" size="40" />
-    </p>
-    <p>
-        <label>Спойлер 3</label>
-        <textarea class="html" name="prop[spoiler3]" rows="15" cols="50">{$i->prop->spoiler3}</textarea>
-    </p> *}
+
     <p>
         <label>Картинка 500 (no&nbsp;watermark)</label>
         {if $i->prop->img500}

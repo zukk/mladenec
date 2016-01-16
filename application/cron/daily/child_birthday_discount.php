@@ -56,11 +56,11 @@ foreach($users as $u) {
                 'customs' => [
                     [
                         'name' => 'coupon',
-                        'contents' => $coupon->name,
+                        'content' => $coupon->name,
                     ],
                     [
                         'name' => 'child_birth_discount',
-                        'contents' => Model_User::CHILD_BIRTH_BEFORE,
+                        'content' => Model_User::CHILD_BIRTH_BEFORE,
                     ],
                 ],
             ]
@@ -117,11 +117,11 @@ foreach($users as $u) {
                 'customs' => [
                     [
                         'name' => 'coupon',
-                        'contents' => $coupon,
+                        'content' => $coupon,
                     ],
                     [
                         'name' => 'child_birth_discount',
-                        'contents' => Model_User::CHILD_BIRTH_TODAY,
+                        'content' => Model_User::CHILD_BIRTH_TODAY,
                     ],
                 ],
             ]
@@ -175,11 +175,11 @@ foreach($users as $u) {
                     'customs' => [
                         [
                             'name' => 'coupon',
-                            'contents' => $coupon,
+                            'content' => $coupon,
                         ],
                         [
                             'name' => 'child_birth_discount',
-                            'contents' => Model_User::CHILD_BIRTH_AFTER,
+                            'content' => Model_User::CHILD_BIRTH_AFTER,
                         ],
                     ],
                 ]
