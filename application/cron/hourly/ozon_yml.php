@@ -26,10 +26,13 @@ fwrite($fp,'<?xml version="1.0" encoding="utf-8"?>
         <categories>');
 
 $catalog = ORM::factory('section')
+/*
     ->where_open()
         ->where('parent_id', 'IN', array(28934)) // детское питание
         ->or_where('id', 'IN', array(29891, 29982)) // автокресла, коляски
     ->where_close()
+*/
+    ->where('active', '=', 1)
     ->order_by('sort')
     ->find_all()
     ->as_array('id');
@@ -53,11 +56,12 @@ for (
     $goods = Model_Good::for_yml(
         $heap_size,
         $heap_number, 
-        array( // where!
+        [ // where!
             array('good.section_id', 'IN', array_keys($catalog)),
             array('good.id1c', '>', 0),
+            array('good.big', '=', 0), // @NOTE в озон не выгружаем КГТ
             array('prop.to_ozon', '=', 1)
-            )
+        ]
         );
     $heap_number++
     ) 
