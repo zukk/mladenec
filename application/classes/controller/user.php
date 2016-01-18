@@ -64,14 +64,14 @@ class Controller_User extends Controller_Frontend
      */
     public function action_unsubscribe_pro()
     {
-		
+
 		$email = $this->request->param('email');
-		
+
 		$this->tmpl['result'] = 'Отписан ' . $email;
-		
+
 		Model_User::unsubscribe($email);
 	}
-	
+
     /**
      * Отписка мыла от рассылки
      */
@@ -207,6 +207,8 @@ class Controller_User extends Controller_Frontend
             {
                 $this->user->values($this->request->post());
                 $this->user->sub = ($this->request->post('sub') ? 1 : 0);
+
+                $this->user->in1c = 0; // перевыгрузить юзера в 1с
                 $this->user->save();
 
                 if ($this->user->changed()) {
