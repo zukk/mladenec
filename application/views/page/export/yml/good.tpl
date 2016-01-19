@@ -25,7 +25,7 @@
     {/if}
 
 	<vendor><![CDATA[{Txt::clean_rude_symbols($g['brand_name']|escape:'html')}]]></vendor>
-    {if $g['code'] neq '' AND not empty($label) AND $label eq 'findologic'}<vendorCode>{$g['code']|escape:'html'}</vendorCode>{/if}
+    {if $g['code'] neq '' AND not empty($label) AND $label eq 'retailrocket'}<vendorCode>{$g['code']|escape:'html'}</vendorCode>{/if}
 	<model><![CDATA[{Txt::clean_rude_symbols($g['group_name']|escape:'html')} {Txt::clean_rude_symbols($g['name']|escape:'html')}]]></model>
 	<description><![CDATA[{Txt::clean_rude_symbols($g['desc']|strip_tags|escape:'html')}]]></description>
     <manufacturer_warranty>true</manufacturer_warranty>
@@ -49,7 +49,7 @@
 			{/foreach}
 		{/if}
 	{/if}
-        {if  not empty($label) and $label eq 'findologic'}    
+        {if  not empty($label) and $label eq 'retailrocket'}
             <param name="cat_url">{$section->get_link(0)}</param>
             <param name="rating">{$g['rating']}</param>
             <param name="id1c">{$g['id1c']}</param>
