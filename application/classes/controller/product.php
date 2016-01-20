@@ -202,8 +202,9 @@ class Controller_Product extends Controller_Frontend {
         if ( ! empty($slider_goods)) { // Товары для слайдера
             $this->tmpl['frequent'] = $slider_goods = $good->analogy();
             $this->tmpl['slider_header'] = $slider_header;
-
-            $keys = array_merge($keys, array_keys($slider_goods));
+            if($slider_goods) {
+                $keys = array_merge($keys, array_keys($slider_goods));
+            }
         }
 
         $this->tmpl['images'] = Model_Good::many_images([255], $keys);
@@ -221,6 +222,31 @@ class Controller_Product extends Controller_Frontend {
             }
         }
         $this->tmpl['filters'] = $filters;  // }}}
+
+        foreach($filters as $fnames => $values){
+            if (strpos($fnames, 'Возраст') !== false){
+                $res_desc_cons = 'Проконсультируйтесь со специалистом. Для детей с ';
+                foreach($values as $val){
+                    $desc_cons = preg_replace("/[^0-9]/", '', $val);
+                    if (strpos($val, 'год') !== false || strpos($val, 'лет') !== false) {
+                        if ($desc_cons > 1) {
+                            $year = 'лет';
+                        } else {
+                            $year = 'года';
+                        }
+                    } else {
+                        if ($desc_cons > 1){
+                            $year = 'месяцев';
+                        } else {
+                            $year = 'месяца';
+                        }
+                    }
+                    $res_desc_cons .= $desc_cons.' '.$year.', ';
+                }
+                $res_desc_cons = rtrim($res_desc_cons, ', ').'.';
+            }
+        }
+        $this->tmpl['consul'] = $res_desc_cons;
 
         if ($good->is_cloth()) { // для карточки одежды получаем все варианты цветов и размеров для товаров из группы, со связями цвет => размеры
 			

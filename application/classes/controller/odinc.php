@@ -735,15 +735,20 @@ class Controller_Odinc extends Controller {
                     $user->name        = $i;
                     $user->last_name   = $f;
                     $user->second_name = $o;
+                    $user->email = $email;
                 }
                 if ($status == 'gold') $user->status_id = 1;
 
                 $user->phone  = $phone;
                 $user->phone2 = $phone2;
+
                 try {
                     $user->save();
+
                     $return[$id] = 'ok';
+
                 } catch (Kohana_Validation_Exception $e) {
+
                     $return[$id] = 'NO';
                     $this->error('Not valid user '.$s.' '.$e->getMessage());
                 }

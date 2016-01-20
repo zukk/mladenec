@@ -22,6 +22,8 @@
                 {Model_Good_Text::desc($goodTabs[$tab])}
 
                 {if not empty($filters)}
+                    {if ! empty($consul)}<p>{$consul}</p>{/if}
+
                     {foreach from=$filters key=fname item=vals}
                         {assign var=under value=$fname|strpos:'_'}
                         {if $under}{assign var=fname value=$fname|mb_substr:$under}{/if}
