@@ -332,12 +332,12 @@ class Sphinx {
                     $sections = [$this->_section->id => $total];
                 }
 
-                // if ( ! empty($this->_section)) { // для одной категории получаем ещё фильтры
+                if ( ! empty($this->_section) || in_array($this->_mode, ['tag'])) { // для одной категории или тега - получаем ещё фильтры
                     $cloneq = clone $q;
                     $fvals = $sphinx_db
                         ->query(Database::SELECT, str_replace('###', '@groupby as fvalue, COUNT(*) as qty', $cloneq->group_by('fvalue')->limit(250)))
                         ->as_array('fvalue', 'qty');
-                //}
+                }
 
                 // всегда получаем страны
                 $cloneq = clone $q;
