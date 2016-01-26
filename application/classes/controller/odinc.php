@@ -502,6 +502,12 @@ class Controller_Odinc extends Controller {
                     ];
                     Model_History::log('order', $id, $message . ' '. $date .' '.$time);
                 }
+                elseif (mb_strpos($s, 'НОМЕРРЕАЛ:') === 0) { // НОМЕРРЕАЛ:4156
+                    $check = mb_substr($s, 10);
+                }
+                elseif (mb_strpos($s, 'ДАТАВРЕМЯЧЕКА:') === 0) { // ДАТАВРЕМЯЧЕКА:21.01.16| 12:23
+                    $check_time = preg_replace('~(\d\d)\.(\d\d)\.(\d\d)\| (\d\d\:\d\d)~', '20$3-$2-$1 $4', mb_substr($s, 14));
+                }
                 elseif ($s != 'КОНЕЦЗАКАЗА') // товар
                 {
                     list($code, $qty, $price) = Txt::parse_explode('©', $s, 3);
@@ -556,6 +562,12 @@ class Controller_Odinc extends Controller {
                     //$order->payment = $pay_amount;
                     $order->pay_type = ! empty($pay8) ? Model_Order::PAY_CARD : Model_Order::PAY_DEFAULT;
 
+                    if ( ! empty($check)) {
+                        $order->check = $check;
+                    }
+                    if ( ! empty($check_time)) {
+                        $order->check_time = $check_time;
+                    }
                     if ($order->can_pay == 0 && ! empty($can_pay)) {
                         $order->can_pay = 1;
                         $payment_changed = TRUE;

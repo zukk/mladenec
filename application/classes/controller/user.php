@@ -28,14 +28,17 @@ class Controller_User extends Controller_Frontend
             if ( ! $v->check()) $this->return_json(['error' => $v->errors('user')]); // ошибки при создании юзера
 
             $user->create_new($v);
+
             Model_User::login($user);
 
+            /*
             $refer = $this->request->referrer();
             if ($has_q = strpos($refer, '?')) {
                 $refer = substr_replace($refer, '?reg_done='.$user->id.'&', $has_q, 1);
             } else {
                 $refer .= '?reg_done='.$user->id;
             }
+            */
 
             if ( ! empty($post['poll_id'])) {
                 $poll = ORM::factory('poll',$post['poll_id']);
@@ -53,27 +56,14 @@ class Controller_User extends Controller_Frontend
             } else {
                 $this->return_json([
                     'userId' => $user->id,
-                    'redirect' => $refer
+                    'redirect' => Route::url('user').'?reg_done='.$user->id,
                 ]);
             }
-        };
+        }
     }
-
+	
     /**
-     * Проброс отсылки из pro.subscribe
-     */
-    public function action_unsubscribe_pro()
-    {
-
-		$email = $this->request->param('email');
-
-		$this->tmpl['result'] = 'Отписан ' . $email;
-
-		Model_User::unsubscribe($email);
-	}
-
-    /**
-     * Отписка мыла от рассылки
+     * Отписка мыла от рассылки - наш интерфейс
      */
     public function action_unsubscribe()
     {
@@ -98,6 +88,29 @@ class Controller_User extends Controller_Frontend
 
         $this->layout->menu = Model_Menu::html();
     }
+
+    /**
+     * Переход по ссылке подтверждения мыла - редиректит на ЛК
+     * Тут же обработка ajax-запроса на письмо с подтверждением
+     *
+     */
+    public function action_email_approve()
+    {
+        if (parse_url($this->request->referrer(), PHP_URL_PATH) == Route::url('user') && ! empty($this->user) && $this->user->email_approved == 0) {
+            $this->user->send_mail_approve($this->user->email, FALSE);
+            exit('Письмо отправлено');
+        }
+
+        $email = $this->request->query('email');
+
+        if ( ! Valid::email($email)) throw new HTTP_Exception_404;
+        if (md5(Cookie::$salt.$email) != $this->request->query('md5')) throw new HTTP_Exception_404;
+
+        DB::update('z_user')->set(['email_approved' => 1])->where('email', '=', $email)->execute();
+
+        $this->request->redirect(Route::url('user'));
+    }
+
     /**
      * Залогинивание юзера
      */
@@ -208,7 +221,6 @@ class Controller_User extends Controller_Frontend
                 $this->user->values($this->request->post());
                 $this->user->sub = ($this->request->post('sub') ? 1 : 0);
 
-                $this->user->in1c = 0; // перевыгрузить юзера в 1с
                 $this->user->save();
 
                 if ($this->user->changed()) {

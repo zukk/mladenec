@@ -6,6 +6,7 @@ class Model_Section extends ORM {
 
     const CLOTHS_ROOT = 29690; // ид родительской категории для всей одежды
     const DIAPERS_ID = 29798; // ид категории подгузников
+    const FOOD_ID = 29798; // ид категории питания
     const LINEN_ID = 29781; // ид пелёнок
     const MILK_ID = 29051; // ид категории молочной продукции (холодильник)
 
@@ -577,5 +578,28 @@ class Model_Section extends ORM {
     {
         $cloth_subs = self::get_cloth_subs();
         return ! empty($cloth_subs[$this->id]);
+    }
+
+    /**
+     * проверяет что категория дает возможность бесплатной сборки
+     * @param $id - ид категории
+     * @return mixed
+     */
+    public static function sborkable($id)
+    {
+        $cache_key = 'section_sborkable';
+        $ids = json_decode(Cache::instance()->get($cache_key), TRUE);
+
+        if (empty($ids)) {
+            $ids = DB::select('id')
+                ->from('z_section')
+                ->where('code', 'IN', ['1474', '50056991', '1081', '1110', '1124', '1426', '1491', '30016536', '30016537', '352', '1340', '1411', '1431'])
+                ->execute()
+                ->as_array('id', 'id');
+
+            $cache = json_encode($ids);
+            Cache::instance()->set($cache_key, $cache);
+        }
+        return ! empty($ids[$id]);
     }
 }

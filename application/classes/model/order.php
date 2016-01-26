@@ -32,7 +32,8 @@ class Model_Order extends ORM {
         'id' => '', 'type' => '', 'user_id' => '', 'user_status' => '', 'sent' => '', 'created' => '', 'changed' => '', 'description' => '',
         'manager' => '', 'price' => '',	'discount' => '', 'price_ship' => '', 'status' => '', 'status_time' => '',
         'pay_type' => '', 'payed' => 0, 'pay8'=> '', 'pay1' => '', 'delivery_type' => '', 'vitrina' => '', 'coupon_id' => '', 'can_pay' => '',
-        'in1c' => 0, 'call_card' => 0
+        'in1c' => 0, 'call_card' => 0,
+        'check' => '', 'check_time' => '',
     ];
 
     protected $_belongs_to = [
@@ -718,6 +719,14 @@ class Model_Order extends ORM {
         if (empty($this->vitrina)) {
             $this->vitrina = Kohana::$server_name;
         }
+
+        if ($this->changed('check')) { // создать чек для заказа
+            try {
+                $this->get_check(TRUE);
+            } catch (Kohana_Exception $e) {
+                Log::instance()->add(Log::WARNING, 'проблемы при создании чека для заказа '.$this->id.': '.$e->getMessage());
+            }
+        }
 		
 		if( $this->status == 'X' ){
 			
@@ -737,5 +746,121 @@ class Model_Order extends ORM {
     {
        // Model_Terminal::
 
+    }
+
+    /**
+     * Вспомогательные функции для генерации чека
+     * @param $price
+     * @return string
+     */
+    private function __check_price_format($price)
+    {
+        return number_format($price, 2, ',', '');
+    }
+    private function __check_nds_format($price)
+    {
+        return number_format($price, 2, ',', '\'');
+    }
+    private function __check_add_good(PHPExcel_Worksheet &$sheet, $g, $n)
+    {
+        $n2 = $n + 2;
+        $sheet->insertNewRowBefore($n, 3); // Insert 3 new rows
+
+        $sheet->setCellValue('A' . $n, $g->group_name . ' ' . $g->name);
+        $sheet->duplicateStyle($sheet->getStyle('A9'), 'A'.$n);
+        $sheet->mergeCells('A' . $n.':F'.( $n + 1 ));
+
+        $sheet->setCellValue('A' . $n2, $g->quantity . ' * ' . self::__check_price_format($g->price));
+        $sheet->duplicateStyle($sheet->getStyle('A11'), 'A'.$n2);
+        //$sheet->mergeCells('A' . $n.':F'.( $n + 1 ));
+
+        $sheet->setCellValue('F' . $n2, ' = '. self::__check_price_format($g->total));
+        $sheet->duplicateStyle($sheet->getStyle('F11'), 'F'.$n2);
+    }
+
+    /**
+     * Генерация/получение чека
+     */
+    function get_check($generate = FALSE)
+    {
+        if ($this->status != 'F') return FALSE;
+        if (empty($this->check) || empty($this->check_time)) return FALSE;
+
+        $subdir = preg_replace('~(\d)~isu', '$1/', substr($this->id, 0, 4));
+        $dir = APPPATH.'../www/upload/'.$subdir;
+        if ( ! file_exists($dir)) {
+            mkdir($dir, 0777, TRUE);
+        }
+        $fname = $dir.$this->id.".xlsx";
+
+        if (empty($generate)) {
+
+            if (file_exists($fname)) {
+                return '/'.Upload::$default_directory.'/'.$subdir.basename($fname);
+            } else {
+                return FALSE;
+            }
+        }
+
+        include(APPPATH.'classes/PHPExcel.php');
+        $excel = PHPExcel_IOFactory::load(APPPATH.'config/check.xlsx');
+        $sheet = $excel->getActiveSheet();
+        $sheet->setCellValue('A7', strftime('%d.%m.%Y %H:%M', strtotime($this->check_time)));
+        $sheet->setCellValue('F8', '№ '.$this->check);
+
+        $goods = $this->get_goods();
+
+        $n = 9;
+        $nds10 = $nds18 = 0;
+
+        foreach($goods as $g) {
+
+            if ($n == 9) { // первая строка - меняем на нашу цену и название
+                $sheet->setCellValue('A' . $n, $g->group_name . ' ' . $g->name);
+                $sheet->setCellValue('A' . ($n + 2), $g->quantity . ' * ' . self::__check_price_format($g->price));
+                $sheet->setCellValue('F' . ($n + 2), ' = '. self::__check_price_format($g->total));
+
+            } else { // следующие - копируем первое и стили
+
+                self::__check_add_good($sheet, $g, $n);
+            }
+            if ($g->nds == 10) {
+                $nds10 += $g->total * $g->nds / 100;
+            }
+            if ($g->nds == 18) {
+                $nds18 += $g->total * $g->nds / 100;
+            }
+            $n += 3;
+        }
+
+        if ($this->price_ship > 0) { // доставка - последним товаром
+
+            $g = new Model_Good();
+            $g->name = 'Доставка';
+            $g->quantity = 1;
+            $g->price = $g->total = $this->price_ship;
+
+            self::__check_add_good($sheet, $g, $n);
+
+            $n += 3;
+        }
+
+        $total = self::__check_price_format($this->get_total());
+        $sheet->setCellValue('D' . ($n + 1), ' = '. $total); // ИТОГО
+        $sheet->setCellValue('A' . ($n + 2), $this->pay_type == Model_Order::PAY_CARD ? 'Безналичные' : 'Наличные'); // текст про НДС
+
+        $nds = "Общая сумма ".self::__check_nds_format($total)." руб. включая НДС ".self::__check_nds_format($nds10 + $nds18)." руб.\n"
+            ."из них оплачено наличными ".self::__check_nds_format($this->pay_type == Model_Order::PAY_CARD ? $this->pay1 : $total)." руб.\n"
+            ."18% НДС - ".self::__check_nds_format($nds18)." руб.\n"
+            ."10% НДС - ".self::__check_nds_format($nds10)." руб";
+
+        $sheet->setCellValue('A' . ($n + 3), $nds); // текст про НДС
+        $sheet->setCellValue('B' . ($n + 5), 'ЕКЛЗ с фп 7024127040'); // счетчик фп?
+        $sheet->setCellValue('B' . ($n + 6), '00037122 #'.$this->id);
+
+        $io = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+
+        $io->save($fname);
+        return $fname;
     }
 }

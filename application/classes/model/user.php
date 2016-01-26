@@ -27,6 +27,7 @@ class Model_User extends ORM {
         'pregnant_terms' => '',
         'child_discount' => '',
         'child_birth_discount' => '', // счетчик использования скидок за ДР ребенка
+        'email_approved' => 0, // флаг подтверждения email
     ];
 
     protected $_has_one = [
@@ -607,7 +608,8 @@ class Model_User extends ORM {
      * Получить количество недель беременности
      * @return mixed
      */
-    public function get_pregnant_weeks() {
+    public function get_pregnant_weeks()
+    {
         $weeks = floor((time() - $this->pregnant_terms) / (7 * 24 * 60 * 60));
         return $weeks = ($weeks <= 41) ? $weeks : null;
     }
@@ -616,9 +618,9 @@ class Model_User extends ORM {
      * Получить url аватарки
      * @return string
      */
-    public function get_avatar() {
-        if (empty($this->avatar_file_id))
-            return false;
+    public function get_avatar()
+    {
+        if (empty($this->avatar_file_id)) return FALSE;
         $return = ORM::factory('file', $this->avatar_file_id)->get_url();
         return $return;
     }
@@ -627,7 +629,8 @@ class Model_User extends ORM {
      * Получить количество избранных
      * @return string
      */
-    public function get_deffered_count() {
+    public function get_deffered_count()
+    {
         return ORM::factory('deferred')
                 ->where('user_id', '=', $this->id)
                 ->count_all();
@@ -638,7 +641,8 @@ class Model_User extends ORM {
      * @param null $good
      * @return bool|void
      */
-    public static function can_one_click($good = NULL) {
+    public static function can_one_click($good = NULL)
+    {
         if (in_array(Request::$client_ip, ['127.0.0.1', '10.0.2.2']))
             return TRUE;
 
@@ -659,6 +663,7 @@ class Model_User extends ORM {
         return ORM::factory('user_address')
             ->where('user_id', '=', $this->id)
             ->where('active', '=', 1)
+            ->where('city', '!=', '')
             ->order_by('last_used', 'DESC')
             ->order_by('id', 'DESC')
             ->find_all()
@@ -735,7 +740,7 @@ class Model_User extends ORM {
     function avg_check()
     {
         if ($this->qty == 0) return 0;
-        return $this->sum/$this->qty;
+        return $this->sum / $this->qty;
     }
 
     /**
@@ -744,8 +749,9 @@ class Model_User extends ORM {
     function save($validation = NULL)
     {
         if ($this->changed('sub') || $this->changed('last_order') || $this->changed('sum') || $this->changed('qty') || $this->changed('pregnant')) {
+            // обновить данные в Getresponse
             GetResponse::renew($this->id);
-            if ($this->sub == 0) rrapi::unsubscribe($this->email);
+            if ($this->sub == 0) rrapi::unsubscribe($this->email); // проброс отписки в retail rocket
         }
         parent::save($validation);
     }

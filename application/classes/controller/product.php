@@ -626,6 +626,7 @@ class Controller_Product extends Controller_Frontend {
                 $cart->remove($id);
                 echo 'remove '.$id;
             } else {
+                $cart->remove($id);
                 $cart->add([$id => 1]);
             }
             $cart->set_comments([$id => $com])->save();

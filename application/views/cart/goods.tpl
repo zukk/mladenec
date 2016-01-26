@@ -85,12 +85,15 @@
                     <td><abbr abbr="Мы предоставляем услугу бесплатной сборки мебели">?</abbr></td>
                     <td colspan="2"><img src="/i/sborka.jpg" alt="Бесплатная сборка" title="Бесплатная сборка" class="img70" /></td>
                     <td class="txt-lft">
-                        <a href="/besplatnaya-sborka">Бесплатная сборка мебели</a><br />
-                        (не&nbsp;раньше следующего дня после доставки, только Москва и&nbsp;МО)
+                        <a href="/delivery#sborka_tovara" target="_blank">Бесплатная сборка мебели</a><br />
+                        (Точную дату сборки вы сможете согласовать с нашим оператором)
                     </td>
                     <td class="price">{$g->price|price}</td>
                     <td class="c">
-                        {Form::select('sborka_comment', Model_Good::sborka(), $comments[$g->id]|default:'', ['id' => 'sborka', 'rel' => $g->id])}
+                        <div class="incdeced">
+                            {*{Form::select('sborka_comment', Model_Good::sborka(), $comments[$g->id]|default:'', ['id' => 'sborka', 'rel' => $g->id])}*}
+                            {Form::select('sborka_comment', Model_Good::sborka(), '', ['id' => 'sborka', 'rel' => $g->id])}
+                        </div>
                      </td>
                     <td class="total">{$g->total|price}</td>
                     <td></td>

@@ -7,6 +7,7 @@ class Model_Coupon extends ORM {
     const TYPE_LK = 2; // купон даёт ЛК
     const TYPE_PRESENT = 3; // купон даёт подарок
     const TYPE_CHILD = 4; // купон на день рождения ребенка - скидка 10% на все кроме подгузов и питания
+    const TYPE_SUB = 5; // купон со скидкой на сумму от суммы - за согласие на рассылку - генерится при регистрации,
 
     //const CHILD_DISCOUNT = 'kidz'; // скрытый купон со скидкой за данные о детях/беременности
 
@@ -166,8 +167,16 @@ class Model_Coupon extends ORM {
         $this->used = $this->used + 1;
         Model_History::log('coupon', $this->id, 'использование', [], $user_id);
         if (($user = Model_User::current()) && ($this->user_id == $user->id)) { // привязанный к юзеру купон - это за заполнение данных о детях
-            $user->child_discount = Model_User::CHILD_DISCOUNT_USED;
-            $user->save();
+
+            if ($this->type == Model_Coupon::TYPE_SUM) {
+                $user->child_discount = Model_User::CHILD_DISCOUNT_USED;
+                $user->save();
+            }
+            if ($this->type == Model_Coupon::TYPE_CHILD) { // купон на др ребенка - считаем сколько всего использований
+                $user->child_birth_discount += 1;
+                $user->save();
+            }
+
         }
         $this->save();
     }
@@ -316,5 +325,27 @@ class Model_Coupon extends ORM {
             }
         }
         return;
+    }
+
+    /**
+     * Поиск неиспользованного купона для юзера по типу
+     * @param $user_id
+     * @param $type
+     * @return bool|ORM
+     */
+    static function for_user($user_id, $type = self::TYPE_SUB)
+    {
+        $coupon = self::factory('coupon')
+            ->where('user_id', '=', $user_id)
+            ->where('type', '=', $type)
+            ->where('used', '=', 0)
+            ->where('active', '=', 1)
+            ->find();
+
+        if ( ! $coupon->loaded()) return FALSE;
+        if ( ! $coupon->is_begun()) return FALSE;
+        if ( $coupon->is_expired()) return FALSE;
+
+        return $coupon;
     }
 }

@@ -149,7 +149,10 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('unsubscribe', 'unsubscribe')
 		->defaults(array('controller' => 'user', 'action' => 'unsubscribe'));
 
-	Route::set('user_error', 'user/error')
+	Route::set('email_approve', 'email_approve')
+        ->defaults(array('controller' => 'user', 'action' => 'email_approve'));
+
+    Route::set('user_error', 'user/error')
 		->defaults(array('controller' => 'ajax', 'action' => 'error'));
 
     Route::set('toggle_state', 'toggle_state')
@@ -710,7 +713,8 @@ if ( ! empty($_SERVER['REQUEST_URI'])) {
         $hh = [];
         foreach ($hosts as $h) $hh[] = (strpos($h['host'], '.') !== FALSE) ? $h['host'] : 'http://'.$h['host'];
 
-		$hh[] = "*.mladenec-shop.ru"; // mladenec main
+		$hh[] = "mladenec-shop.ru"; // mladenec main
+        $hh[] = "www.mladenec-shop.ru"; // mladenec www
 		$hh[] = "*.mladenec.ru"; // mladenec static
 
 		$hh[] = "*.jivosite.com"; // jivosite
