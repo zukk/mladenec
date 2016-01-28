@@ -107,7 +107,12 @@
         <th class="r nw">{if $o->delivery_type eq Model_Order::SHIP_COURIER or (($o->delivery_type eq Model_Order::SHIP_SERVICE or $o->delivery_type eq Model_Order::SHIP_OZON) and $o->price_ship gt 0)}{$o->price_ship|price}{else}?{/if}</th>
     </tr>
     <tr>
-        <th colspan="4" class="r">Итого:</th>
+        <th colspan="2">
+            {if $o->check}
+                Получить чек: {HTML::anchor($o->get_check(), basename($o->get_check()))}
+            {/if}
+        </th>
+        <th colspan="2" class="r">Итого:</th>
         <th class="r nw">{$o->get_total()|price}</th>
     </tr>
     </tfoot>

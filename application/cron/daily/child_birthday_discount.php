@@ -21,7 +21,8 @@ if (empty($kids)) exit('no kids');
 
 $users = ORM::factory('user')
     ->where('sub', '=', 1)
-    ->where('user_id', 'IN', $kids)
+    //->where('email_approved', '=', 1)
+    ->where('id', 'IN', $kids)
     ->find_all()
     ->as_array('id');
 
@@ -35,6 +36,7 @@ $coupons = ORM::factory('coupon')
     ->find_all()
     ->as_array('user_id');
 
+echo implode(',', array_keys($users))."\n";
 foreach($users as $u) {
 
     if (empty($coupons[$u->id])) {
@@ -46,13 +48,13 @@ foreach($users as $u) {
         $coupon->to = strtotime('+7 days', $bd);
     }
 
-    if (Valid::email($this->email) && $this->sub == 1 && $this->login == 'zukk') { // оповещение getresponse
+    if ($u->can_sub()) { // оповещение getresponse
 
         $quest = new Model_Daemon_Quest();
         $quest->values([
             'action'    => 'getresponse',
-            'params'    => [
-                'user' => $this->as_array(),
+            'params'    => json_encode([
+                'user' => $u->as_array(),
                 'customs' => [
                     [
                         'name' => 'coupon',
@@ -63,7 +65,7 @@ foreach($users as $u) {
                         'content' => Model_User::CHILD_BIRTH_BEFORE,
                     ],
                 ],
-            ]
+            ])
         ]);
         $quest->save();
         Daemon::new_task();
@@ -85,7 +87,7 @@ if (empty($kids)) exit('no kids');
 
 $users = ORM::factory('user')
     ->where('sub', '=', 1)
-    ->where('user_id', 'IN', $kids)
+    ->where('id', 'IN', $kids)
     ->find_all()
     ->as_array('id');
 
@@ -99,21 +101,22 @@ $coupons = ORM::factory('coupon')
     ->find_all()
     ->as_array('user_id');
 
+echo implode(',', array_keys($users))."\n";
 foreach($users as $u) {
 
     if ( ! empty($coupons[$u->id])) {
         $coupon = $coupons[$u->id]->name; // если есть не использованный детский купон
     } else {
-        $coupon = '';
+        $coupon = NULL;
     }
 
-    if (Valid::email($this->email) && $this->sub == 1 && $this->login == 'zukk') { // оповещение getresponse
+    if ($u->can_sub()) { // оповещение getresponse
 
         $quest = new Model_Daemon_Quest();
         $quest->values([
             'action'    => 'getresponse',
-            'params'    => [
-                'user' => $this->as_array(),
+            'params'    => json_encode([
+                'user' => $u->as_array(),
                 'customs' => [
                     [
                         'name' => 'coupon',
@@ -124,7 +127,7 @@ foreach($users as $u) {
                         'content' => Model_User::CHILD_BIRTH_TODAY,
                     ],
                 ],
-            ]
+            ])
         ]);
         $quest->save();
         Daemon::new_task();
@@ -146,7 +149,7 @@ if (empty($kids)) exit('no kids');
 
 $users = ORM::factory('user')
     ->where('sub', '=', 1)
-    ->where('user_id', 'IN', $kids)
+    ->where('id', 'IN', $kids)
     ->find_all()
     ->as_array('id');
 
@@ -160,18 +163,19 @@ $coupons = ORM::factory('coupon')
     ->find_all()
     ->as_array('user_id');
 
+echo implode(',', array_keys($users))."\n";
 foreach($users as $u) {
 
     if ( ! empty($coupons[$u->id])) {
         $coupon = $coupons[$u->id]->name; // если есть не использованный детский купон
 
-        if (Valid::email($this->email) && $this->sub == 1 && $this->login == 'zukk') { // оповещение getresponse
+        if ($u->can_sub()) { // оповещение getresponse
 
             $quest = new Model_Daemon_Quest();
             $quest->values([
                 'action' => 'getresponse',
-                'params' => [
-                    'user' => $this->as_array(),
+                'params' => json_encode([
+                    'user' => $u->as_array(),
                     'customs' => [
                         [
                             'name' => 'coupon',
@@ -182,14 +186,10 @@ foreach($users as $u) {
                             'content' => Model_User::CHILD_BIRTH_AFTER,
                         ],
                     ],
-                ]
+                ])
             ]);
             $quest->save();
             Daemon::new_task();
         }
     }
 }
-
-
-/*
-*/

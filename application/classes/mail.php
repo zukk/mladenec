@@ -26,6 +26,8 @@ class Mail {
 
     private static $allowed_extensions = array('doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'rtf', 'txt', 'csv',
         'jpg', 'jpeg', 'gif', 'png', 'tiff', 'wbmp', 'zip', 'gz', 'gzip', 'rar');
+
+    public static $test_accounts = ['ekaterinaden@mail.ru', 'm.zukk@ya.ru', 'm.zukk@yandex.ru', 'a.hohlacheva@mladenec.ru', 'mmladenec@bk.ru'];
     
     function __construct($charset = false)
     {
@@ -33,7 +35,8 @@ class Mail {
         $this->boundary = md5(microtime());
     }
 
-    public static function site() {
+    public static function site()
+    {
         $site = Kohana::$environment === Kohana::PRODUCTION ? 'http://www.mladenec-shop.ru' : 'http://test.mladenecshop.ru'; // NO LAST / here!
         if ( ! empty($_SERVER['SERVER_NAME'])) {
             $site = 'http://'.$_SERVER['SERVER_NAME'];
@@ -233,13 +236,20 @@ class Mail {
             .'From:'.$this->getSubject(self::MAIL_PREFIX).' <'.self::MAIL_FROM.'>'."\r\n"
             .$this->header."\r\n";
 
-        if (Kohana::$environment === Kohana::DEVELOPMENT)
-        {
-            $subject = 'Test: ' . $subject . ', to: ' . $to;
-            $to = 'm.zukk@ya.ru';
+        if (Kohana::$environment === Kohana::DEVELOPMENT) { // на тесте
+            if ( ! in_array($to, self::$test_accounts)) { // нетестовым аккам - не шлем письма
+                $subject = $subject . ', to: ' . $to;
+                $to = 'm.zukk@ya.ru';
+            }
+            if ( ! $this->send_smtp($to, 'Младенец.РУ: '.$subject)) { // с тестового - шлем через smtp
+                mail('m.zukk@ya.ru', 'SMTP ERROR sending copy', $this->smtp_error);
+            } else {
+                return TRUE;
+            }
+        } else {
+            return mail($to, $this->getSubject($subject), $message, $add_header, '-f'.self::MAIL_FROM.' -F'.self::MAIL_PREFIX);
         }
-        
-        return mail($to, $this->getSubject($subject), $message, $add_header, '-f'.self::MAIL_FROM.' -F'.self::MAIL_PREFIX);
+
     }
 
     /* read smtpl response */

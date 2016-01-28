@@ -71,6 +71,10 @@ class GetResponse {
     function upload($user, $customs)
     {
         if ( ! Valid::email($user['email'])) return FALSE;
+        if ( Kohana::$environment !== Kohana::PRODUCTION && ! in_array($user['email'], Mail::$test_accounts)) {
+            Log::instance()->add(Log::WARNING, 'НЕ отсылаем мыло в ГР в тестовом режиме: '.$user['email']);
+            return TRUE;
+        }
         try {
 
             $exist = $this->_client->get_contacts(

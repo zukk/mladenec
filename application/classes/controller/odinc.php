@@ -625,6 +625,14 @@ class Controller_Odinc extends Controller {
 
                     try {
                         $order->save();
+
+                        if ($order->status == 'F' && ! empty($order->check)) { // если пришел статус - доставлено, то всегда генерим чек
+                            try {
+                                $order->get_check(TRUE);
+                            } catch (Kohana_Exception $e) {
+                                Log::instance()->add(Log::WARNING, 'проблемы при создании чека для заказа '.$order->id.': '.$e->getMessage());
+                            }
+                        }
                         if ( ! empty($goods)) $order->change_goods($goods);
 
                         $order_data = new Model_Order_Data($id);

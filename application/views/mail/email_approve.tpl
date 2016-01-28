@@ -7,20 +7,31 @@
 
 <br><h3>Здравствуйте, {$user->name}!<br></h3>
 
-{assign var=$coupon value=Model_Coupon::for_user($user->id)}
-
 {if ! empty($changed)}
-    <p>Ваш email был изменен на {$user->email}.</p>
+
+    <p>
+        Для завершения регистрации, пожалуйста, перейдите по&nbsp;ссылке: {HTML::anchor($user->approve_url())}<br />
+        Если Вы не&nbsp;можете перейти по&nbsp;ссылке, скопируйте ее в&nbsp;адресную строку.
+    </p>
+
+{else}
+
+    <p>Вы&nbsp;изменили адрес электронной почты.<br />
+    Пожалуйста, подтвердите новый <nobr>e-mail</nobr> адрес почты. Для этого перейдите по&nbsp;ссылке:<br />
+    Если Вы&nbsp;не&nbsp;можете перейти по&nbsp;ссылке, скопируйте ее&nbsp;в&nbsp;адресную строку.</p>
 
 {/if}
 
-{if $coupon}
-<p>Ваш купон на&nbsp;скидку при покупке: <strong>{$coupon->name}</strong><br />
-    Подтвердите email чтобы иметь возможность использовать этот купон.
-</p>
-{/if}
+{assign var=coupon value=Model_Coupon::for_user($user->id)}
 
-<p>Подтвердить {if ! empty($changed)}изменение{/if} email: {HTML::anchor(Route::url('email_approve', ['email' => $user->email, 'md5' => md5(Cookie::$salt . $user->email)]))}</p>
+{if ! empty($coupon)}
+
+    <p>Мы дарим 200 рублей на&nbsp;Ваш первый заказ! Для получения скидки введите в&nbsp;корзине промокод: <br />
+        <strong>{$coupon->name}</strong><br />
+        Промокод дает скидку только после завершения регистрации и&nbsp;подтверждения согласия на&nbsp;получение рассылок.
+    </p>
+
+{/if}
 
 			</td>
 			<td width="30"></td>

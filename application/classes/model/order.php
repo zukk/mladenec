@@ -328,7 +328,8 @@ class Model_Order extends ORM {
     /**
      * Пытается отправить СМС о том что заказ принят
      */
-    public function send_sms_accepted() {
+    public function send_sms_accepted()
+    {
         if ($this->delivery_type == Model_Order::SHIP_SERVICE) return FALSE;
 
         $user = ORM::factory('user', $this->user_id);
@@ -713,24 +714,18 @@ class Model_Order extends ORM {
         if ($this->changed('status')) {
             $this->status_time = date("Y-m-d H:i:s");
         }
+
         if ($this->changed()) {
             $this->changed = date("Y-m-d H:i:s");
         }
+
         if (empty($this->vitrina)) {
             $this->vitrina = Kohana::$server_name;
         }
-
-        if ($this->changed('check')) { // создать чек для заказа
-            try {
-                $this->get_check(TRUE);
-            } catch (Kohana_Exception $e) {
-                Log::instance()->add(Log::WARNING, 'проблемы при создании чека для заказа '.$this->id.': '.$e->getMessage());
-            }
-        }
 		
-		if( $this->status == 'X' ){
+		if ($this->status == 'X') {
 			
-			if( ! empty( $this->coupon_id ) ){
+			if ( ! empty( $this->coupon_id)) {
 
 				$this->coupon->unused();
 				$this->coupon_id = 0;
@@ -745,7 +740,6 @@ class Model_Order extends ORM {
     static function terminal($city, $region)
     {
        // Model_Terminal::
-
     }
 
     /**

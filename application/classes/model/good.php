@@ -1151,8 +1151,11 @@ class Model_Good extends ORM {
      */
     public function sborkable()
     {
-        return Model_Section::sborkable($this->section_id);
-        //return FALSE; // отключено до выяснения финансового результата
+        $ids_goods = [215082, 215081, 179693, 215080, 196230, 179692, 217823, 216028, 217780, 179369,
+            221928, 217778, 217774, 217783, 217770, 179368, 179367, 217792, 217821, 217819, 218732, 221927, 221926,
+            218430, 217822, 217820];
+
+        return (!in_array($this->id, $ids_goods) && Model_Section::sborkable($this->section_id));
     }
 
     /**

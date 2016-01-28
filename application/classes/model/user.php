@@ -691,7 +691,10 @@ class Model_User extends ORM {
             'sub'       => 1, // подписка на рассылку - по умолчанию
         ])->create();
 
-        Mail::htmlsend('register', array('user' => $this, 'passwd' => $v['password']), $v['email'], 'Добро пожаловать!'); // письмо о регистрации
+        // создадим юзеру купон со скидкой за подписку на рассылку
+        $coupon = Model_Coupon::generate(200, 201, 1, 1, $this->id, Model_Coupon::TYPE_SUB);
+
+        Mail::htmlsend('register', ['user' => $this, 'passwd' => $v['password'], 'coupon' => $coupon], $v['email'], 'Добро пожаловать!'); // письмо о регистрации
 
         if ($phone && Txt::phone_is_mobile($v['phone'])) {
             Model_Sms::to_queue($v['phone'], 'Добро пожаловать! Логин:'.$v['email']."\n".'Пароль: '.$v['password']);  // смс о регистрации
@@ -744,7 +747,34 @@ class Model_User extends ORM {
     }
 
     /**
-     * Сохранение юзера - синхрон с ГР
+     * проверка что юзера можно подписать на рассылку
+     */
+    function can_sub()
+    {
+        return Valid::email($this->email) && $this->sub == 1 && $this->email_approved == 1;
+    }
+
+    /**
+     * сменить мыло - (поставить новое на подтверждение)
+     */
+    function send_mail_approve($mail, $change = FALSE)
+    {
+        if ( ! Valid::email($mail)) {
+            return FALSE;
+        }
+        Mail::htmlsend('email_approve', ['user' => $this, 'change' => $change], $this->email, 'Подтвердите '.($change ? 'смену': '').' email');
+    }
+
+    /**
+     * Сылка для подтв текущего мыла
+     */
+    function approve_url()
+    {
+        return 'http://'.$_SERVER['HTTP_HOST'].Route::url('email_approve').'?'.http_build_query(['email' => $this->email, 'md5' => md5(Cookie::$salt . $this->email)]);
+    }
+
+    /**
+     * Сохранение юзера - синхрон с ГР и почта на подтв мыла
      */
     function save($validation = NULL)
     {
@@ -753,7 +783,17 @@ class Model_User extends ORM {
             GetResponse::renew($this->id);
             if ($this->sub == 0) rrapi::unsubscribe($this->email); // проброс отписки в retail rocket
         }
-        parent::save($validation);
-    }
 
+        if ($this->changed('email')) $changed_email = TRUE;
+
+        parent::save($validation);
+
+        if ( ! empty($changed_email)) {
+
+            $this->send_mail_approve($this->email, TRUE);
+
+            $this->email_approved = 0;
+            $this->save();
+        }
+    }
 }

@@ -492,7 +492,7 @@ class Cart {
      */
     public function load_coupon($name)
     {
-        $coupon = new Model_Coupon(['name' => $name, 'active' => 1]);
+        $coupon = new Model_Coupon(['name' => trim($name), 'active' => 1]);
         if ( ! $coupon->loaded()) {
             $this->coupon_error = 'Купона с таким кодом не существует';
             return FALSE;
@@ -511,6 +511,8 @@ class Cart {
     {
         $this->coupon_error = FALSE;
 
+        $user = Model_User::current();
+
         if (empty($this->total)) { $this->coupon_error = 'В корзине нет товаров'; return FALSE; };
 
         if (empty($this->coupon['id'])) { $this->coupon_error = 'Нет такого купона'; return FALSE; }
@@ -524,22 +526,31 @@ class Cart {
 
         if ($this->total < $coupon->min_sum) { $this->coupon_error = 'Минимальная сумма товаров '.$coupon->min_sum; return FALSE; };
 
-        if (Model_User::logged()) { // есть пользователь - посчитаем сколько купонов потратил
+        if ($user) { // есть пользователь - посчитаем сколько купонов потратил
 
             $uses = ORM::factory('order')
-                ->where('user_id', '=', Model_User::current()->id)
+                ->where('user_id', '=', $user->id)
                 ->where('coupon_id', '=', $coupon->id)
                 ->where('status', '!=', 'X')
                 ->count_all();
 
             if ($uses >= $coupon->per_user) { $this->coupon_error = 'Превышен лимит использований купона'; return FALSE; };
+
+            if ( ! empty($coupon->user_id) && $coupon->user_id != $user->id) { $this->coupon_error = 'Купон предназначен для другого пользователя'; return FALSE;}
         }
 
         switch ($coupon->type) {
 
             case Model_Coupon::TYPE_SUM:  // скидка на сумму
+
+            case Model_Coupon::TYPE_SUB: // скидка на сумму за подписку
+
+                if ($coupon->type == Model_Coupon::TYPE_SUB && empty($user->sub)) { $this->coupon_error = 'Вы не подписаны на рассылку'; return FALSE;}
+                if ($coupon->type == Model_Coupon::TYPE_SUB && empty($user->email_approved)) { $this->coupon_error = 'Вы не подтвердили email'; return FALSE;}
+
                 $this->total -= $coupon->sum;
                 $this->discount += $coupon->sum;
+
                 break;
 
             case Model_Coupon::TYPE_PERCENT:  // скидка на процент на конкретные товары
@@ -558,7 +569,7 @@ class Cart {
                             // все остальные типы акций уже отключены так как в расчетах используется base_price (цена розница)
                             if ($g->old_price > 0) {
                                 continue; // купон не применяем для этого товара
-                                $base_price[$good_id] = $g->old_price;
+                                // $base_price[$good_id] = $g->old_price;
                             }
 
                             if ($coupon->max_sku > 0 && $qty > $coupon->max_sku) {
@@ -574,6 +585,26 @@ class Cart {
 
                             $used = TRUE;
                         }
+                    }
+                }
+
+                if ( ! $used ) { $this->coupon_error = 'В корзине нет товаров, для которых активен купон'; return FALSE; };
+                break;
+
+            case Model_Coupon::TYPE_CHILD; // купон со скидкой на ДР ребенка - скидка 10% на все кроме подгузов и питания, если есть старая цена - не действует
+
+                $used = FALSE;
+
+                foreach($this->goods as $good_id => $g) {
+
+                    $catalog = Model_Section::get_catalog();
+                    $forbidden_sections = array_merge(array_keys($catalog[28934]->children), array_keys($catalog[29777]->children)); // подгузники и питание
+
+                    // если на товар есть старая цена, то базовая цена = старая цена (купон выключает скидочные акции)
+                    // все остальные типы акций уже отключены так как в расчетах используется base_price (цена розница)
+                    if ( ! in_array($g->section_id, $forbidden_sections) && $g->old_price == 0) {
+                        $this->apply_discount($goods, $base_price, 10, [$good_id => $good_id]); // применяем скидку 10% на все
+                        $used = TRUE;
                     }
                 }
 
