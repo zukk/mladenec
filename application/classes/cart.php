@@ -545,7 +545,7 @@ class Cart {
 
             case Model_Coupon::TYPE_SUB: // скидка на сумму за подписку
 
-                if ($coupon->type == Model_Coupon::TYPE_SUB && empty($user->sub)) { $this->coupon_error = 'Вы не подписаны на рассылку'; return FALSE;}
+                if ($coupon->type == Model_Coupon::TYPE_SUB && empty($user->sub)) { $this->coupon_error = 'Вы не подписаны на e-mail рассылки. Подписаться на рассылки можно в '.HTML::anchor(Route::url('user'), 'личном кабинете'); return FALSE;}
                 if ($coupon->type == Model_Coupon::TYPE_SUB && empty($user->email_approved)) { $this->coupon_error = 'Вы не подтвердили email'; return FALSE;}
 
                 $this->total -= $coupon->sum;

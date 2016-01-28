@@ -11,6 +11,10 @@ $(document).on('ready', function () {
 
 <h1>Личный кабинет</h1>
 
+{if ! empty($smarty.get.reg_done)}
+<p>На указанный e-mail отправлено письмо с&nbsp;подтверждением регистрации.</p>
+{/if}
+
 <div class="tabs mt">
 
     {include file='user/personal.tpl' active='user'}
@@ -26,7 +30,7 @@ $(document).on('ready', function () {
                         <span class="ok">email подтвержден</span>
                     {else}
                         <span class="no">email не подтвержден</span><br />
-                        <a id="email_approve" class="abbr ajax">выслать письмо с&nbsp;подтверждением</a>
+                        <a id="email_approve" class="abbr ajax">повторно отправить письмо с&nbsp;подтверждением регистрации</a>
                     {/if}
                 </p>
                 {/if}

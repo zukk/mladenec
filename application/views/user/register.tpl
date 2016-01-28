@@ -36,7 +36,7 @@
         <input name="last_name" value="{$i->last_name}" />
     </div>
     <div>
-        <label><input type="checkbox" name="sub" value="1" />&nbsp;получить 200&nbsp;рублей в&nbsp;подарок на&nbsp;первый заказ<br /><small>при подписке на&nbsp;рассылки</small></label>
+        <label><input type="checkbox" name="sub" value="1" checked />&nbsp;Подписаться на рассылки<br /><small>получить 200 рублей в&nbsp;подарок на&nbsp;первый заказ!</small></label>
     </div>
     <div>
         <input type="submit" value="Зарегистрироваться" name="register" />
