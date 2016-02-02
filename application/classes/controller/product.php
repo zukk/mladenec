@@ -228,20 +228,32 @@ class Controller_Product extends Controller_Frontend {
                 $res_desc_cons = 'Проконсультируйтесь со специалистом. Для детей с ';
                 foreach($values as $val){
                     $desc_cons = preg_replace("/[^0-9]/", '', $val);
-                    if (strpos($val, 'год') !== false || strpos($val, 'лет') !== false) {
-                        if ($desc_cons > 1) {
-                            $year = 'лет';
+                    if(strpos($val, '-') === false){
+                        if (strpos($val, 'год') !== false || strpos($val, 'лет') !== false) {
+                            if ($desc_cons > 1) {
+                                $year = 'лет';
+                            } else {
+                                $year = 'года';
+                            }
                         } else {
-                            $year = 'года';
+                            if ($desc_cons > 1){
+                                $year = 'месяцев';
+                            } else {
+                                $year = 'месяца';
+                            }
                         }
+                        $res_desc_cons .= $desc_cons.' '.$year.', ';
                     } else {
-                        if ($desc_cons > 1){
+                        $del_str = explode(' ', $val);
+                        $res_val = explode('-', $del_str[0]);
+                        if ($res_val[1] > 1){
+
                             $year = 'месяцев';
                         } else {
                             $year = 'месяца';
                         }
+                        $res_desc_cons .= $res_val[0] . ' до ' . $res_val[1] . ' ' . $year.', ';
                     }
-                    $res_desc_cons .= $desc_cons.' '.$year.', ';
                 }
                 $res_desc_cons = rtrim($res_desc_cons, ', ').'.';
             }

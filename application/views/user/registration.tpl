@@ -6,7 +6,7 @@
 	<input name="name" placeholder="Имя" class="txt" error="Данное имя будет использовано при&nbsp;обращении к&nbsp;вам и&nbsp;в&nbsp;подписях отзывов о&nbsp;сайте и&nbsp;товарах." />
 	<input type="tel" name="phone" placeholder="+7(___)___-__-__" class="txt" error="Этот телефон будет использован для&nbsp;связи с&nbsp;вами и&nbsp;подтверждения заказа" />
 
-	<label><input type="checkbox" name="sub" value="1" checked />&nbsp;Подписаться на рассылки<br /><small>получить 200 рублей в&nbsp;подарок на&nbsp;первый заказ!</small></label>
+	<label><input type="checkbox" name="sub" value="1" />Подписаться на рассылки<br /><small>получить 200 рублей в&nbsp;подарок<br />на&nbsp;первый заказ!</small></label>
 
     <input type="submit" class="butt small fl registration-submit" value="Зарегистрироваться" />
 	<br clear="all" />

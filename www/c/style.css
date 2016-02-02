@@ -6311,7 +6311,7 @@ abbr:hover {
     -ms-transition: opacity 0.1s ease;
     transition: opacity 0.1s ease;
     position: relative;
-    height: 200px;
+    height: 300px;
 }
 
 .cart-login tbody td > div {

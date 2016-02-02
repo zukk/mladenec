@@ -846,7 +846,16 @@ class Model_Order extends ORM {
         $n -= 1;
         $total = self::__check_price_format($this->get_total());
         $sheet->setCellValue('D' . ($n + 1), ' = '. $total); // ИТОГО
-        $sheet->setCellValue('A' . ($n + 2), $this->pay_type == Model_Order::PAY_CARD ? 'Безналичные' : 'Наличные'); // текст про НДС
+
+        $pay_type = 'Наличные';
+        if ($this->pay_type == Model_Order::PAY_CARD) {
+            if ($this->pay1 > 1) {
+                $pay_type = 'Безналичные/Наличные';
+            } else {
+                $pay_type = 'Безналичные';
+            }
+        }
+        $sheet->setCellValue('A' . ($n + 2), $pay_type); // текст про НДС
 
         $nds = "Общая сумма ".self::__check_nds_format($total)." руб. включая НДС ".self::__check_nds_format($nds10 + $nds18)." руб.\n"
             ."из них оплачено наличными ".self::__check_nds_format($this->pay_type == Model_Order::PAY_CARD ? $this->pay1 : $total)." руб.\n"
