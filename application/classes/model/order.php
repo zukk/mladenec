@@ -26,6 +26,8 @@ class Model_Order extends ORM {
 
     const PRICE_KM = 20;
 
+    const EKLZ = 1;
+
     protected $_table_name = 'z_order';
 
     protected $_table_columns = [
@@ -757,8 +759,9 @@ class Model_Order extends ORM {
     }
     private function __check_add_good(PHPExcel_Worksheet &$sheet, $g, $n)
     {
+        $sheet->insertNewRowBefore($n, 3); // Insert new rows
+
         $n2 = $n + 2;
-        $sheet->insertNewRowBefore($n, 3); // Insert 3 new rows
 
         $sheet->setCellValue('A' . $n, $g->group_name . ' ' . $g->name);
         $sheet->duplicateStyle($sheet->getStyle('A9'), 'A'.$n);
@@ -766,7 +769,6 @@ class Model_Order extends ORM {
 
         $sheet->setCellValue('A' . $n2, $g->quantity . ' * ' . self::__check_price_format($g->price));
         $sheet->duplicateStyle($sheet->getStyle('A11'), 'A'.$n2);
-        //$sheet->mergeCells('A' . $n.':F'.( $n + 1 ));
 
         $sheet->setCellValue('F' . $n2, ' = '. self::__check_price_format($g->total));
         $sheet->duplicateStyle($sheet->getStyle('F11'), 'F'.$n2);
@@ -799,10 +801,12 @@ class Model_Order extends ORM {
         include(APPPATH.'classes/PHPExcel.php');
         $excel = PHPExcel_IOFactory::load(APPPATH.'config/check.xlsx');
         $sheet = $excel->getActiveSheet();
+
         $sheet->setCellValue('A7', strftime('%d.%m.%Y %H:%M', strtotime($this->check_time)));
         $sheet->setCellValue('F8', '№ '.$this->check);
 
         $goods = $this->get_goods();
+        usort($goods, function ($a, $b) { return $a->group_id < $b->group_id ? 1 : -1;}); // товары с группой = 0 - в конец списка
 
         $n = 9;
         $nds10 = $nds18 = 0;
@@ -839,6 +843,7 @@ class Model_Order extends ORM {
             $n += 3;
         }
 
+        $n -= 1;
         $total = self::__check_price_format($this->get_total());
         $sheet->setCellValue('D' . ($n + 1), ' = '. $total); // ИТОГО
         $sheet->setCellValue('A' . ($n + 2), $this->pay_type == Model_Order::PAY_CARD ? 'Безналичные' : 'Наличные'); // текст про НДС
@@ -849,8 +854,16 @@ class Model_Order extends ORM {
             ."10% НДС - ".self::__check_nds_format($nds10)." руб";
 
         $sheet->setCellValue('A' . ($n + 3), $nds); // текст про НДС
-        $sheet->setCellValue('B' . ($n + 5), 'ЕКЛЗ с фп 7024127040'); // счетчик фп?
-        $sheet->setCellValue('B' . ($n + 6), '00037122 #'.$this->id);
+
+        $sheet->getStyle('A' . ($n + 4))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID); // серая линия
+        $sheet->mergeCells('A' . ($n + 4).":".'F' . ($n + 4));
+        $sheet->getStyle('A' . ($n + 4))->getFill()->getStartColor()->setRGB('777777');
+        $sheet->setCellValue('A' . ($n + 4), 'ФП');
+
+        $sheet->setCellValue('B' . ($n + 5), 'ЭКЛЗ 7024127040'); // счетчик фп?
+        //$sheet->getStyle('B' . ($n + 5))->getStyleArray();
+        $sheet->setCellValue('B' . ($n + 6), (self::EKLZ + $this->id).' #'.$this->id);
+
 
         $io = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
 
