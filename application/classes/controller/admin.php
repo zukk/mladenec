@@ -517,11 +517,12 @@ class Controller_Admin extends Controller_Authorised {
 
         $title = $this->request->post('title');
         $url = $this->request->post('url');
+        $order = $this->request->post('order');
 
         if ( ! empty($title) && ! empty($url)) {
             $tag = new Model_Actiontag();
 
-            $tag->values(['title' => $title, 'url' => $url])
+            $tag->values(['title' => $title, 'url' => $url, 'order' => $order])
                 ->save();
         }
 

@@ -26,7 +26,7 @@
 			<option value="{$field}"{if not empty($section) and $section->settings['orderByItems'][0] eq $field} selected='selected'{/if}>{$o[$field]}</option>
 			{/foreach}
 		</select>
-        {if not isset($per_page)}{assign var=per_page value=[20,40,80]}{/if}
+        {if not isset($per_page)}{assign var=per_page value=[30,60,90]}{/if}
 
         <label for="page">На странице:</label>
         <select id="page" name="pp">

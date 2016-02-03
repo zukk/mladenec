@@ -175,11 +175,11 @@ $(function() {
                 {if not empty($i->settings.per_page) and is_array($i->settings.per_page)}
                     {assign var=per_page value=implode(',',$i->settings.per_page)}
                 {/if}
-                <input name="settings[per_page]" value="{$per_page|default:'20,40,80'}" />
-                <p>Укажите возможное число товаров на странице через запятую, например "20,40,80"</p>
+                <input name="settings[per_page]" value="{$per_page|default:'30,60,90'}" />
+                <p>Укажите возможное число товаров на странице через запятую, например "30,60,90"</p>
             <br />
             <h5>Товаров в ряду</h5>
-            {Form::select('settings[row]', [3 => 3, 4 => 4], $i->settings.row|default:4)}
+            {Form::select('settings[row]', [3 => 3, 4 => 4], $i->settings.row|default:3)}
             <br />
             <h5>Вкладки в карточках</h5>
             <div class="sortableItems" id="sortableGoodTabs">

@@ -103,8 +103,8 @@ class Model_Section extends ORM {
 		$this->_settings = $s + array(
             'm' => 1,
             's' => 'rating',
-            'per_page' => [20,40,80],
-            'row' => 4,
+            'per_page' => [30,60,90],
+            'row' => 3,
             'sub' => 0,
             'list' => 0,
             'orderByItems' => ["rating","name","price", "pricedesc","new"],

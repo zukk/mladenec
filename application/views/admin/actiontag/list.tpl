@@ -15,6 +15,11 @@
                 <div>
                     <input type="text" name="url" class="width-100" value="">
                 </div>
+
+                <b>Порядок</b><br />
+                <div>
+                    <input type="text" name="order" class="width-100" value="">
+                </div>
                 <div style='float: right'>
                     <input class='btn' type='submit' value='Добавить' />
                 </div>
@@ -28,6 +33,7 @@
         <th>#</th>
         <th>Название</th>
         <th>URL</th>
+        <th>Порядок</th>
         <th>&nbsp;</th>
     </tr>
     {foreach from=$actiontag item=i}
@@ -35,6 +41,7 @@
             <td>{$i->id}</td>
             <td>{$i->title}</td>
             <td>{$i->url}</td>
+            <td>{$i->order}</td>
             <td>
                 <a href="{Route::url("admin_edit", ["model" => "actiontag", "id" => $i->id])}"
                    class="edit_action_tag">&#9998;

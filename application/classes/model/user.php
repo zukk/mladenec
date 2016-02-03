@@ -751,7 +751,7 @@ class Model_User extends ORM {
      */
     function can_sub()
     {
-        return Valid::email($this->email) && $this->sub == 1 && $this->email_approved == 1;
+        return Valid::email($this->email) && $this->sub == 1 && ($this->email_approved == 1 || $this->id < 153604); // до этого ид не было проверки мыла - считаем подтвержденным
     }
 
     /**
@@ -778,10 +778,14 @@ class Model_User extends ORM {
      */
     function save($validation = NULL)
     {
-        if ($this->changed('sub') || $this->changed('last_order') || $this->changed('sum') || $this->changed('qty') || $this->changed('pregnant')) {
-            // обновить данные в Getresponse
-            GetResponse::renew($this->id);
-            if ($this->sub == 0) rrapi::unsubscribe($this->email); // проброс отписки в retail rocket
+        if ($this->changed('email_approved') || $this->changed('sub') || $this->changed('last_order') || $this->changed('sum') || $this->changed('qty') || $this->changed('pregnant')) {
+            if ($this->can_sub()) {
+                GetResponse::renew($this->id);
+            } else {
+                $gr = new GetResponse();
+                $gr->unsubscribe($this->email);
+                rrapi::unsubscribe($this->email); // проброс отписки в retail rocket
+            }
         }
 
         if ($this->changed('email')) $changed_email = TRUE;

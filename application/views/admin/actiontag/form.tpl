@@ -16,6 +16,12 @@
                 <div>
                     <input type="text" name="url" class="width-100" value="{$res.url}">
                 </div>
+
+                <b>Порядок</b><br />
+                <div>
+                    <input type="text" name="order" class="width-100" value="{$res.order}">
+                </div>
+
                 <div style='float: right'>
                     <input class='btn' type='submit' value='Изменить' />
                 </div>

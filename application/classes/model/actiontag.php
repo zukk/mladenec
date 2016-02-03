@@ -13,7 +13,8 @@ class Model_Actiontag extends ORM
     protected $_table_columns = [
         'id' => 0,
         'title' => '',
-        'url' => ''
+        'url' => '',
+        'order' => 0
     ];
 
     protected $_has_many = [
@@ -68,6 +69,7 @@ class Model_Actiontag extends ORM
                 ->where('z_action.vitrina_show', '=', 'all')
                 ->or_where('z_action.vitrina_show', '=', Kohana::$server_name)
             ->where_close()
+            ->order_by('order', 'ASC')
             ->find_all()
             ->as_array('id');
     }
@@ -83,9 +85,10 @@ class Model_Actiontag extends ORM
     public function edit_actiontag($edit_id, $data){
         $title = Request::current()->post('title');
         $url = Request::current()->post('url');
+        $order = Request::current()->post('order');
 
         $query = DB::update('z_actiontag')
-            ->set(['title' => $title, 'url' => $url])
+            ->set(['title' => $title, 'url' => $url, 'order' => $order])
             ->where('id','=', $edit_id)
             ->execute();
 

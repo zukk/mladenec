@@ -26,7 +26,7 @@ class Model_Order extends ORM {
 
     const PRICE_KM = 20;
 
-    const EKLZ = 1;
+    const EKLZ = 42428;
 
     protected $_table_name = 'z_order';
 

@@ -375,7 +375,9 @@ class Controller_User extends Controller_Frontend
                 $this->return_reload();
             }
 
-            GetResponse::renew($this->user->id);
+            if ($this->user->can_sub()) {
+                GetResponse::renew($this->user->id);
+            }
         }
 
         // скидка за даные о детях - включаем если надо
