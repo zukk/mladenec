@@ -82,7 +82,7 @@ class Controller_Odinc extends Controller {
      */
     public function before()
     {
-        
+
         $this->action = $this->request->query('action');
         
         Log::instance()->add(Log::INFO, $this->request->action() . ' started' . ($this->action ? ', action '.$this->action : '').', timer: ' . $this->timer());
@@ -394,6 +394,7 @@ class Controller_Odinc extends Controller {
 
         $data = FALSE;
         foreach($strings as $s) {
+
             $s = trim($s);
             if (empty($s)) continue;
 
@@ -538,6 +539,7 @@ class Controller_Odinc extends Controller {
                 }
                 elseif ($s == 'КОНЕЦЗАКАЗА') // проапдейтить заказ и отослать письмо
                 {
+
                     $order = new Model_Order($id);
                     $order->load_with('data');
 
@@ -582,10 +584,15 @@ class Controller_Odinc extends Controller {
 
                     $status_changed = $order->changed('status');
 
+                    if ($status_changed && $order->status == 'F') { // только при первом подтверждении заказа
+                        // если в заказе есть подарочный сертификат - сгенерим купон и вышлем почту про него
+                        $order->activate_gift();
+                    }
+
                     // смена статуса у заказа с карточной оплатой - может быть снятие или возврат
                     if ($status_changed && $order->pay_type == Model_Order::PAY_CARD) {
-
                         if (in_array($order->status, ['F', 'X'])) {
+
                             $authz = $order->payments->where('status', '=', Model_Payment::STATUS_Authorized)->find_all()->as_array('id');
 
                             if ($order->status == 'F') { // order delivered - charge money
@@ -600,6 +607,7 @@ class Controller_Odinc extends Controller {
                                         }
                                     }
                                 }
+
                                 if ($charged != $to_charge) {
                                     mail('m.zukk@ya.ru, a.sergeev@mladenec.ru', 'Снятая сумма не совпадает с запрошенной ' . $order->id, "$charged != $to_charge");
                                 }
@@ -708,7 +716,7 @@ class Controller_Odinc extends Controller {
                 ->where('user_id', 'IN', $segments_recount_user_ids)
                 ->execute();
         }
-        
+
         $this->view->saved = $saved;
     }
 

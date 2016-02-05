@@ -51,6 +51,7 @@ class Model_Good extends ORM {
         'group' => array('model' => 'group', 'foreign_key' => 'group_id'),
         'section' => array('model' => 'section', 'foreign_key' => 'section_id'),
         'wikicategories' => array('model' => 'wikicategories', 'foreign_key' => 'wiki_cat_id'),
+        'ozontype' => array('model' => 'ozontype', 'foreign_key' => 'ozon_type_id'),
         'brand' => array('model' => 'brand', 'foreign_key' => 'brand_id'),
         'country' => array('model' => 'country', 'foreign_key' => 'country_id'),
         'promo' => array('model' => 'promo', 'foreign_key' => 'promo_id'),
@@ -108,7 +109,8 @@ class Model_Good extends ORM {
         'show'            => 0,  // Отображать на сайте?
         'new'             => 0,  // флаг новинки
         'zombie'          => 0,   // флаг зомби
-        'wiki_cat_id'     => 0   // id викимарт категории
+        'wiki_cat_id'     => 0,   // id викимарт категории
+        'ozon_type_id'    => 0   // id озон категории
     );
 	
 	protected $filters_data;
@@ -1864,6 +1866,26 @@ class Model_Good extends ORM {
             ->set(['wiki_cat_id' => $wiki_cat_id])
             ->where('id', 'IN', $goods_ids)
             ->execute();
+    }
+
+    /**
+     * Сохранить озон-категорию для набора товаров,
+     * если набор товаров пустой - скинуть эту озон-категорию у всех товаров
+     * @return object
+     */
+    public static function save_ozon($ozon_type_id, $goods_ids)
+    {
+        $ins = DB::update(ORM::factory('good')->table_name());
+
+        if ( ! empty($goods_ids)) {
+            $ins->set(['ozon_type_id' => $ozon_type_id])
+                ->where('id', 'IN', $goods_ids);
+        } else {
+            $ins->set(['ozon_type_id' => 0])
+                ->where('ozon_type_id', '=', $ozon_type_id);
+        }
+        return $ins->execute();
+
     }
 
     /**

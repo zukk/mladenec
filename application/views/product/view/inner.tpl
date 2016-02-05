@@ -55,6 +55,7 @@
         {assign var=lovely value=Cart::instance()->status_id()}
         {assign var=lovely_price value=$price[$cgood->id]}
         {assign var=default_price value=$cgood->price}
+
         {if ! empty($lovely)}
             {assign var=current_price value=$lovely_price}
         {else}
@@ -81,12 +82,13 @@
                 {include file="common/action.tpl" action=$good_action[$cgood->id]}{* акции по товару *}
             {/if}
 
-            <br />
             {if ($default_price neq $lovely_price)}
                 {if $lovely}
                     <abbr abbr="Ваш статус - Любимый клиент">{$default_price|price} обычная цена</abbr>
                 {else}
-                    <abbr>{$lovely_price} для любимого клиента</abbr>
+                    {if strpos($cgood->code, "syst_gift") === false}
+                        <abbr>{$lovely_price} для любимого клиента</abbr>
+                    {/if}
                 {/if}
             {/if}
         </div>

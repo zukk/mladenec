@@ -673,6 +673,7 @@ class Sphinx {
             'query' => $this->_query,
             'params' => $this->_params,
             'sphinx' => $this,
+            'is_checked' => $this->_mode == 'tag' && Request::current()->query(), // скрыть прямые ссылки
             'section' => $this->_section,
             'toggler' => json_decode(Session::instance()->get('toggle_state'), TRUE),
         ])->render();
@@ -1275,7 +1276,7 @@ class Sphinx {
             'pager'     => $this->pager,
             'params'    => $this->_params,
             'section'   => $has_section,
-            'row'       => $has_section ? $this->_section->settings['row'] : 4, // число в ряд
+            'row'       => $has_section ? $this->_section->settings['row'] : 3, // число в ряд
             'menu'      => $this->_menu,
             'mode'      => $this->_mode,
             'is_cloth'  => $this->is_cloth(),

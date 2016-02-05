@@ -390,7 +390,7 @@ class Model_Order extends ORM {
      */
     public function save_goods(Cart $cart) 
     {
-        $ins = DB::insert('z_order_good',array('order_id','good_id','price','quantity','comment','action_id'));
+        $ins = DB::insert('z_order_good',array('order_id','good_id','price','quantity','comment','comment_email','action_id'));
         $not_empty = FALSE;
 
         $goods = $cart->recount();
@@ -403,6 +403,7 @@ class Model_Order extends ORM {
                 'price' => $g->price,
                 'quantity' => $cart->goods[$g->id],
                 'comment' => $cart->get_comment($g->id),
+                'comment_email' => $cart->get_commentid_email($g->id),
                 'action_id' => 0
             ]);
             $not_empty = TRUE;
@@ -427,6 +428,7 @@ class Model_Order extends ORM {
                         'price'     => 0,
                         'quantity'  => $action->pq,
                         'comment'   => '',
+                        'comment_email'   => '',
                         'action_id' => $action->pk()
                     ]);
                 }
@@ -455,6 +457,7 @@ class Model_Order extends ORM {
                 'price' => 1,
                 'quantity' => $cart->blago,
                 'comment' => '',
+                'comment_email' => '',
                 'action_id' => 0
             ]);
         }
@@ -772,6 +775,37 @@ class Model_Order extends ORM {
 
         $sheet->setCellValue('F' . $n2, ' = '. self::__check_price_format($g->total));
         $sheet->duplicateStyle($sheet->getStyle('F11'), 'F'.$n2);
+    }
+
+    /**
+     * Проверяет заказ на подарочный сертификат и активирует купон - шлет письмо
+     */
+    function activate_gift()
+    {
+        $sum_gift = DB::select('g.price')
+            ->from(['z_order_good', 'og'])
+            ->join(['z_good', 'g'])
+            ->on('g.id', '=', 'og.good_id')
+            ->where('order_id', '=', $this->id)
+            ->where('code', 'LIKE', '%syst_gift%')
+            ->execute()
+            ->get(0);
+
+        if ($sum_gift) {
+            $save_gift = Model_Coupon::generate($sum_gift, 1, 1, 1, 0, Model_Coupon::TYPE_SUM, date('Y-m-d H:i'), date(date('Y') + 1 .'-m-d H:i'));
+
+            if(empty($data['comment_email']) && $data['comment_email'] == 0){
+                $email = $this->data->email;
+            } else {
+                $email = $data['comment_email'];
+            }
+            if(empty($data['comment']) && $data['comment'] == 0){
+                $message = '';
+            } else {
+                $message = $data['comment'];
+            }
+            Mail::htmlsend('creategift', array('gift' => $save_gift, 'order' => $this, 'message' => $message), $email, 'Покупка сертификата!');
+        }
     }
 
     /**

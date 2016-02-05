@@ -16,7 +16,7 @@ function cart_presents(val, inp) { {* выбор подарка в корзин�
 function cart_recount() { {* функция пересчёта корзины *}
     if (recountTimeout) window.clearTimeout(recountTimeout);
     recountTimeout = window.setTimeout(function () {
-        
+
         var o = $(".cart-recount-link");
         o.addClass("changed").html("Пересчитываем");
         o.append('<i class="load"></i>');

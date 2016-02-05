@@ -549,6 +549,18 @@ class Controller_Admin extends Controller_Authorised {
         return array($return);
     }
 
+    public function action_ozontypes_list()
+    {
+        $goods_ids = $this->request->post('goods');
+        $ozon_type_id = $this->request->post('ozon_type_id');
+
+        $return = [];
+        if ( ! empty($goods_ids) && ! empty($ozon_type_id)) {
+            $return = Model_Good::save_ozon($ozon_type_id, $goods_ids);
+        }
+        return array($return);
+    }
+
     public function action_getwikigoods()
     {
         $wiki_cat_id = $this->request->post('id');
@@ -1768,39 +1780,6 @@ class Controller_Admin extends Controller_Authorised {
 		return $return;
 	}
 	
-    function action_ozon_edit($theme) {
-
-		$this->request->redirect(Route::url('admin_list',array('model'=> 'ozon')));
-    }
-	
-    function action_ozon_list()
-    {
-		$returner['types'] = Model_Ozon::$TYPES;
-		$returner['types_models'] = Model_Ozon::$TYPES_MODELS;
-		
-        $query = $this->model;
-		
-        $returner['pager'] = $pager = new Pager($query->count_all(), 50);
-        $returner['list']  = $query->order_by('id', 'desc')->offset($pager->offset)->limit($pager->per_page)->find_all()->as_array();
-		
-		$elementsIds = array();
-		foreach( $returner['list'] as $key => $element ){
-			
-			$elementsIds[$element->type][] = $element->id_item;
-		}
-		
-		$elements = array();
-		foreach( $elementsIds as $typeId => $ids ){
-			if( !empty( $ids ) ){
-				$elements[$typeId] = ORM::factory(Model_Ozon::$TYPES_MODELS[$typeId])->where('id', 'in', $ids)->find_all()->as_array('id');
-			}
-		}
-		
-		$returner['elements'] = $elements;
-		
-		return $returner;
-	}
-	
     /**
      * Список претензий - с поиском
      * @return array
@@ -2859,7 +2838,7 @@ class Controller_Admin extends Controller_Authorised {
     }
 
     /**
-     * Поиск товаров, для акций
+     * Поиск товаров толпой, для акций и не только
      * @return array
      */
     function action_goods()
@@ -2876,6 +2855,13 @@ class Controller_Admin extends Controller_Authorised {
         if($not_wiki == 1){
             $query->where('wiki_cat_id', '=', '0');
             $return['not_wiki'] = $not_wiki;
+        }
+
+        $not_ozon = $this->request->post('not_ozon'); // условие на озон-категорию
+
+        if($not_ozon == 1){
+            $query->where('ozon_type_id', '=', '0');
+            $return['not_ozon'] = $not_ozon;
         }
 
         $brands_q = ORM::factory('brand')->where('active', '=', 1)->order_by('name'); // запрос на бренды

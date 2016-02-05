@@ -49,32 +49,51 @@
         </thead>
         <tbody>
             {foreach from=$goods item=g name=i}
-            {if $g->code neq Model_Good::SBORKA_ID1C}
-                {capture assign=gname}{$g->group_name|escape:html} {$g->name|escape:html}{/capture}
-                <tr id="cart-good-tr-{$g->id}">
-					<td>{$smarty.foreach.i.iteration}</td>
-                    <td>{if $images[$g->id][70]}<a href="{$g->get_link(0)}" target="_blank"><img src="{$images[$g->id][70]->get_url()}" alt="{$gname}" title="{$gname}" class="img70" /></a>{else}{$g->id}{/if}</td>
-                    <td>
-						<div class="pencil fl">
-                            <input class="pencilator-input" type="hidden" name="comment[{$g->id}]" id="good_comment_{$g->id}" value="{$comments[$g->id]|default:''}" />
-                            <button title="{$comments[$g->id]|default:'Укажите &mdash; для мальчика или девочки, цвет и другие пожелания по данному товару'}"
-                            {if not empty($comments[$g->id])}class="filled"{/if} rel="good_comment_{$g->id}"></button>
-                        </div>
-                    </td>
-                    <td class="txt-lft">
-                        <a class="google-good" href="{$g->get_link(0)}" target="_blank">{$gname}</a>
-					</td>
-                    <td class="price">{$g->price|price}</td>
-                    <td>
-                        {include file="common/buy.tpl" good=$g}
-                        {$g|qty}
-                    </td>
-                    <td class="total">{$g->total|price}</td>
-                    <td>
-						<a title="Удалить товар из корзины" data-id="{$g->id}" class="ico ico-del cart-remove-link"></a>
-					</td>
-                </tr>
-            {/if}
+                {if strpos($g->code, "syst_gift") !== false}
+                    {assign var="class" value="syst_gift"}
+                    {assign var="pencilator_email" value="<input class='pencilator-input-email' type='hidden' name='comment_email[{$g->id}]' id='gift_good_comment_{$g->id}' value='{$comment_email[$g->id]|default:''}'/>"}
+                    {*{if $goods|count == 1}
+                        <input type="hidden" name="syst_gift" value="1">
+                    {/if}*}
+                {/if}
+
+                {if $g->code neq Model_Good::SBORKA_ID1C}
+                    {capture assign=gname}{$g->group_name|escape:html} {$g->name|escape:html}{/capture}
+                    <tr id="cart-good-tr-{$g->id}" class="{$class}">
+                        <td>{$smarty.foreach.i.iteration}</td>
+                        <td>{if $images[$g->id][70]}<a href="{$g->get_link(0)}" target="_blank"><img src="{$images[$g->id][70]->get_url()}" alt="{$gname}" title="{$gname}" class="img70" /></a>{else}{$g->id}{/if}</td>
+                        <td>
+                            <div class="pencil fl">
+                                <input class="pencilator-input" type="hidden" name="comment[{$g->id}]" id="good_comment_{$g->id}" value="{$comments[$g->id]|default:''}" />
+                                <button class="{$class}" title="{$comments[$g->id]|default:'Укажите &mdash; для мальчика или девочки,
+                                 цвет и другие пожелания по данному товару'}"
+                                {if not empty($comments[$g->id])}class="filled"{/if} rel="good_comment_{$g->id}"></button>
+                                {$pencilator_email}
+                            </div>
+                        </td>
+                        <td class="txt-lft">
+                            <a class="google-good" href="{$g->get_link(0)}" target="_blank">{$gname}</a>
+                            {*<table width="100%">
+                                <tr>
+                                    <td style="text-align: left;">
+                                        <h3>Отправить сертификат другу</h3>
+                                        <label>Email</label> <input type="text" name="syst_gift_name" value=""><br />
+                                        <label>Сообщение</label><textarea name="syst_gift_mess"></textarea>
+                                    </td>
+                                </tr>
+                            </table>*}
+                        </td>
+                        <td class="price">{$g->price|price}</td>
+                        <td>
+                            {include file="common/buy.tpl" good=$g}
+                            {$g|qty}
+                        </td>
+                        <td class="total">{$g->total|price}</td>
+                        <td>
+                            <a title="Удалить товар из корзины" data-id="{$g->id}" class="ico ico-del cart-remove-link"></a>
+                        </td>
+                    </tr>
+                {/if}
             {/foreach}
 
             {if not empty($cart->sborkable)}
@@ -117,7 +136,16 @@
 
 	<div class="oh">
 
-        {if $cart->discount gt 0}<div id="economy">Ваша экономия <strong class="discount">{$cart->discount|price}</strong></div>{/if}
+        {assign var="def" value="0"}
+        {foreach from=$cart->code item=code}
+            {if strpos($code, "syst_gift") === false}
+                {assign var="def" value="1"}
+            {/if}
+        {/foreach}
+
+        {if $def == 1}
+            {if $cart->discount gt 0}<div id="economy">Ваша экономия <strong class="discount">{$cart->discount|price}</strong></div>{/if}
+        {/if}
 
         <div id="totals">
             Вес: <b id="weight">{'%01.2f'|sprintf:$cart->weight()}&nbsp;кг</b>;
@@ -138,16 +166,17 @@
             </div>
         </div>
 
-        {include file="cart/coupon.tpl"}
+        {if $def == 1}
+            {include file="cart/coupon.tpl"}
+            <div class="cl fl">
+                {if ! empty($include)}
+                    <a title="Нажмите для пересчета" class="cart-recount-link">Пересчитать</a>
+                {else}
+                    <a title="Нажмите для пересчета" class="cart-recount-link changed">Пересчитали</a>
+                {/if}
+            </div>
+        {/if}
 
-
-        <div class="cl fl">
-            {if ! empty($include)}
-                <a title="Нажмите для пересчета" class="cart-recount-link">Пересчитать</a>
-            {else}
-                <a title="Нажмите для пересчета" class="cart-recount-link changed">Пересчитали</a>
-            {/if}
-        </div>
 	</div>
 
     {if not empty($cart->promo)}
@@ -178,6 +207,18 @@
             ecomm_totalvalue: '{$cart->get_total()}',
             ecomm_prodid: [ {foreach from=$goods item=g name=g}{$g->id}{if not $smarty.foreach.g.last},{/if}{/foreach} ]
         };
+
+        function hideBlocks(){
+            var counter = $('#cart_goods tbody tr').length;
+            $('#cart_goods tbody tr').each(function(){
+                if($(this).hasClass('syst_gift') && counter == 2){
+                    location.reload();
+                }
+            });
+        }
+        $('.cart-remove-link').click(function(){
+            setTimeout(hideBlocks, 2000);
+        });
     </script>
 
 </form>

@@ -238,7 +238,7 @@ class Model_File extends ORM {
      */
     function get_host()
     {
-        return (Kohana::$environment == Kohana::PRODUCTION) ? 'http://st'.($this->pk() % 10).'.mladenec.ru' : '';
+        return 'http://st'.($this->pk() % 10).'.mladenec.ru';
     }
 
     /**

@@ -130,10 +130,28 @@
                 }
                 {/if}
             </script>            
-        {else}    
-            <h2>Адрес доставки</h2>
+        {else}
+            {foreach from=$cart->goods item=good}
+                {assign var="def" value="0"}
+                {if count($cart->goods) eq 1}
+                    {if $cart->gift_sum eq 0}
+                        {$def = 1}
+                    {else}
+                        <input type="hidden" name="syst_gift" value="1">
+                        {$def = 0}
+                    {/if}
+                {else}
+                    {$def = 1}
+                {/if}
+            {/foreach}
+            {if $def == 1}
+                <h2 id="delivery_address">Адрес доставки</h2>
+            {/if}
         {/if}
-        <div id="courier-tab" class="tab active">
+
+
+        {if $def == 1}
+            <div id="courier-tab" class="tab active">
             {if not empty($user) && $user->address()} {* адреса юзера *}
                 <div id="address">
                     {foreach from=$user->address() item=a name=a}
@@ -145,15 +163,8 @@
                 </div>
             {/if}
 
-            {* dadata widget }
-            <input id="dadata" name="address" type="text" size="100" placeholder="Введите адрес в любой форме" />
-
-            <link href="https://dadata.ru/static/css/lib/suggestions-15.2.css" type="text/css" rel="stylesheet" />
-            <!--[if lt IE 10]>
-            <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-ajaxtransport-xdomainrequest/1.0.1/jquery.xdomainrequest.min.js"></script>
-            <![endif]-->
-            <script src="https://dadata.ru/static/js/lib/jquery.suggestions-15.2.min.js"></script>
-            {* /dadata widget *}
+            {*<script src="https://api-maps.yandex.ru/2.0/?load=package.standard,package.geoQuery&lang=ru-RU"></script>
+            <script src="https://delivery.yandex.ru/widget/loader?resource_id=3127&sid=1540&key=2e3bad24bd1b2e1349c2f47293da27b2"></script>*}
 
             <div id="map-wrap">
                 <input id="last_geocode" type="hidden" />
@@ -231,6 +242,7 @@
                 </div>
             </div>
         </div>
+        {/if}
 
         <h2>Звонки и SMS</h2>
         <div>
@@ -256,24 +268,37 @@
             </div>
         </div>
 
-        <h2>Доставка</h2>
-        <div id="ship_datetime">
-            <div class="half fl" id="ship_date">
-                <p>Время и&nbsp;стоимость доставки уточнит менеджер поcле приёма Вашего заказа</p>
-            </div>
+        {if $def == 1}
+            <h2 id="delivery">Доставка</h2>
+            <div id="ship_datetime">
+                <div class="half fl" id="ship_date">
+                    <p>Время и&nbsp;стоимость доставки уточнит менеджер поcле приёма Вашего заказа</p>
+                </div>
 
-            <div class="half fl" id="ship_time"></div>
-        </div>
+                <div class="half fl" id="ship_time"></div>
+            </div>
+        {/if}
 
         <h2>Оплата</h2>
         <div id="cart-payment">
-            <div class="half fl">
-                <label><input type="radio" name="pay_type" value="{Model_Order::PAY_DEFAULT}"
-                            {if empty($session_params.pay_type) || $session_params.pay_type eq Model_Order::PAY_DEFAULT} checked="checked"{/if} />
-                    Наличный расчет</label>
+            {*{foreach from=$cart->goods item=good}
+                {assign var="def" value="0"}
+                {if strpos($good.code, "syst_gift") === false}
+                    {$def = 1}
+                {/if}
+            {/foreach}*}
 
-                <em>Оплата заказа и&nbsp;доставки производится наличными при получении</em>
-            </div>
+            {if $def == 1}
+                <div class="half fl">
+                    <label><input type="radio" name="pay_type" value="{Model_Order::PAY_DEFAULT}"
+                                {if empty($session_params.pay_type) || $session_params.pay_type eq Model_Order::PAY_DEFAULT} checked="checked"{/if} />
+                        Наличный расчет</label>
+
+                    <em>Оплата заказа и&nbsp;доставки производится наличными при получении</em>
+                </div>
+            {/if}
+
+
             <div class="half fl">
                 <label><input type="radio" name="pay_type" value="{Model_Order::PAY_CARD}"
                             {if $session_params.pay_type eq Model_Order::PAY_CARD} checked="checked"{/if} />

@@ -1399,10 +1399,13 @@ $(document).ready(function () {
 
     updateLinks();
 
-    $(document).on('change', '#sborka', function() { // бесплатная сборка КГТ
-        var params = { sborka : 1, comment : $(this).val(), id : $(this).attr('rel') };
+    function addSborka() { // бесплатная сборка КГТ
+        var params = { sborka : 1, comment : $('#sborka').val(), id : $('#sborka').attr('rel') };
         $.post('/cart/comments.php', params);
-    });
+    }
+    $(document).on('change', '#sborka',addSborka);
+
+    addSborka();
 
     $(document).on('click', 'table#goods td.pencil button,.pencilator-opener', function (event) {
         if (0 === $('#pencilator').size()) { // Диалог НЕ открыт

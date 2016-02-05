@@ -13,6 +13,7 @@ class Cart {
     public $actions         = [];  // action.id => Model_Action
     public $goods           = [];  // good.id => qty
     public $comments        = [];  // good.id => comment
+    public $comment_email   = [];  // good.id => comment_email
     public $status_id       = 0;
     public $blago           = 0;        // благотворительность
     public $added           = FALSE;    // флаг - было ли добавление только что - используется при отображении корзины
@@ -35,6 +36,7 @@ class Cart {
     public $width           = 1; // размеры корзины - в см
     public $length          = 1; // длина
     public $height          = 1; // высота
+    public $gift_sum        = 0; // сумма купленных сертификатов
     public $ship_wrong = FALSE; // флаг проблемного веса / объёма в заказе
 
 	protected $_session_id  = NULL;
@@ -63,6 +65,7 @@ class Cart {
             $this->goods = $cart_s->goods;
             $this->qty = $cart_s->qty;
             $this->comments = ! empty($cart_s->comments) ? $cart_s->comments : [];
+            $this->comment_email = ! empty($cart_s->comment_email) ? $cart_s->comment_email : [];
             $this->blago = ! empty($cart_s->blago) ? $cart_s->blago : 0;
             $this->discount = ! empty($cart_s->discount) ? $cart_s->discount : 0;
             $this->presents_selected = ! empty($cart_s->presents_selected) ? $cart_s->presents_selected : [];
@@ -129,6 +132,7 @@ class Cart {
         $this->blago = 0;
         $this->coupon_error = FALSE;
         $this->coupon = $this->goods = $this->presents = $this->comments = $this->sborkable = $this->big = $this->to_wait = $this->no_possible = [];
+
         return $this->save();
     }
 
@@ -174,7 +178,15 @@ class Cart {
     public function set_comments($comments)
     {
         if (empty($comments)) return $this;
-        $this->comments = $comments + $this->comments; // Новый массив (первый, $comments) имеет больший приоритет
+        //$this->comments = $comments['comments'] + $this->comments; // Новый массив (первый, $comments) имеет больший
+        // приоритет
+        if(!empty($comments['comments'])){
+            $this->comments = $comments['comments']; // Новый массив (первый, $comments) имеет больший приоритет
+        }
+        if(!empty($comments['comment_email'])){
+            $this->comment_email = $comments['comment_email'];
+        }
+
         $this->clear_comments(); // Убираем комментарии к отсутствующим в корзине товарам
         
         return $this;
@@ -282,8 +294,26 @@ class Cart {
      * @return array
      */
     public function get_comments() {
+
         $this->clear_comments(); // Убираем комментарии к отсутствующим в корзине товарам
         return $this->comments;
+    }
+
+    /**
+     * Получить из корзины уже имеющийся email
+     * @return array
+     */
+    public function get_comment_email() {
+
+        return $this->comment_email;
+    }
+    /**
+     * Получить email для товара
+     * @return array
+     */
+    public function get_commentid_email($good_id) {
+
+        return empty( $this->comment_email[$good_id] ) ? FALSE : $this->comment_email[$good_id];
     }
     
     /**
@@ -307,7 +337,7 @@ class Cart {
         }
         $this->comments = array_filter($this->comments);
     }
-    
+
     /**
      * Подсёт цены, ограничений на кол-во, статуса по кгт и нет на складе
      * @param Model_Good[] $goods
@@ -543,12 +573,16 @@ class Cart {
 
             case Model_Coupon::TYPE_SUM:  // скидка на сумму
 
-            case Model_Coupon::TYPE_SUB: // скидка на сумму за подписку
+            case Model_Coupon::TYPE_SUB: // или скидка на сумму за подписку
+
+                // если в заказе есть сертификаты - их нельзя оплачивать купоном
+                $price_gift = $this->gift_sum;
 
                 if ($coupon->type == Model_Coupon::TYPE_SUB && empty($user->sub)) { $this->coupon_error = 'Вы не подписаны на e-mail рассылки. Подписаться на рассылки можно в '.HTML::anchor(Route::url('user'), 'личном кабинете'); return FALSE;}
                 if ($coupon->type == Model_Coupon::TYPE_SUB && empty($user->email_approved)) { $this->coupon_error = 'Вы не подтвердили email'; return FALSE;}
 
-                $this->total -= $coupon->sum;
+                $this->total = $this->total - $coupon->sum - $price_gift;
+                $this->total = max(0, $this->total) + $price_gift; // TODO
                 $this->discount += $coupon->sum;
 
                 break;
@@ -730,9 +764,11 @@ class Cart {
 				}
 			}
 
-            // считаем вес и размер
+            // считаем вес и размер и сумму купленных сертификатов
             $this->weight = 0;
             $this->width = $this->height = $this->length = 1;
+            $this->gift_sum = 0;
+
             foreach($goods as $id => $g) {
 
                 // вес
@@ -754,6 +790,11 @@ class Cart {
                 } else {
                     $this->ship_wrong = TRUE;
                 }
+
+                // учет подарочных сертификатов
+                if (strpos($g->code, 'syst_gift') !== FALSE) { // подарочный сертификат
+                    $this->gift_sum += $g->price;
+                }
             }
 
             $this->weight *= self::WEIGHT_RATE; // к весу добавим упаковку
@@ -761,7 +802,7 @@ class Cart {
             $this->height = ceil($this->height / 10);
             $this->length = ceil($this->length / 10);
 
-            $base_price = $this->check_qty_wait_lk($goods); // Пересчитываем цены, в т.ч. ЛК, убираем товары с 0 qty
+            $base_price = $this->check_qty_wait_lk($goods); // Пересчитываем цены, в т.ч. ЛК, убираем товары с 0 // qty
 
             $this->check_price_actions($goods, $base_price); // проверяет акции и купон
 
@@ -771,7 +812,7 @@ class Cart {
         $this->save();
 
         $this->force_recount = FALSE;
-        
+
         return $goods;
     }
 
@@ -1257,6 +1298,7 @@ class Cart {
             'coupon_presents' => $this->coupon_presents,
             'present_goods' => $this->get_present_goods(),
             'comments' => $this->get_comments(),
+            'comment_email' => $this->get_comment_email(),
             'session_params' => Session::instance()->get('cart_delivery'),
             'delivery' => Controller_Product::cart_delivery(),
             'slider' => $this->slider($goods),

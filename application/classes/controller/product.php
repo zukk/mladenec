@@ -207,8 +207,11 @@ class Controller_Product extends Controller_Frontend {
             }
         }
 
-        $this->tmpl['images'] = Model_Good::many_images([255], $keys);
-        $this->tmpl['price'] = Model_Good::get_status_price(1, $keys); // цены
+        if($keys){
+            $this->tmpl['images'] = Model_Good::many_images([255], $keys);
+            $this->tmpl['price'] = Model_Good::get_status_price(1, $keys); // цены
+        }
+
         // $this->tmpl['serts'] = $group->get_serts( TRUE ); // сертификаты соответствия
 
         $filters = []; // {{{ показ фильтров в карточке товара
@@ -313,7 +316,7 @@ class Controller_Product extends Controller_Frontend {
     public function action_add()
     {
         $cart = Cart::instance();
-        
+
         $cart->add($this->request->post('qty'));
         
         if ($this->request->is_ajax() AND $this->request->post('one')) exit($cart); // put one item to cart - ajax
@@ -377,10 +380,18 @@ class Controller_Product extends Controller_Frontend {
      */
     protected function _create_order(&$post)
     {
+
 		$cart = Cart::instance();
 		$user = Model_User::current();
 		$post = $this->request->post();
-
+        if(isset($post['syst_gift']) && $post['syst_gift'] == 1){ // сброс адреса если в заказе только подарочный сертификат
+            $post['city'] = ' ';
+            $post['street'] = ' ';
+            $post['house'] = 1;
+            $post['kv'] = 1;
+            $post['name'] = 'noname';
+            $post['last_name'] = 'noname';
+        }
         $delivery_type = (int)$post['delivery_type'];
 
 		$order_data = new Model_Order_Data();
@@ -436,6 +447,7 @@ class Controller_Product extends Controller_Frontend {
                 'address_id' => $addr->id,
                 'correct_addr' => $addr->correct_addr,
             ]);
+
             if ($delivery_type != Model_Order::SHIP_COURIER) { // если не наш курьер - надо фио
                 $v->rule('last_name', 'not_empty');
                 $v->rule('name', 'not_empty');
@@ -505,9 +517,10 @@ class Controller_Product extends Controller_Frontend {
 
 			if ( ! empty($a)) $order_data->address_id = $a->id;
             $order_data->client_data = print_r($_SERVER, TRUE);
-			$order_data->save(); 
+			$order_data->save();
 
 			$cart->clean(); // чистка корзины!
+
 			Session::instance()->delete('cart_delivery');
 
     		$o->send_sms_accepted(); // смс о приёме заказа
@@ -517,6 +530,7 @@ class Controller_Product extends Controller_Frontend {
 				'od' => $order_data,
 				'coupon' => $o->coupon_id ? $o->coupon : FALSE
 			);
+
 			if ( ! empty($to_wait)) $mail_params['to_wait'] = $to_wait;
 			Mail::htmlsend('order', $mail_params, $order_data->email, 'Ваш заказ '.$o->id.' принят');
 
@@ -631,7 +645,9 @@ class Controller_Product extends Controller_Frontend {
     {
 		$cart = Cart::instance();
 
-        $com = $this->request->post('comment');
+        $com['comments'] = $this->request->post('comment');
+        $com['comment_email'] = $this->request->post('comment_email');
+
         if ($this->request->post('sborka')) { // это сборка КГТ, должен быть id и коммент - строка
             $id = $this->request->post('id');
             if ($com == '') {
@@ -645,6 +661,8 @@ class Controller_Product extends Controller_Frontend {
 
         } else {
             $cart->set_comments($com)->save();
+            //$cart->set_comments($com_email)->save();
+
         }
 
 		exit('ok');
@@ -672,7 +690,7 @@ class Controller_Product extends Controller_Frontend {
         Session::instance()->set('od_time', time());
         
         $previous_cart_total = $cart->total;
-        
+
         if ($qty = $this->request->post('qty')) { // пересчёт корзины с нуля
             $cart->clean();
 
@@ -682,7 +700,14 @@ class Controller_Product extends Controller_Frontend {
             $cart->add($qty, FALSE); // recount inside!
         }
 
-        if ($comments = $this->request->post('comment')) { // если были комментарии - прикрепим обратно, мы их стёрли в cart::clean
+        if ($comments = $this->request->post('comment')) { // если были комментарии - прикрепим обратно,
+        // мы их стёрли в cart::clean
+            //$cart->set_comments($comments); // original
+            $comments['comments'] = $comments;
+            if ($comment_email = $this->request->post('comment_email')) { // если были комментарии - прикрепим обратно,
+                // мы их стёрли в cart::clean
+                $comments['comment_email'] = $comment_email;
+            }
             $cart->set_comments($comments);
         }
 
@@ -693,6 +718,7 @@ class Controller_Product extends Controller_Frontend {
         if ($previous_cart_total != $cart->total) {
             $result['price_changed'] = 1;
         }
+
         $this->return_json($result);
     }
 

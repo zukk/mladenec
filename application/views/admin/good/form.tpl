@@ -377,16 +377,18 @@ $(document).ready(function() {
         <input type="checkbox" id="new" name="prop[superprice]" value="1" {if $i->prop->superprice}checked="checked"{/if} />
     </p>
     <p>
-        <label for="to_ozon">Выгружать на Озон?</label>
-        <input type="checkbox" id="to_ozon" name="prop[to_ozon]" value="1" {if $i->prop->to_ozon}checked="checked"{/if} />
-    </p>
-    <p>
         <label for="to_yandex">Выгружать в&nbsp;Yandex</label>
         <input type="checkbox" id="to_yandex" name="prop[to_yandex]" value="1" {if $i->prop->to_yandex}checked="checked"{/if} />
     </p>
     <p>
-        <label for="to_wikimart">Выгружать в&nbsp;Wikimart</label>
-        <input type="checkbox" id="to_wikimart" name="prop[to_wikimart]" value="1" {if $i->prop->to_wikimart}checked="checked"{/if} />
+        <label>Категория в&nbsp;Ozon</label>
+        <input type="text" value="{$i->ozontype->name}" class="width-100"/>
+        <small>{$i->ozontype->path_name}</small>
+    </p>
+
+    <p>
+        <label>Категория в&nbsp;Wikimart</label>
+        <input type="text" value="{$i->wikicategories->name}" class="width-100"/>
     </p>
 
     <div class="units-row">
