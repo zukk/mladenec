@@ -371,8 +371,11 @@ class Model_Good extends ORM {
 
 //        Database::instance()->commit();
 
-        passthru('indexer --rotate --all', $return); // переиндексация
-        echo '<pre>'.$return.'</pre>';
+        if (Kohana::DEVELOPMENT == Kohana::$environment) {
+            // сфинкс запускать от www-data
+            passthru('indexer --rotate --all', $return); // переиндексация
+            echo '<pre>' . $return . '</pre>';
+        }
 
         // Перерасчет данных акций
         $current_user = Model_User::i_robot();
