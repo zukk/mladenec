@@ -1013,7 +1013,7 @@ class Controller_Odinc extends Controller {
                         ) = $this->parse('©', $s, 22);
 
                     $grid = 0;
-                    if ($gcode != '30006296' && $gcode != '50061508' ) { // это услуги или подарочные сертификаты - не искать группу
+                    if ($gcode != '30006296') { // это услуги - не искать группу
                         $gr = $group->clear()->where('code', '=', $gcode)->find(); // группа
                         if ( ! $gr->loaded()) {
                             $this->error('No group found with code ' . $gcode);
