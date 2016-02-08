@@ -13,14 +13,14 @@
 	   <textarea name='search_words' class='width-100' style='height: 100px'>{$i->search_words}</textarea>
    </p>
 	<p>
-	   <label for="img225">Изображение</label>
-        {if $i->img225}
+	   <label for="image">Изображение</label>
+        {if $i->image}
             <img src="{$i->get_img()}" alt="" />
         {else}
             <strong>отсутствует</strong>
         {/if}
 		<br />
-        <input type="file" name="img225" />
+        <input type="file" name="image" />
    </p>
 
     <div class="units-row">

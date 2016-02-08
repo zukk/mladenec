@@ -102,7 +102,7 @@ class Controller_Product extends Controller_Frontend {
             ->where('active', '=', 1)
             ->find();
 
-        if ( ! $parent->loaded()) throw new HTTP_Exception_404;
+        if ($parent->loaded() && ! $parent->active) throw new HTTP_Exception_404; // если есть - то надо активную
 
         // redirect to canonical url
         if (($good->translit != $this->request->param('translit')) || ($section->vitrina != Kohana::$server_name) || $good->group_id != $this->request->param('group_id'))
