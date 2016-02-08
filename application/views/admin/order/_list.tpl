@@ -1,43 +1,3 @@
-<script>
-    $(document).ready( function() {
-
-        $('input[name^=call]').click(function() {
-            var item = $(this), id = item.attr('id').replace('call_', '');
-            if (confirm('Заказ ' + id + ' отзвонили?')) {
-                $.post('{Route::url('admin_ajax_call')}', { 'id': id }, function(data) {
-                    if (data == 'ok') {
-                        item.replaceWith('<span class="green">Отзвонили</span>');
-                    }
-                })
-            }
-        });
-
-        $('input[name^=cash]').click(function() {
-            var item = $(this), id = item.attr('id').replace('cash_', '');
-            if (confirm('Заказ ' + id + ' перевести на НАЛ?')) {
-                $.post('{Route::url('admin_ajax_cash')}', { 'id': id }, function(data) {
-                    if (data == 'ok') {
-                        item.replaceWith('<span class="green">перевели на НАЛ</span>');
-                    }
-                })
-            }
-        });
-
-        $('input[name^=can_pay]').click(function() {
-            var item = $(this), id = item.attr('id').replace('can_pay_', '');
-
-            if (confirm("Заказ " + id + " разрешить оплату?\n\nРазрешая оплату, убедитесь в возможности поставки всех заказанных клиентом товаров и правильности суммы доставки")) {
-                $.post('{Route::url('admin_ajax_can_pay')}', { 'id': id }, function(data) {
-                    if (data == 'ok') {
-                        item.replaceWith('<span class="green">Разрешили оплату</span>');
-                    }
-                })
-            }
-        });
-    });
-</script>
-
-
 {$pager->html('Заказы')}
 
 <form action="" >
@@ -51,6 +11,7 @@
             <th>Доставка</th>
             <th>Всего</th>
             <th>Статус</th>
+            <th>Источник</th>
         </tr>
         {foreach from=$list item=i}
             <tr {cycle values='class="odd",'}>
@@ -87,6 +48,7 @@
                 <td>{$i->price_ship}<br /><small>{$i->data->ship_date}<br />{Model_Zone_Time::name($i->data->ship_time)}</small></td>
                 <td>{$i->price + $i->price_ship}</td>
                 <td>{$i->status()}<br /><small>{$i->status_time}</small></td>
+                <td>{$i->data->source|json_decode|print_r}</td>
             </tr>
         {/foreach}
     </table>
