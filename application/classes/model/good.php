@@ -1637,6 +1637,7 @@ class Model_Good extends ORM {
             ->execute()
             ->as_array('sort', 'good_id');
 
+        if (empty($r)) return FALSE;
         $goods_q = ORM::factory('good')->where('id', 'IN', $r);
 
         if ( ! $admin) {
