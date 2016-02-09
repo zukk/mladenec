@@ -43,6 +43,9 @@
 {include file='common/buy.tpl' good=$g}
 
 <div class="ico">
+    {if $g->sborkable()}
+        <a href="/delivery#sborka_tovara"><img src="/i/sborka_icon.png" alt="Бесплатная сборка" title="Бесплатная сборка" /></a>
+    {/if}
     {if not $g->is_advert_hidden() and not empty($good_action[$g->id])}
         {include file="common/action.tpl" action=$good_action[$g->id]}{* акции по товару *}
     {elseif $g->new}
