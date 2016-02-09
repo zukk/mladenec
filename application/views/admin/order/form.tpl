@@ -14,4 +14,14 @@
 {include file="user/order/view.tpl" o=$i od=$i->data order_goods=$i->get_goods()}
 
 <hr />
-{$i->data->client_data}
+{if $i->data->source}
+    {assign var=json value=$i->data->source|json_decode}
+    <strong>{$json->source}</strong>
+    <small>{$i->data->source}</small>
+{/if}
+
+<hr />
+{if $i->data->client_data}
+<pre style="font-size:10px;">{$i->data->client_data}</pre>
+{/if}
+

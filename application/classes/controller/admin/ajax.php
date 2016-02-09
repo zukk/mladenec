@@ -289,9 +289,9 @@ class Controller_Admin_Ajax extends Controller_Authorised {
 
         if ( ! empty($fields)) {
             foreach ($fields as $field) {
-                $model->or_where($field, 'like', '%' . $term . '%');
+                $model->or_where($field, 'like', ($modelname != 'coupon' ? '%' : '') . $term . '%');
             }
-            if (!empty($children)) {
+            if ( ! empty($children)) {
                 $model->and_where_close();
             }
             $data = $model->find_all()->as_array('id');

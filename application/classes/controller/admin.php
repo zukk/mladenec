@@ -1841,7 +1841,14 @@ class Controller_Admin extends Controller_Authorised {
         if ($email = $this->request->query('email')) {
             $query->where('data.email', 'LIKE', $email.'%');
         }
-		
+        if ($cname = $this->request->query('coupon_name')){
+            $query->with('coupon')
+                ->where('coupon.name', 'LIKE', $cname.'%');
+        }
+        if ($this->request->query('coupon')) {
+            $query->where('coupon_id', '>', 0);
+        }
+
         $from = $this->request->query('from');
         if ( ! empty($from['date'])) {
             $query->where('sent', '>=' , $from['date'].' '.$from['time']);
@@ -1920,6 +1927,9 @@ class Controller_Admin extends Controller_Authorised {
             $query->where('data.email', 'LIKE', $email . '%');
         }
 
+        if ($this->request->query('coupon')) {
+            $query->where('coupon_id', '>', 0);
+        }
         $from = $this->request->query('from');
         if ( ! empty($from['date'])) {
             $query->where('sent', '>=' , $from['date'].' '.$from['time']);
@@ -1937,8 +1947,15 @@ class Controller_Admin extends Controller_Authorised {
             'price'     => 'Сумма',
             'user_id'   => '№ клиента',
             'sent'      => 'Отправлен',
-            'status'    => 'Статус'
-        ], $orders, 'orders', ['status' => function($row) { return $row->status(); }]);
+            'num'       => 'Номер',
+            'coupon_id' => 'Купон',
+            'status'    => 'Статус',
+            'source'    => 'Источник',
+        ], $orders, 'orders', [
+            'status' => function($row) { return $row->status(); },
+            'source' => function($row) { if (($json = json_decode($row->data->source)) && ! empty($json->source)) return $json->source;},
+            'num' => function($row) { return $row->data->num;},
+        ]);
 
         exit;
     }

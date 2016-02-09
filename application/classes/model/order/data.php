@@ -16,6 +16,7 @@ class Model_Order_Data extends ORM {
         'okpo' => '', 'gendir' => '', 'user_status' => '', 'address' => '', 'latlong' => '',
         'correct_addr' => '', 'comment' => '', 'courier' => '', 'address_id' => '', 'ozon_delivery_id' => '', 'ozon_barcode' => '', 'ozon_status' => '',
         'client_data' => '', 'source' => '',
+        'num' => 1,
     ];
 
     public function rules()

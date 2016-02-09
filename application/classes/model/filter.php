@@ -7,6 +7,7 @@ class Model_Filter extends ORM {
     const CARE_BIG_TYPE = 2102; // фильтр Категорий для Косметики
     const FEED_BIG_TYPE = 2086; // фильтр Вид (средства для кормления)
     const HEALTH_BIG_TYPE = 1985; // фильтр Подкатегория в Здоровье малыша
+    //const CHEM_BIG_TYPE = 2124; // фильтр Подкатегория в Бытовой химии
 
     const PURE_SOSTAV = 2068; // фильтр состава в пюре
 
@@ -250,6 +251,7 @@ class Model_Filter extends ORM {
             self::CARE_BIG_TYPE,
             self::FEED_BIG_TYPE,
             self::HEALTH_BIG_TYPE,
+            //self::CHEM_BIG_TYPE,
             self::TOYS_AGE,
         ]);
     }

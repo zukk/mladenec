@@ -11,6 +11,8 @@
             <th>Доставка</th>
             <th>Всего</th>
             <th>Статус</th>
+            <th>Число заказов</th>
+            <th>Купон</th>
             <th>Источник</th>
         </tr>
         {foreach from=$list item=i}
@@ -48,7 +50,9 @@
                 <td>{$i->price_ship}<br /><small>{$i->data->ship_date}<br />{Model_Zone_Time::name($i->data->ship_time)}</small></td>
                 <td>{$i->price + $i->price_ship}</td>
                 <td>{$i->status()}<br /><small>{$i->status_time}</small></td>
-                <td>{$i->data->source|json_decode|print_r}</td>
+                <td>{$i->data->num}</td>
+                <td>{if $i->coupon_id}{HTML::anchor(Route::url('admin_edit', ['model'=>'coupon', 'id'=> $i->coupon_id]), $i->coupon->name)}{/if}</td>
+                <td>{if $i->data->source}{assign var=json value=$i->data->source|json_decode}<strong>{$json->source}</strong>{/if}</td>
             </tr>
         {/foreach}
     </table>

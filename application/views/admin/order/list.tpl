@@ -33,8 +33,49 @@
                     <option value="">все</option>
                     {html_options options=Model_Order::pay_types() selected=$smarty.get.pay_type|default:''}
                 </select>
-                <!--br />
-                <a href="{Route::url('admin_order_card')}">Проблемный безнал</a-->
+                <br />
+                <label><input type="checkbox" name="coupon" value="1" {if $smarty.get.coupon}checked{/if}> Купон <input id="coupon_name" name="coupon_name" value="{$smarty.get.coupon_name}" /></label>
+
+                <script>
+                    $(document).ready(function() {
+
+                        $("#coupon_name")
+                                .on('blur keyup mouseup', function () {
+                                    var v = $.trim($(this).val());
+                                    if (v == '') $(this).next().val('').addClass("empty")
+                                })
+                                .autocomplete({
+                                    source: function (request, response) {
+                                        var term = $.trim(request.term);
+                                        $.getJSON("/od-men/ajax/autocomplete.php?term=" + term, {
+                                            model: "coupon",
+                                            fields: [ "name"]
+                                        }, function (data) {
+                                            response(data);
+                                        });
+                                    },
+                                    minLength:1,
+                                    maxHeight:300,
+                                    select: function(value, data) {
+                                        $(this).removeClass('input-error');
+                                        $(this).next().val(data.item.id).removeClass("empty");
+                                    }
+                                })
+
+                                .data("ui-autocomplete")
+
+                                ._renderItem = function(ul, item) {
+
+                            return $( "<li></li>" )
+                                    .data( "item.ui-autocomplete", item )
+                                    .append( "<a><span style=\"color: green\">" + item.id + "</span> " + item.label + "</a>" )
+                                    .appendTo( ul );
+                        };
+                    });
+                </script>
+
+
+                <!--a href="{Route::url('admin_order_card')}">Проблемный безнал</a-->
             </div>
             <div class="unit-50 datepicker">
                 <b>Отправлен:</b><br />
