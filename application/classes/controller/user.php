@@ -124,10 +124,7 @@ class Controller_User extends Controller_Frontend
 
             if ($u) {
 
-				ORM::factory('session')
-                    ->where('user_id', '=', $u->id)
-                    ->where('id', '!=', Session::instance()->id())
-                    ->delete(); // сотрем все старые сессии
+				Model_Session::delete_old($u->id, Session::instance()->id());
 
                 $this->return_redirect($this->request->referrer());
 

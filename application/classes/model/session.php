@@ -14,4 +14,13 @@ class Model_Session extends ORM {
         $this->last_active = time();
         parent::save($validation);
     }
+
+    static function delete_old($user_id, $session_id)
+    {
+        DB::delete('z_session')
+            ->where('user_id', '=', $user_id)
+            ->where('id', '!=', $session_id)
+            ->execute(); // сотрем все старые сессии
+
+    }
 }
