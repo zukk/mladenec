@@ -131,26 +131,13 @@
                 {/if}
             </script>            
         {else}
-            {foreach from=$cart->goods item=good}
-                {assign var="def" value="0"}
-                {if count($cart->goods) eq 1}
-                    {if $cart->gift_sum eq 0}
-                        {$def = 1}
-                    {else}
-                        <input type="hidden" name="syst_gift" value="1">
-                        {$def = 0}
-                    {/if}
-                {else}
-                    {$def = 1}
-                {/if}
-            {/foreach}
-            {if $def == 1}
+            {if not $cart->gift_only()}
                 <h2 id="delivery_address">Адрес доставки</h2>
             {/if}
         {/if}
 
 
-        {if $def == 1}
+        {if not $cart->gift_only()}
             <div id="courier-tab" class="tab active">
             {if not empty($user) && $user->address()} {* адреса юзера *}
                 <div id="address">
@@ -268,7 +255,7 @@
             </div>
         </div>
 
-        {if $def == 1}
+        {if not $cart->gift_only()}
             <h2 id="delivery">Доставка</h2>
             <div id="ship_datetime">
                 <div class="half fl" id="ship_date">
@@ -281,14 +268,9 @@
 
         <h2>Оплата</h2>
         <div id="cart-payment">
-            {*{foreach from=$cart->goods item=good}
-                {assign var="def" value="0"}
-                {if strpos($good.code, "syst_gift") === false}
-                    {$def = 1}
-                {/if}
-            {/foreach}*}
 
-            {if $def == 1}
+
+            {if not $cart->gift_only()}
                 <div class="half fl">
                     <label><input type="radio" name="pay_type" value="{Model_Order::PAY_DEFAULT}"
                                 {if empty($session_params.pay_type) || $session_params.pay_type eq Model_Order::PAY_DEFAULT} checked="checked"{/if} />

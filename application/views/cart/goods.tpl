@@ -51,7 +51,7 @@
             {foreach from=$goods item=g name=i}
                 {if strpos($g->code, "syst_gift") !== false}
                     {assign var="class" value="syst_gift"}
-                    {assign var="pencilator_email" value="<input class='pencilator-input-email' type='hidden' name='comment_email[{$g->id}]' id='gift_good_comment_{$g->id}' value='{$comment_email[$g->id]|default:''}'/>"}
+                    {capture assign="pencilator_email"}<input class='pencilator-input-email' type='hidden' name='comment_email[{$g->id}]' id='gift_good_comment_{$g->id}' value='{$comment_email[$g->id]|default:''}'/>{/capture}
                     {*{if $goods|count == 1}
                         <input type="hidden" name="syst_gift" value="1">
                     {/if}*}
@@ -136,14 +136,7 @@
 
 	<div class="oh">
 
-        {assign var="def" value="0"}
-        {foreach from=$cart->code item=code}
-            {if strpos($code, "syst_gift") === false}
-                {assign var="def" value="1"}
-            {/if}
-        {/foreach}
-
-        {if $def == 1}
+        {if ! $cart->gift_only()}
             {if $cart->discount gt 0}<div id="economy">Ваша экономия <strong class="discount">{$cart->discount|price}</strong></div>{/if}
         {/if}
 
@@ -166,17 +159,16 @@
             </div>
         </div>
 
-        {if $def == 1}
+        {if ! $cart->gift_only()}
             {include file="cart/coupon.tpl"}
-            <div class="cl fl">
-                {if ! empty($include)}
-                    <a title="Нажмите для пересчета" class="cart-recount-link">Пересчитать</a>
-                {else}
-                    <a title="Нажмите для пересчета" class="cart-recount-link changed">Пересчитали</a>
-                {/if}
-            </div>
         {/if}
-
+        <div class="cl fl">
+            {if ! empty($include)}
+                <a title="Нажмите для пересчета" class="cart-recount-link">Пересчитать</a>
+            {else}
+                <a title="Нажмите для пересчета" class="cart-recount-link changed">Пересчитали</a>
+            {/if}
+        </div>
 	</div>
 
     {if not empty($cart->promo)}

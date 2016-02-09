@@ -124,12 +124,17 @@ class Controller_User extends Controller_Frontend
 
             if ($u) {
 
-				$Session = Session::instance();
-				$cart = $Session->get('cart');
+				ORM::factory('session')
+                    ->where('user_id', '=', $u->id)
+                    ->where('id', '!=', Session::instance()->id())
+                    ->delete(); // сотрем все старые сессии
 
-				$session_id = Session::instance()->id();
+                $this->return_redirect($this->request->referrer());
 
-				$old_sessions = ORM::factory('session')->where('user_id', '=', $u->id)->where('id', '!=', $session_id)->find_all()->as_array('id');
+				/* диалог с предложением положить товары старой корзины
+                $cart = $Session->get('cart');
+
+                $old_sessions = ORM::factory('session')->where('user_id', '=', $u->id)->where('id', '!=', $session_id)->find_all()->as_array('id');
 
 				if (empty($old_sessions)) $this->return_redirect($this->request->referrer());
 
@@ -162,6 +167,7 @@ class Controller_User extends Controller_Frontend
                         ])->render(),
                     ];
                 }
+				*/
 
                 $json['userId'] = $u->id;
             }

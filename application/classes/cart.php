@@ -1383,4 +1383,13 @@ class Cart {
 
         return $return;
     }
+
+    /**
+     * проверка что в корзине только подарочные карты
+     * @return bool
+     */
+    public function gift_only()
+    {
+        return $this->gift_sum > 0 && $this->gift_sum == $this->total;
+    }
 }
