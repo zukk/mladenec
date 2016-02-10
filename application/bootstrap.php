@@ -71,11 +71,11 @@ Kohana::$environment = Kohana::PRODUCTION; // БОЕВОЙ САЙТ!!!
  * - boolean  profile     enable or disable internal profiling               TRUE
  * - boolean  caching     enable or disable internal caching                 FALSE
  */
-Kohana::init(array(
-    'base_url' => '/',
-    'index_file' => '',
-    'errors'	=> FALSE,
-));
+Kohana::init([
+    'base_url'  => '/',
+    'index_file'=> '',
+    'errors'	=> Kohana::$environment !== Kohana::PRODUCTION,
+]);
 
 /**
  * Attach the file write to logging. Multiple writers are supported.
@@ -444,8 +444,14 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
     Route::set('admin_getwikigoods', 'admin/getwikigoods.php')
         ->defaults(array('controller' => 'admin', 'action' => 'getwikigoods'));
 
+	Route::set('admin_getgooglegoods', 'admin/getgooglegoods.php')
+		->defaults(array('controller' => 'admin', 'action' => 'getgooglegoods'));
+
     Route::set('admin_valupd', 'admin/valupd.php')
         ->defaults(array('controller' => 'admin', 'action' => 'valupd'));
+
+    Route::set('admin_valgooglecatupd', 'admin/valgooglecatupd.php')
+        ->defaults(array('controller' => 'admin', 'action' => 'valgooglecatupd'));
 
     Route::set('admin_ajax_call', 'od-men/ajax/card_call')
         ->defaults(array('controller' => 'admin_ajax', 'action' => 'card_call'));
@@ -605,6 +611,9 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 
     Route::set('wikimart', 'export/wikimart.xml')
 		->defaults(array('controller' => 'page', 'action' => 'wikimart_yml'));
+
+	Route::set('google_merchant', 'export/google_merchant.xml')
+		->defaults(array('controller' => 'page', 'action' => 'google_merchant'));
 
 	Route::set('findologic_yml', 'export/findologic_yml.xml')
 		->defaults(array('controller' => 'page', 'action' => 'findologic_yml'));

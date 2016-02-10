@@ -261,7 +261,11 @@ class Controller_Product extends Controller_Frontend {
                 $res_desc_cons = rtrim($res_desc_cons, ', ').'.';
             }
         }
-        $this->tmpl['consul'] = $res_desc_cons;
+
+        $section_id = [29065, 29150, 28985, 28935, 29253, 29051, 29138, 29413, 28962];
+        if(in_array($good->section->id, $section_id)) {
+            $this->tmpl['consul'] = $res_desc_cons;
+        }
 
         if ($good->is_cloth()) { // для карточки одежды получаем все варианты цветов и размеров для товаров из группы, со связями цвет => размеры
 			

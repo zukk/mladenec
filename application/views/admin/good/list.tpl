@@ -21,6 +21,7 @@
             <label><i class="tr{$smarty.get.move|default:''}"></i><span>Продвигать</span><input type="hidden" name="move" value="{$smarty.get.move|default:''}" /></label>
             <label><i class="tr{$smarty.get.big|default:''}"></i><span>Крупногабаритка</span><input type="hidden" name="big" value="{$smarty.get.big|default:''}" /></label>
             <label><i class="tr{$smarty.get.wiki_cat|default:''}"></i><span>Не в викикатегории</span><input type="hidden" name="wiki_cat" value="{$smarty.get.wiki_cat|default:''}" /></label>
+            <label><i class="tr{$smarty.get.google_cat|default:''}"></i><span>Не в гугл категории</span><input type="hidden" name="google_cat" value="{$smarty.get.google_cat|default:''}" /></label>
         </div>
         <div class="cb"></div>
         <div class="units-row">

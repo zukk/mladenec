@@ -51,6 +51,7 @@ class Model_Good extends ORM {
         'group' => array('model' => 'group', 'foreign_key' => 'group_id'),
         'section' => array('model' => 'section', 'foreign_key' => 'section_id'),
         'wikicategories' => array('model' => 'wikicategories', 'foreign_key' => 'wiki_cat_id'),
+        'googlecategories' => array('model' => 'googlecategories', 'foreign_key' => 'google_cat_id'),
         'ozontype' => array('model' => 'ozontype', 'foreign_key' => 'ozon_type_id'),
         'brand' => array('model' => 'brand', 'foreign_key' => 'brand_id'),
         'country' => array('model' => 'country', 'foreign_key' => 'country_id'),
@@ -110,7 +111,8 @@ class Model_Good extends ORM {
         'new'             => 0,  // флаг новинки
         'zombie'          => 0,   // флаг зомби
         'wiki_cat_id'     => 0,   // id викимарт категории
-        'ozon_type_id'    => 0   // id озон категории
+        'ozon_type_id'    => 0,   // id озон категории
+        'google_cat_id'   => 0,   // id google merchant
     );
 	
 	protected $filters_data;
@@ -1049,6 +1051,52 @@ class Model_Good extends ORM {
         else return FALSE;
     }
 
+    /**
+     * получаем товары для Google Merchant пачками
+     *
+     * @param int $heap_size сколько товаров вытаскивать в 1 пачке
+     * @param int $heap_number сколько пачек уже вытащено
+     * @param array $where - доп условия
+     * @return boolean
+     */
+    public static function for_google_merchant($heap_size, $heap_number)
+    {
+        $query = DB::select('good.*', 'file.SUBDIR', 'file.FILE_NAME','prop.img1600','prop.img500','prop.desc',
+            ['brand.name','brand_name'],
+            ['section.name','section_name'],
+            ['section.market_category','market_category']
+        )->from(['z_good', 'good'])
+
+            ->join(['z_good_prop',   'prop'])    ->on('good.id',         '=', 'prop.id')
+            ->join(['z_brand',       'brand'])   ->on('good.brand_id',   '=', 'brand.id')
+            ->join(['z_section',     'section']) ->on('good.section_id', '=', 'section.id')
+            ->join(['z_group',       'group'])   ->on('good.group_id',   '=', 'group.id')
+            ->join(['b_file',        'file'])    ->on('prop.img1600',    '=', 'file.id')
+
+            ->where('good.show',      '=', 1)
+            ->where('good.qty', '!=', '0')
+            ->where('good.section_id',  '>', 0)
+            ->where('good.brand_id',    '>', 0)
+            ->where('good.group_id',    '>', 0)
+            ->where('prop.img1600',     '>', 0)
+            ->where('section.active',   '=', 1)
+            ->where('good.google_cat_id', '>', 0)
+            ->where('group.active',     '=', 1)
+            ->where('brand.active',     '=', 1)
+            ->order_by('good.id')
+            ->offset($heap_number * $heap_size)
+            ->limit($heap_size);
+
+        if ( ! empty($where)) {
+            foreach($where as $w) $query->where($w[0], $w[1], $w[2]);
+        }
+
+        $goods = $query->execute()->as_array('id');
+
+        if (count($goods)) return $goods;
+        else return FALSE;
+    }
+
     public static function get_wikimart_catalog()
     {
         $catalog = '';
@@ -1870,6 +1918,34 @@ class Model_Good extends ORM {
             ->set(['wiki_cat_id' => $wiki_cat_id])
             ->where('id', 'IN', $goods_ids)
             ->execute();
+    }
+
+    /**
+     * Сохранить google merchant-категорию для набора товаров
+     * @return object
+     */
+    public static function save_googlecat($google_cat_id, $goods_ids)
+    {
+        return DB::update(ORM::factory('good')->table_name())
+            ->set(['google_cat_id' => $google_cat_id])
+            ->where('id', 'IN', $goods_ids)
+            ->execute();
+    }
+
+    /**
+     * получить товары по google merchant-категории
+     * @param $google_cat_id
+     * @return array
+     * @throws Kohana_Exception
+     */
+    public function get_goodsgoogle($google_cat_id)
+    {
+        $res = ORM::factory('good')
+            ->where('google_cat_id', '=', $google_cat_id)
+            ->find_all()
+            ->as_array('id');
+
+        return $res;
     }
 
     /**

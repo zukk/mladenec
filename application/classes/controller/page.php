@@ -801,6 +801,16 @@ class Controller_Page extends Controller_Frontend {
     }
 
     /**
+     * YML для Google.Merchant
+     */
+    public function action_google_merchant()
+    {
+        $this->menu = FALSE;
+        $filename = APPPATH . 'cache/google_merchant.xml';
+        $this->return_xml(file_get_contents($filename));
+    }
+
+    /**
      * XML для Товары@mail.ru
      */
     public function action_mailru_xml()

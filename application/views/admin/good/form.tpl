@@ -379,6 +379,8 @@ $(document).ready(function() {
     <p>
         <label for="to_yandex">Выгружать в&nbsp;Yandex</label>
         <input type="checkbox" id="to_yandex" name="prop[to_yandex]" value="1" {if $i->prop->to_yandex}checked="checked"{/if} />
+        <pre>&lt;sales_notes&gt;{Model_Action::sales_notes($i->id)}&lt;/sales_notes&gt;
+        </pre>
     </p>
     <p>
         <label>Категория в&nbsp;Ozon</label>

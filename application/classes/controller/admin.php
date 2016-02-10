@@ -667,6 +667,51 @@ class Controller_Admin extends Controller_Authorised {
 
         $this->messages_add(array('errors' => $errors));
     }
+
+    public function action_googlecategories_list()
+    {
+        $google_cat_id = $this->request->post('google_cat_id');
+        if(isset($google_cat_id) && !empty($google_cat_id)){
+
+            $goods_ids = $this->request->post('goods');
+
+            if ( ! empty($goods_ids) && ! empty($google_cat_id)) {
+                Model_Good::save_googlecat($google_cat_id, $goods_ids);
+            }
+        }
+
+        $google_categories['data'] = DB::select('category_id', 'parent_id', 'name_cat')
+            ->from('google_categories')
+            ->as_object()
+            ->execute();
+
+        return $google_categories;
+    }
+
+    public function action_valgooglecatupd()
+    {
+        $good = ORM::factory('good', $this->request->post('id'));
+
+        if ($good->loaded()) {
+            $good->google_cat_id = 0;
+            $good->save();
+        }
+        exit;
+    }
+
+    public function action_getgooglegoods()
+    {
+        $google_cat_id = $this->request->post('id');
+
+        $good = new Model_Good();
+        $all_goods = $good->get_goodsgoogle($google_cat_id);
+
+        $tmpl = array(
+            'goods' => $all_goods
+        );
+
+        exit(View::factory('smarty:admin/good/chosen', $tmpl)->render());
+    }
 	
 	/**
 	 * @param Model_Good $good
@@ -1468,6 +1513,10 @@ class Controller_Admin extends Controller_Authorised {
             if (($wiki_cat = $this->request->query('wiki_cat')) != "")
             {
                 $query->where('good.wiki_cat_id', '=',  0);
+            }
+            if (($google_cat = $this->request->query('google_cat')) != "")
+            {
+                $query->where('good.google_cat_id', '=',  0);
             }
 
 
@@ -2872,6 +2921,12 @@ class Controller_Admin extends Controller_Authorised {
         if($not_wiki == 1){
             $query->where('wiki_cat_id', '=', '0');
             $return['not_wiki'] = $not_wiki;
+        }
+        $not_google = $this->request->post('not_google'); // условие на Гуглкатегорию
+
+        if($not_google == 1){
+            $query->where('google_cat_id', '=', '0');
+            $return['not_google'] = $not_google;
         }
 
         $not_ozon = $this->request->post('not_ozon'); // условие на озон-категорию

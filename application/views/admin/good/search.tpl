@@ -39,6 +39,11 @@
             <input {if !empty($not_wiki)}checked="checked"{/if} type="checkbox" value="1" name="not_wiki">
         </label>
     </div>
+    <div>
+        <label>Товары не в Гугл категории
+            <input {if !empty($not_google)}checked="checked"{/if} type="checkbox" value="1" name="not_google">
+        </label>
+    </div>
     <input type="submit" name="search" value="Отобрать товары" rel="{$smarty.request.rand}" />
 
     <hr />

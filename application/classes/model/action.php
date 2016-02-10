@@ -52,6 +52,7 @@ class Model_Action extends ORM
         'presents_instock'      => 0,  // Наличие подарков
         'require_all_presents'  => 0,   // Чтобы акция включилась - в наличии д.б. все подарки.
         'per_day'               => 0, // ограничение на число срабатываний акции в день
+        'sales_notes'           => '',  // фраза для товаров акции в sales_notes в YML
     );
 
     protected $_has_many = array(
@@ -1178,6 +1179,22 @@ class Model_Action extends ORM
             $data[$var] = $this->{$var};
         }
         return serialize($data);
+    }
+
+    /**
+     * получить строку sales_notes по настройкам акций в которых участвует товар
+     *
+     */
+    public static function sales_notes($gid)
+    {
+        $return = '';
+        foreach(self::by_goods([$gid]) as $action) {
+            if ($action->sales_notes > '') {
+                $return .= $action->sales_notes.' ';
+            }
+        }
+        if ($return == '') return 'Наличные, Visa/Mastercard';
+        return $return;
     }
 
 }

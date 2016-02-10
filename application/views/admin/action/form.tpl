@@ -338,6 +338,11 @@
         <label for="link_comment">Комментарий к входящей ссылке</label>
         <textarea id="link_comment" class="wide" cols="80" rows="5" style="height:5em;" name="link_comment" >{$i->link_comment}</textarea>
     </p>
+    <p>
+        <label for="sales_notes">Добавка в YML sales_notes</label>
+        <input id="sales_notes" class="width-100" name="sales_notes" value="{$i->sales_notes}" />
+    </p>
+
     <p class="forms-inline">
         <input name="edit" value="Сохранить" type="submit" class="btn btn-green"/>
         <input name="edit" value="Сохранить и вернуться к списку" type="submit" class="btn btn-green" alt="list" />
