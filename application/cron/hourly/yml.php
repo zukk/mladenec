@@ -107,6 +107,7 @@ for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size, $heap_number); $
             $section = $id2Catalog[$g['section_id']];
         }
 
+        if (empty($section)) continue;
         $g['real_section'] = $section->id;
 
         if ($section->is_cloth()) {
