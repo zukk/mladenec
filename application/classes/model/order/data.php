@@ -34,4 +34,23 @@ class Model_Order_Data extends ORM {
             ],
         ];
     }
+
+    /**
+     * сохранение данных - парсинг источника и номер заказа
+     *
+     */
+    public function save(Validation $validation = NULL)
+    {
+        if ($this->changed('client_data')) { // получение источника для статистики
+            $this->source = Txt::parse_utm($this->client_data);
+        }
+        if ( ! $this->loaded()) { // это новый заказ - проставим num
+            $this->num = DB::select(DB::expr('count(o.id) as cnt'))
+                    ->from(['z_order', 'o'])
+                    ->where('user_id', '=', $this->order->user_id)
+                    ->execute()
+                    ->get('cnt') + 1;
+        }
+        parent::save($validation);
+    }
 }

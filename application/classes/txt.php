@@ -685,4 +685,24 @@ class Txt {
 
         exit();
     }
+
+    /**
+     * Распарсить utm_ переменные с $_SERVER
+     * @param $data
+     * @return array
+     */
+    public static function parse_utm($data)
+    {
+        $data = str_replace('%25', '%', $data);
+        $data = str_replace('%3D', '=', $data);
+        $data = str_replace('%26', '&', $data);
+        $arr = [];
+        if (preg_match_all('~utm_([a-z]+)(=)([^&\s]+)~isu', $data, $matches)) {
+            foreach($matches[1] as $k => $utm) {
+                $arr[$utm] = urldecode(urldecode($matches[3][$k]));
+            }
+        }
+        if (empty($arr)) return '';
+        return json_encode($arr);
+    }
 }
