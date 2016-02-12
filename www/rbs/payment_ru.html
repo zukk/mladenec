@@ -1,0 +1,194 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="ru-RU">
+<head>
+    <title>Оплата заказа</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="c/style.css" type="text/css" media="all" />
+
+    <script src="../../js/jquery-1.8.1.min.js"></script>
+    <script src="../../js/jquery-ui-1.9.2.custom.min.js"></script>
+
+    <script src="../../js/jquery.timers-1.2.js"></script>
+    <script src="../../js/jquery.url.js"></script>
+
+    <script src="../../js/maskedinput.js"></script>
+    <script src="../../js/jquery.main.js"></script>
+    <script src="../../js/select.js"></script>
+    <script src="../../js/localization.js"></script>
+    <script src="../../js/additional.js"></script>
+    <script src="j/jquery.payment_new.js"></script>
+    <script>
+        $(document).payment({
+            language: "ru",
+            messageAjaxError: "Сервис временно недоступен. Попробуйте позднее.",
+            messageTimeRemaining: "До окончания сессии осталось #MIN#:#SEC#",
+            visualValidationEnabled: true,
+            updatePage: function(data) {
+                $('#orderNumber').text(data['orderNumber']);
+                $("title").text('Оплата заказа номер ' + data['orderNumber']);
+                $("#amount").text(data['amount']);
+                $("#back").attr('href', 'http://www.mladenec-shop.ru/' + data['orderNumber']);
+            }
+        });
+        $(document).ready(function() {
+            $('.pan').keyup(function() {
+                $('#iPAN').val($('#pan1').val() + $('#pan2').val() + $('#pan3').val() + $('#pan4').val());
+                var cur_pan = parseInt($(this).attr('id').replace('pan', ''), 10);
+                if (cur_pan < 4 && $(this).val().length == 4) $('#pan' + (cur_pan+1)).focus();
+                $('#iPAN').keyup();
+            });
+        });
+    </script>
+</head>
+<body>
+
+<div id="all">
+
+    <div id="head">
+        <a href="http://www.mladenec-shop.ru" id="logo"></a>
+        <img src="i/logo-alfabank.png" alt="Альфабанк" id="alpha" />
+    </div>
+
+    <div id="body">
+        <form name="paymentForm" id="formPayment" method="post" action="#" autocomplete="off">
+            <input type="hidden" id="expiry" >
+            <input type="hidden" id="mdOrder" >
+            <input type="hidden" id="location" value="/../" >
+            <input type="hidden" id="language" value="ru" >
+
+            <div class="fr">
+                <a href="#" id="back">Вернуться к&nbsp;оформлению заказа</a>
+                <div id="numberCountdown">До окончания сессии осталось 20:00</div>
+            </div>
+
+            <div class="order">
+                <h1>Оплата заказа №<div id="orderNumber"></div></h1>
+                <h2>Сумма к&nbsp;оплате: <div id="amount"></div></h2>
+            </div>
+
+
+            <div id="description"></div>
+
+            <br />
+
+
+            <strong>
+                Пожалуйста, введите реквизиты платежного средства и&nbsp;нажмите кнопку &laquo;оплатить&raquo;.<br />
+                По завершению оплаты Вы будете автоматически перенаправлены на&nbsp;страницу <nobr>интернет-магазина.</nobr>
+            </strong>
+
+            <br />
+
+            <div id="errorBlock"></div>
+            <div id="errorBlock1"></div>
+            <div id="infoBlock"></div>
+
+            <div id="indicator" style="display:none;"><img src="../../img/ajax-loader.gif" height="19" width="220" alt="indicator"></div>
+
+            <br />
+
+            <h3>Реквизиты карты</h3>
+
+            <div id="card">
+                <div id="card_front">
+                    <label>Номер карты:</label>
+                    <input type="text" id="pan1"  maxlength="4" class="pan txt"/>
+                    <input type="text" id="pan2"  maxlength="4" class="pan txt"/>
+                    <input type="text" id="pan3"  maxlength="4" class="pan txt"/>
+                    <input type="text" id="pan4"  maxlength="7" class="pan txt"/>
+
+                    <input id="iPAN" maxlength="19" type="hidden" />
+
+                    <label for="iTEXT">Имя и фамилия держателя (как на карте):</label>
+                    <input class="txt" maxlength="90" id="iTEXT" value="" title="Укажите имя владельца карты латинскими буквами, в&nbsp;точности так, как написано на&nbsp;карте"/>
+
+                    <div class="till">
+                        <select id="month" name="MM">
+                            <option>01</option>
+                            <option>02</option>
+                            <option>03</option>
+                            <option>04</option>
+                            <option>05</option>
+                            <option>06</option>
+                            <option>07</option>
+                            <option>08</option>
+                            <option>09</option>
+                            <option>10</option>
+                            <option>11</option>
+                            <option>12</option>
+                        </select>
+                        /
+                        <select id="year" name="YYYY">
+                            <option>2015</option>
+                        </select>
+                    </div>
+                    <label>Срок действия:</label>
+                </div>
+
+                <div id="card_back">
+                    <label for="iCVC">Код CVC2/CVV2</label>
+                    <input  class="txt" id="iCVC" size="11" maxlength="4" value="" type="password" />
+                    <span>Кодом CVC2/CVV2 являются три&nbsp;последних<br />цифры на&nbsp;оборотной стороне карты </span>
+                </div>
+            </div>
+            <div class="bottom-row">
+                <a class="alfaclick-btn" id="buttonPaymentAlfa" style="display: none;">
+                    <strong><span>Можно оплатить<br />через Альфа-Клик</span></strong>
+                </a>
+                <div class="ch-col">
+                    <div id="bindingBlock" class="row">
+                        <label class="ch-wrap"><input type="checkbox" class="checkbox" id="createBinding"/>
+                            Запомнить данные этой карты</label>
+                    </div>
+                    <div class="row agreeBox" id="agreeBlock" style="display: none;">
+                        <label class="ch-wrap"><input type="checkbox" class="checkbox" id="agreeCheckbox"/> Я ознакомлен и принимаю условия<br/><a id='agreeHref' href="#">договора-оферты</a></label>
+                    </div>
+                </div>
+            </div>
+            <input class="button" value="Оплатить" type="button" id="buttonPayment" />
+        </form>
+
+
+        <form action="" id="formBinding" style="display: none;">
+            <select name="bindingId" id="bindingIdSelect">
+                <!--<option value="" selected="selected"/>-->
+            </select>
+            <input name="cvc" id="bindingCvc" type="password" value=" "/>
+            <input value="Оплатить" type="button" id="buttonBindingPayment"/>
+        </form>
+    </div>
+
+    <div id="xfoot"></div>
+
+</div>
+
+<div id="foot">
+    <p>Оплата по&nbsp;банковским картам на&nbsp;сайте <nobr>mladenec-shop</nobr>.ru осуществляется с&nbsp;помощью электронного платежного шлюза <nobr>Альфа-Банк</nobr>.
+        Все операции по&nbsp;вашей карте осуществляются при полном соблюдении требований VISA International, MasterCard и&nbsp;других платежных систем с&nbsp;использованием
+        специальных технологий безопасности карточных <nobr>онлайн-платежей</nobr> Verified by&nbsp;Visa и&nbsp;MasterCard<sup><small>&reg;</small></sup> SecureCode&trade;.
+    </p>
+
+    <p>Сбор и&nbsp;обработка полученных конфиденциальных данных клиента (реквизиты карты, регистрационные данные <nobr>и т. д.</nobr>)
+        производится в&nbsp;процессинговом центре, а&nbsp;не&nbsp;на&nbsp;сайте <nobr>mladenec-shop</nobr>.ru. Таким образом, компания
+        &laquo;Младенец. РУ&raquo; не&nbsp;может получить и&nbsp;не&nbsp;запрашивает персональные и&nbsp;банковские данные клиента, включая пароли
+        и&nbsp;информацию о&nbsp;его покупках, сделанных в&nbsp;других магазинах. В&nbsp;соответствии с&nbsp;требованиями международных платежных систем
+        данные вашей карты после завершения платежа не&nbsp;сохраняются ни&nbsp;в&nbsp;<nobr>онлайн-магазине</nobr>, ни&nbsp;на&nbsp;авторизационном сервере <nobr>Альфа-банка.</nobr>
+    </p>
+</div>
+
+<div id="foot2">
+    <div class="fr">
+        <img src="i/mastercard.gif" alt="MasterCard Secure Code" /><img src="i/visa.gif" alt="Verified by Visa" />
+    </div>
+    <a href="http://www.mladenec-shop.ru"></a>
+    <br />&copy; &laquo;Младенец.ru&raquo;. Все права защищены. <br />Вы находитесь на странице платёжного шлюза.<br />
+</div>
+
+<form id="acs" method="post" action="">
+    <input type="hidden" id="MD" name="MD"/>
+    <input type="hidden" id="PaReq" name="PaReq"/>
+    <input type="hidden" id="TermUrl" name="TermUrl"/>
+</form>
+
+</body>
+</html>
