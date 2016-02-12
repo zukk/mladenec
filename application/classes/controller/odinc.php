@@ -398,7 +398,6 @@ class Controller_Odinc extends Controller {
     {
         $strings = explode("\n", $this->body);
         $saved = array();
-        $segments_recount_user_ids = []; // ID пользователей, которым надо пересчитать сегменты
 
         $data = FALSE;
         foreach($strings as $s) {
@@ -696,11 +695,7 @@ class Controller_Odinc extends Controller {
                         }
 
                     } catch (ORM_Validation_Exception $e) {
-                        $this->error('Cannot save order for '.$s.' '.$e->getMessage());
-                    }
-
-                    if ($status_changed AND $order->status == 'F') { // order delivered - need to recount segments
-                        $segments_recount_user_ids[] = $user_id;
+                        $this->error('Cannot save order for '.$s.' '.$e->getMessage(), $id);
                     }
                     
                     $goods = []; // чистим список товаров
@@ -708,21 +703,8 @@ class Controller_Odinc extends Controller {
             } 
             catch (Txt_Exception $ex)
             {
-                $this->error($ex->getMessage());
+                $this->error($ex->getMessage(), $id);
             }
-        }
-        
-        if ( ! empty($segments_recount_user_ids)) {
-
-            DB::update('z_user')
-                ->set(['segments_recount_ts' => 0])
-                ->where('id', 'IN', $segments_recount_user_ids)
-                ->execute();
-
-            DB::update('user_segment')
-                ->set(['upload_ts' => 0])
-                ->where('user_id', 'IN', $segments_recount_user_ids)
-                ->execute();
         }
 
         $this->view->saved = $saved;
