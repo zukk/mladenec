@@ -122,9 +122,17 @@ class Controller_Odinc extends Controller {
         Log::instance()->add(Log::INFO, $this->request->action() . ($this->action ? ', action '.$this->action : '').', processing completed, timer: ' . $this->timer());
         
         $body = $this->view->render();
-        if ( ! empty($this->errors)) $body = implode("\n", $this->errors) . "\n" . $body;
+        if ( ! empty($this->errors)) {
+            foreach ($this->errors as $key => $errors) {
+                if ($key > 0) {
+                    $body = $key.':ERRORS:'.implode('|', $errors)."\n".$body;
+                } else {
+                    $body = implode("\n", $errors)."\n".$body;
+                }
+            }
+        }
 
-        if ( 'utf8' == $this->request->query('encoding')) {
+        if ('utf8' == $this->request->query('encoding')) {
             header('Content-Type: text/plain; charset=utf-8');
         } else {
             $body = mb_convert_encoding($body, 'cp1251', 'utf8');
@@ -146,10 +154,9 @@ class Controller_Odinc extends Controller {
     /**
      * Функция генерации ошибки
      */
-    protected function error($string, $key = NULL)
+    protected function error($string, $key = 0)
     {
-        $string = ($key ? $key.':error:': '').$string;
-        $this->errors[] = $string;
+        $this->errors[$key][] = $string;
         Log::instance()->add(Log::ERROR, $string);
     }
 
