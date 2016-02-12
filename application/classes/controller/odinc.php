@@ -146,8 +146,9 @@ class Controller_Odinc extends Controller {
     /**
      * Функция генерации ошибки
      */
-    protected function error($string)
+    protected function error($string, $key = NULL)
     {
+        $string = ($key ? $key.':error:': '').$string;
         $this->errors[] = $string;
         Log::instance()->add(Log::ERROR, $string);
     }
@@ -479,7 +480,7 @@ class Controller_Odinc extends Controller {
                         $address->save();
                         $new_address = $address->id;
                     } catch (ORM_Validation_Exception $e) {
-                        $this->error('Cannot save address for '.$s.' '.$e->getMessage());
+                        $this->error('Cannot save address for '.$s.' '.$e->getMessage(), $id);
                     }
 
                 } 
@@ -529,7 +530,7 @@ class Controller_Odinc extends Controller {
                         default:
                             $good = ORM::factory('good')->where('code', '=', $code)->find();
                             if ( ! $good->loaded()) {
-                                $this->errors[] = 'Unknown good code - '.$code;
+                                $this->error('Unknown good code - '.$code, $id);
                                 continue;
                             }
                             $goods[$good->id] = array($qty => $price);
@@ -545,13 +546,13 @@ class Controller_Odinc extends Controller {
 
                     if ( ! $order->loaded())
                     {
-                        $this->errors[] = 'Unknown order '.$id;
+                        $this->error('Unknown order '.$id, $id);
                         continue;
                     }
 
                     if ( ! $order->data->loaded())
                     {
-                        $this->errors[] = 'Order data not loaded '.$id;
+                        $this->error('Order data not loaded '.$id, $id);
                         continue;
                     }
                     $order->user_id = $user_id;
@@ -1131,7 +1132,7 @@ class Controller_Odinc extends Controller {
 
                     $g = $good->clear()->where('code', '=', $code)->find();
                     if ( ! $g->loaded()) {
-                        $this->errors[] = 'Product not found with code '.$code.' for '.$s;
+                        $this->error('Product not found with code '.$code.' for '.$s);
                         continue;
                     }
                     
