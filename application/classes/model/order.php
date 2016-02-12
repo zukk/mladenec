@@ -832,7 +832,7 @@ class Model_Order extends ORM {
             }
         }
 
-        include(APPPATH.'classes/PHPExcel.php');
+        include_once(APPPATH.'classes/PHPExcel.php');
         $excel = PHPExcel_IOFactory::load(APPPATH.'config/check.xlsx');
         $sheet = $excel->getActiveSheet();
 

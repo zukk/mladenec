@@ -2039,7 +2039,7 @@ class Controller_Admin extends Controller_Authorised {
 
             if ($this->request->post('excel')) { // получить ответы в excel
 
-                include(APPPATH.'classes/PHPExcel.php');
+                include_once(APPPATH.'classes/PHPExcel.php');
                 $excel = new PHPExcel();
                 $sheet = $excel->getActiveSheet();
                 $i = 0;

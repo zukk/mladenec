@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Настройки платежного шлюза
+ */
+
 return [
     'rbs' => [
         'url'   => 'https://test.paymentgate.ru/testpayment/rest/',
@@ -8,8 +12,7 @@ return [
     ],
     'payture' => [
         'url'   => 'https://secure.payture.com/apim/',
-        'key'   => 'MShop274',
-        'pass'  => '2WNEvSG5',
-
+        'key'   => 'KEY',
+        'pass'  => 'PASS',
     ]
 ];

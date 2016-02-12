@@ -153,12 +153,13 @@
 
         {* admitad counter *}
         {assign var=admitad_uid value=Cookie::get('admitad_uid')}
+        {capture assign=action_code}{if $o->data->num eq 1}2{* новый клиент*}{else}3{/if}{/capture}
         {if $admitad_uid}
             <script>
                 (function (d, w) {
                     w._admitadPixel = {
                         response_type: 'img',
-                        action_code: '1',
+                        action_code: '{$action_code}',
                         campaign_code: '773f9c05f3'
                     };
                     w._admitadPositions = w._admitadPositions || [];
@@ -178,7 +179,7 @@
                             product_id: '{$g->id}',
                             screen: '',
                             tracking: '',
-                            old_customer: '{if $user->sum gt 0}1{else}0{/if}',
+                            old_customer: '{if $o->data->num gt 1}1{else}0{/if}',
                             coupon: '{if $o->coupon_id}1{else}0{/if}',
                             payment_type: 'sale'
                         });
@@ -197,7 +198,7 @@
             <noscript>
                 {foreach from=$order_goods item=g name=n}
                     {if $g->price > 1}
-                        <img src="//ad.admitad.com/r?campaign_code=773f9c05f3&action_code=1&response_type=img&uid={$admitad_uid}&order_id={$o->id}&client_id={$o->user_id}&position_id={$smarty.foreach.n.iteration}&tariff_code=1&currency_code=RUB&position_count={$smarty.foreach.n.total}&price={$g->price}&quantity={$g->quantity}&product_id={$g->id}&coupon={if $o->coupon_id}1{else}0{/if}&payment_type=sale&old_customer={if $user->sum gt 0}1{else}0{/if}" width="1" height="1" alt="" />
+                        <img src="//ad.admitad.com/r?campaign_code=773f9c05f3&action_code={$action_code}&response_type=img&uid={$admitad_uid}&order_id={$o->id}&client_id={$o->user_id}&position_id={$smarty.foreach.n.iteration}&tariff_code=1&currency_code=RUB&position_count={$smarty.foreach.n.total}&price={$g->price}&quantity={$g->quantity}&product_id={$g->id}&coupon={if $o->coupon_id}1{else}0{/if}&payment_type=sale&old_customer={if $user->sum gt 0}1{else}0{/if}" width="1" height="1" alt="" />
                     {/if}
                 {/foreach}
             </noscript>
