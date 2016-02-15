@@ -125,6 +125,11 @@ class Controller_Odinc extends Controller {
         if ( ! empty($this->errors)) {
             foreach ($this->errors as $key => $errors) {
                 if ($key > 0) {
+                    if ( ! empty($this->view->saved[$key])) { // ид заказа есть в сохраненных - уберем
+                        unset($this->view->saved[$key]);
+                    }
+                    $errors[] = 'SAVED';
+
                     $body = $key.':ERRORS:'.implode('|', $errors)."\n".$body;
                 } else {
                     $body = implode("\n", $errors)."\n".$body;
