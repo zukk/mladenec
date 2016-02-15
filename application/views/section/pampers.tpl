@@ -192,7 +192,7 @@
                                                 <div class="ctdot_pampers-ru-sis"></div>
                                             </div>
                                             <div class="comparision-table-row-details_pampers-ru-sis">
-                                                <div class="name_pampers-ru-sis">
+                                                <div class="name_pampers-ru-sis yellow">
                                                     New Baby-Dry
                                                 </div>
                                                 <div class="name_pampers-ru-sis">
@@ -205,8 +205,8 @@
                                         </div>
                                     </td>
                                     <td></td>
-                                    <td><a href="?size=1&f2200=18728">2-5<small>кг</small></a></td>
-                                    <td><a href="?size=2&f2200=18728">3-6<small>кг</small></a></td>
+                                    <td><a href="?size=1&f2200=18728" class="yellow">2-5<small>кг</small></a></td>
+                                    <td><a href="?size=2&f2200=18728" class="yellow">3-6<small>кг</small></a></td>
                                     <td><a href="?size=3&f2200=18728">4-9<small>кг</small></a></td>
                                     <td><a href="?size=4&f2200=18728">7-14<small>кг</small></a></td>
                                     <td><a href="?size=4+&f2200=18728">9-16<small>кг</small></a></td>
