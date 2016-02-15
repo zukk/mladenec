@@ -691,7 +691,7 @@ class Controller_Odinc extends Controller {
                         // письмо о смене типа оплаты
                         if ( ! empty($payment_changed)) $order->on_payment_change();
 
-                        $saved[] = $order->id;
+                        $saved[$order->id] = $order->id;
 
                         if ( ! empty($changes)) {
                             foreach($changes as $event) {
