@@ -4,7 +4,7 @@
  * Запускать раз в сутки
  * Карта сайта и все подкарты кладутся в каталог /export
  */
-require('../../../www/preload.php');
+require(__DIR__.'/../../../www/preload.php');
 
 $domains = Kohana::$config->load('domains')->as_array(); // = Kohana::$config->load('domains')->as_array();
 $host = $domains['mladenec']['host'];
