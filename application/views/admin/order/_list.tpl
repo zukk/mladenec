@@ -52,7 +52,7 @@
                 <td>{$i->status()}<br /><small>{$i->status_time}</small></td>
                 <td>{$i->data->num}</td>
                 <td>{if $i->coupon_id}{HTML::anchor(Route::url('admin_edit', ['model'=>'coupon', 'id'=> $i->coupon_id]), $i->coupon->name)}{/if}</td>
-                <td>{if $i->data->source}{assign var=json value=$i->data->source|json_decode}<strong>{$json->source}</strong>{/if}</td>
+                <td>{if $i->data->source}{assign var=json value=$i->data->source|json_decode}<strong>{$json->current->typ|default:''}</strong><small>{$json->current->src|default:''}</small>{/if}</td>
             </tr>
         {/foreach}
     </table>

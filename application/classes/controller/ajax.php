@@ -13,6 +13,15 @@ class Controller_Ajax extends Controller_Frontend {
         $this->response->body($this->layout->render());
     }
 
+    /**
+     * Сохранить данные sbjs в сессию
+     */
+    public function action_sbjs()
+    {
+        Session::instance()->set('sbjs', $this->request->post('sbjs'));
+        exit('sbjs');
+    }
+
     public function action_cart()
     {
         $cart = Cart::instance();
