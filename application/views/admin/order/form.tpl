@@ -16,7 +16,7 @@
 <hr />
 {if $i->data->source}
     {assign var=json value=$i->data->source|json_decode}
-    <strong>{$json->current->typ|default:$json->source}</strong>
+    <strong>{$json->current->typ|default:$json->source|default:''}</strong>
     <small>{$i->data->source}</small>
 {/if}
 

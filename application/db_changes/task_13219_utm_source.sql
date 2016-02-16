@@ -1,0 +1,1 @@
+ALTER TABLE z_order_data change source source text not null default '';
