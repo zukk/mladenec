@@ -19,7 +19,7 @@
         sbjs.init({
             timezone_offset: 3,
             callback: function() {
-                $.post({Route::url('sbjs_session')}, { sbjs: JSON.stringify(sbjs.get);});
+                $.post('{Route::url('sbjs_session')}', { sbjs: JSON.stringify(sbjs.get)});
             }
         });
 	</script>
