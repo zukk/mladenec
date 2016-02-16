@@ -388,7 +388,8 @@ class Controller_Product extends Controller_Frontend {
 		$cart = Cart::instance();
 		$user = Model_User::current();
 		$post = $this->request->post();
-        if($cart->gift_only()){ // сброс адреса если в заказе только подарочные сертификаты
+
+        if ($cart->gift_only()) { // сброс адреса если в заказе только подарочные сертификаты
             $post['city'] = ' ';
             $post['street'] = ' ';
             $post['house'] = 1;
@@ -396,6 +397,7 @@ class Controller_Product extends Controller_Frontend {
             $post['name'] = 'noname';
             $post['last_name'] = 'noname';
         }
+
         $delivery_type = (int)$post['delivery_type'];
 
 		$order_data = new Model_Order_Data();
@@ -521,6 +523,7 @@ class Controller_Product extends Controller_Frontend {
 
 			if ( ! empty($a)) $order_data->address_id = $a->id;
             $order_data->client_data = print_r($_SERVER, TRUE);
+            $order_data->source = Session::instance()->get('sbjs');
 			$order_data->save();
 
 			$cart->clean(); // чистка корзины!

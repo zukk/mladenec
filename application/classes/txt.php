@@ -628,7 +628,7 @@ class Txt {
      */
     public static function as_excel($columns, $list, $fname, $callbacks = [])
     {
-        include(APPPATH.'classes/PHPExcel.php');
+        include_once(APPPATH.'classes/PHPExcel.php');
         $excel = new PHPExcel();
         $sheet = $excel->getActiveSheet();
 

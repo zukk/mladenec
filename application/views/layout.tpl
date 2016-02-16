@@ -16,6 +16,12 @@
                 , RetailRocket = 1
             {/if}
         ;
+        sbjs.init({
+            timezone_offset: 3,
+            callback: function() {
+                $.post('{Route::url('sbjs_session')}', { sbjs: JSON.stringify(sbjs.get)});
+            }
+        });
 	</script>
 
     <!--[if lt IE 10]>
