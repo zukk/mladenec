@@ -374,7 +374,7 @@ class Cart {
                 if ( isset($this->to_wait[$id])) unset($this->to_wait[$id]); // и из нет на сладе
             }
         }
-        
+
         // Применяем цены статуса ЛК
         if ($this->status_id == 0 && ($this->total >= self::MAX_SIMPLE)) $this->status_id = 1; // тоже любимый
         if ($this->status_id == 1) $this->apply_lk_price($goods);
@@ -824,11 +824,11 @@ class Cart {
     public function save()
     {
         $cart = clone $this; // надо сделать копию, чтобы не пересчитывать имеющуюся корзину заново
-        
+
         $cart->save_clear();
-        
+
         Session::instance(NULL, $this->_session_id)->set('cart', $cart)->write();
-		
+
         return $this;
     }
     
@@ -1013,7 +1013,7 @@ class Cart {
     public function get_total()
     {
         if ($this->force_recount) $this->recount();
-        
+
         return $this->total + $this->blago; //  - $this->discount();
     }
 
@@ -1390,6 +1390,9 @@ class Cart {
      */
     public function gift_only()
     {
+        if(!$this->total){
+            $this->recount();
+        }
         return $this->gift_sum > 0 && $this->gift_sum == $this->total;
     }
 }

@@ -786,13 +786,12 @@ class Model_Order extends ORM {
             ->from(['z_order_good', 'og'])
             ->join(['z_good', 'g'])
             ->on('g.id', '=', 'og.good_id')
-            ->where('order_id', '=', $this->id)
-            ->where('code', 'LIKE', '%syst_gift%')
+            ->where('og.order_id', '=', $this->id)
+            ->where('g.code', 'LIKE', '%syst_gift%')
             ->execute()
-            ->get(0);
-
+            ->as_array();
         if ($sum_gift) {
-            $save_gift = Model_Coupon::generate($sum_gift, 1, 1, 1, 0, Model_Coupon::TYPE_SUM, date('Y-m-d H:i'), date(date('Y') + 1 .'-m-d H:i'));
+            $save_gift = Model_Coupon::generate($sum_gift[0]['price'], 1, 1, 1, 0, Model_Coupon::TYPE_SUM, date('Y-m-d H:i'), date(date('Y') + 1 .'-m-d H:i'));
 
             if(empty($data['comment_email']) && $data['comment_email'] == 0){
                 $email = $this->data->email;
