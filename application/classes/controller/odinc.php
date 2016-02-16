@@ -120,22 +120,23 @@ class Controller_Odinc extends Controller {
     public function after()
     {
         Log::instance()->add(Log::INFO, $this->request->action() . ($this->action ? ', action '.$this->action : '').', processing completed, timer: ' . $this->timer());
-        
-        $body = $this->view->render();
+
+        $errors_body = '';
         if ( ! empty($this->errors)) {
-            foreach ($this->errors as $key => $errors) {
+            foreach ($this->errors as $key => &$errors) {
                 if ($key > 0) {
                     if ( ! empty($this->view->saved[$key])) { // ид заказа есть в сохраненных - уберем
                         $this->view->saved[$key] = FALSE;
                         $errors[] = 'SAVED';
                     }
 
-                    $body = $key.':error:'.implode('|', $errors)."\n".$body;
+                    $errors_body = $key.':error:'.implode('|', $errors)."\n".$errors_body;
                 } else {
-                    $body = implode("\n", $errors)."\n".$body;
+                    $errors_body = implode("\n", $errors)."\n".$errors_body;
                 }
             }
         }
+        $body = $errors_body.$this->view->render();
 
         if ('utf8' == $this->request->query('encoding')) {
             header('Content-Type: text/plain; charset=utf-8');
