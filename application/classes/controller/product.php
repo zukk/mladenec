@@ -523,7 +523,7 @@ class Controller_Product extends Controller_Frontend {
 
 			if ( ! empty($a)) $order_data->address_id = $a->id;
             $order_data->client_data = print_r($_SERVER, TRUE);
-            $order_data->source = Session::instance()->get('sbjs');
+            $order_data->source = Session::instance()->get('source');
 			$order_data->save();
 
 			$cart->clean(); // чистка корзины!
@@ -1134,6 +1134,7 @@ class Controller_Product extends Controller_Frontend {
 
         if (Txt::phone_is_mobile($_phone)) $order_data->mobile_phone = $_phone;
         $order_data->client_data = print_r($_SERVER, TRUE);
+        $order_data->source = Session::instance()->get('source');
         $order_data->save();
 
         // очищаем корзину или восстанавливаем корзину

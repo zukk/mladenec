@@ -28,6 +28,7 @@ class Model_User extends ORM {
         'child_discount' => '',
         'child_birth_discount' => '', // счетчик использования скидок за ДР ребенка
         'email_approved' => 0, // флаг подтверждения email
+        'source' => '', // bсточник перехода при регистрации
     ];
 
     protected $_has_one = [
@@ -689,6 +690,7 @@ class Model_User extends ORM {
             'phone'     => strval($phone),
             'created'   => time(),
             'sub'       => 1, // подписка на рассылку - по умолчанию
+            'source'    => Session::instance()->get('source'),
         ])->create();
 
         // создадим юзеру купон со скидкой за подписку на рассылку

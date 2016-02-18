@@ -144,10 +144,6 @@ Route::set('odinc', '1c/<action>.php')
 Route::set('sync', 'sync')
     ->defaults(array('controller' => 'page', 'action' => 'sync'));
 
-// cохранение данных визита в сессию
-Route::set('sbjs_session', 'ajax/sbjs')
-    ->defaults(array('controller' => 'ajax', 'action' => 'sbjs'));
-
 // user
 Route::set('unsubscribe', 'unsubscribe')
     ->defaults(array('controller' => 'user', 'action' => 'unsubscribe'));
