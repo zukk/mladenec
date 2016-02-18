@@ -112,7 +112,8 @@
                             {if $under}{assign var=fname value=$fname|mb_substr:$under}{/if}
                             <strong>{$fname} <i class="toggler"></i></strong>
 
-                            {if Model_Filter::begunok($fid)}
+                            {assign var=begunok value=Model_Filter::begunok($fid)}
+                            {if $begunok}
                                 {* бегунок по весу коляски или ширине шасси *}
                                 {include file="common/menu/begunok.tpl"}
                             {else}

@@ -687,22 +687,45 @@ class Txt {
     }
 
     /**
-     * Распарсить utm_ переменные с $_SERVER
+     * Получить данные по источнику перехода
+	 * В в
      * @param $data
      * @return array
      */
-    public static function parse_utm($data)
+    public static function parse_source($data)
     {
-        $data = str_replace('%25', '%', $data);
-        $data = str_replace('%3D', '=', $data);
-        $data = str_replace('%26', '&', $data);
-        $arr = [];
-        if (preg_match_all('~utm_([a-z]+)(=)([^&\s]+)~isu', $data, $matches)) {
-            foreach($matches[1] as $k => $utm) {
-                $arr[$utm] = urldecode(urldecode($matches[3][$k]));
-            }
-        }
-        if (empty($arr)) return '';
-        return json_encode($arr);
+        $return = [
+			'type' => '',
+			'referer' => '',
+			'url'	=> '',
+		];
+
+		$json = json_decode($data, TRUE);
+
+		if ( ! empty($json['url'])) { // точка входа
+
+			$return['url'] = $json['url'];
+
+			$arr = [];
+			if (preg_match_all('~utm_([a-z]+)(=)([^&\s]+)~isu', $json['url'], $matches)) { // utm-метки
+				foreach($matches[1] as $k => $utm) {
+					$arr[$utm] = urldecode(urldecode($matches[3][$k]));
+				}
+			}
+			if ( ! empty($arr['source'])) {
+				$return['type'] = $arr['source'];
+			}
+		}
+
+		if ( ! empty($json['referer'])) { // откуда пришел
+
+			$return['referer'] = $json['referer'];
+			if (empty($return['type'])) {
+				$return['type'] = parse_url($json['referer'], PHP_URL_HOST);
+			}
+		}
+
+        return $return;
     }
+
 }
