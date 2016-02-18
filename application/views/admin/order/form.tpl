@@ -15,11 +15,11 @@
 
 <hr />
 {if $i->data->source}
-    {assign var=json value=$i->data->source|json_decode}
-    <strong>{$json->source}</strong>
-    <small>{$i->data->source}</small>
+    {assign var=source value=Txt::parse_source($i->data->source)}
+    <strong>{$source.type}</strong><br />
+    <small>{$source.url}</small>
+    <small>[ {$source.referer} ]</small><br />
 {/if}
-
 <hr />
 {if $i->data->client_data}
 <pre style="font-size:10px;">{$i->data->client_data}</pre>

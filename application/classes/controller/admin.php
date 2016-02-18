@@ -2002,7 +2002,7 @@ class Controller_Admin extends Controller_Authorised {
             'source'    => 'Источник',
         ], $orders, 'orders', [
             'status' => function($row) { return $row->status(); },
-            'source' => function($row) { if (($json = json_decode($row->data->source)) && ! empty($json->source)) return $json->source;},
+            'source' => function($row) { $return = Txt::parse_source($row->data->source); return $return['type'];},
             'num' => function($row) { return $row->data->num;},
         ]);
 
