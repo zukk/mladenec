@@ -122,9 +122,22 @@ class Controller_Odinc extends Controller {
         Log::instance()->add(Log::INFO, $this->request->action() . ($this->action ? ', action '.$this->action : '').', processing completed, timer: ' . $this->timer());
         
         $body = $this->view->render();
-        if ( ! empty($this->errors)) $body = implode("\n", $this->errors) . "\n" . $body;
+        if ( ! empty($this->errors)) {
+            foreach ($this->errors as $key => $errors) {
+                if ($key > 0) {
+                    if ( ! empty($this->view->saved[$key])) { // ид заказа есть в сохраненных - уберем
+                        $this->view->saved[$key] = FALSE;
+                        $errors[] = 'SAVED';
+                    }
 
-        if ( 'utf8' == $this->request->query('encoding')) {
+                    $body = $key.':error:'.implode('|', $errors)."\n".$body;
+                } else {
+                    $body = implode("\n", $errors)."\n".$body;
+                }
+            }
+        }
+
+        if ('utf8' == $this->request->query('encoding')) {
             header('Content-Type: text/plain; charset=utf-8');
         } else {
             $body = mb_convert_encoding($body, 'cp1251', 'utf8');
@@ -146,9 +159,9 @@ class Controller_Odinc extends Controller {
     /**
      * Функция генерации ошибки
      */
-    protected function error($string)
+    protected function error($string, $key = 0)
     {
-        $this->errors[] = $string;
+        $this->errors[$key][] = $string;
         Log::instance()->add(Log::ERROR, $string);
     }
 
@@ -390,7 +403,6 @@ class Controller_Odinc extends Controller {
     {
         $strings = explode("\n", $this->body);
         $saved = array();
-        $segments_recount_user_ids = []; // ID пользователей, которым надо пересчитать сегменты
 
         $data = FALSE;
         foreach($strings as $s) {
@@ -479,7 +491,7 @@ class Controller_Odinc extends Controller {
                         $address->save();
                         $new_address = $address->id;
                     } catch (ORM_Validation_Exception $e) {
-                        $this->error('Cannot save address for '.$s.' '.$e->getMessage());
+                        $this->error('Cannot save address for '.$s.' '.$e->getMessage(), $id);
                     }
 
                 } 
@@ -529,7 +541,7 @@ class Controller_Odinc extends Controller {
                         default:
                             $good = ORM::factory('good')->where('code', '=', $code)->find();
                             if ( ! $good->loaded()) {
-                                $this->errors[] = 'Unknown good code - '.$code;
+                                $this->error('Unknown good code - '.$code, $id);
                                 continue;
                             }
                             $goods[$good->id] = array($qty => $price);
@@ -545,13 +557,13 @@ class Controller_Odinc extends Controller {
 
                     if ( ! $order->loaded())
                     {
-                        $this->errors[] = 'Unknown order '.$id;
+                        $this->error('Unknown order '.$id, $id);
                         continue;
                     }
 
                     if ( ! $order->data->loaded())
                     {
-                        $this->errors[] = 'Order data not loaded '.$id;
+                        $this->error('Order data not loaded '.$id, $id);
                         continue;
                     }
                     $order->user_id = $user_id;
@@ -679,7 +691,7 @@ class Controller_Odinc extends Controller {
                         // письмо о смене типа оплаты
                         if ( ! empty($payment_changed)) $order->on_payment_change();
 
-                        $saved[] = $order->id;
+                        $saved[$order->id] = $order->id;
 
                         if ( ! empty($changes)) {
                             foreach($changes as $event) {
@@ -688,11 +700,7 @@ class Controller_Odinc extends Controller {
                         }
 
                     } catch (ORM_Validation_Exception $e) {
-                        $this->error('Cannot save order for '.$s.' '.$e->getMessage());
-                    }
-
-                    if ($status_changed AND $order->status == 'F') { // order delivered - need to recount segments
-                        $segments_recount_user_ids[] = $user_id;
+                        $this->error('Cannot save order for '.$s.' '.$e->getMessage(), $id);
                     }
                     
                     $goods = []; // чистим список товаров
@@ -700,21 +708,8 @@ class Controller_Odinc extends Controller {
             } 
             catch (Txt_Exception $ex)
             {
-                $this->error($ex->getMessage());
+                $this->error($ex->getMessage(), $id);
             }
-        }
-        
-        if ( ! empty($segments_recount_user_ids)) {
-
-            DB::update('z_user')
-                ->set(['segments_recount_ts' => 0])
-                ->where('id', 'IN', $segments_recount_user_ids)
-                ->execute();
-
-            DB::update('user_segment')
-                ->set(['upload_ts' => 0])
-                ->where('user_id', 'IN', $segments_recount_user_ids)
-                ->execute();
         }
 
         $this->view->saved = $saved;
@@ -1131,7 +1126,7 @@ class Controller_Odinc extends Controller {
 
                     $g = $good->clear()->where('code', '=', $code)->find();
                     if ( ! $g->loaded()) {
-                        $this->errors[] = 'Product not found with code '.$code.' for '.$s;
+                        $this->error('Product not found with code '.$code.' for '.$s);
                         continue;
                     }
                     

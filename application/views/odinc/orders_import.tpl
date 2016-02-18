@@ -1,4 +1,5 @@
 {foreach from=$saved item=o}
-{$o}
+{if $o}{$o}{/if}
+
 {/foreach}
 ORDERS IMPORT DONE

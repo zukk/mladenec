@@ -57,7 +57,12 @@ I18n::lang('en-us');
  * Note: If you supply an invalid environment name, a PHP warning will be thrown
  * saying "Couldn't find constant Kohana::<INVALID_ENV_NAME>"
  */
-Kohana::$environment = Kohana::PRODUCTION; // БОЕВОЙ САЙТ!!!
+if ( ! empty($_ENV['KOHANA_ENV']) && $_ENV['KOHANA_ENV'] == 'real') {
+    Kohana::$environment = Kohana::PRODUCTION; // БОЕВОЙ САЙТ!!!
+} else {
+    Kohana::$environment = Kohana::DEVELOPMENT;
+}
+
 /**
  * Initialize Kohana, setting the default options.
  *
@@ -85,7 +90,8 @@ Kohana::$log->attach(new Log_File(APPPATH . 'logs'));
 /**
  * Attach a file reader to config. Multiple readers are supported.
  */
-Kohana::$config->attach(new Config_File);
+Kohana::$config->attach(new Config_File('config'));
+Kohana::$config->attach(new Config_File('config/local', FALSE));
 
 /**
  * Enable modules. Modules are referenced by a relative or absolute path.

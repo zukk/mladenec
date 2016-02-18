@@ -49,7 +49,7 @@ class Model_Order_Data extends ORM {
                     ->from(['z_order', 'o'])
                     ->where('user_id', '=', $this->order->user_id)
                     ->execute()
-                    ->get('cnt') + 1;
+                    ->get('cnt');
         }
         parent::save($validation);
     }
