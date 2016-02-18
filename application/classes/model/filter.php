@@ -154,70 +154,82 @@ class Model_Filter extends ORM {
     ];
 
     /**
-     * Интервалы для Веса колясок
-     */
-    public static $_stroller_weight = [
-        1 => [
-            'min' => 1,
-            'max' => 6,
-            'name' => 'до 6 кг',
-        ],
-        2 => [
-            'min' => 6,
-            'max' => 8,
-            'name' => 'от 6 до 8 кг',
-        ],
-        3 => [
-            'min' => 8,
-            'max' => 10,
-            'name' => 'от 8 до 10 кг',
-        ],
-        4 => [
-            'min' => 10,
-            'max' => 15,
-            'name' => 'от 10 до 15 кг',
-        ],
-        5 => [
-            'min' => 15,
-            'max' => 100,
-            'name' => 'от 15 кг',
-        ]
-    ];
-
-    /**
-     * Интервалы для Шасси колясок
-     */
-    public static $_stroller_shassi = [
-        1 => [
-            'min' => 1,
-            'max' => 40,
-            'name' => 'до 40 см',
-        ],
-        2 => [
-            'min' => 41,
-            'max' => 50,
-            'name' => 'с 41 до 50 см',
-        ],
-        3 => [
-            'min' => 51,
-            'max' => 60,
-            'name' => 'с 51 до 60 см',
-        ],
-        4 => [
-            'min' => 61,
-            'max' => 100,
-            'name' => 'от 61 см',
-        ],
-    ];
-
-    /**
      * бегунок
      * @param $fid
      * @return bool
      */
     public static function begunok($fid)
     {
-        return in_array($fid, [self::STROLLER_SHASSI, self::STROLLER_WEIGHT, self::VOLUME_KG, self::VOLUME_LITR]);
+        $begunki = [
+            self::STROLLER_WEIGHT => [
+                'settings' => [
+                    1 => [
+                        'min' => 1,
+                        'max' => 6,
+                        'name' => 'до 6 кг',
+                    ],
+                    2 => [
+                        'min' => 6,
+                        'max' => 8,
+                        'name' => 'от 6 до 8 кг',
+                    ],
+                    3 => [
+                        'min' => 8,
+                        'max' => 10,
+                        'name' => 'от 8 до 10 кг',
+                    ],
+                    4 => [
+                        'min' => 10,
+                        'max' => 15,
+                        'name' => 'от 10 до 15 кг',
+                    ],
+                    5 => [
+                        'min' => 15,
+                        'max' => 100,
+                        'name' => 'от 15 кг',
+                    ],
+                ],
+                'unit' => 'кг',
+            ],
+
+            self::STROLLER_SHASSI => [
+                'settings' => [
+                    1 => [
+                        'min' => 1,
+                        'max' => 40,
+                        'name' => 'до 40 см',
+                    ],
+                    2 => [
+                        'min' => 41,
+                        'max' => 50,
+                        'name' => 'с 41 до 50 см',
+                    ],
+                    3 => [
+                        'min' => 51,
+                        'max' => 60,
+                        'name' => 'с 51 до 60 см',
+                    ],
+                    4 => [
+                        'min' => 61,
+                        'max' => 100,
+                        'name' => 'от 61 см',
+                    ],
+                ],
+                'unit' => 'см',
+            ],
+
+            self::VOLUME_KG => [
+                'unit' => 'кг',
+            ],
+
+            self::VOLUME_LITR => [
+                'unit' => 'л',
+            ]
+
+        ];
+
+        if (empty($begunki[$fid])) return FALSE;
+        return $begunki[$fid];
     }
 
     /**

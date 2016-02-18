@@ -383,7 +383,7 @@ class Sphinx {
                                 $stroller_weight['max'] = $float;
                             }
 
-                            foreach(Model_Filter::$_stroller_weight as $id => $data) {
+                            foreach(Model_Filter::begunok($fid)['settings'] as $id => $data) {
                                 if (empty($stroller_weight[$id])) $stroller_weight[$id] = 0;
                                 if ($data['max'] >= $float and $data['min'] <= $float) {
                                     $stroller_weight[$id] += $val['qty'];
@@ -403,7 +403,7 @@ class Sphinx {
                                 $stroller_shassi['max'] = $float;
                             }
 
-                            foreach(Model_Filter::$_stroller_shassi as $id => $data) {
+                            foreach(Model_Filter::begunok($fid)['settings'] as $id => $data) {
                                 if (empty($stroller_shassi[$id])) $stroller_shassi[$id] = 0;
                                 if ($data['max'] >= $float and $data['min'] <= $float) {
                                     $stroller_shassi[$id] += $val['qty'];
@@ -1070,10 +1070,11 @@ class Sphinx {
                     } elseif (is_array($values)) { // искусственные интервалы - надо заменить на набор id значений фильтров попадающих в интервал
 
                         $vals_ids = [];
+                        $intervals = Model_Filter::begunok($fid)['settings'];
                         foreach($values as $int_id) {
-                            if ( ! empty(Model_Filter::$_stroller_weight[$int_id])) {
-                                $min = Model_Filter::$_stroller_weight[$int_id]['min'];
-                                $max = Model_Filter::$_stroller_weight[$int_id]['max'];
+                            if ( ! empty(Model_Filter::begunok($fid)['settings'][$int_id])) {
+                                $min = $intervals[$int_id]['min'];
+                                $max = $intervals[$int_id]['max'];
                                 //echo $min.' < '.$max.' = ';
                                 foreach(ORM::factory('filter_value')->where('filter_id', '=', $fid)->find_all()->as_array('id', 'name') as $id => $name) {
                                     if (floatval($name) >= $min && floatval($name) <= $max) {
@@ -1089,6 +1090,7 @@ class Sphinx {
 
                 } elseif ($fid == Model_Filter::STROLLER_SHASSI) { // ширина шасси для колясок
 
+
                     if (is_string($values)) { // передан интервал от - до - умножаем на 10 - в индексе int
 
                         $ss = explode('-', $values);
@@ -1101,10 +1103,11 @@ class Sphinx {
                     } elseif (is_array($values)) { // искусственные интервалы - надо заменить на набор id значений фильтров попадающих в интервал
 
                         $vals_ids = [];
+                        $intervals = Model_Filter::begunok($fid)['settings'];
                         foreach($values as $int_id) {
-                            if ( ! empty(Model_Filter::$_stroller_shassi[$int_id])) {
-                                $min = Model_Filter::$_stroller_shassi[$int_id]['min'];
-                                $max = Model_Filter::$_stroller_shassi[$int_id]['max'];
+                            if ( ! empty($intervals[$int_id])) {
+                                $min = $intervals[$int_id]['min'];
+                                $max = $intervals[$int_id]['max'];
                                 //echo $min.' < '.$max.' = ';
                                 foreach(ORM::factory('filter_value')->where('filter_id', '=', $fid)->find_all()->as_array('id', 'name') as $id => $name) {
                                     if (floatval($name) >= $min && floatval($name) <= $max) {

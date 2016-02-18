@@ -62,9 +62,12 @@
                 {if not empty($params.f)}
                     {foreach from=$params.f key=fid item=fvals}
                         {if not Model_Filter::big($fid)}
-                            {if in_array($fid, [Model_Filter::STROLLER_WEIGHT, Model_Filter::STROLLER_SHASSI])}
+                            {assign var=begunok value=Model_Filter::begunok($fid)}
+                            {if $begunok}
                                 {if is_array($fvals)}
-                                    {$fvals|print_r}
+                                    {foreach from=$fvals item=fval}
+                                    <a href="{$sphinx->href(['f' => [{$fid} => [{-$fval}]]])}">{$begunok.settings[$fval]['name']}</a>
+                                    {/foreach}
                                 {else}
                                     <a title="{$fvals}" href="{$sphinx->href(['f' => [$fid => [0]]])}">{$fvals} {if $fid eq Model_Filter::STROLLER_WEIGHT}кг{else}см{/if}</a>
                                 {/if}
