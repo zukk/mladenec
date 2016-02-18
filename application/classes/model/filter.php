@@ -14,8 +14,9 @@ class Model_Filter extends ORM {
     const STROLLER_WEIGHT = 2329; // бегунок по весу - коляски
     const STROLLER_SHASSI = 2324; // бегунок по ширине шасси - коляски
 
-    const VOLUME_KG = 2352; // вес в кг - быт хим
-    const VOLUME_LITR = 2348; // объем в л - быт хим
+    const VOLUME_KG = -2352; // вес в кг - быт хим
+    const VOLUME_LITR = -2348; // объем в л - быт хим
+    /*  значения с минусом - это никогда не сработает, для включения прописать сюда и в sphinx.conf фактические id  */
 
     const WEIGHT = 100; // искусственный фильтр по весу в подгузах
     const TASTE = 101; // искусственный фильтр  - только выбранные вкусы

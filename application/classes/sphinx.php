@@ -423,7 +423,6 @@ class Sphinx {
                                 $volume_kg['max'] = $float;
                             }
                         }
-                        var_dump($volume_kg);
                     }
                     if ($fid == Model_Filter::VOLUME_LITR) { // объем в быт хим
                         $volume_litr = [];
