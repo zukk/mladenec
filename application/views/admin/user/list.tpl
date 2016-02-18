@@ -53,6 +53,7 @@
         <th>рассылка</th>
         <th>создан</th>
         <th>дети</th>
+        <th>источник</th>
         {if ! empty($access)}
         <th>админ доступ</th>
         {/if}
@@ -80,6 +81,14 @@
                 {if $i->pregnant eq 1}
                 <div>ждет малыша &mdash; {$i->get_pregnant_weeks()} неделя</div>
                 {/if}
+            {/if}
+        </td>
+        <td>
+            {if $i->source}
+                {assign var=source value=Txt::parse_source($i->source)}
+                <strong>{$source.type}</strong><br />
+                <small>{$source.url}</small>
+                <small>[ {$source.referer} ]</small><br />
             {/if}
         </td>
         {if ! empty($access)}
