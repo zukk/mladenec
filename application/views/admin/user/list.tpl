@@ -86,9 +86,7 @@
         <td>
             {if $i->source}
                 {assign var=source value=Txt::parse_source($i->source)}
-                <strong>{$source.type}</strong><br />
-                <small>{$source.url}</small>
-                <small>[ {$source.referer} ]</small><br />
+                <strong>{$source.type}</strong>
             {/if}
         </td>
         {if ! empty($access)}

@@ -709,7 +709,7 @@ class Txt {
 			$arr = [];
 			if (preg_match_all('~utm_([a-z]+)(=)([^&\s]+)~isu', $json['url'], $matches)) { // utm-метки
 				foreach($matches[1] as $k => $utm) {
-					$arr[$utm] = urldecode(urldecode($matches[3][$k]));
+					$arr[$utm] = $matches[3][$k];
 				}
 			}
 			if ( ! empty($arr['source'])) {

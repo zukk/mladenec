@@ -17,7 +17,7 @@
 {if $i->data->source}
     {assign var=source value=Txt::parse_source($i->data->source)}
     <strong>{$source.type}</strong><br />
-    <small>{$source.url}</small>
+    <small>{$source.url}</small><br />
     <small>[ {$source.referer} ]</small><br />
 {/if}
 <hr />

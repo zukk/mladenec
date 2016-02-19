@@ -54,9 +54,7 @@
                 <td>{if $i->coupon_id}{HTML::anchor(Route::url('admin_edit', ['model'=>'coupon', 'id'=> $i->coupon_id]), $i->coupon->name)}{/if}</td>
                 <td>{if $i->data->source}
                         {assign var=source value=Txt::parse_source($i->data->source)}
-                        <strong>{$source.type}</strong><br />
-                        <small>{$source.url}</small>
-                        <small>[ {$source.referer} ]</small><br />
+                        <strong>{$source.type}</strong>
                     {/if}
                 </td>
             </tr>
