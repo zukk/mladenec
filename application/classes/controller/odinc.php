@@ -138,6 +138,11 @@ class Controller_Odinc extends Controller {
         }
         $body = $errors_body.$this->view->render();
 
+        // все переносы заменяем на \r\n
+        $body = str_replace("\r\n", "\n", $body);
+        $body = str_replace("\r", "\n", $body);
+        $body = str_replace("\n", "\r\n", $body);
+
         if ('utf8' == $this->request->query('encoding')) {
             header('Content-Type: text/plain; charset=utf-8');
         } else {
@@ -149,7 +154,7 @@ class Controller_Odinc extends Controller {
             $this->request->action().' complete'.($this->action ? ', action '.$this->action : '').', '.
             $this->request->content_length().' bytes, '.(substr_count($this->body, "\n") + 1).' strings'
         );
-        header('Content-Length:'.strlen($body)); // bug gone ?  /*if (Kohana::$environment !== Kohana::DEVELOPMENT) */ do not send on test server due to bug!
+        header('Content-Length:'.strlen($body));
         echo $body;
         
         Log::instance()->add(Log::INFO, $this->request->action() . ($this->action ? ', action '.$this->action : '').', finished, timer: ' . $this->timer());
