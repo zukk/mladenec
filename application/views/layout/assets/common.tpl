@@ -9,9 +9,12 @@
     {foreach from=Controller_Frontend::$css item=css}
         <link href="/{$css}" rel="stylesheet" type="text/css" />
     {/foreach}
+
 {else}
-    <script src="/j/script.min.js?$SVN$"></script>
-    <link href="/c/style.min.css?$SVN$" rel="stylesheet" type="text/css" />
+
+    <script src="/j/script.min.js?{$smarty.const.CURRENT_VERSION}"></script>
+    <link href="/c/style.min.css?{$smarty.const.CURRENT_VERSION}" rel="stylesheet" type="text/css" />
+
 {/if}
 
 {if empty($user)}

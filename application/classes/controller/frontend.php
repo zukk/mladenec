@@ -25,7 +25,6 @@ class Controller_Frontend extends Controller_Smarty
 		'plugins/mladenecdateslider/jquery.mladenecdateslider.js',
 
         'j/ss.min.js', //стопсоветник stopsovetnik.ru
-        'j/sourcebuster.min.js' // источник трафика
     ];
 
     public static $css = [

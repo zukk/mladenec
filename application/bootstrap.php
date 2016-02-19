@@ -57,8 +57,13 @@ I18n::lang('en-us');
  * Note: If you supply an invalid environment name, a PHP warning will be thrown
  * saying "Couldn't find constant Kohana::<INVALID_ENV_NAME>"
  */
-if ( ! empty($_ENV['KOHANA_ENV']) && $_ENV['KOHANA_ENV'] == 'real') {
-    Kohana::$environment = Kohana::PRODUCTION; // БОЕВОЙ САЙТ!!!
+
+if (is_readable(APPPATH.'config/local/environment.php')) {
+    include(APPPATH.'config/local/environment.php');
+}
+
+if (defined('KOHANA_ENV')) {
+    Kohana::$environment = KOHANA_ENV;
 } else {
     Kohana::$environment = Kohana::DEVELOPMENT;
 }
