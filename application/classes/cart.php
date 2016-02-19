@@ -843,6 +843,7 @@ class Cart {
         $this->present_variants = [];
         $this->promo            = [];
         $this->big              = [];
+        $this->to_wait          = [];
         $this->sborkable        = [];
         $this->discount         = NULL;
 

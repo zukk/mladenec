@@ -6,5 +6,5 @@
  * Среду на боевом проставить Kohana::PRODUCTION
  */
 
-const KOHANA_ENV = Kohana::PRODUCTION;
+const KOHANA_ENV = Kohana::DEVELOPMENT;
 const CURRENT_VERSION = 1;
