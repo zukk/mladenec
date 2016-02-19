@@ -103,6 +103,7 @@ writeUrl('/',
 
 // категории каталога
 $sections = get_sections();
+$sections_count = count($sections);
 foreach($sections as &$section){
 	
 	writeUrl(
@@ -144,7 +145,7 @@ $result = DB::select('g.id', 'g.name', 'g.translit', 'g.group_id')
 		->where('gr.active', '=', 1)
 		->execute()
 		->as_array();
-
+$prod_count = count($result);
 foreach ($result as $row) {
 	
 	$f = DB::select('file_id')->from('z_good_img')->where('good_id', '=', $row['id'])->where('size', '=', 1600)->execute()->as_array('file_id');
@@ -171,6 +172,7 @@ foreach ($result as $row) {
 
 // теговые
 $result = DB::select('code')->from('z_tag')->where('goods_count', '>', 0)/*->where('checked', '=', 1) */->execute();
+$tags_count = count($result);
 while( $tag = $result->current() ){
 	
     writeUrl(
@@ -222,3 +224,234 @@ if($in = fopen($indexFile, 'w')) fwrite($in, $index );
 
 fclose( $in );
 
+/***************************** SEO STATISTICS ************************************/
+$prod_result_title = DB::select('z_good.id', 'z_good.group_name', 'z_good.name')
+	->distinct('z_good.id')
+	->from('z_good')
+	->where('z_good.show', '=', 1)
+	->where('z_good.id', 'NOT IN', DB::select('z_seo.item_id')
+		->from('z_seo')
+		->where('z_seo.title', '!=', '')
+		->where('z_seo.type', '=', 4))
+	->execute()
+	->as_array();
+$prod_missing_title = count($prod_result_title);
+
+$prod_result_desc = DB::select('z_good.id', 'z_good.group_name', 'z_good.name')
+	->distinct('z_good.id')
+	->from('z_good')
+	->where('z_good.show', '=', 1)
+	->where('z_good.id', 'NOT IN', DB::select('z_seo.item_id')
+		->from('z_seo')
+		->where('z_seo.description', '!=', '')
+		->where('z_seo.type', '=', 4))
+	->execute()
+	->as_array();
+$prod_missing_desc = count($prod_result_desc);
+
+$prod_result_keywords = DB::select('z_good.id', 'z_good.group_name', 'z_good.name')
+	->distinct('z_good.id')
+	->from('z_good')
+	->where('z_good.show', '=', 1)
+	->where('z_good.id', 'NOT IN', DB::select('z_seo.item_id')
+		->from('z_seo')
+		->where('z_seo.keywords', '!=', '')
+		->where('z_seo.type', '=', 4))
+	->execute()
+	->as_array();
+$prod_missing_keywords = count($prod_result_keywords);
+
+$cat_result_title = DB::select('z_section.id', 'z_section.name')
+	->distinct('z_section.id')
+	->from('z_section')
+	->where('z_section.active', '=', 1)
+	->where('z_section.id', 'NOT IN', DB::select('z_seo.item_id')
+		->from('z_seo')
+		->where('z_seo.title', '!=', '')
+		->where('z_seo.type', '=', 3))
+	->execute()
+	->as_array();
+$cat_missing_title = count($cat_result_title);
+
+$cat_result_desc = DB::select('z_section.id', 'z_section.name')
+	->distinct('z_section.id')
+	->from('z_section')
+	->where('z_section.active', '=', 1)
+	->where('z_section.id', 'NOT IN', DB::select('z_seo.item_id')
+		->from('z_seo')
+		->where('z_seo.description', '!=', '')
+		->where('z_seo.type', '=', 3))
+	->execute()
+	->as_array();
+$cat_missing_desc = count($cat_result_desc);
+
+$cat_result_keywords = DB::select('z_section.id', 'z_section.name')
+	->distinct('z_section.id')
+	->from('z_section')
+	->where('z_section.active', '=', 1)
+	->where('z_section.id', 'NOT IN', DB::select('z_seo.item_id')
+		->from('z_seo')
+		->where('z_seo.keywords', '!=', '')
+		->where('z_seo.type', '=', 3))
+	->execute()
+	->as_array();
+$cat_missing_keywords = count($cat_result_keywords);
+
+$tag_result_title = DB::select('z_tag.id', 'z_tag.name')
+	->distinct('z_tag.id')
+	->from('z_tag')
+	->where('z_tag.goods_count', '>', 0)
+	->where('z_tag.id', 'NOT IN', DB::select('z_seo.item_id')
+		->from('z_seo')
+		->where('z_seo.title', '!=', '')
+		->where('z_seo.type', '=', 2))
+	->execute()
+	->as_array();
+$tag_missing_title = count($tag_result_title);
+
+$tag_result_desc = DB::select('z_tag.id', 'z_tag.name')
+	->distinct('z_tag.id')
+	->from('z_tag')
+	->where('z_tag.goods_count', '>', 0)
+	->where('z_tag.id', 'NOT IN', DB::select('z_seo.item_id')
+		->from('z_seo')
+		->where('z_seo.description', '!=', '')
+		->where('z_seo.type', '=', 2))
+	->execute()
+	->as_array();
+$tag_missing_desc = count($tag_result_desc);
+
+$tag_result_keywords = DB::select('z_tag.id', 'z_tag.name')
+	->distinct('z_tag.id')
+	->from('z_tag')
+	->where('z_tag.goods_count', '>', 0)
+	->where('z_tag.id', 'NOT IN', DB::select('z_seo.item_id')
+		->from('z_seo')
+		->where('z_seo.keywords', '!=', '')
+		->where('z_seo.type', '=', 2))
+	->execute()
+	->as_array();
+$tag_missing_keywords = count($tag_result_keywords);
+
+$ins = DB::insert('z_seo_statistics')
+	->columns(array(
+		'products_count',
+		'prod_missing_title',
+		'prod_missing_desc',
+		'prod_missing_keywords',
+		'categories_count',
+		'categories_missing_title',
+		'categories_missing_desc',
+		'categories_missing_keywords',
+		'tags_count',
+		'tags_missing_title',
+		'tags_missing_desc',
+		'tags_missing_keywords',
+		'date'
+	))
+	->values(array(
+		$prod_count,
+		$prod_missing_title,
+		$prod_missing_desc,
+		$prod_missing_keywords,
+		$sections_count,
+		$cat_missing_title,
+		$cat_missing_desc,
+		$cat_missing_keywords,
+		$tags_count,
+		$tag_missing_title,
+		$tag_missing_desc,
+		$tag_missing_keywords,
+		date('Y-m-d H:i:s', time())))
+	->execute();
+/***************************** SEO STATISTICS ************************************/
+
+/************************* SEO STATISTICS ЗАПИСЬ В ФАЙЛ *************************/
+$prod_result_all = DB::select('z_good.id', 'z_good.group_name', 'z_good.name')
+	->distinct('z_good.id')
+	->from('z_good')
+	->where('z_good.show', '=', 1)
+	->where('z_good.id', 'NOT IN', DB::select('z_seo.item_id')
+		->from('z_seo')
+		->where('z_seo.title', '!=', '')
+		->where('z_seo.description', '!=', '')
+		->where('z_seo.keywords', '!=', '')
+		->where('z_seo.type', '=', 4))
+	->execute()
+	->as_array();
+
+$dir = APPPATH.'../www/export/seo_statistics/';
+if(!is_dir(APPPATH.'../www/export/seo_statistics')){
+	mkdir(APPPATH.'../www/export/seo_statistics', 0755);
+}
+// output headers so that the file is downloaded rather than displayed
+$filename = 'goods_'.date('Y_m_d').'.csv';
+
+$output = fopen($dir.$filename, 'w');
+
+fputcsv($output, array('id', 'name', 'link'));
+
+foreach($prod_result_all as $prod_csv){
+	$link['id'] = $prod_csv['id'];
+	$link['name'] = $prod_csv['group_name'].' '.$prod_csv['name'];
+	$link['link'] = 'http://'.$host.'/od-men/good/'.$prod_csv['id'];
+	fputcsv($output, $link);
+}
+fclose($output);
+
+$cat_result_all = DB::select('z_section.id', 'z_section.name')
+	->distinct('z_section.id')
+	->from('z_section')
+	->where('z_section.active', '=', 1)
+	->where('z_section.id', 'NOT IN', DB::select('z_seo.item_id')
+		->from('z_seo')
+		->where('z_seo.title', '!=', '')
+		->where('z_seo.description', '!=', '')
+		->where('z_seo.keywords', '!=', '')
+		->where('z_seo.type', '=', 3))
+	->execute()
+	->as_array();
+
+// output headers so that the file is downloaded rather than displayed
+$filename = 'categories_'.date('Y_m_d').'.csv';
+
+$output = fopen($dir.$filename, 'w');
+
+fputcsv($output, array('id', 'name', 'link'));
+
+foreach($cat_result_all as $cat_csv){
+	$link['id'] = $cat_csv['id'];
+	$link['name'] = $cat_csv['name'];
+	$link['link'] = 'http://'.$host.'/od-men/section/'.$cat_csv['id'];
+	fputcsv($output, $link);
+}
+fclose($output);
+
+$tag_result_all = DB::select('z_tag.id', 'z_tag.name')
+	->distinct('z_tag.id')
+	->from('z_tag')
+	->where('z_tag.goods_count', '>', 0)
+	->where('z_tag.id', 'NOT IN', DB::select('z_seo.item_id')
+		->from('z_seo')
+		->where('z_seo.title', '!=', '')
+		->where('z_seo.description', '!=', '')
+		->where('z_seo.keywords', '!=', '')
+		->where('z_seo.type', '=', 2))
+	->execute()
+	->as_array();
+
+// output headers so that the file is downloaded rather than displayed
+$filename = 'tag_'.date('Y_m_d').'.csv';
+
+$output = fopen($dir.$filename, 'w');
+
+fputcsv($output, array('id', 'name', 'link'));
+
+foreach($tag_result_all as $tag_csv){
+	$link['id'] = $tag_csv['id'];
+	$link['name'] = $tag_csv['name'];
+	$link['link'] = 'http://'.$host.'/od-men/tag/'.$tag_csv['id'];
+	fputcsv($output, $link);
+}
+fclose($output);
+/************************* SEO STATISTICS ЗАПИСЬ В ФАЙЛ *************************/

@@ -1,59 +1,73 @@
 <?php
 class Model_Seostatistics extends ORM {
 
-    protected $_table_name = 'z_good';
+    protected $_table_name = 'z_seostatistics';
+
+    protected $_table_columns = array(
+        'id'                          => '',
+        'products_count'              => '',
+        'prod_missing_title'          => '',
+        'prod_missing_desc'           => '',
+        'prod_missing_keywords'       => '',
+        'categories_count'            => '',
+        'categories_missing_title'    => '',
+        'categories_missing_desc'     => '',
+        'categories_missing_keywords' => '',
+        'tags_count'                  => '',
+        'tags_missing_title'          => '',
+        'tags_missing_desc'           => '',
+        'tags_missing_keywords'       => '',
+        'date'                        => ''
+    );
 
     public function get_seostatistics(){
+
+        $date = Request::current()->query('date');
+        $presents['error'] = '';
+        if(!empty($date)){
+            $date = date('Y_m_d', strtotime($date));
+            $dir = APPPATH.'../www/export/seo_statistics/';
+            $files = scandir($dir, 1);
+            $zip = new ZipArchive();
+            $zip_name = $dir."seo_statistics.zip";
+            if($zip->open($zip_name, ZIPARCHIVE::CREATE) !== TRUE){
+                $presents['error'] = "Извините, создание ZIP архива невозможно в настоящее время";
+            }
+            foreach($files as $file){
+                if(strrpos($file, $date) !== FALSE ){
+                    $filename = $dir.$file;
+                    $zip->addFile($filename, $file); // добавляем файлы в zip архив
+                    $zip->deleteName($dir.$file); // добавляем файлы в zip архив
+                } else {
+                    $presents['error'] = "Нет файлов для выбранной даты";
+                }
+            }
+            $zip->close();
+            if(file_exists($zip_name)) {
+                header('Content-type: application/zip');
+                header('Content-Disposition: attachment; filename="'.$zip_name.'"');
+                readfile($zip_name);
+                unlink($zip_name);
+            }
+        }
         $domains = Kohana::$config->load('domains')->as_array();
         $host = $domains['mladenec']['host'];
 
-        $result_title = DB::select('z_good.id', 'z_good.group_name', 'z_good.name')
-            ->distinct('z_good.id')
-            ->from('z_good')
-            ->where('z_good.show', '=', 1)
-            ->where('z_good.id', 'NOT IN', DB::select('z_seo.item_id')
-                ->from('z_seo')
-                ->where('z_seo.title', '!=', ''));
-        $presents['title'] = $result_title->execute()->as_array();
-
-        $result_desc = DB::select('z_good.id', 'z_good.group_name', 'z_good.name')
-            ->distinct('z_good.id')
-            ->from('z_good')
-            ->where('z_good.show', '=', 1)
-            ->where('z_good.id', 'NOT IN', DB::select('z_seo.item_id')
-                ->from('z_seo')
-                ->where('z_seo.description', '!=', ''));
-        $presents['desc'] = $result_desc->execute()->as_array();
-
-        $result_keywords = DB::select('z_good.id', 'z_good.group_name', 'z_good.name')
-            ->distinct('z_good.id')
-            ->from('z_good')
-            ->where('z_good.show', '=', 1)
-            ->where('z_good.id', 'NOT IN', DB::select('z_seo.item_id')
-                ->from('z_seo')
-                ->where('z_seo.keywords', '!=', ''));
-        $presents['keywords'] = $result_keywords->execute()->as_array();
-
-        $dir = APPPATH.'../www/export/sitemap/';
-        $file = fopen( $dir . 'seostatistics.xml', 'w' );
-        fwrite($file, '<?xml version="1.0" encoding="UTF-8"?>'. "\n". '<?xml-stylesheet type="text/xsl" href="/xml-seostatistics.xsl"?>' . "\n". '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'."\n");
-
-        foreach($presents['title'] as $keyword_title){
-            $line = '<url><loc>http://' . $host . '/od-men/goods/' . $keyword_title['id'] . '</loc></url>'. "\n";
-            fwrite($file, $line);
-
+        $count_row = Request::current()->query('count_row');
+        if(!empty($count_row)){
+            $count = $count_row;
+        } else {
+            $count = 20;
         }
-        foreach($presents['desc'] as $keyword_desc){
-            $line = '<url><loc>http://' . $host . '/od-men/goods/' . $keyword_desc['id'] . '</loc></url>'. "\n";
-            fwrite($file, $line);
-        }
-        foreach($presents['keywords'] as $keyword_keywords){
-            $line = '<url><loc>http://' . $host . '/od-men/goods/' . $keyword_keywords['id'] . '</loc></url>'. "\n";
-            fwrite($file, $line);
-        }
+        $query = ORM::factory('seostatistics');
 
-        fwrite($file, '</urlset>');
-        fclose($file);
+        $presents['count_row'] = $count;
+        $presents['pager'] = $pager = new Pager($query->count_all(), $count);
+        $presents['list'] = $query
+            ->limit($pager->per_page)
+            ->offset($pager->offset)
+            ->order_by('date', 'DESC')
+            ->find_all();
         return $presents;
     }
 }
