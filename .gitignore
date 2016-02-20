@@ -9,6 +9,7 @@ www/bonuses/www/admin/plugins/
 www/bonuses/www/images/
 www/bonuses/var/templates_compiled/
 www/bonuses/var/cache/
+www/bonuses/var/debug.log
 sphinx/
 www/upload
 www/export
