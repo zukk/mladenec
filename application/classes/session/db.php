@@ -59,6 +59,14 @@ class Session_Db extends Session {
             }
             $this->_write(); // запишем их в сесиию
         }
+        #заполним referer если нет, потом по нему определим источник входа
+        if ( ! isset($this->_data['source'])) {
+            $this->_data['source'] = json_encode([
+                'referer' => $_SERVER['HTTP_REFERER'],
+                'url' => $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']
+            ]);
+            $this->_write();
+        }
 
         return NULL;
     }

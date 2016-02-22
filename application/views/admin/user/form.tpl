@@ -315,7 +315,7 @@
         </tbody>
     </table>
 {else}
-    Нет
+    <p>Нет</p>
 {/if}
 {if $i->pregnant eq 1 AND $i->get_pregnant_weeks()}
     <div>
@@ -323,6 +323,16 @@
     </div>
 {/if}
 </div>
+
+{if $i->source}
+<h3>Источник</h3>
+<p>
+    {assign var=source value=Txt::parse_source($i->source)}
+    <strong>{$source.type}</strong><br />
+    <small>{$source.url}</small><br />
+    <small>[ {$source.referer} ]</small><br />
+</p>
+{/if}
 
 <form action="{Route::url('admin_list', ['model' => 'user'])}" method="post" id="reset_form">
     <input type="hidden" name="password" value="{$i->id}" />

@@ -1512,7 +1512,7 @@ class Controller_Admin extends Controller_Authorised {
             }
             if (($wiki_cat = $this->request->query('wiki_cat')) != "")
             {
-                $query->where('good.wiki_cat_id', '=',  0);
+                $query->where('good.wiki_cat_id', $wiki_cat == 0 ? '>' : '=',  0);
             }
             if (($google_cat = $this->request->query('google_cat')) != "")
             {
@@ -2002,7 +2002,7 @@ class Controller_Admin extends Controller_Authorised {
             'source'    => 'Источник',
         ], $orders, 'orders', [
             'status' => function($row) { return $row->status(); },
-            'source' => function($row) { if (($json = json_decode($row->data->source)) && ! empty($json->source)) return $json->source;},
+            'source' => function($row) { $return = Txt::parse_source($row->data->source); return $return['type'];},
             'num' => function($row) { return $row->data->num;},
         ]);
 
@@ -2039,7 +2039,7 @@ class Controller_Admin extends Controller_Authorised {
 
             if ($this->request->post('excel')) { // получить ответы в excel
 
-                include(APPPATH.'classes/PHPExcel.php');
+                include_once(APPPATH.'classes/PHPExcel.php');
                 $excel = new PHPExcel();
                 $sheet = $excel->getActiveSheet();
                 $i = 0;

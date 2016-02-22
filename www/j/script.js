@@ -342,11 +342,11 @@ function init_ranges() {
         var mi = $('input.min', this), ma = $('input.max', this);
 
         // current values
-        var xmin = parseInt(mi.val().replace(/ /g, ''));
-        var xmax = parseInt(ma.val().replace(/ /g, ''));
+        var xmin = parseFloat(mi.val().replace(/ /g, ''));
+        var xmax = parseFloat(ma.val().replace(/ /g, ''));
 
-        var min = parseInt(mi.attr('rel')); // limits
-        var max = parseInt(ma.attr('rel'));
+        var min = parseFloat(mi.attr('rel')); // limits
+        var max = parseFloat(ma.attr('rel'));
         if (isNaN(xmin)) {
             xmin = min;
         }
@@ -357,8 +357,8 @@ function init_ranges() {
 
         $(this).attr('rel', ratio); // ratio
         $('span.line', this).css({
-            marginLeft: (xmin - min) / ratio,
-            marginRight: (max - xmax) / ratio
+            marginLeft: Math.round((xmin - min) / ratio),
+            marginRight: Math.round((max - xmax) / ratio)
         });
     });
 
@@ -1146,7 +1146,7 @@ $(document).ready(function () {
             }
 
             var line = $(this).parent(), ratio = parseFloat($(this).closest('div.range').attr('rel')), initX,
-                key = $(line).attr('rev'), link_id = $(line).attr('rel');
+                key = $(line).attr('rev'), link_id = $(line).attr('rel'), digits = parseInt($(this).closest('div.range').attr('data-digits'));
             if (event.type == "touchstart") {
                 var touch = event.originalEvent.touches[0] || event.originalEvent.changedTouches[0];
                 initX = (touch.clientX);
@@ -1166,16 +1166,16 @@ $(document).ready(function () {
                 if (mode == 'left') {
 
                     p = Math.max(0, Math.min(initP + epagex - initX, maxP));
-                    v = parseInt(input.attr('rel')) + Math.round(ratio * p);
+                    v = parseFloat(input.attr('rel')) + ratio * p;
 
                 } else {
 
                     p = Math.max(0, Math.min(initP + initX - epagex, maxP));
-                    v = parseInt(input.attr('rel')) - Math.round(ratio * p);
+                    v = parseFloat(input.attr('rel')) - ratio * p;
                 }
 
                 line.css(cssProp, p + 'px');
-                input.val(v);
+                input.val(v.toFixed(digits));
             };
             $('body')
                 .bind('touchmove', function (event) {
@@ -1196,13 +1196,13 @@ $(document).ready(function () {
 
                     var inputs = line.parent().parent().find('input'), mi = inputs.eq(0), ma = inputs.eq(1);
 
-                    var from = parseInt(mi.val().replace(/[^0-9-]/g, ''));
+                    var from = parseFloat(mi.val().replace(/[^0-9-\.]/g, ''));
                     if (isNaN(from)) {
-                        from = parseInt(mi.attr('rel'));
+                        from = parseFloat(mi.attr('rel'));
                     }
-                    var to = parseInt(ma.val().replace(/[^0-9-]/g, ''));
+                    var to = parseFloat(ma.val().replace(/[^0-9-\.]/g, ''));
                     if (isNaN(to)) {
-                        to = parseInt(ma.attr('rel'));
+                        to = parseFloat(ma.attr('rel'));
                     }
 
                     $('#' + link_id).val(from + '-' + to);
