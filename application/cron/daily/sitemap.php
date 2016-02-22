@@ -333,7 +333,7 @@ $tag_result_keywords = DB::select('z_tag.id', 'z_tag.name')
 	->as_array();
 $tag_missing_keywords = count($tag_result_keywords);
 
-$ins = DB::insert('z_seo_statistics')
+$ins = DB::insert('z_seostatistics')
 	->columns(array(
 		'products_count',
 		'prod_missing_title',
