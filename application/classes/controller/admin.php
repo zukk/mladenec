@@ -1512,7 +1512,7 @@ class Controller_Admin extends Controller_Authorised {
             }
             if (($wiki_cat = $this->request->query('wiki_cat')) != "")
             {
-                $query->where('good.wiki_cat_id', '=',  0);
+                $query->where('good.wiki_cat_id', $wiki_cat == 0 ? '>' : '=',  0);
             }
             if (($google_cat = $this->request->query('google_cat')) != "")
             {
