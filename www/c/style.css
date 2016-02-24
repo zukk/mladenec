@@ -2434,6 +2434,7 @@ div#view h1 {
     position: relative;
     top: -7px;
     left: 10px;
+    padding-right:10px;
 }
 
 #good-price strong {
@@ -7005,3 +7006,54 @@ td.select-present {
     margin: 2px;
     white-space: nowrap;
 }
+
+.real-discount {
+    color:#fff;
+    text-align:center;
+    font: bold 15px/26px 'PT Sans', Verdana, Tahoma, Geneva, sans-serif;
+}
+
+.real-discount span {
+    display: inline-block;
+    height: 26px;
+    border-radius: 3px;
+    padding: 0 9px;
+    margin: 3px 0;
+}
+
+.real-discount span:first-child {
+    background: #eb1c24;
+}
+
+.real-discount span:last-child {
+    background: #7bce66;
+}
+
+.g .real-discount {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 66px;
+    height: 46px;
+    padding:3px;
+    background: #eb1c24;
+    border-radius: 6px;
+}
+
+.g .real-discount span {
+    margin:0;
+    white-space: nowrap;
+    font-size: 20px;
+    height:26px;
+    line-height:26px;
+    display:block;
+}
+
+.g .real-discount span:last-child {
+    background:#fff;
+    color:#434343;
+    font-size: 14px;
+    height:20px;
+    line-height:20px;
+}
+

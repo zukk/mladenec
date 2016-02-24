@@ -46,14 +46,24 @@
     {if $g->sborkable()}
         <a href="/delivery#sborka_tovara"><img src="/i/sborka_icon.png" alt="Бесплатная сборка" title="Бесплатная сборка" /></a>
     {/if}
+
     {if not $g->is_advert_hidden() and not empty($good_action[$g->id])}
         {include file="common/action.tpl" action=$good_action[$g->id]}{* акции по товару *}
     {elseif $g->new}
         <img src="/i/new_h.png" alt="новинка" />
     {/if}
+
     {if $g->section_id eq Model_Section::MILK_ID}
         <abbr abbr="Вся продукция при&nbsp;доставке перевозится в&nbsp;специальных авто-холодильниках<br /><strong>(от +3 до +5 градусов)</strong>"><img src="/i/ice.png" alt="***" /></abbr>
     {/if}
 </div>
+
+{if $g->old_price > 0} {* есть старая цена - покажем скидку в процентах *}
+<div class="real-discount">
+    <span>-{Txt::discount($g)}%</span>
+    {assign var=real value=$g->old_price-$g->price}
+    <span>-{$real|price:0} р.</span>
+</div>
+{/if}
 
 {include file="google/click.tpl" good=$g}
