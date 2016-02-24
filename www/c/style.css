@@ -2434,6 +2434,7 @@ div#view h1 {
     position: relative;
     top: -7px;
     left: 10px;
+    padding-right:10px;
 }
 
 #good-price strong {
@@ -7004,4 +7005,17 @@ td.select-present {
     padding: 4px;
     margin: 2px;
     white-space: nowrap;
+}
+
+.real-discount {
+    display:block;
+    float:left;
+    background:red;
+    color:#fff;
+    border:1px solid #fff;
+    border-radius:9px;
+    white-space:nowrap;
+    line-height:18px;
+    margin-top:2px;
+    padding:0 5px;
 }
