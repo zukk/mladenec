@@ -1153,7 +1153,7 @@ class Model_Good extends ORM {
             ->join(['z_country',      'country'], 'LEFT')  ->on('good.country_id', '=', 'country.id')
 
             ->where('good.show',        '=', 1)
-            ->where('good.qty',         '>=', 1)
+            ->where('good.qty',         '!=', 0)
             ->where('good.brand_id',    '>', 0)
             ->where('good.group_id',    '>', 0)
             ->where('good.price',       '>=', 500)
