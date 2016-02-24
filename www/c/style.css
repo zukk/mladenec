@@ -7007,7 +7007,7 @@ td.select-present {
     white-space: nowrap;
 }
 
-.real-discount {
+.real-discount, .real-economy {
     position: absolute;
     top:0;
     display: inline-block;
@@ -7019,4 +7019,15 @@ td.select-present {
     line-height:23px;
     margin:0 2px;
     padding:0 5px;
+}
+
+.real-economy {
+    background:green;
+    right:5px;
+    top:35px;
+}
+
+.zoombox_thumb .real-discount {
+    top: 5px;
+    right: 5px;
 }

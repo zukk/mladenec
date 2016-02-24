@@ -18,6 +18,13 @@
                 </div>
                 <img class="zoombox_magnifier_icon" src="/i/lupa.png" />
                 {if $cgood->new}<div class="product_new_marker"><img src="/i/new.png" /></div>{/if}
+
+                {if $cgood->old_price > 0} {* есть старая цена - покажем скидку в процентах *}
+                    <span class="real-discount">скидка {Txt::discount($cgood)}%</span><br />
+                    <span class="real-economy">экономия {$cgood->old_price-$cgood->price}р.</span>
+                {/if}
+
+
             </div>
             {if count($good_pics) gt 1 and empty( $infancybox )}
                 <div class="zoombox_st">{foreach from=$good_pics key=k item=i}{if $i.255}<img {if (k%3)}class="cl"{/if} src="{$i.255->get_img(0)}" alt="{$good_name}" />{/if}{/foreach}</div>
@@ -82,6 +89,7 @@
                 {include file="common/action.tpl" action=$good_action[$cgood->id]}{* акции по товару *}
             {/if}
 
+            <br />
             {if ($default_price neq $lovely_price)}
                 {if $lovely}
                     <abbr abbr="Ваш статус - Любимый клиент">{$default_price|price} обычная цена</abbr>
