@@ -7008,14 +7008,15 @@ td.select-present {
 }
 
 .real-discount {
-    display:block;
-    float:left;
+    position: absolute;
+    top:0;
+    display: inline-block;
     background:red;
     color:#fff;
     border:1px solid #fff;
     border-radius:9px;
     white-space:nowrap;
-    line-height:18px;
-    margin-top:2px;
+    line-height:23px;
+    margin:0 2px;
     padding:0 5px;
 }
