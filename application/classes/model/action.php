@@ -1096,10 +1096,20 @@ class Model_Action extends ORM
             foreach ($actions as $id => $a) {
                 if (($a->show || ($a->parent_id && ! empty($actions[$a->parent_id]->show))) && ! empty($a->show_gifticon)) {
                     if ($a->parent_id) { // есть родительская акция - берем от неё id и name, тип + описание - своё
-                        $return[$good_id][$a->parent_id] = ['name' => $actions[$a->parent_id]->name, 'preview' => $a->preview, 'type' => $a->is_gift_type() ? 'gift' : 'sale'];
+                        $return[$good_id][$a->parent_id] = [
+                            'name' => $actions[$a->parent_id]->name,
+                            'preview' => $a->preview,
+                            'type' => $a->is_gift_type() ? 'gift' : 'sale',
+                            'discount' => $a->type == self::TYPE_PRICE
+                        ];
                     } else {
                         if (empty($return[$good_id][$a->id])) { // не перезаписываем если уже поставлено подчиненной акцией
-                            $return[$good_id][$a->id] = ['name' => $a->name, 'preview' => $a->preview, 'type' => $a->is_gift_type() ? 'gift' : 'sale'];
+                            $return[$good_id][$a->id] = [
+                                'name' => $a->name,
+                                'preview' => $a->preview,
+                                'type' => $a->is_gift_type() ? 'gift' : 'sale',
+                                'discount' => $a->type == self::TYPE_PRICE
+                            ];
                         }
                     }
                 }
