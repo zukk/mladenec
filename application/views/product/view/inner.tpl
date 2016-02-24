@@ -1,51 +1,16 @@
 <div itemscope itemtype="http://schema.org/Product" {if $cgood->is_cloth()}class="cloth"{/if}>
 
 {assign var=good_pics value=$cgood->get_images()}
+
 {capture assign=good_name}{$group->name|escape:html} {if not $group->good}{$goods[{$prop->id}]->name|escape:html}{/if}{/capture}
-{if $cgood->is_cloth()}     {assign var=imgsize value='380x560'} {else}     {assign var=imgsize value='380'} {/if}
 
-{if empty($infancybox)}
-    {if $cgood->show}
-        <div class="zoombox {if $prop->img380}_380{/if}">
-            <div class="zoombox_thumb">
-                <div class="zoombox_magnifier"></div>
-                <div class="zoombox_roll">
-                    {foreach from=$good_pics key=k item=i}
-                        <img itemprop="image" src="{if ! empty($i[$imgsize])}{$i[$imgsize]->get_img(0)}{else}{$i.255->get_img(0)}{/if}" {if $k gt 0}class="hide"{/if} {if $i.1600}rel="{$i.1600->get_img(0)}"{/if} alt="{$good_name} {$k}" />
-                        {foreachelse}
-                        <img src="http://www.mladenec-shop.ru/images/no_pic70.png" alt="{$good_name}" />
-                    {/foreach}
-                </div>
-                <img class="zoombox_magnifier_icon" src="/i/lupa.png" />
-                {if $cgood->new}<div class="product_new_marker"><img src="/i/new.png" /></div>{/if}
-
-                {if $cgood->old_price > 0} {* есть старая цена - покажем скидку в процентах *}
-                    <span class="real-discount">скидка {Txt::discount($cgood)}%</span><br />
-                    <span class="real-economy">экономия {$cgood->old_price-$cgood->price}р.</span>
-                {/if}
-
-
-            </div>
-            {if count($good_pics) gt 1 and empty( $infancybox )}
-                <div class="zoombox_st">{foreach from=$good_pics key=k item=i}{if $i.255}<img {if (k%3)}class="cl"{/if} src="{$i.255->get_img(0)}" alt="{$good_name}" />{/if}{/foreach}</div>
-            {/if}
-        </div>
-    {else}
-        {include file='product/view/notshowimage.tpl'}
-    {/if}
+{if $cgood->is_cloth()}
+    {assign var=imgsize value='380x560'}
 {else}
-    <div class="zoombox">
-        <div class="zoombox_thumb">
-            <div class="zoombox_magnifier"></div>
-            <div class="zoombox_roll">
-                {foreach from=$good_pics key=k item=i}
-                    {if $i.255}<img src="{$i.255->get_img(0)}" {if $k > 0}class="hide"{/if} {if $i.1600}rel="{$i.1600->get_img(0)}"{/if} alt="{$good_name}" />{/if}
-                {/foreach}
-            </div>
-        </div>
-    </div>
+    {assign var=imgsize value='380'}
 {/if}
-<div class="zoombox_large"></div>
+
+    {include file='product/view/zoombox.tpl'}
 
 <div id="good-view">
 <div id="view">

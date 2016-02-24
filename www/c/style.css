@@ -7007,27 +7007,48 @@ td.select-present {
     white-space: nowrap;
 }
 
-.real-discount, .real-economy {
-    position: absolute;
-    top:0;
-    display: inline-block;
-    background:red;
+.real-discount {
     color:#fff;
-    border:1px solid #fff;
-    border-radius:9px;
-    white-space:nowrap;
-    line-height:23px;
-    margin:0 2px;
-    padding:0 5px;
+    text-align:center;
+    font: bold 19px/26px 'PT Sans', Verdana, Tahoma, Geneva, sans-serif;
 }
 
-.real-economy {
-    background:green;
-    right:5px;
-    top:35px;
+.real-discount span {
+    display: inline-block;
+    height: 26px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    padding: 0 9px;
+    margin: 3px 0;
 }
 
-.zoombox_thumb .real-discount {
-    top: 5px;
-    right: 5px;
+.real-discount span:first-child {
+    background: #eb1c24;
 }
+
+.real-discount span:last-child {
+    background: #7bce66;
+}
+
+.g .real-discount {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 72px;
+}
+
+.g .real-discount span {
+    margin:0;
+    white-space: nowrap;
+    font-size: 24px;
+    height:28px;
+    line-height:28px;
+    display:block;
+}
+
+.g .real-discount span:last-child {
+    font-size: 15px;
+    height:20px;
+    line-height:20px;
+}
+
