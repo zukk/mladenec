@@ -7010,12 +7010,12 @@ td.select-present {
 .real-discount {
     color:#fff;
     text-align:center;
-    font: bold 19px/26px 'PT Sans', Verdana, Tahoma, Geneva, sans-serif;
+    font: bold 15px/26px 'PT Sans', Verdana, Tahoma, Geneva, sans-serif;
 }
 
 .real-discount span {
     display: inline-block;
-    height: 21px;
+    height: 26px;
     border-radius: 3px;
     text-transform: uppercase;
     padding: 0 9px;
