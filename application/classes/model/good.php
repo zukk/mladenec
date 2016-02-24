@@ -1107,7 +1107,7 @@ class Model_Good extends ORM {
                 ->from('z_good')
                 ->join('wiki_categories')
                 ->on('z_good.wiki_cat_id','=','wiki_categories.category_id')
-                ->where('z_good.qty',   '>', 0)
+                ->where('z_good.qty',   '!=', 0)
                 ->where('z_good.show',  '=', 1)
                 ->where('z_good.price', '>', 300)
                 ->execute()

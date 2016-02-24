@@ -1516,7 +1516,7 @@ class Controller_Admin extends Controller_Authorised {
             }
             if (($google_cat = $this->request->query('google_cat')) != "")
             {
-                $query->where('good.google_cat_id', '=',  0);
+                $query->where('good.google_cat_id', $google_cat == 0 ? '>' : '=',  0);
             }
 
 
