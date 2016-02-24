@@ -62,7 +62,7 @@ $(function() {
         {foreach from=$list item=l}
             <tr {cycle values='class="odd",'}>
                 <td><small>{$l->id}</small></td>
-                <td>{$l->date}</td>
+                <td>{date('d-m-Y H:i:s', strtotime($l->date))}</td>
                 <td>{$l->products_count}</td>
                 <td>{$l->prod_missing_title}</td>
                 <td>{$l->prod_missing_desc}</td>

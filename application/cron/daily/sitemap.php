@@ -53,7 +53,7 @@ function newPart()
 	$i++;
 	
 	$file = fopen( $dir . $i . '.xml', 'w' );
-	fwrite($file, '<?xml version="1.0" encoding="UTF-8"?>'. "\n". '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'."\n");
+	fwrite($file, '<?xml version="1.0" encoding="UTF-8"?>'. "\n". '<?xml-stylesheet type="text/xsl" href="/xml-sitemap.xsl"?>'. "\n". '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'."\n");
 	
 	$length = $c = 0;
 }
@@ -233,6 +233,9 @@ $prod_result_title = DB::select('z_good.id', 'z_good.group_name', 'z_good.name')
 		->from('z_seo')
 		->where('z_seo.title', '!=', '')
 		->where('z_seo.type', '=', 4))
+	->join('z_group')
+	->on('z_good.group_id', '=', 'z_group.id')
+	->where('z_group.active', '=', 1)
 	->execute()
 	->as_array();
 $prod_missing_title = count($prod_result_title);
@@ -245,6 +248,9 @@ $prod_result_desc = DB::select('z_good.id', 'z_good.group_name', 'z_good.name')
 		->from('z_seo')
 		->where('z_seo.description', '!=', '')
 		->where('z_seo.type', '=', 4))
+	->join('z_group')
+	->on('z_good.group_id', '=', 'z_group.id')
+	->where('z_group.active', '=', 1)
 	->execute()
 	->as_array();
 $prod_missing_desc = count($prod_result_desc);
@@ -257,6 +263,9 @@ $prod_result_keywords = DB::select('z_good.id', 'z_good.group_name', 'z_good.nam
 		->from('z_seo')
 		->where('z_seo.keywords', '!=', '')
 		->where('z_seo.type', '=', 4))
+	->join('z_group')
+	->on('z_good.group_id', '=', 'z_group.id')
+	->where('z_group.active', '=', 1)
 	->execute()
 	->as_array();
 $prod_missing_keywords = count($prod_result_keywords);
@@ -377,6 +386,9 @@ $prod_result_all = DB::select('z_good.id', 'z_good.group_name', 'z_good.name')
 		->where('z_seo.description', '!=', '')
 		->where('z_seo.keywords', '!=', '')
 		->where('z_seo.type', '=', 4))
+	->join('z_group')
+	->on('z_good.group_id', '=', 'z_group.id')
+	->where('z_group.active', '=', 1)
 	->execute()
 	->as_array();
 
