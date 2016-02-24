@@ -1,4 +1,4 @@
-<offer id="{$g['id']}" available="{if $g['qty'] gt 0}true{else}false{/if}">
+<offer id="{$g['id']}" available="true">
     <url>http://www.mladenec-shop.ru{Route::url('product',['translit'=>$g['translit'],'group_id'=>$g['group_id'],'id'=>$g['id']])}</url>
     <price>{$g['price']|string_format:"%d"}</price>
     {$oldprice = round($g['old_price'],2)}
@@ -23,7 +23,7 @@
     <vendor><![CDATA[{Txt::clean_rude_symbols($g['brand_name']|escape:'html')}]]></vendor>
     <vendorCode>{$g['barcode']|escape:'html'}</vendorCode>
     <description><![CDATA[{Txt::clean_rude_symbols($g['desc']|strip_tags|escape:'html')}]]></description>
-    <stock>{$g['qty']|escape:'html'}</stock>
+    {if $g['qty'] gt 0}<stock>{$g['qty']|escape:'html'}</stock>{/if}
 
     {*if not empty($section) and ($section->is_cloth() or $section->id eq Model_Section::CLOTHS_ROOT)*}
     {if not empty( $good_filter )}
