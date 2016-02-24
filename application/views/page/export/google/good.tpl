@@ -14,7 +14,7 @@
     {/if}
 
     <g:condition>new</g:condition>
-    <g:availability>{if $g['qty'] gt 0}in stock{else}out of stock{/if}</g:availability>
+    <g:availability>{if $g['qty'] gt 0}in stock{elseif $g['qty'] lt 0}preorder{else}out of stock{/if}</g:availability>
     <g:price>{$g['price']|string_format:"%.2f"} RUB</g:price>
 
     <g:brand><![CDATA[{Txt::clean_rude_symbols($g['brand_name']|escape:'html')}]]></g:brand>
