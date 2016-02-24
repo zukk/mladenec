@@ -7033,19 +7033,25 @@ td.select-present {
     position: absolute;
     top: 3px;
     right: 3px;
-    width: 72px;
+    width: 66px;
+    height: 46px;
+    padding:3px;
+    background: #eb1c24;
+    border-radius: 6px;
 }
 
 .g .real-discount span {
     margin:0;
     white-space: nowrap;
     font-size: 20px;
-    height:28px;
-    line-height:28px;
+    height:26px;
+    line-height:26px;
     display:block;
 }
 
 .g .real-discount span:last-child {
+    background:#fff;
+    color:#434343;
     font-size: 14px;
     height:20px;
     line-height:20px;
