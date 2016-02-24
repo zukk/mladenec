@@ -18,9 +18,9 @@
 
             {if $cgood->old_price > 0} {* есть старая цена - покажем скидку в процентах *}
                 <div class="real-discount">
-                    <span>скидка {Txt::discount($cgood)}%</span>
+                    <span>СКИДКА {Txt::discount($cgood)}%</span>
                     {assign var=real value=$cgood->old_price-$cgood->price}
-                    <span>экономия {$real|price:0} р.</span>
+                    <span>ЭКОНОМИЯ {$real|price:0} р.</span>
                 </div>
             {/if}
 
