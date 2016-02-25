@@ -431,7 +431,7 @@ $(document).ready(function () {
     $('.rr_slider').each(function() { // слайдеры - асинхронно загружаем
         var url = '/slide/rr-' + $(this).attr('data-func'), param = $(this).attr('data-param'), div = $(this);
         if (param) url += '/' + param;
-        url += '?t=' + $(this).attr('title');
+        url += '?t=' + encodeURIComponent($(this).attr('title'));
 
         window.setTimeout(
             $.get(url, function(data) {
