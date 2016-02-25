@@ -59,11 +59,27 @@
 </div>
 
 {if $g->old_price > 0} {* есть старая цена - покажем скидку в процентах *}
-<div class="real-discount">
-    <span>-{Txt::discount($g)}%</span>
-    {assign var=real value=$g->old_price-$g->price}
-    <span>-{$real|price:0} р.</span>
-</div>
+
+    {if not empty($good_action[$g->id])} {* ищем акцию *}
+
+        {foreach from=$good_action[$g->id] item=icon key=action_id}
+            {if $icon.discount}
+                {assign var=pop_icon value=$icon}
+                {assign var=pop_action value=$action_id}
+            {/if}
+        {/foreach}
+
+    {/if}
+
+    <a class="real-discount"
+            {if ! empty($pop_action)} href="{Route::url('action', ['id' => $pop_action])}"{/if}
+            {if ! empty($pop_icon)} abbr="<b>{$pop_icon.name|escape:html}</b><br />{$pop_icon.preview|escape:html}"{/if}
+            >
+        <span>-{Txt::discount($g)}%</span>
+        {assign var=real value=$g->old_price-$g->price}
+        <span>-{$real|price:0} р.</span>
+    </a>
+
 {/if}
 
 {include file="google/click.tpl" good=$g}
