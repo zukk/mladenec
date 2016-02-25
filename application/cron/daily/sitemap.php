@@ -4,6 +4,7 @@
  * Запускать раз в сутки
  * Карта сайта и все подкарты кладутся в каталог /export
  */
+ini_set('memory_limit', '1024M');
 require(__DIR__.'/../../../www/preload.php');
 
 $domains = Kohana::$config->load('domains')->as_array(); // = Kohana::$config->load('domains')->as_array();
