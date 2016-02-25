@@ -47,4 +47,5 @@ return array(
     'ozontype'          => 'Категории OZON',
     'wikicategories' => 'Категории wikimart',
     'googlecategories' => 'Категории google',
+    'seostatistics'  => 'SEO - статистика',
 );

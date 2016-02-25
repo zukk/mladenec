@@ -18,6 +18,7 @@
 
     <script src="/j/fancybox/jquery.fancybox.pack.js"></script>
     <link href="/j/fancybox/jquery.fancybox.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 
 	<script src="/j/redactor/redactor.min.js"></script>
     <script src="/j/redactor/filemanager.js"></script>
@@ -29,6 +30,7 @@
 	<script src="/j/redactor/goods.js"></script>
     <script src="/j/redactor/ru.js"></script>
     <script src="/j/admin/tags/magicsuggest-min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
     <script src="/j/admin/filemanager.js"></script>
     <script src="/j/admin/jstree/jstree.min.js"></script>

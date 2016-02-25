@@ -3265,5 +3265,15 @@ class Controller_Admin extends Controller_Authorised {
 
         return $return;
     }
+
+    /**
+     * Вызов функции для получения сео статистики
+     * @return array
+     */
+    public function action_seostatistics_list()
+    {
+        $stats = new Model_Seostatistics();
+        return $stats->get_seostatistics();
+    }
 }
 
