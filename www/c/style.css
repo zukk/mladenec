@@ -4442,11 +4442,11 @@ ins.nnn {
 #body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody tr td { padding: 4px 0; }
 #body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody tr > td:first-child img {  position: relative; display: inline-block }
 #body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody tr > td > .comparision-table-row-box_pampers-ru-sis { min-height: 70px; vertical-align: middle; display: inline-block; width: 100%; }
+#body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody tr > td > .comparision-table-row-box_pampers-ru-sis:hover { text-decoration: none;}
 #body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody .comparision-table-row-picture-box_pampers-ru-sis { display: inline-block; width: 39%; text-align: right; padding-right: 10px; }
 #body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody .comparision-table-row-picture_pampers-ru-sis { position: relative; line-height: 60px; display: inline-block; width: 35%; text-align: right }
 #body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody .comparision-table-row-picture_pampers-ru-sis img { vertical-align: middle }
 #body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody .comparision-table-row-picture_pampers-ru-sis:after,
-#body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .pointer-tooltip_pampers-ru-sis:after { position: absolute; bottom: 5px; width: 35px; height: 35px; background: url(/i/pampers/v2/comparision-table-row-point.png) no-repeat; content: ""; }
 #body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .pointer-tooltip_pampers-ru-sis:after { right: -10px; }
 #body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody tr:nth-child(even) .comparision-table-row-picture_pampers-ru-sis:after { left: -6px; }
 
@@ -4454,48 +4454,8 @@ ins.nnn {
 #body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody tr:nth-child(odd) .comparision-table-row-picture_pampers-ru-sis:after { right: -6px; }
 #body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody tr:nth-child(2) .comparision-table-row-picture_pampers-ru-sis:after { left: auto; right: 50%; }
 #body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody tr:nth-child(4) .comparision-table-row-picture_pampers-ru-sis:after { left: auto; right: 50%; }
-
-#body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody .comparision-table-row-picture_pampers-ru-sis .ctdot_pampers-ru-sis,
-#body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-footer_pampers-ru-sis .ctdot_pampers-ru-sis { bottom:-7px; border: 15px solid #ff9636;background: transparent;-webkit-border-radius: 60px;-moz-border-radius: 60px;border-radius: 60px;height: 60px; width: 60px;-webkit-animation: pulsetp 3s ease-out; -moz-animation: pulsetp 3s ease-out; -o-animation: pulsetp 3s ease-out;-ms-animation: pulsetp 3s ease-out;animation: pulsetp 3s ease-out;-webkit-animation-iteration-count: infinite;-moz-animation-iteration-count: infinite;-o-animation-iteration-count: infinite; -ms-animation-iteration-count: infinite;animation-iteration-count: infinite;position: absolute;z-index: 100;opacity: 0;}
-#body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody tr:nth-child(odd) .comparision-table-row-picture_pampers-ru-sis .ctdot_pampers-ru-sis { left: auto; right: -26%; }
-#body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody tr:nth-child(even) .comparision-table-row-picture_pampers-ru-sis .ctdot_pampers-ru-sis { left: auto; right: 38%; }
-#body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-footer_pampers-ru-sis .ctdot_pampers-ru-sis { left:87%; }
-@-moz-keyframes pulsetp {
-    0% {-moz-transform: scale(0);opacity: 0.0;}
-    25% { -moz-transform: scale(0);opacity: 0.1;}
-    50% {-moz-transform: scale(0.1);opacity: 0.3;}
-    75% { -moz-transform: scale(0.5);opacity: 0.5;}
-    100% {-moz-transform: scale(1);opacity: 0.0;}
-}
-@-webkit-keyframes pulsetp {
-    0% { -webkit-transform: scale(0);opacity: 0.0;}
-    25% {-webkit-transform: scale(0);opacity: 0.1;}
-    50% {-webkit-transform: scale(0.1);opacity: 0.3;}
-    75% {-webkit-transform: scale(0.5);opacity: 0.5;}
-    100% {-webkit-transform: scale(1);opacity: 0.0;}
-}
-@-o-keyframes pulsetp {
-    0% { -o-transform: scale(0);opacity: 0.0;}
-    25% {-o-transform: scale(0);opacity: 0.1;}
-    50% {-o-transform: scale(0.1);opacity: 0.3;}
-    75% {-o-transform: scale(0.5);opacity: 0.5;}
-    100% {-o-transform: scale(1);opacity: 0.0;}
-}
-@-ms-keyframes pulsetp {
-    0% { -ms-transform: scale(0);opacity: 0.0;}
-    25% {-ms-transform: scale(0);opacity: 0.1;}
-    50% {-ms-transform: scale(0.1);opacity: 0.3;}
-    75% {-ms-transform: scale(0.5);opacity: 0.5;}
-    100% {-ms-transform: scale(1);opacity: 0.0;}
-}
-@keyframes pulsetp {
-    0% { transform: scale(0);opacity: 0.0;}
-    25% {transform: scale(0);opacity: 0.1;}
-    50% {transform: scale(0.1);opacity: 0.3;}
-    75% {transform: scale(0.5);opacity: 0.5;}
-    100% {transform: scale(1);opacity: 0.0;}
-}
 #body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody .comparision-table-row-details_pampers-ru-sis { font-family: Arial, RotonReg, Verdana, Helvetica, sans-serif; display: inline-block; text-align: left; width: 59%; vertical-align: top; padding-top: 5px; padding-bottom: 5px; vertical-align: middle; padding-left: 10px; margin-left: -10px }
+#body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody .comparision-table-row-details_pampers-ru-sis:hover { text-decoration:none;}
 #body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody tr .comparision-table-row-details_pampers-ru-sis .name_pampers-ru-sis { font-weight: bold; font-size: 14px; }
 #body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody tr.c1_pampers-ru-sis .comparision-table-row-details_pampers-ru-sis .name_pampers-ru-sis { color: #ac9038; }
 #body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody tr.c2_pampers-ru-sis .yellow { color: #fac902 !important; }
@@ -4618,15 +4578,6 @@ ins.nnn {
 #body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table-row-tooltip_pampers-ru-sis {
     top:0;
     right:-190px;
-}
-#body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody tr:nth-child(odd) .comparision-table-row-picture_pampers-ru-sis .ctdot_pampers-ru-sis {
-    right:-20%;
-}
-#body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody tr:nth-child(even) .comparision-table-row-picture_pampers-ru-sis .ctdot_pampers-ru-sis {
-    right:33%;
-}
-#body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-footer_pampers-ru-sis .ctdot_pampers-ru-sis {
-    left:48%;
 }
 #body.pampers-page div#comparision_pampers-ru-sis.section_pampers-ru-sis #comparision-wrap_pampers-ru-sis .comparision-table_pampers-ru-sis table tbody tr td:not(:first-child) {
     font-size:16px;

@@ -89,25 +89,9 @@
                             <tbody>
                                 <tr class="c1_pampers-ru-sis">
                                     <td>
-                                        <div class="comparision-table-row-box_pampers-ru-sis">
+                                        <a class="comparision-table-row-box_pampers-ru-sis" href="?f2199=18695&f2200=18743&ba=14">
                                             <div class="comparision-table-row-picture_pampers-ru-sis">
                                                 <img src="/i/pampers/v2/comparision-picture-premium-care.png" alt="Premium Care - 5 ЗВЕЗД защиты кожи">
-                                                <div class="comparision-table-row-tooltip_pampers-ru-sis">
-                                                    <div class="tooltip-picture_pampers-ru-sis">
-                                                        <img src="/i/pampers/v2/comparision-picture-premium-care-tooltip.png" alt="Premium Care - 5 ЗВЕЗД защиты кожи">
-                                                    </div>
-                                                    <div class="tooltip-details_pampers-ru-sis">
-                                                        <div class="tooltip-details-name_pampers-ru-sis">
-                                                            Premium Care
-                                                        </div>
-                                                        <ul class="tooltip-details-advs_pampers-ru-sis">
-                                                            <li>5 ЗВЕЗД защиты кожи</li>
-                                                            <li>Помогают сохранять кожу малыша в идеальном состоянии</li>
-                                                        </ul>
-                                                        <a href="?f2200=18743&ba=14" class="tooltip-details-purchase_pampers-ru-sis br-4_pampers-ru-sis">Показать</a>
-                                                    </div>
-                                                </div>
-                                                <div class="ctdot_pampers-ru-sis"></div>
                                             </div>
                                             <div class="comparision-table-row-details_pampers-ru-sis">
                                                 <div class="name_pampers-ru-sis">
@@ -117,7 +101,7 @@
                                                     "5 ЗВЕЗД" защиты кожи малыша
                                                 </div>
                                             </div>
-                                        </div>
+                                        </a>
                                     </td>
                                     <td><a href="?size=0&f2200=18743&f2199=18695">&lt;2.5<small>кг</small></a></td>
                                     <td><a href="?size=1&f2200=18743&f2199=18695">2-5<small>кг</small></a></td>
@@ -130,25 +114,9 @@
                                 </tr>
                                 <tr class="c1_pampers-ru-sis">
                                     <td>
-                                        <div class="comparision-table-row-box_pampers-ru-sis">
+                                        <a class="comparision-table-row-box_pampers-ru-sis" href="?f2199=18696&f2200=18743&ba=15">
                                             <div class="comparision-table-row-picture_pampers-ru-sis">
                                                 <img src="/i/pampers/v2/comparision-picture-premium-care-2.png" alt="Трусики Premium Care - Трусики такие мягкие, что Ваш малыш их даже не заметит">
-                                                <div class="comparision-table-row-tooltip_pampers-ru-sis">
-                                                    <div class="tooltip-picture_pampers-ru-sis">
-                                                        <img src="/i/pampers/v2/comparision-picture-premium-care-pants-tooltip.png" alt="Трусики Premium Care - Трусики такие мягкие, что Ваш малыш их даже не заметит">
-                                                    </div>
-                                                    <div class="tooltip-details_pampers-ru-sis">
-                                                        <div class="tooltip-details-name_pampers-ru-sis">
-                                                            Трусики Premium Care
-                                                        </div>
-                                                        <ul class="tooltip-details-advs_pampers-ru-sis">
-                                                            <li>До 12 часов сухости</li>
-                                                            <li>Трусики такие мягкие, что Ваш малыш их даже не заметит</li>
-                                                        </ul>
-                                                        <a href="?f2199=18696&f2200=18743&ba=15" class="tooltip-details-purchase_pampers-ru-sis br-4_pampers-ru-sis">Показать</a>
-                                                    </div>
-                                                </div>
-                                                <div class="ctdot_pampers-ru-sis"></div>
                                             </div>	
                                             <div class="comparision-table-row-details_pampers-ru-sis">
                                                 <div class="name_pampers-ru-sis">
@@ -158,7 +126,7 @@
                                                     Трусики такие мягкие, <br />что Ваш малыш их<br />даже не заметит
                                                 </div>
                                             </div>
-                                        </div>
+                                        </a>
                                     </td>
                                     <td></td>
                                     <td></td>
@@ -171,25 +139,9 @@
                                 </tr>
                                 <tr class="c2_pampers-ru-sis">
                                     <td>
-                                        <div class="comparision-table-row-box_pampers-ru-sis">
-                                            <div class="comparision-table-row-picture_pampers-ru-sis">
+                                        <a class="comparision-table-row-box_pampers-ru-sis" href="?f2200=18728&ba=16">
+                                            <div class="comparision-table-row-picture_pampers-ru-sis"">
                                                 <img src="/i/pampers/v2/comparision-picture-active-baby-dry.png" alt="Active Baby-Dry - До 12 часов надежной сухости">
-                                                <div class="comparision-table-row-tooltip_pampers-ru-sis">
-                                                    <div class="tooltip-picture_pampers-ru-sis">
-                                                        <img src="/i/pampers/v2/comparision-picture-active-baby-dry-tooltip.png" alt="Active Baby-Dry - До 12 часов надежной сухости">
-                                                    </div>
-                                                    <div class="tooltip-details_pampers-ru-sis">
-                                                        <div class="tooltip-details-name_pampers-ru-sis">
-                                                            Active Baby-Dry
-                                                        </div>
-                                                        <ul class="tooltip-details-advs_pampers-ru-sis">
-                                                            <li>До 12 часов сухости</li>
-                                                            <li>Рельефный слой и основа, которая надежно запирает влагу внутри</li>
-                                                        </ul>
-                                                        <a href="?f2200=18728&ba=16" class="tooltip-details-purchase_pampers-ru-sis br-4_pampers-ru-sis">Показать</a>
-                                                    </div>
-                                                </div>
-                                                <div class="ctdot_pampers-ru-sis"></div>
                                             </div>
                                             <div class="comparision-table-row-details_pampers-ru-sis">
                                                 <div class="name_pampers-ru-sis yellow">
@@ -202,7 +154,7 @@
                                                     До 2x раз суше обычного подгузника
                                                 </div>
                                             </div>
-                                        </div>
+                                        </a>
                                     </td>
                                     <td></td>
                                     <td><a href="?size=1&f2200=18728" class="yellow">2-5<small>кг</small></a></td>
@@ -215,25 +167,9 @@
                                 </tr>
                                 <tr class="c3_pampers-ru-sis">
                                     <td>
-                                        <div class="comparision-table-row-box_pampers-ru-sis">
+                                        <a class="comparision-table-row-box_pampers-ru-sis" href="?f2200=18738&ba=25">
                                             <div class="comparision-table-row-picture_pampers-ru-sis">
                                                 <img src="/i/pampers/v2/comparision-picture-panties.png" alt="Трусики - Самые сухие трусики для мальчиков и девочек">
-                                                <div class="comparision-table-row-tooltip_pampers-ru-sis">
-                                                    <div class="tooltip-picture_pampers-ru-sis">
-                                                        <img src="/i/pampers/v2/comparision-picture-pants-tooltip.png" alt="Трусики - Самые сухие трусики для мальчиков и девочек">
-                                                    </div>
-                                                    <div class="tooltip-details_pampers-ru-sis">
-                                                        <div class="tooltip-details-name_pampers-ru-sis">
-                                                            Трусики Pampers Pants
-                                                        </div>
-                                                        <ul class="tooltip-details-advs_pampers-ru-sis">
-                                                            <li>До 12 часов сухости</li>
-                                                            <li>Универсальный впитывающий слой для мальчиков и девочек</li>
-                                                        </ul>
-                                                        <a href="?f2200=18738&ba=25" class="tooltip-details-purchase_pampers-ru-sis br-4_pampers-ru-sis">Показать</a>
-                                                    </div>
-                                                </div>
-                                                <div class="ctdot_pampers-ru-sis"></div>
                                             </div>
                                             <div class="comparision-table-row-details_pampers-ru-sis">
                                                 <div class="name_pampers-ru-sis">
@@ -243,7 +179,7 @@
                                                     Непревзойденно сухие трусики для&nbsp;мальчиков и&nbsp;девочек
                                                 </div>
                                             </div>
-                                        </div>
+                                        </a>
                                     </td>
                                     <td></td>
                                     <td></td>
@@ -256,25 +192,9 @@
                                 </tr>
                                 <tr class="c4_pampers-ru-sis">
                                     <td>
-                                        <div class="comparision-table-row-box_pampers-ru-sis">
+                                        <a class="comparision-table-row-box_pampers-ru-sis" href="?f2200=18730&ba=18">
                                             <div class="comparision-table-row-picture_pampers-ru-sis">
                                                 <img src="/i/pampers/v2/comparision-picture-sleep-and-play.png" alt="Sleep &amp; Play - Сухой по СУПЕРцене">
-                                                <div class="comparision-table-row-tooltip_pampers-ru-sis">
-                                                    <div class="tooltip-picture_pampers-ru-sis">
-                                                        <img src="/i/pampers/v2/comparision-picture-sleep-and-play-tooltip.png" alt="Sleep &amp; Play - Сухой по СУПЕРцене">
-                                                    </div>
-                                                    <div class="tooltip-details_pampers-ru-sis">
-                                                        <div class="tooltip-details-name_pampers-ru-sis">
-                                                            Sleep &amp; Play
-                                                        </div>
-                                                        <ul class="tooltip-details-advs_pampers-ru-sis">
-                                                            <li>До 9&nbsp;часов сухости</li>
-                                                            <li>Двойные манжетики по&nbsp;бокам, защищающие от&nbsp;протеканий</li>
-                                                        </ul>
-                                                        <a href="?f2200=18730&ba=18" class="tooltip-details-purchase_pampers-ru-sis br-4_pampers-ru-sis">Показать</a>
-                                                    </div>
-                                                </div>
-                                                <div class="ctdot_pampers-ru-sis"></div>
                                             </div>
                                             <div class="comparision-table-row-details_pampers-ru-sis">
                                                 <div class="name_pampers-ru-sis">
@@ -284,7 +204,7 @@
                                                     Надежная сухость каждому по&nbsp;карману
                                                 </div>
                                             </div>
-                                        </div>
+                                        </a>
                                     </td>
                                     <td></td>
                                     <td></td>
@@ -299,24 +219,9 @@
                         </table>
                         <div class="comparision-footer_pampers-ru-sis">
                             <img src="/i/pampers/v2/comparision-footer-heart.png" class="comparision-footer-heart_pampers-ru-sis" alt="">
-                            <div class="comparision-footer-wipes_pampers-ru-sis tooltip-handler_pampers-ru pointer-tooltip_pampers-ru-sis">
+                            <a class="comparision-footer-wipes_pampers-ru-sis tooltip-handler_pampers-ru pointer-tooltip_pampers-ru-sis" href="?ba=14&c=28856">
                                 <img src="/i/pampers/v2/comparision-footer-wipes.png" alt="">
-                                <div class="comparision-table-row-tooltip_pampers-ru-sis reversed_pampers-ru-sis">
-                                    <div class="tooltip-picture_pampers-ru-sis">
-                                        <img src="/i/pampers/v2/comparision-footer-wipes-tooltip.png" alt="Premium Care - 5 ЗВЕЗД защиты кожи">
-                                    </div>
-                                    <div class="tooltip-details_pampers-ru-sis">
-                                        <div class="tooltip-details-name_pampers-ru-sis">
-                                            Салфетки  Pampers
-                                        </div>
-                                        <ul class="tooltip-details-advs_pampers-ru-sis">
-                                            <li>Нежное очищение кожи вашего малыша</li>
-                                        </ul>
-                                        <a href="?ba=14&c=28856" class="tooltip-details-purchase_pampers-ru-sis br-4_pampers-ru-sis">Показать</a>
-                                    </div>
-                                </div>
-                                <div class="ctdot_pampers-ru-sis"></div>
-                            </div>
+                            </a>
                             <p class="comparision-footer-cleansing_pampers-ru-sis">
                                 Деликатное очищение для нежной кожи малыша
                             </p>
