@@ -13,6 +13,15 @@
             <h1 itemprop="name">{$group->name} {if not $group->good}<span>{$cgood->name}</span>{/if}</h1>
             <meta itemprop="brand" content="{$cgood->brand->name}" />
 
+            {assign var=lovely value=Cart::instance()->status_id()}
+            {assign var=lovely_price value=$price[$cgood->id]}
+            {assign var=default_price value=$cgood->price}
+            {if ! empty($lovely)}
+                {assign var=current_price value=$lovely_price}
+            {else}
+                {assign var=current_price value=$default_price}
+            {/if}
+
             {include file='product/view/price.tpl'}
 
         </div>
@@ -95,7 +104,8 @@
                     <div class="delivery_price">
                         <strong>Доставка</strong>
                         <div style="margin: 10px 0">
-                            <em>По Москве</em> доставка от {Model_Zone::min_price({Model_Zone::DEFAULT_ZONE}, $current_price)|price}<br />
+                            {assign var=ship value=Model_Zone::min_price({Model_Zone::DEFAULT_ZONE}, $cgood->price)}
+                            <em>По Москве</em> доставка {if $ship == 0}бесплатно{else}{$ship|price}{/if}<br />
                             <em>По Московской области</em> стоимость доставки + {Model_Order::PRICE_KM} р/км<br />
                         </div>
                         <em>По России</em> доставка осуществляется транспортной компанией<br />
