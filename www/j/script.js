@@ -1095,11 +1095,11 @@ $(document).ready(function () {
             return false;
         })
 
-        .on('mouseenter', 'abbr', function () { // tooltip show
+        .on('mouseenter', 'abbr, a.real-discount', function () { // tooltip show
             var a = $(this).attr('abbr');
             tt(this, a ? a : $('#abbr').attr('abbr'));
         })
-        .on('mouseleave', 'abbr', function () { // tooltip hide
+        .on('mouseleave', 'abbr, a.real-discount', function () { // tooltip hide
             tt(false);
         })
 
