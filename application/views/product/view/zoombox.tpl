@@ -17,11 +17,27 @@
             </div>
 
             {if $cgood->old_price > 0} {* есть старая цена - покажем скидку в процентах *}
-                <div class="real-discount">
+
+                {if not empty($good_action[$cgood->id])} {* ищем акцию *}
+
+                    {foreach from=$good_action[$cgood->id] item=icon key=action_id}
+                        {if $icon.discount}
+                            {assign var=pop_icon value=$icon}
+                            {assign var=pop_action value=$action_id}
+                        {/if}
+                    {/foreach}
+
+                {/if}
+
+                <a class="real-discount"
+                    {if ! empty($pop_action)} href="{Route::url('action', ['id' => $pop_action])}"{/if}
+                    {if ! empty($pop_icon)} abbr="<b>{$pop_icon.name|escape:html}</b><br />{$pop_icon.preview|escape:html}"{/if}
+                >
                     <span>СКИДКА {Txt::discount($cgood)}%</span>
                     {assign var=real value=$cgood->old_price-$cgood->price}
                     <span>ЭКОНОМИЯ {$real|price:0} р.</span>
-                </div>
+                </a>
+
             {/if}
 
             {if count($good_pics) gt 1 and empty( $infancybox )}

@@ -7008,9 +7008,14 @@ td.select-present {
 }
 
 .real-discount {
+    display: block;
     color:#fff;
     text-align:center;
     font: bold 15px/26px 'PT Sans', Verdana, Tahoma, Geneva, sans-serif;
+}
+
+.real-discount:hover {
+    color:#fff;
 }
 
 .real-discount span {
