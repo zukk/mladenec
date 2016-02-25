@@ -33,7 +33,7 @@ fwrite($fp,'</categories>
 $goods_written = 0;
 $image_types = 'originals';
 
-for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size,$heap_number, ['id', 'IN', ['52231', '158548', '52233', '158547', '147052', '147053', '170522']]);$heap_number++) {
+for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size,$heap_number, [['good.id', 'NOT IN', ['52231', '158548', '52233', '158547', '147052', '147053', '170522']]]);$heap_number++) {
     $good_ids = [];
     foreach($goods as &$g) {
         $good_ids[] = $g['id'];
