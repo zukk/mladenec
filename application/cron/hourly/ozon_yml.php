@@ -37,13 +37,6 @@ $catalog = ORM::factory('section')
     ->find_all()
     ->as_array('id');
 
-$qtyE  = ORM::factory('ozon')->find_all()->as_array();
-$elements = array();
-foreach( $qtyE as $key => $element ){
-
-	$elements[$element->type][$element->id_item] = $element->scount;
-}
-    
 fwrite($fp,View::factory('smarty:page/export/yml/categories', array('catalog' => $catalog)));
 
 fwrite($fp,'</categories>
@@ -69,30 +62,11 @@ for (
     foreach($goods as &$g) {
 		
 		$minqty = 0;
-		$sparent = $catalog[$g['section_id']]->parent_id;
-		if( $sparent > 0 && !empty( $elements[Model_Ozon::T_CATEGORY][$sparent] ) ){
-			$minqty = $elements[Model_Ozon::T_CATEGORY][$sparent];
-		}
-		
-		if( !empty( $elements[Model_Ozon::T_CATEGORY][$g['section_id']] ) ){
-			$minqty = $elements[Model_Ozon::T_CATEGORY][$g['section_id']];
-		}
-		
-		if( !empty( $elements[Model_Ozon::T_BRAND][$g['brand_id']] ) ){
-			$minqty = $elements[Model_Ozon::T_BRAND][$g['brand_id']];
-		}
-		
-		if( !empty( $elements[Model_Ozon::T_GOOD][$g['id']] ) ){
-			$minqty = $elements[Model_Ozon::T_GOOD][$g['id']];
-		}
-		
+
 		if( $g['id1c'] > 0 && ( $g['qty'] > $minqty || $g['qty'] == -1 ) ) {
             // $g['id'] = $g['id1c'];
-			fwrite($fp, View::factory('smarty:page/export/yml/good_ozon', array('g' => $g))); // label used inside for Qty!
+			fwrite($fp, View::factory('smarty:page/export/yml/good_ozon', ['g' => $g])); // label used inside for Qty!
 			$goods_written++;
-		}
-		else{
-			echo $g['id1c'] .' : '. $g['name'] . ' - ' . $g['qty'] . ' - ' . $minqty . "\n";
 		}
     }
 	unset( $g );
