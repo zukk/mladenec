@@ -85,6 +85,23 @@ class Controller_Daemon extends Controller
     /************************************************************ задания **********************************************/
 
     /**
+     * Задание: генерация электронного чека
+     * @return bool
+     */
+    protected function quest_check($params)
+    {
+        $order = new Model_Order($params);
+        if ( ! $order->loaded()) return FALSE;
+        try {
+            $order->get_check(TRUE);
+        } catch (ErrorException $e) {
+            Log::instance()->add(Log::WARNING, 'проблемы при создании чека для заказа '.$order->id.': '.$e->getMessage());
+            return FALSE;
+        }
+        return TRUE;
+    }
+
+    /**
      * Задание: Обновление данных в GR
      * @return bool
      */

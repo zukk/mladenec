@@ -1,41 +1,9 @@
 <div itemscope itemtype="http://schema.org/Product">
 
-    {if empty($infancybox)}
-        {if $cgood->show}
-            <div class="zoombox {if $prop->img380}_380{/if}">
-                <div class="zoombox_thumb">
-                    <div class="zoombox_magnifier"></div>
-                    <div class="zoombox_roll">
-                        {foreach from=$good_pics key=k item=i}
-                            <img itemprop="image" src="{if ! empty($i[$imgsize])}{$i[$imgsize]->get_img(0)}{else}{$i.255->get_img(0)}{/if}" {if $k gt 0}class="hide"{/if} {if $i.1600}rel="{$i.1600->get_img(0)}"{/if} alt="{$good_name} {$k}" />
-                            {foreachelse}
-                            <img src="http://www.mladenec-shop.ru/images/no_pic70.png" alt="{$good_name}" />
-                        {/foreach}
-                    </div>
-                    <img class="zoombox_magnifier_icon" src="/i/lupa.png" />
-                    {if $cgood->new}<div class="product_new_marker"><img src="/i/new.png" /></div>{/if}
-                </div>
-                {if count($good_pics) gt 1 and empty( $infancybox )}
-                    <div class="zoombox_st">{foreach from=$good_pics key=k item=i}{if $i.255}<img {if (k%3)}class="cl"{/if} src="{$i.255->get_img(0)}" alt="{$good_name}" />{/if}{/foreach}</div>
-                {/if}
-            </div>
-        {else}
-            {include file='product/view/notshowimage.tpl'}
-        {/if}
-    {else}
-        <div class="zoombox">
-            <div class="zoombox_thumb">
-                <div class="zoombox_magnifier"></div>
-                <div class="zoombox_roll">
-                    {foreach from=$good_pics key=k item=i}
-                        {if $i.255}<img src="{$i.255->get_img(0)}" {if $k > 0}class="hide"{/if} {if $i.1600}rel="{$i.1600->get_img(0)}"{/if} alt="{$good_name}" />{/if}
-                    {/foreach}
-                </div>
-            </div>
-        </div>
-    {/if}
-    <div class="zoombox_large"></div>
+    {include file='product/view/zoombox.tpl'}
+
     <div id="good-view">
+
         <div id="view">
             <a name="{$cgood->id}"></a>
             <input type="hidden" id="good_id" value="{$cgood->id}" />
@@ -45,52 +13,8 @@
             <h1 itemprop="name">{$group->name} {if not $group->good}<span>{$cgood->name}</span>{/if}</h1>
             <meta itemprop="brand" content="{$cgood->brand->name}" />
 
-            {if $cgood->show}
+            {include file='product/view/price.tpl'}
 
-                {assign var=lovely value=Cart::instance()->status_id()}
-                {assign var=lovely_price value=$price[$cgood->id]}
-                {assign var=default_price value=$cgood->price}
-                {if ! empty($lovely)}
-                    {assign var=current_price value=$lovely_price}
-                {else}
-                    {assign var=current_price value=$default_price}
-                {/if}
-
-                <div id="good-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
-
-                    <div class="share42init fr" data-path="/i/"></div>
-                    <script src="/j/share42.js"></script>
-
-                    <strong {if $cgood->old_price gt 0}class="no"{/if}>
-                        {$current_price|price}
-                        <meta itemprop="priceCurrency" content="RUR" />
-                        <meta itemprop="price" content="{$current_price}" />
-                        {if $cgood->qty != 0}
-                            <link itemprop="availability" href="http://schema.org/InStock"/>
-                        {else}
-                            <link itemprop="availability" href="http://schema.org/OutOfStock"/>
-                        {/if}
-                    </strong>
-                    {if $cgood->old_price gt 0}<del>{$cgood->old_price|price}</del>{/if}
-
-                    {if $cgood->sborkable()}
-                        <a href="/delivery#sborka_tovara"><img src="/i/sborka_icon.png" alt="Бесплатная сборка" title="Бесплатная сборка" /></a>
-                    {/if}
-                    {if not $cgood->is_advert_hidden() and not empty($good_action[$cgood->id])}
-                        {include file="common/action.tpl" action=$good_action[$cgood->id]} {* акции по товару *}
-                    {/if}
-
-                    <br />
-                    {if ($default_price neq $lovely_price)}
-                        {if $lovely}
-                            <abbr abbr="Ваш статус - Любимый клиент">{$default_price|price} обычная цена</abbr>
-                        {else}
-                            <abbr>{$lovely_price} для любимого клиента</abbr>
-                        {/if}
-                    {/if}
-                </div>
-
-            {/if}
         </div>
 
         {* выбор цвета *}

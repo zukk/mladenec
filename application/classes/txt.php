@@ -728,4 +728,13 @@ class Txt {
         return $return;
     }
 
+	/**
+	 * Рассчитать скидку в процентах
+	 */
+	public static function discount(Model_Good $g)
+	{
+		return round(($g->old_price - $g->price) / $g->old_price * 100);
+
+	}
+
 }
