@@ -264,6 +264,11 @@ function tt(item, content) {
             left: $(item).parent().offset().left + 27,
             top: offset.top - tooltip.outerHeight() - 5
         };
+    } else if ($(item).parent().hasClass('zoombox')) { // discount under zoombox
+        var pos = {
+            left: offset.left + 155,
+            top: offset.top - tooltip.outerHeight() - 5
+        };
     } else {
         var pos = {
             left: offset.left - 10,
@@ -1095,11 +1100,11 @@ $(document).ready(function () {
             return false;
         })
 
-        .on('mouseenter', 'abbr', function () { // tooltip show
+        .on('mouseenter', 'abbr, a.real-discount', function () { // tooltip show
             var a = $(this).attr('abbr');
-            tt(this, a ? a : $('#abbr').attr('abbr'));
+            if (a || ! $(this).is('a')) tt(this, a ? a : $('#abbr').attr('abbr')); // do not show standart text in discount tooltips
         })
-        .on('mouseleave', 'abbr', function () { // tooltip hide
+        .on('mouseleave', 'abbr, a.real-discount', function () { // tooltip hide
             tt(false);
         })
 
