@@ -652,12 +652,15 @@ class Controller_Odinc extends Controller {
                     try {
                         $order->save();
 
-                        if ($order->status == 'F' && ! empty($order->check)) { // если пришел статус - доставлено, то всегда генерим чек
-                            try {
-                                $order->get_check(TRUE);
-                            } catch (Kohana_Exception $e) {
-                                Log::instance()->add(Log::WARNING, 'проблемы при создании чека для заказа '.$order->id.': '.$e->getMessage());
-                            }
+                        if ($order->status == 'F' && ! empty($order->check)) { // если пришел статус - доставлено, то всегда генерим чек (задание демону)
+
+                            $quest = new Model_Daemon_Quest();
+                            $quest->values([
+                                'action'    => 'check',
+                                'params'    => $order->id,
+                            ]);
+                            $quest->save();
+                            Daemon::new_task();
                         }
                         if ( ! empty($goods)) $order->change_goods($goods);
 
