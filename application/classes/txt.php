@@ -733,7 +733,7 @@ class Txt {
 	 */
 	public static function discount(Model_Good $g)
 	{
-		return round(($g->old_price - $g->price) / $g->price * 100);
+		return round(($g->old_price - $g->price) / $g->old_price * 100);
 
 	}
 
