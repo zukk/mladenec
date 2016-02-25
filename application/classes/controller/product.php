@@ -394,8 +394,8 @@ class Controller_Product extends Controller_Frontend {
             $post['street'] = ' ';
             $post['house'] = 1;
             $post['kv'] = 1;
-            $post['name'] = 'noname';
-            $post['last_name'] = 'noname';
+            $post['name'] = $user->name;
+            $post['last_name'] = $user->last_name;
         }
 
         $delivery_type = (int)$post['delivery_type'];
