@@ -510,7 +510,6 @@ class Model_Order extends ORM {
         }
 
         $ins->execute();
-
     }
 
     /**
@@ -801,7 +800,7 @@ class Model_Order extends ORM {
             ->execute()
             ->as_array();
         if ($sum_gift) {
-            $save_gift = Model_Coupon::generate($sum_gift[0]['price'], 1, 1, 1, 0, Model_Coupon::TYPE_SUM, date('d-m-Y H:i'), date('d.m.'.(date('Y') + 1).' H:i'));
+            $save_gift = Model_Coupon::generate($sum_gift[0]['price'], 1, 1, 1, 0, Model_Coupon::TYPE_SUM, date('Y-m-d H:i'), date(date('Y') + 1 .'-m-d H:i'));
 
             if(empty($sum_gift[0]['comment_email']) && $sum_gift[0]['comment_email'] == 0){
                 $email = $this->data->email;
