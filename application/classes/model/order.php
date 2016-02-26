@@ -479,28 +479,38 @@ class Model_Order extends ORM {
      */
     public function change_goods($goods)
     {
-        $good_action = DB::select('good_id','action_id')
+        $good_action = DB::select('good_id', 'comment', 'comment_email', 'action_id')
                 ->from('z_order_good')
                 ->where('order_id',  '=',  $this->id)
-                ->where('action_id', '!=', 0)
-                ->execute()->as_array('good_id','action_id');
-        
+                //->where('action_id', '!=', 0)
+                ->execute()->as_array();
         DB::delete('z_order_good')->where('order_id', '=', $this->id)->execute(); // удалим всё что было
         
-        $ins = DB::insert('z_order_good', ['order_id', 'good_id', 'price', 'quantity', 'action_id']);
+        $ins = DB::insert('z_order_good', ['order_id', 'good_id', 'price', 'quantity', 'comment', 'comment_email', 'action_id']);
         
         foreach ($goods as $id => $g) {
+            foreach($good_action as $good_act){
+                $comment = 0;
+                $comment_email = 0;
+                if($id == $good_act['good_id']){
+                    $comment = $good_act['comment'];
+                    $comment_email = $good_act['comment_email'];
+                }
+            }
+
             $ins->values([
                 'order_id' => $this->id,
                 'good_id' => $id,
                 'price' => current($g),
                 'quantity' => key($g),
+                'comment' => $comment,
+                'comment_email' => $comment_email,
                 'action_id' => (empty($good_action[$id]) ? 0 : $good_action[$id])
             ]);
         }
 
         $ins->execute();
-        
+
     }
 
     /**
@@ -782,7 +792,7 @@ class Model_Order extends ORM {
      */
     function activate_gift()
     {
-        $sum_gift = DB::select('g.price')
+        $sum_gift = DB::select('g.price', 'og.comment', 'og.comment_email')
             ->from(['z_order_good', 'og'])
             ->join(['z_good', 'g'])
             ->on('g.id', '=', 'og.good_id')
@@ -791,17 +801,17 @@ class Model_Order extends ORM {
             ->execute()
             ->as_array();
         if ($sum_gift) {
-            $save_gift = Model_Coupon::generate($sum_gift[0]['price'], 1, 1, 1, 0, Model_Coupon::TYPE_SUM, date('Y-m-d H:i'), date(date('Y') + 1 .'-m-d H:i'));
+            $save_gift = Model_Coupon::generate($sum_gift[0]['price'], 1, 1, 1, 0, Model_Coupon::TYPE_SUM, date('d-m-Y H:i'), date('d.m.'.(date('Y') + 1).' H:i'));
 
-            if(empty($data['comment_email']) && $data['comment_email'] == 0){
+            if(empty($sum_gift[0]['comment_email']) && $sum_gift[0]['comment_email'] == 0){
                 $email = $this->data->email;
             } else {
-                $email = $data['comment_email'];
+                $email = $sum_gift[0]['comment_email'];
             }
-            if(empty($data['comment']) && $data['comment'] == 0){
+            if(empty($sum_gift[0]['comment']) && $sum_gift[0]['comment'] == 0){
                 $message = '';
             } else {
-                $message = $data['comment'];
+                $message = $sum_gift[0]['comment'];
             }
             Mail::htmlsend('creategift', array('gift' => $save_gift, 'order' => $this, 'message' => $message), $email, 'Покупка сертификата!');
         }
