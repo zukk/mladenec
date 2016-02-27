@@ -3,7 +3,7 @@
 /**
  * Данные о последнем аплоаде в гр есть в таблице getresponse
  * Нам нужно отписать если кто вдруг отписался, и обновить тех у кого uploaded == NULL
- * по умолчанию обрабатывает 100 человек
+ * по умолчанию обрабатывает 1000 человек
  * ключ --count дает число людей но не обрабатывает их
  */
 require('../../../www/preload.php');
@@ -17,7 +17,7 @@ ob_end_flush();
 flush();
 
 $count = FALSE;
-$limit = 100;
+$limit = 1000;
 if ( ! empty($argv[1])) {
     if ($argv[1] == '--count') $count = TRUE; // выдаем статистику по количеству
     if (ctype_digit($argv[1])) $limit = $argv[1];
@@ -184,7 +184,7 @@ foreach ($user_ids as $row) {
         'content' => empty($row['has_girl'])  ? 'нет' : 'да'
     ];
     
-    $resp = $gr->upload($name, $email, $customs);
+    $resp = $gr->upload($row, $customs);
     if ($resp === TRUE) {
         $uploaded_ids[] = $row['id'];
     }
