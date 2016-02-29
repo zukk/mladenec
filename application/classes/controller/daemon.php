@@ -102,6 +102,28 @@ class Controller_Daemon extends Controller
     }
 
     /**
+     * Задание: Отсылка письма
+     * В параметрах должен быть json массива [html =>, to =>, subj =>, copy=>]
+     * @return bool
+     */
+    protected function quest_mail($params)
+    {
+        $decoded = json_decode($params, TRUE);
+        $mail = new Mail();
+
+        $mail->setHTML($decoded['html']);
+        $mail->send($decoded['to'], 'Младенец.РУ: '.$decoded['subj']);
+
+        if ( ! empty($decoded['copy'])) {
+            if ( ! $mail->send_smtp('zakaz@mladenec-shop.ru,1creport@mladenec-shop.ru', 'Младенец.РУ: '.$decoded['subj'])) {
+                mail('m.zukk@ya.ru', 'SMTP ERROR sending copy', $mail->smtp_error);
+            }
+        }
+
+        return TRUE;
+    }
+
+    /**
      * Задание: Обновление данных в GR
      * @return bool
      */

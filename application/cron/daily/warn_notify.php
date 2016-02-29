@@ -4,14 +4,21 @@ require('../../../www/preload.php');
 
 $result = DB::query(Database::SELECT, "SELECT good_id FROM z_warn GROUP BY good_id")->execute();
 
-while( $row = $result->current() ){
+while ($row = $result->current()) {
 
-	$warns = ORM::factory('good_warn')->where('notified','=','0')->where('timemark', '<=', date('Y-m-d', time()-24*3600*7))->where('good_id', '=', $row['good_id'])->with('user')->with('good')->find_all()->as_array();
+	$warns = ORM::factory('good_warn')
+		->with('user')
+		->with('good')
+		->where('notified','=','0')
+		->where('timemark', '<=', date('Y-m-d', time()-24*3600*7))
+		->where('good_id', '=', $row['good_id'])
+		->find_all()
+		->as_array();
+
 	if ( ! empty($warns)) {
 		$warns_send = 0;
 		foreach($warns as $w) {
 			if ($w->notify()){
-				echo 'sdf';
 				$warns_send++;
 			}
 		}

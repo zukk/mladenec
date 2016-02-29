@@ -1,0 +1,1 @@
+﻿alter table z_daemon_quest change params params mediumtext not null;

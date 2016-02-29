@@ -82,16 +82,18 @@ class Mail {
 
     public static function htmlsend($tmpl, $params, $to, $subject)
     {
-        $mail = new self();
-        $mail->setHTML(View::factory('smarty:mail/'.$tmpl, $params + array('site' => self::site()))->render());
-
-        if ($tmpl == 'order') { // шлём копии писем через smtp - а то яндекс нас забанил за слишком много писем
-            if ( ! $mail->send_smtp('zakaz@mladenec-shop.ru,1creport@mladenec-shop.ru', 'Младенец.РУ: '.$subject)) {
-                mail('m.zukk@ya.ru', 'SMTP ERROR sending copy', $mail->smtp_error);
-            }
-        }
-
-        return $mail->send($to, 'Младенец.РУ: '.$subject);
+        $quest = new Model_Daemon_Quest(); // задание демону
+        $quest->values([
+            'action'    => 'mail',
+            'params'    => json_encode([
+                'html'  => View::factory('smarty:mail/'.$tmpl, $params + array('site' => self::site()))->render(),
+                'to'    => $to,
+                'subj'  => $subject,
+                'copy'  => $tmpl == 'order',
+            ])
+        ]);
+        $quest->save();
+        Daemon::new_task();
     }
 
     public function attachUploaded($file)
@@ -241,7 +243,7 @@ class Mail {
                 $subject = $subject . ', to: ' . $to;
                 $to = 'm.zukk@ya.ru';
             }
-            if ( ! $this->send_smtp($to, 'Младенец.РУ: '.$subject)) { // с тестового - шлем через smtp
+            if ( ! $this->send_smtp($to, $subject)) { // с тестового - шлем через smtp
                 mail('m.zukk@ya.ru', 'SMTP ERROR sending copy', $this->smtp_error);
             } else {
                 return TRUE;
