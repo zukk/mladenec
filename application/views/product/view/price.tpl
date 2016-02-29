@@ -1,14 +1,5 @@
 {if $cgood->show}
 
-    {assign var=lovely value=Cart::instance()->status_id()}
-    {assign var=lovely_price value=$price[$cgood->id]}
-    {assign var=default_price value=$cgood->price}
-    {if ! empty($lovely)}
-        {assign var=current_price value=$lovely_price}
-    {else}
-        {assign var=current_price value=$default_price}
-    {/if}
-
     <div id="good-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
 
         <div class="share42init fr" data-path="/i/"></div>
