@@ -13,7 +13,7 @@
                 {assign var=change value=$vid}
             {/if}
             {if $is_checked == 1}
-                <a onclick="reload_section('{$sphinx->href(['f' => [$fid => [$change]]])}')" href="#" class="checkbox
+                <a onclick="reload_section('{$sphinx->href(['f' => [$fid => [$change]]])}'); return false;" href="#" class="checkbox
                  {if empty($val.qty)}empty{/if} {if $checked}checked{/if}"  title="{$val.name} ({$val.qty})"><i></i> {$val.name|trim}{*nospace!*}<small>{$val.qty}</small></a>
             {else}
                 <a href="{$sphinx->href(['f' => [$fid => [$change]]])}" class="checkbox {if empty($val.qty)}empty{/if} {if $checked}checked{/if}"  title="{$val.name} ({$val.qty})"><i></i> {$val.name|trim}{*nospace!*}<small>{$val.qty}</small></a>

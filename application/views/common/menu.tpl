@@ -32,7 +32,7 @@
                             {/if}
 
                             {if $is_checked == 1}
-                                <a onclick="reload_section('{$sphinx->href(['c' => [$change]])}')" href="#" class="checkbox {if $checked}checked{/if} {if empty($c.qty)}empty{/if}" title="{$c.name} ({$c.qty})"><i></i> {$c.name|trim}{*nospace!*}<small>{$c.qty}</small></a>
+                                <a onclick="reload_section('{$sphinx->href(['c' => [$change]])}'); return false;" href="#" class="checkbox {if $checked}checked{/if} {if empty($c.qty)}empty{/if}" title="{$c.name} ({$c.qty})"><i></i> {$c.name|trim}{*nospace!*}<small>{$c.qty}</small></a>
                             {else}
                                 <a href="{$sphinx->href(['c' => [$change]])}" class="checkbox {if $checked}checked{/if} {if empty($c.qty)}empty{/if}" title="{$c.name} ({$c.qty})"><i></i> {$c.name|trim}{*nospace!*}<small>{$c.qty}</small></a>
                             {/if}
@@ -71,7 +71,7 @@
                                 {/if}
 
                                 {if $is_checked == 1}
-                                    <a onclick="reload_section('{$sphinx->href(['b' => [$change]])}')" href="#" class="checkbox {if empty($b.qty)}empty{/if} {if $checked}checked{/if} {if !empty($section->settings.b_hit[$b.id])}hit{/if}" title="{$b.name} ({$b.qty})"><i></i> {$b.name|trim}{*nospace!*}<small>{$b.qty}</small></a>
+                                    <a onclick="reload_section('{$sphinx->href(['b' => [$change]])}'); return false;" href="#" class="checkbox {if empty($b.qty)}empty{/if} {if $checked}checked{/if} {if !empty($section->settings.b_hit[$b.id])}hit{/if}" title="{$b.name} ({$b.qty})"><i></i> {$b.name|trim}{*nospace!*}<small>{$b.qty}</small></a>
                                 {else}
                                     <a href={$sphinx->href(['b' => [$change]])} class="checkbox {if empty($b.qty)}empty{/if} {if $checked}checked{/if} {if !empty($section->settings.b_hit[$b.id])}hit{/if}" title="{$b.name} ({$b.qty})"><i></i> {$b.name|trim}{*nospace!*}<small>{$b.qty}</small></a>
                                 {/if}
@@ -155,7 +155,7 @@
                                             {/if}
 
                                             {if $is_checked == 1}
-                                                <a onclick="reload_section('{$sphinx->href(['f' => [$fid=>[$change]]])}')" href="#" class="checkbox {if empty($val.qty)}empty{/if} {if $checked}checked{/if}"  title="{$val.name} ({$val.qty})"><i></i> {$val.name|trim}{*nospace!*}<small>{$val.qty}</small></a>
+                                                <a onclick="reload_section('{$sphinx->href(['f' => [$fid=>[$change]]])}'); return false;" href="#" class="checkbox {if empty($val.qty)}empty{/if} {if $checked}checked{/if}"  title="{$val.name} ({$val.qty})"><i></i> {$val.name|trim}{*nospace!*}<small>{$val.qty}</small></a>
                                             {else}
                                                 <a href="{$sphinx->href(['f' => [$fid => [$change]]])}" class="checkbox {if empty($val.qty)}empty{/if} {if $checked}checked{/if}"  title="{$val.name} ({$val.qty})"><i></i> {$val.name|trim}{*nospace!*}<small>{$val.qty}</small></a>
                                             {/if}
@@ -225,7 +225,7 @@
                             {/if}
 
                             {if $is_checked == 1}
-                                <a onclick="reload_section('{$sphinx->href(['co' => [$change]])}')" href="#" class="checkbox {if empty($co.qty)}empty{/if} {if $checked}checked{/if}" title="{$co.name} ({$co.qty})"><i></i> {$co.name|trim}{*nospace!*}<small>{$co.qty}</small></a>
+                                <a onclick="reload_section('{$sphinx->href(['co' => [$change]])}'); return false;" href="#" class="checkbox {if empty($co.qty)}empty{/if} {if $checked}checked{/if}" title="{$co.name} ({$co.qty})"><i></i> {$co.name|trim}{*nospace!*}<small>{$co.qty}</small></a>
                             {else}
                                 <a href="{$sphinx->href(['co' => [$change]])}" class="checkbox {if empty($co.qty)}empty{/if} {if $checked}checked{/if}" title="{$co.name} ({$co.qty})"><i></i> {$co.name|trim}{*nospace!*}<small>{$co.qty}</small></a>
                             {/if}

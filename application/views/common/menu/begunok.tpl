@@ -34,7 +34,7 @@
         {/if}
 
         {if $is_checked == 1}
-            <a onclick="reload_section('{$sphinx->href(['f' => [{$fid} => [{$change}]]])}')" href="#"
+            <a onclick="reload_section('{$sphinx->href(['f' => [{$fid} => [{$change}]]])}'); return false;" href="#"
                class="checkbox {if empty($options[$id])
             }empty{/if} {if $checked}checked{/if}" title="{$data.name}"><i></i>{$data.name}<small>{$options[$id]|default:0}</small></a>
         {else}

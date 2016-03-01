@@ -1126,10 +1126,10 @@ $(document).ready(function () {
 
             var url = $(this).attr('href');
 
-            if (url) {
+            if (url && url != '#') {
                 reload_section(url);
-                return false;
             }
+            return false;
         })
 
         .on('touchstart mousedown', 'div.range span.line i', function (event) { // бегунок от-до
