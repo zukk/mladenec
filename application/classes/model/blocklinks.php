@@ -17,7 +17,6 @@ class Model_Blocklinks extends ORM {
         )
     );
 
-
     public function get_blocklink($id){
         $query = ORM::factory('blocklinks')
             ->with('blocklinksanchor')
@@ -49,7 +48,7 @@ class Model_Blocklinks extends ORM {
     public function get_blocklink_url($blocklink_url){
         $query = ORM::factory('blocklinks')
             ->with('blocklinksanchor')
-            ->where('link', 'LIKE', '%'.$blocklink_url.'%')
+            ->where('link', '=', $blocklink_url)
             ->find_all();
 
         return $query;

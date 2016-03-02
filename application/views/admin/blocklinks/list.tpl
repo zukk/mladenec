@@ -11,6 +11,7 @@
             <th>#</th>
             <th>Ссылка</th>
             <th></th>
+            <th></th>
         </tr>
 
         {foreach from=$list item=l}
@@ -24,6 +25,10 @@
                 <td>
                     <a href="/od-men/blocklinks/{$l->id}">
                         Редактировать
+                    </a>
+                </td><td>
+                    <a href="/od-men/blocklinks/{$l->id}/del">
+                        Удалить
                     </a>
                 </td>
             </tr>

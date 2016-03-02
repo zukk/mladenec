@@ -31,7 +31,7 @@
 
                 <div style='float: right; margin-top: 10px;'>
                     <a href="/od-men/blocklinks" class="btn">Назад</a>
-                    <input class='btn' type='submit' value='Изменить' />
+                    <input class='btn' type='submit' value='Обновить' />
                 </div>
             </div>
         </div>

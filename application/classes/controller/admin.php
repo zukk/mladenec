@@ -3333,5 +3333,13 @@ class Controller_Admin extends Controller_Authorised {
         }
         return $form_vars;
     }
+
+    public function blocklinks_del(){
+        $id = $this->request->post('id');
+        print_r($id);
+        echo '<br />';
+        die('action_blocklinks_del');
+
+    }
 }
 
