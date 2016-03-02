@@ -331,6 +331,7 @@ class Controller_Odinc extends Controller {
         $this->view->orders = ORM::factory('order')
             ->with('card')
             ->with('data')
+            ->where('status', '!=', 'N')
             ->where('in1c', '=', 0)
             ->order_by('id', 'ASC')
             ->find_all();
