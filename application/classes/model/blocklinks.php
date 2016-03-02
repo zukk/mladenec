@@ -39,7 +39,9 @@ class Model_Blocklinks extends ORM {
         $query = DB::insert('blocklinksanchor')
             ->columns(array('url_id', 'title', 'url'));
         for($i=0; $i < count($title); $i++){
-            $query->values( array($edit_id, $title[$i], $url[$i]));
+            if(!empty($title) && !empty($url)){
+                $query->values( array($edit_id, $title[$i], $url[$i]));
+            }
         }
         $query->execute();
     }
