@@ -42,8 +42,8 @@
     function addFields(){
         var str = '<div style="width: 40%; display: inline-block;">Текст</div>&nbsp;' +
                 '<div style="width: 40%; display: inline-block;">Ссылка</div>' +
-                '<input type="text" name="title[]" value="" class="width-40">&nbsp;' +
-                '<input type="text" name="url[]" value="" class="width-40">&nbsp;' +
+                '<input type="text" name="title[]" required="required" value="" class="width-40">&nbsp;' +
+                '<input type="text" name="url[]" required="required" value="" class="width-40">&nbsp;' +
                 '<a href="javascript:void(0)" class="edit_action_tag" onclick="addFields(); return false;">&plus;</a>';
         $("#links").append(str);
      }
