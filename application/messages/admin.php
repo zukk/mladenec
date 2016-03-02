@@ -48,4 +48,5 @@ return array(
     'wikicategories' => 'Категории wikimart',
     'googlecategories' => 'Категории google',
     'seostatistics'  => 'SEO - статистика',
+    'blocklinks'  => 'Блок ссылок',
 );

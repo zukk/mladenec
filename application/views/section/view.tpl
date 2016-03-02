@@ -34,6 +34,28 @@ allowGoodsTopBar = false;
     </h1>
 </div>
 
+{assign var=pops value=0}
+{foreach from=$block_links item=block_link}
+    {if !empty($block_link->blocklinksanchor->title)}
+        {assign var=pops value=1}
+    {/if}
+{/foreach}
+
+{if $pops == 1}
+    {if $block_links && !empty($block_links)}
+        <div id="tagsinsection">
+            <div class="tagsinsectiontitle">
+                <div id="tagsinsectionlink">
+                    <b style="float: left">Популярное:&nbsp;</b>
+                    {foreach from=$block_links item=block_link}
+                        <a href="/{$block_link->blocklinksanchor->url}">{$block_link->blocklinksanchor->title}</a>
+                    {/foreach}
+                </div>
+            </div>
+        </div>
+    {/if}
+{/if}
+
 {if ! empty($subs)}{* есть подкатегориии - показываем их *}
 
     {assign var=item value=$top_menu[$section->id]}
@@ -133,3 +155,22 @@ allowGoodsTopBar = false;
     _paq.push(['trackPageView']);
 </script>
 {/if}
+
+<script>
+    $(document).ready(function(){
+        $('#tagsinsectionlink').trunk8({
+            fill: '&hellip; <a id="read-more" href="#">Показать все</a>',
+            lines: 2
+        });
+
+        $(document).on('click', '#read-more', function (event) {
+            $(this).parent().trunk8('revert').append(' <a id="read-less" href="#">Основные метки</a>');
+            return false;
+        });
+
+        $(document).on('click', '#read-less', function (event) {
+            $(this).parent().trunk8();
+            return false;
+        });
+    });
+</script>
