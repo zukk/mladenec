@@ -8,7 +8,7 @@
 {assign var=link value=$g->get_link(0)}
 {capture assign=name}{$g->group_name|escape:'html'} {if $g->grouped eq 1}{$g->name|escape:'html'}{/if}{/capture}
 
-<a class="google-good" data-id="{$g->id}" href="{$link}" title="{$name}">{$images[$g->id].255->get_img(['alt' => $name])}</a>
+<a class="google-good" data-id="{$g->id}" href="{$link}" title="{$name}">{if $images[$g->id].255}{$images[$g->id].255->get_img(['alt' => $name])}{else}{Model_File::empty_image(['alt' => $name])}{/if}</a>
 <a class="google-good" data-id="{$g->id}" href="{$link}"><b>{$g->group_name|escape:'html'}</b> {if $g->grouped eq 1}{$g->name|escape:'html'}{/if}</a>
 
 <a href="{$link}?ajax=1" data-id="{$g->id}" class="butt small fastview" rev="{$g->id}" rel="ajax" data-fancybox-type="ajax">Быстрый просмотр</a>
