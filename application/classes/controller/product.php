@@ -384,7 +384,6 @@ class Controller_Product extends Controller_Frontend {
      */
     protected function _create_order(&$post)
     {
-
 		$cart = Cart::instance();
 		$user = Model_User::current();
 		$post = $this->request->post();
@@ -399,7 +398,6 @@ class Controller_Product extends Controller_Frontend {
             if(empty($post['last_name'])){
                 $post['last_name'] = $post['name'];
             }
-
         }
 
         $delivery_type = (int)$post['delivery_type'];
@@ -524,6 +522,9 @@ class Controller_Product extends Controller_Frontend {
 			$o->save_goods($cart); // тут будет засчитано использование купона
 
 			$order_data->id = $o->id;
+
+            $user->last_order = $o->id; // апдейт юзера - номер последнего заказа
+            $user->save();
 
 			if ( ! empty($a)) $order_data->address_id = $a->id;
             $order_data->client_data = print_r($_SERVER, TRUE);
@@ -1132,6 +1133,9 @@ class Controller_Product extends Controller_Frontend {
         $order_data->name = $user->name;
         $order_data->email = $user->email;
         $order_data->phone = $_phone;
+
+        $user->last_order = $order->id; // последний заказ юзера
+        $user->save();
 
         $central = new Model_Zone(Model_Zone::DEFAULT_ZONE);
         $order_data->ship_date = key($cart->allowed_date($central)); // дату доставки ставим ближайшую для центр. зоны
