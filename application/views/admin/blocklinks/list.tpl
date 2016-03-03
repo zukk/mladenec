@@ -27,7 +27,7 @@
                         Редактировать
                     </a>
                 </td><td>
-                    <a href="/od-men/blocklinks/{$l->id}/del">
+                    <a href="/od-men/blocklinks/{$l->id}/blocklinks_del">
                         Удалить
                     </a>
                 </td>

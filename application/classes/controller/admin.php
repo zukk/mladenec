@@ -3285,7 +3285,8 @@ class Controller_Admin extends Controller_Authorised {
         $link = $this->request->post('link');
 
         if(isset($link) && !empty($link)){
-            $link = ltrim($link, '/');
+            $link = trim($link, ' ');
+            $link = trim($link, '/');
 
             $mblocklinks = new Model_Blocklinks();
             $res_blocklink = $mblocklinks->get_blocklink_url(trim($link));
@@ -3326,7 +3327,7 @@ class Controller_Admin extends Controller_Authorised {
         $blocklink = new Model_Blocklinks();
         if(isset($edit_id) && !empty($edit_id)){
             $form_vars['res'] = $blocklink->edit_blocklink($edit_id);
-           $this->request->redirect(Route::url('admin_list', array('model' => 'blocklinks')));
+            $this->request->redirect(Route::url('admin_list', array('model' => 'blocklinks')));
         } else {
             $id = $data->id;
             $form_vars['res'] = $blocklink->get_blocklink($id);
@@ -3334,12 +3335,18 @@ class Controller_Admin extends Controller_Authorised {
         return $form_vars;
     }
 
-    public function blocklinks_del(){
-        $id = $this->request->post('id');
-        print_r($id);
-        echo '<br />';
-        die('action_blocklinks_del');
+    public function action_blocklinks_del(){
+        $id = $this->request->param('id');
 
+        $blocklinks = ORM::factory('blocklinks', $id);
+        if($blocklinks->loaded()){
+            $blocklinks->delete();
+        }
+        $blocklinksanchor = ORM::factory('blocklinksanchor', $id);
+        if($blocklinksanchor->loaded()){
+            $blocklinksanchor->delete();
+        }
+        $this->request->redirect(Route::url('admin_list', array('model' => 'blocklinks')));
     }
 }
 
