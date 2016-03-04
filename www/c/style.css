@@ -7020,11 +7020,11 @@ td.select-present {
 .slider .g .real-discount, #hitz .g .real-discount {
     width:45px;
 }
-.slider .g .real-discount span, #hitz .g .real-discount {
+.slider .g .real-discount span, #hitz .g .real-discount span {
     font-size:16px !important;
 }
 .slider .g .real-discount span:last-child, #hitz .g .real-discount span:last-child {
-    font-size:12px;
+    font-size:12px !important;
 }
 
 #tagsinsection a {
