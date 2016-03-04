@@ -22,7 +22,7 @@ function cart_recount() { {* функция пересчёта корзины *}
         o.append('<i class="load"></i>');
 
         $.post('{Route::url('cart_recount')}',
-            $('#cart-form input').serialize(),
+            $('#cart-form input, #sborka').serialize(),
             function(data) {
                 if (data.cart) {
                     $('#cart-form').replaceWith(data.cart);
