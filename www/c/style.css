@@ -6978,6 +6978,7 @@ td.select-present {
     display: inline-block;
     height: 26px;
     border-radius: 3px;
+    padding: 0 9px;
     margin: 3px 0;
 }
 
@@ -7017,7 +7018,6 @@ td.select-present {
     line-height:20px;
 }
 
-
 .slider .g .real-discount, #hitz .g .real-discount {
     width:45px;
 }
@@ -7026,4 +7026,13 @@ td.select-present {
 }
 .slider .g .real-discount span:last-child, #hitz .g .real-discount span:last-child {
     font-size:12px;
+}
+
+#tagsinsection a {
+    border-bottom-style: dashed;
+    border-bottom-width: 1px;
+    margin-right: 15px;
+}
+#tagsinsection a#read-more, #tagsinsection a#read-less {
+    color: #999;
 }

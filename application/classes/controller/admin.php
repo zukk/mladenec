@@ -3275,5 +3275,78 @@ class Controller_Admin extends Controller_Authorised {
         $stats = new Model_Seostatistics();
         return $stats->get_seostatistics();
     }
+
+    /**
+     * Список блок ссылок
+     * @return array
+     */
+    function action_blocklinks_list()
+    {
+        $link = $this->request->post('link');
+
+        if(isset($link) && !empty($link)){
+            $link = trim($link, ' ');
+            $link = trim($link, '/');
+
+            $mblocklinks = new Model_Blocklinks();
+            $res_blocklink = $mblocklinks->get_blocklink_url(trim($link));
+
+            if(count($res_blocklink) == 0){
+                $save_link = DB::insert('blocklinks')
+                    ->columns(['link'])
+                    ->values(['link' => $link ])
+                    ->execute();
+                $id = $save_link[0];
+            } else {
+                $id = $res_blocklink[0]->id;
+            }
+            $this->request->redirect(Route::url('admin_edit',array('model'=>'blocklinks','id'=>$id)));
+        }
+
+        $query = ORM::factory('blocklinks');
+
+        $query->reset(FALSE);
+        $domains = Kohana::$config->load('domains')->as_array();
+
+        $return['host'] = $domains['mladenec']['host'];
+        $return['pager'] = $pager = new Pager($query->count_all(), 20);
+        $return['list'] = $query
+            ->order_by('id', 'desc')
+            ->offset($pager->offset)
+            ->limit($pager->per_page)
+            ->find_all()
+            ->as_array();
+
+        return $return;
+    }
+
+    public function action_blocklinks_edit(Model_Blocklinks $data)
+    {
+        $edit_id = $this->request->post('id');
+
+        $blocklink = new Model_Blocklinks();
+        if(isset($edit_id) && !empty($edit_id)){
+            $form_vars['res'] = $blocklink->edit_blocklink($edit_id);
+            $this->request->redirect(Route::url('admin_list', array('model' => 'blocklinks')));
+        } else {
+            $id = $data->id;
+            $form_vars['res'] = $blocklink->get_blocklink($id);
+        }
+        return $form_vars;
+    }
+
+    public function action_blocklinks_del(){
+        $id = $this->request->param('id');
+
+        $blocklinks = ORM::factory('blocklinks', $id);
+        if($blocklinks->loaded()){
+            $blocklinks->delete();
+        }
+        $blocklinksanchor = ORM::factory('blocklinksanchor', $id);
+        if($blocklinksanchor->loaded()){
+            $blocklinksanchor->delete();
+        }
+        $this->request->redirect(Route::url('admin_list', array('model' => 'blocklinks')));
+    }
 }
 

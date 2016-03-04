@@ -968,6 +968,10 @@ class Controller_Product extends Controller_Frontend {
 			$this->layout->title .= ' (страница каталога №'.$p.') - Младенец.ру';
 		}
 
+        $blocklink_url = ltrim($this->request->url(), '/');
+        $res_blocklink_url = new Model_Blocklinks();
+        $this->tmpl['block_links'] = $res_blocklink_url->get_blocklink_url($blocklink_url);
+
         if ($this->request->post('goodajax') || $this->request->is_ajax()) { // возвращаем json c данными
             $json = [
                 'title' => ! empty($this->layout->title) ? $this->layout->title : 'Младенец. РУ',

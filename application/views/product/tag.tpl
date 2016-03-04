@@ -46,6 +46,28 @@
     <h1>{$tag->name}</h1>
 </div>
 
+{assign var=pops value=0}
+{foreach from=$block_links item=block_link}
+    {if !empty($block_link->blocklinksanchor->title)}
+        {assign var=pops value=1}
+    {/if}
+{/foreach}
+
+{if $pops == 1}
+    {if $block_links && !empty($block_links)}
+        <div id="tagsinsection">
+            <div class="tagsinsectiontitle">
+                <div id="tagsinsectionlink">
+                    <b style="float: left">Популярное:&nbsp;</b>
+                    {foreach from=$block_links item=block_link}
+                        <a href="/{$block_link->blocklinksanchor->url}">{$block_link->blocklinksanchor->title}</a>
+                    {/foreach}
+                </div>
+            </div>
+        </div>
+    {/if}
+{/if}
+
 {if $tag->code == 'catalog/japan/fruit'}
     <div>{$tag->text}</div>
 {/if}

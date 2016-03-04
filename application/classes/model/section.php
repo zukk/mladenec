@@ -487,7 +487,7 @@ class Model_Section extends ORM {
 			$this->roditi = $d[2];
 			$this->save();
 		}
-		
+
         return ['errors' => $errors];
     }
 
