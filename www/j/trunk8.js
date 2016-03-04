@@ -1,4 +1,4 @@
-/**!
+/*!
  * trunk8 v1.3.3
  * https://github.com/rviscomi/trunk8
  *
@@ -41,7 +41,7 @@
             return tmp.textContent;
         }
 
-        return tmp.innerText
+        return tmp.innerText;
     }
 
     function getHtmlArr(str) {
@@ -227,31 +227,31 @@
     methods = {
         init: function (options) {
             return this.each(function () {
-                var $this = $(this),
-                    data = $this.data('trunk8');
+                var item = $(this),
+                    data = item.data('trunk8');
 
                 if (!data) {
-                    $this.data('trunk8', (data = new trunk8(this)));
+                    item.data('trunk8', (data = new trunk8(this)));
                 }
 
                 data.updateSettings(options);
 
-                truncate.call($this);
+                truncate.call(item);
             });
         },
 
         /** Updates the text value of the elements while maintaining truncation. */
         update: function (new_string) {
             return this.each(function () {
-                var $this = $(this);
+                var item = $(this);
 
                 /* Update text. */
                 if (new_string) {
-                    $this.data('trunk8').original_text = new_string;
+                    item.data('trunk8').original_text = new_string;
                 }
 
                 /* Truncate accordingly. */
-                truncate.call($this);
+                truncate.call(item);
             });
         },
 

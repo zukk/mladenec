@@ -6978,7 +6978,6 @@ td.select-present {
     display: inline-block;
     height: 26px;
     border-radius: 3px;
-    padding: 0 9px;
     margin: 3px 0;
 }
 
@@ -7022,7 +7021,7 @@ td.select-present {
     width:45px;
 }
 .slider .g .real-discount span, #hitz .g .real-discount {
-    font-size:16px;
+    font-size:16px !important;
 }
 .slider .g .real-discount span:last-child, #hitz .g .real-discount span:last-child {
     font-size:12px;
