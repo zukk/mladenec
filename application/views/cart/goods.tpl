@@ -105,13 +105,13 @@
                     <td colspan="2"><img src="/i/sborka.jpg" alt="Бесплатная сборка" title="Бесплатная сборка" class="img70" /></td>
                     <td class="txt-lft">
                         <a href="/delivery#sborka_tovara" target="_blank">Бесплатная сборка мебели</a><br />
-                        (Точную дату сборки вы сможете согласовать с нашим оператором)
+                        (Точную дату сборки Вы сможете согласовать с&nbsp;нашим оператором)
                     </td>
                     <td class="price">{$g->price|price}</td>
                     <td class="c">
                         <div class="incdeced">
-                            {*{Form::select('sborka_comment', Model_Good::sborka(), $comments[$g->id]|default:'', ['id' => 'sborka', 'rel' => $g->id])}*}
-                            {Form::select('sborka_comment', Model_Good::sborka(), '', ['id' => 'sborka', 'rel' => $g->id])}
+                            {capture assign=sborka_var}qty[{$g->id}]{/capture}
+                            {Form::select($sborka_var, Model_Good::sborka(), intval($cart->goods[$g->id]), ['id' => 'sborka', 'rel' => $g->id])}
                         </div>
                      </td>
                     <td class="total">{$g->total|price}</td>

@@ -1895,7 +1895,7 @@ class Model_Good extends ORM {
     public static function sborka()
     {
         $opts = [
-            '' => 'не нужна',
+            '0' => 'не нужна',
             '1' => 'нужна'
         ];
         /*$opts = [ // временно пока не трубуется

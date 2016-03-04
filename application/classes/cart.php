@@ -375,6 +375,10 @@ class Cart {
             }
         }
 
+        if ( isset($this->goods[Model_Good::SBORKA_ID1C]) && empty($this->sborkable)) { // в корзине есть сборка но нет товаров для нее - скинем сборку
+            unset($this->goods[Model_Good::SBORKA_ID1C]);
+        }
+
         // Применяем цены статуса ЛК
         if ($this->status_id == 0 && ($this->total >= self::MAX_SIMPLE)) $this->status_id = 1; // тоже любимый
         if ($this->status_id == 1) $this->apply_lk_price($goods);
@@ -1391,7 +1395,7 @@ class Cart {
      */
     public function gift_only()
     {
-        if(!$this->total){
+        if ( ! $this->total) {
             $this->recount();
         }
         return $this->gift_sum > 0 && $this->gift_sum == $this->total;

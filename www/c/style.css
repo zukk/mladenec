@@ -5338,6 +5338,11 @@ a.tognext + div {
     top: 3px;
     width: 150px;
 }
+
+.slider .g > div.ico {
+    width: 110px;
+}
+
 .g > div.ico > abbr {
     border:none;
     float:left;
@@ -6973,7 +6978,6 @@ td.select-present {
     display: inline-block;
     height: 26px;
     border-radius: 3px;
-    padding: 0 9px;
     margin: 3px 0;
 }
 
@@ -7013,3 +7017,13 @@ td.select-present {
     line-height:20px;
 }
 
+
+.slider .g .real-discount, #hitz .g .real-discount {
+    width:45px;
+}
+.slider .g .real-discount span, #hitz .g .real-discount {
+    font-size:16px;
+}
+.slider .g .real-discount span:last-child, #hitz .g .real-discount span:last-child {
+    font-size:12px;
+}
