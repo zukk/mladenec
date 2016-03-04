@@ -120,14 +120,14 @@ $to_id = DB::select('to_id')
         ->execute()->get('to_id');
 
 
-if ( ! is_null($to_id)) {
+if ( ! empty($to_id)) {
 
     $to_url = DB::select('url')
             ->from('tag_redirect')
             ->where('id', '=', $to_id)
             ->execute()->get('url');
 
-    if ( ! empty($to_url)) {
+    if ( ! is_null($to_url)) {
         header("HTTP/1.1 301 Moved Permanently");
         header ('Location: http://' . $_SERVER['HTTP_HOST'] . '/' . $to_url);
         exit();
