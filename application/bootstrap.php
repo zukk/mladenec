@@ -119,7 +119,8 @@ $to_id = DB::select('to_id')
         ->where('url', '=', Request::detect_uri())
         ->execute()->get('to_id');
 
-if ( ! empty($to_id)) {
+
+if ( ! is_null($to_id)) {
 
     $to_url = DB::select('url')
             ->from('tag_redirect')
