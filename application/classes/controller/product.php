@@ -414,7 +414,7 @@ class Controller_Product extends Controller_Frontend {
         }
         $order_data->values($post);
         
-        if( ! $is_ozon_delivery) {
+        if ( ! $is_ozon_delivery) {
             $v = $order_data->validation();
 
             if ( ! empty($post['address_id'])) { // старый адрес!
@@ -423,9 +423,27 @@ class Controller_Product extends Controller_Frontend {
                 if ($addr->user_id != $this->user->id) throw new HTTP_Exception_403; // not current user address
 
             } else {
-                $addr = new Model_User_Address();
-                $addr->values($post);
-                $addr->user_id = $this->user->id;
+                // поищем адрес с таким же город-улица-дом-кв
+                $addr = ORM::factory('user_address')
+                    ->where('user_id', '=', $this->user->id)
+                    ->where('city', '=', trim($post['city']))
+                    ->where('street', '=', trim($post['street']))
+                    ->where('house', '=', trim($post['house']))
+                    ->where('kv', '=', trim($post['kv']))
+                    ->find();
+
+                if ( ! $addr->loaded()) { // новый адрес
+                    $addr = new Model_User_Address();
+                    $addr->values($post);
+                    $addr->user_id = $this->user->id;
+
+                } else { // update старого адреса
+                    $addr->enter = $post['enter'];
+                    $addr->domofon = $post['domofon'];
+                    $addr->floor = $post['floor'];
+                    $addr->lift = $post['lift'];
+
+                }
                 $addr->save();
                 $post['address_id'] = $addr->id;
             }

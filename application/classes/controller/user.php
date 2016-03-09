@@ -260,9 +260,7 @@ class Controller_User extends Controller_Frontend
 
     public function action_deferred()
     {
-        if (!$this->user) {
-            throw new HTTP_Exception_403;
-        }
+        if ( ! $this->user) throw new HTTP_Exception_403;
 
         $deferreds = ORM::factory('deferred')
             ->where('user_id', '=', $this->user->id);
@@ -754,6 +752,7 @@ class Controller_User extends Controller_Frontend
             }
         } else {
             if ( ! $this->user) throw new HTTP_Exception_403;
+            if ($order->user_id != $this->user) throw new HTTP_Exception_403;
         }
 
         $this->tmpl['o'] = $this->tmpl['cart'] = $order;
