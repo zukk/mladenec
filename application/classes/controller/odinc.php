@@ -650,72 +650,84 @@ class Controller_Odinc extends Controller {
                         }
                     }
 
-                    try {
-                        $order->save();
-
-                        if ($order->status == 'F' && ! empty($order->check)) { // если пришел статус - доставлено, то всегда генерим чек (задание демону)
-
-                            $quest = new Model_Daemon_Quest();
-                            $quest->values([
-                                'action'    => 'check',
-                                'params'    => $order->id,
-                            ]);
-                            $quest->save();
-                            Daemon::new_task();
+                    if ( ! $order->validation()->check()) {
+                        $msg = 'Cannot save order:';
+                        foreach($order->validation()->errors() as $val => $err) {
+                            $msg .= $val.'-'.implode(', ', $err).':';
                         }
-                        if ( ! empty($goods)) $order->change_goods($goods);
+                        $this->error($msg, $id);
+                        continue;
+                    }
+                    $order->save();
 
-                        $order_data = new Model_Order_Data($id);
+                    if ($order->status == 'F' && ! empty($order->check)) { // если пришел статус - доставлено, то всегда генерим чек (задание демону)
 
-                        $user = new Model_User($user_id);
-                        $order_data->name           = $user->name;
-                        $order_data->second_name    = $user->second_name;
-                        $order_data->last_name      = $user->last_name;
-                        $order_data->email          = $user->email;
+                        $quest = new Model_Daemon_Quest();
+                        $quest->values([
+                            'action'    => 'check',
+                            'params'    => $order->id,
+                        ]);
+                        $quest->save();
+                        Daemon::new_task();
+                    }
 
-                        $order_data->city           = $city;
-                        $order_data->courier        = $courier;
-                        $order_data->ship_date      = preg_replace('~(\d\d)\.(\d\d)\.(\d\d)~', '20$3-$2-$1', $ship_date);
-                        $order_data->ship_time_text = $from.'-'.$to;
+                    if ( ! empty($goods)) $order->change_goods($goods);
 
-                        $order_data->street         = $street;
-                        $order_data->house          = $house;
-                        $order_data->correct_addr   = $correct_addr == 'Y' ? 1 : 0;
-                        $order_data->latlong        = $latlong;
-                        $order_data->enter          = $enter;
-                        $order_data->lift           = $lift;
-                        $order_data->floor          = $floor;
-                        $order_data->domofon        = $domofon;
-                        $order_data->mkad           = $mkad;
-                        $order_data->comment        = $comment;
+                    $order_data = new Model_Order_Data($id);
+                    $user = new Model_User($user_id);
 
-                        if ( ! empty($new_address)) {
-                            $order_data->address_id = $new_address;
+                    $order_data->name           = $user->name;
+                    $order_data->second_name    = $user->second_name;
+                    $order_data->last_name      = $user->last_name;
+                    $order_data->email          = $user->email;
+
+                    $order_data->city           = $city;
+                    $order_data->courier        = $courier;
+                    $order_data->ship_date      = preg_replace('~(\d\d)\.(\d\d)\.(\d\d)~', '20$3-$2-$1', $ship_date);
+                    $order_data->ship_time_text = $from.'-'.$to;
+
+                    $order_data->street         = $street;
+                    $order_data->house          = $house;
+                    $order_data->correct_addr   = $correct_addr == 'Y' ? 1 : 0;
+                    $order_data->latlong        = $latlong;
+                    $order_data->enter          = $enter;
+                    $order_data->lift           = $lift;
+                    $order_data->floor          = $floor;
+                    $order_data->domofon        = $domofon;
+                    $order_data->mkad           = $mkad;
+                    $order_data->comment        = $comment;
+
+                    if ( ! empty($new_address)) {
+                        $order_data->address_id = $new_address;
+                    }
+
+                    if ( ! $order_data->validation()->check()) {
+                        $msg = 'Cannot save order data:';
+                        foreach($order_data->validation()->errors() as $val => $err) {
+                            $msg .= $val.'-'.implode(', ', $err).':';
                         }
+                        $this->error($msg, $id);
+                        continue;
+                    }
+                    $order_data->save();
 
-                        $order_data->save();
-                        
-                        // обработка смены статуса (письма, размещение в транспортной компании, пересчет накоплений по акциям и т.п.)
-                        if ($status_changed) $order->on_status_change();
+                    // обработка смены статуса (письма, размещение в транспортной компании, пересчет накоплений по акциям и т.п.)
+                    if ($status_changed) $order->on_status_change();
 
-                        // письмо о смене типа оплаты
-                        if ( ! empty($payment_changed)) $order->on_payment_change();
+                    // письмо о смене типа оплаты
+                    if ( ! empty($payment_changed)) $order->on_payment_change();
 
-                        $saved[$order->id] = $order->id;
+                    $saved[$order->id] = $order->id;
 
-                        if ( ! empty($changes)) {
-                            foreach($changes as $event) {
-                                Model_History::log('order', $order->id, $event['date'].' '.$event['time'].' '.$event['message']);
-                            }
+                    if ( ! empty($changes)) {
+                        foreach($changes as $event) {
+                            Model_History::log('order', $order->id, $event['date'].' '.$event['time'].' '.$event['message']);
                         }
-
-                    } catch (ORM_Validation_Exception $e) {
-                        $this->error('Cannot save order for '.$s.' '.$e->getMessage(), $id);
                     }
                     
                     $goods = []; // чистим список товаров
                 }
-            } 
+            }
             catch (Txt_Exception $ex)
             {
                 $this->error($ex->getMessage(), $id);
@@ -1018,7 +1030,7 @@ class Controller_Odinc extends Controller {
                         ) = $this->parse('©', $s, 22);
 
                     $grid = 0;
-                    if ($gcode != '30006296') { // это услуги - не искать группу
+                    if ( ! in_array($gcode, ['30006296', '30006295', '994'])) { // это исключения - не искать группу
                         $gr = $group->clear()->where('code', '=', $gcode)->find(); // группа
                         if ( ! $gr->loaded()) {
                             $this->error('No group found with code ' . $gcode);

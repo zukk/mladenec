@@ -86,3 +86,33 @@ var_dump(DB::query(Database::UPDATE, "update z_order_data set mobile_phone = pho
 
 // если второй телефон плохой а первого нет - то сотрем и второй
 var_dump(DB::query(Database::UPDATE, "update  z_order_data set mobile_phone = '' where id > 500000 and mobile_phone > '' and mobile_phone not regexp '7[0-9]{10}'")->execute());
+
+// теперь сотрем мобильные у кого они не мобильные
+$phones = DB::select('id', 'mobile_phone')
+    ->from('z_order_data')
+    ->where('id', '>', 500000)
+    ->where('mobile_phone', '>', '')
+    ->where('mobile_phone', 'NOT REGEXP', '79[0-9]{9}')
+    ->execute()
+    ->as_array('id', 'mobile_phone');
+
+$updated = 0;
+
+foreach($phones as $id => $phone) {
+
+    $clear_phone = Txt::phone_clear($phone);
+
+    if ( ! Txt::phone_is_mobile($clear_phone)) {
+        echo 'NOT mobile '.$id.':'.$phone."\n";
+
+        DB::update('z_order_data')
+            ->set(['mobile_phone' => ''])
+            ->where('id', '=', $id)
+            ->execute();
+
+        $updated++;
+    }
+}
+echo 'Updated '.$updated."\n\n";
+
+

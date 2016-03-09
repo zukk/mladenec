@@ -5,8 +5,7 @@
 {else}
     {assign var=payment value=$o->payment()}
 
-
-    {if not $payment->status_final()}
+    {if not $payment->status_final() and $o->status != 'X'}
 
         <a href="{Route::url('pay', ['id' => $o->id])}" class="butt small">оплатить</a>
 
