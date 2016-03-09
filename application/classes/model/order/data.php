@@ -19,17 +19,33 @@ class Model_Order_Data extends ORM {
         'num' => 1,
     ];
 
-    public function rules()
+    public function filters()
     {
         return [
             'phone' => [
-                ['not_empty'],
                 ['Txt::phone_clear', [':value']],
             ],
             'phone2' => [
                 ['Txt::phone_clear', [':value']],
             ],
             'mobile_phone' => [
+                ['Txt::phone_clear', [':value']],
+            ]
+        ];
+    }
+
+    public function rules()
+    {
+        return [
+            'phone' => [
+                ['not_empty'],
+                ['phone', [':value', 11]],
+            ],
+            'phone2' => [
+                ['phone', [':value', 11]],
+            ],
+            'mobile_phone' => [
+                ['phone', [':value', 11]],
                 ['Txt::phone_is_mobile', [':value']],
             ],
         ];
