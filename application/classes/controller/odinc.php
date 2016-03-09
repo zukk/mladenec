@@ -1053,7 +1053,7 @@ class Controller_Odinc extends Controller {
                     }
 
                     $bid = 0;
-                    if ($bcode != '30007742') { // это подарок - не искать бренд
+                    if ( ! in_array($gcode, ['30006296', '30006295', '994']) && $bcode != '30007742') { // это исключения - не искать бренд
 
                         $b = $brand->clear()->where('code', '=', $bcode)->find();
                         if ( ! $b->loaded()) {
