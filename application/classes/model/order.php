@@ -171,13 +171,12 @@ class Model_Order extends ORM {
                 if (($this->user->status_id == 0) AND ($this->user->sum >= Model_User::STATUS_CHANGE)) { // меняем статус
 
                     $this->user->status_id = 1;
-                    $this->user->save();
-
                     $got_status = TRUE;
+
                 }
+
                 $this->user->save();
 
-                
             }
             
             $this->on_status_change_email($got_status);

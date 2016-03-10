@@ -712,7 +712,11 @@ class Controller_Odinc extends Controller {
                     $order_data->save();
 
                     // обработка смены статуса (письма, размещение в транспортной компании, пересчет накоплений по акциям и т.п.)
-                    if ($status_changed) $order->on_status_change();
+                    try {
+                        if ($status_changed) $order->on_status_change();
+                    } catch (ORM_Validation_Exception $e) {
+                        $this->error('Cannot save user '.$user_id, $id);
+                    }
 
                     // письмо о смене типа оплаты
                     if ( ! empty($payment_changed)) $order->on_payment_change();
