@@ -24,19 +24,7 @@
         line-height: 37px !important;
         padding: 0 0 0 37px !important;
     }
-    #chem_menu {
-        background:none;
-    }
-    #chem_menu a {
-        letter-spacing: 1px;
-        height: 37px;
-        margin: 10px 8px 0 !important;
-        background: #fff url(/images/menu-japan.png) no-repeat 0 100%;
-        border-radius: 5px;
-        line-height: 37px !important;
-        padding: 0 0 0 37px !important;
-    }
-    #japan_menu, #chem_menu {
+    #japan_menu {
         height:37px;
     }
 </style>
@@ -75,7 +63,6 @@
                 {/if}
                 {if $item->id eq 29429}
                     <li id="japan_menu"><a href="/jp_kr_cosmetics">Японская&nbsp;косметика</a></li>
-                    <li id="chem_menu"><a href="/japan-home">Бытовая химия</a></li>
                 {/if}
             </ul>
         </div>
