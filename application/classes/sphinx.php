@@ -1371,6 +1371,7 @@ class Sphinx {
 			'ga_list'   => $ga_list,
             'is_diapers'=> $has_section == Model_Section::DIAPERS_ID,
             'per_pack'  => in_array($has_section, [Model_Section::DIAPERS_ID, Model_Section::LINEN_ID]),
+            'show_qty'  => $this->_mode == 'action' && $this->_query == 192982,
         ])->render();
     }
 

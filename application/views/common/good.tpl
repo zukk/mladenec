@@ -34,10 +34,18 @@
     <small class="per_pack">[{$one|string_format:'%01.2f'} р/шт]</small>
 {/if}
 
-{if $g->review_qty}
-    <span class="stars"><span style="width:{$g->rating*20}%"></span></span>
-    <a class="review google-good" data-id="{$g->id}" title="{'отзыв'|plural:$g->review_qty}" href="{$g->get_review_link()}">
-    ({if not empty($per_pack) and $g->per_pack}{$g->review_qty}{else}{'отзыв'|plural:$g->review_qty}{/if})</a>
+{if ! empty($show_qty)} {* показ остатков *}
+
+    <div class="reminder">Осталось {$g->qty} шт.</div>
+
+{else}
+
+    {if $g->review_qty}
+        <span class="stars"><span style="width:{$g->rating*20}%"></span></span>
+        <a class="review google-good" data-id="{$g->id}" title="{'отзыв'|plural:$g->review_qty}" href="{$g->get_review_link()}">
+            ({if not empty($per_pack) and $g->per_pack}{$g->review_qty}{else}{'отзыв'|plural:$g->review_qty}{/if})</a>
+    {/if}
+
 {/if}
 
 {include file='common/buy.tpl' good=$g}

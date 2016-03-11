@@ -7035,3 +7035,7 @@ td.select-present {
 #tagsinsection a#read-more, #tagsinsection a#read-less {
     color: #999;
 }
+
+.reminder {
+    font-size:10px; text-align:center; color:red;
+}
