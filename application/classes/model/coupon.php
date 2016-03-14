@@ -213,15 +213,21 @@ class Model_Coupon extends ORM {
 
     /**
      * Получить товары купона, сгруппировать по скидкам и минимальному кол-ву товара
+     * @param $good_idz - искать только товары из этого массива id
+     * @return array ['discount' => ['min_qty' => $goodz ]]
      */
-    function get_goods()
+    function get_goods($good_idz = [])
     {
         $return = [];
 
-        $good_discount = DB::select('good_id', 'discount', 'min_qty')
+        $q = DB::select('good_id', 'discount', 'min_qty')
             ->from('z_coupon_good')
-            ->where('coupon_id', '=', $this->id)
-            ->order_by('min_qty') // важно для правильного применения скидок если у одного товара есть их несколько при разном кол-ве
+            ->where('coupon_id', '=', $this->id);
+        if ( ! empty($good_idz)) {
+            $q->where('good_id', 'IN', $good_idz);
+        }
+
+        $good_discount = $q->order_by('min_qty') // важно для правильного применения скидок если у одного товара есть их несколько при разном кол-ве
             ->order_by('discount', 'DESC')
             ->execute()
             ->as_array();
