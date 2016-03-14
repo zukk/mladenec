@@ -597,31 +597,36 @@ class Cart {
 
                 $used = FALSE;
 
-                foreach($cgoods as $discount => $goodz) {
-                    foreach ($goodz as $good_id => $g) {
-                        if ( ! empty($goods[$good_id])) {  // купон сработал!
+                foreach($cgoods as $discount => $qty_goodz) {
+                    foreach ($qty_goodz as $min_qty => $goodz) {
+                        foreach ($goodz as $good_id => $g) {
+                            if ( ! empty($goods[$good_id])) {  // купон сработал!
 
-                            $qty = $this->goods[$good_id];
+                                $qty = $this->goods[$good_id];
 
-                            // если на товар есть старая цена, то базовая цена = старая цена (купон выключает скидочные акции)
-                            // все остальные типы акций уже отключены так как в расчетах используется base_price (цена розница)
-                            if ($g->old_price > 0) {
-                                continue; // купон не применяем для этого товара
-                                // $base_price[$good_id] = $g->old_price;
+                                if ($qty >= $min_qty) { // условие на количество - выполнено
+
+                                    // если на товар есть старая цена, то базовая цена = старая цена (купон выключает скидочные акции)
+                                    // все остальные типы акций уже отключены так как в расчетах используется base_price (цена розница)
+                                    if ($g->old_price > 0) {
+                                        continue; // купон не применяем для этого товара
+                                        // $base_price[$good_id] = $g->old_price;
+                                    }
+
+                                    if ($coupon->max_sku > 0 && $qty > $coupon->max_sku) {
+                                        // считаем скидку в процентах за каждый, при учете что даём скидку не более чем на max_sku товаров
+                                        $gprice = round($base_price[$good_id] * (1 - $discount / 100)); // цену округляем до 1 коп
+                                        $total = $base_price[$good_id] * ($qty - $coupon->max_sku) + $gprice * $coupon->max_sku;
+                                        $each = $total / $qty;
+                                        $percent = (1 - $each / $base_price[$good_id]) * 100;
+                                        $this->apply_discount($goods, $base_price, $percent, [$good_id => $good_id]);
+                                    } else {
+                                        $this->apply_discount($goods, $base_price, $discount, [$good_id => $good_id]); // применяем скидку на все
+                                    }
+
+                                    $used = TRUE;
+                                }
                             }
-
-                            if ($coupon->max_sku > 0 && $qty > $coupon->max_sku) {
-                                // считаем скидку в процентах за каждый, при учете что даём скидку не более чем на max_sku товаров
-                                $gprice = round($base_price[$good_id] * (1 - $discount / 100)); // цену округляем до 1 коп
-                                $total = $base_price[$good_id] * ($qty - $coupon->max_sku) + $gprice * $coupon->max_sku;
-                                $each = $total / $qty;
-                                $percent = (1 - $each / $base_price[$good_id]) * 100;
-                                $this->apply_discount($goods, $base_price, $percent, [$good_id => $good_id]);
-                            } else {
-                                $this->apply_discount($goods, $base_price, $discount, [$good_id => $good_id]); // применяем скидку на все
-                            }
-
-                            $used = TRUE;
                         }
                     }
                 }
@@ -654,9 +659,11 @@ class Cart {
                 if (empty($cgoods))  { $this->coupon_error = 'В корзине нет товаров, для которых активен купон'; return FALSE; };
 
                 $this->coupon_presents = [];
-                foreach($cgoods as $discount => $goodz) {
-                    foreach ($goodz as $good_id => $g) {
-                        $this->coupon_presents[] = $good_id;
+                foreach($cgoods as $discount => $qty_goodz) {
+                    foreach ($qty_goodz as $min_qty => $goodz) {
+                        foreach ($goodz as $good_id => $g) {
+                            $this->coupon_presents[] = $good_id;
+                        }
                     }
                 }
                 //print_r($this->coupon_presents);

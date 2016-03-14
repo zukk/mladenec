@@ -3046,7 +3046,8 @@ class Controller_Admin extends Controller_Authorised {
             'goods' => $add,
             'total' => count($add),
             'mode'  => $this->request->post('mode'),
-            'discount' => $this->request->post('discount')
+            'discount' => $this->request->post('discount'),
+            'min_qty' => $this->request->post('min_qty')
         );
 
         exit(View::factory('smarty:admin/good/chosen', $tmpl)->render());

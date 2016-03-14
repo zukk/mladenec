@@ -97,6 +97,9 @@ $(document).ready(function() {
             var discount = $('#chose' + rel).attr('data-discount');
             if (typeof(discount) != 'undefined' && discount != "") send+= '&discount=' + discount;
 
+            var min_qty = $('#chose' + rel).attr('data-min_qty');
+            if (typeof(min_qty) != 'undefined' && min_qty != "") send+= '&min_qty=' + min_qty;
+
             $.post(
                 '/od-men/chosen',
                 send,
@@ -125,6 +128,8 @@ $(document).ready(function() {
             var discount = $('#chose' + rel).attr('data-discount');
             if (typeof(discount) != 'undefined' && discount != "") post.discount = discount;
 
+            var min_qty = $('#chose' + rel).attr('data-min_qty');
+            if (typeof(min_qty) != 'undefined' && min_qty != "") send+= '&min_qty=' + min_qty;
 
             $.post('/od-men/chosen', post, function(data) {
                 $('#chose' + rel).closest('.area').append(data);

@@ -31,20 +31,22 @@
 
     <div id="type1" {if not $i->id OR $i->type != Model_Coupon::TYPE_PERCENT}class="hide"{/if}>
         {if $i->id}
-            {foreach from=$i->get_goods() key=discount item=goods}
-                <label>
-                    Товары со скидкой {$discount}%<br />
-                    <a onclick="$('#goods{$discount} .trdel').click()" class="no">удалить все</a>
-                </label>
+            {foreach from=$i->get_goods() key=discount item=qty_goods}
+                {foreach from=$qty_goods key=min_qty item=goods}
+                    <label>
+                        Товары со&nbsp;скидкой {$discount}% при покупке от&nbsp;{$min_qty} шт<br />
+                        <a onclick="$('#goods{$discount}_{$min_qty} .trdel').click()" class="no">удалить все</a>
+                    </label>
 
-                <div class="area" id="goods{$discount}">
-                    {include file='admin/good/chosen.tpl' goods=$goods discount=$discount}
-                </div>
+                    <div class="area" id="goods{$discount}_{$min_qty}">
+                        {include file='admin/good/chosen.tpl' goods=$goods discount=$discount min_qty=$min_qty}
+                    </div>
+                {/foreach}
             {/foreach}
 
-            <label>Скидка (%)<input type="text" value="1" name="misc[discount]"/></label>
-            <div class="area" id="goods{$discount}">
-                {include file='admin/good/chosen.tpl' goods=[] discount=0}
+            <label>Скидка (%)<input type="text" value="1" name="misc[discount]" maxlength="3"/> при покупке от <input type="text" value="1" name="misc[min_qty]" maxlength="3"/></label>
+            <div class="area" id="goods0">
+                {include file='admin/good/chosen.tpl' goods=[] discount=0 min_qty=0}
             </div>
         {/if}
     </div>
@@ -58,7 +60,8 @@
                     <th></th>
                 </tr>
 
-                {foreach from=$i->get_goods() key=discount item=presents}
+                {foreach from=$i->get_goods() key=discount item=qty_presents}
+                    {foreach from=$qty_presents item=presents}
                     {foreach from=$presents key=id item=p}
                     <tr>
                         <td>
@@ -70,6 +73,7 @@
                         <td><input type="button" class="btn btn-small btn-red trdel" value="удалить" /></td>
                     </tr>
 
+                    {/foreach}
                     {/foreach}
                 {/foreach}
 

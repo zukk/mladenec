@@ -212,29 +212,34 @@ class Model_Coupon extends ORM {
     }
 
     /**
-     * Получить товары купона, сгруппировать по скидкам
+     * Получить товары купона, сгруппировать по скидкам и минимальному кол-ву товара
      */
     function get_goods()
     {
         $return = [];
 
-        $good_discount = DB::select('good_id', 'discount')
+        $good_discount = DB::select('good_id', 'discount', 'min_qty')
             ->from('z_coupon_good')
             ->where('coupon_id', '=', $this->id)
+            ->order_by('min_qty') // важно для правильного применения скидок если у одного товара есть их несколько при разном кол-ве
             ->order_by('discount', 'DESC')
             ->execute()
-            ->as_array('good_id', 'discount');
+            ->as_array();
 
         if (empty($good_discount)) return $return;
 
+        // собираем товары
+        $idz = [];
+        foreach($good_discount as $g) $idz[$g['good_id']] = $g['good_id'];
+
         $goods = ORM::factory('good')
-            ->where('id', 'IN', array_keys($good_discount))
+            ->where('id', 'IN', $idz)
             ->find_all()
             ->as_array('id');
 
-        foreach($good_discount as $id => $discount) {
-            $return[$discount][$id] = $goods[$id];
-        }
+        // распихиваем по скидкам и кол-ву
+        foreach($good_discount as $g) $return[$g['discount']][$g['min_qty']][$g['good_id']] = $goods[$g['good_id']];
+
         return $return;
     }
 
@@ -250,33 +255,42 @@ class Model_Coupon extends ORM {
             $old_good_idz = [];
             $old_goods = $this->get_goods();
 
-            foreach($old_goods as $discount => $goodz) {
-                foreach($goodz as $id => $good) $old_good_idz[$id] = $discount; // запоминаем скидку и товар
+            foreach($old_goods as $discount => $qty_goodz) {
+                foreach($qty_goodz as $min_qty => $goodz) {
+                    foreach($goodz as $id => $good) {
+                        $old_good_idz[$id] = [$discount, $min_qty]; // запоминаем скидку и товар
+                    }
+                }
             }
 
             $add_disc = Request::current()->post('misc');
 
-            // чистим все товары и добавляем согласно списку, заодно собираем id => discount для полученных из POST
+            // чистим все товары и добавляем согласно списку, заодно собираем id => [discount, min_qty] для полученных из POST
             DB::delete('z_coupon_good')->where('coupon_id', '=', $this->id)->execute();
             $new_good_idz = [];
-            foreach($goods as $discount => $goodz) {
-                $idz = array_unique($goodz);
-                if ( ! empty($idz)) {
-                    $ins = DB::insert('z_coupon_good')->columns(['good_id', 'coupon_id', 'discount']);
-                    if ($discount == 0) $discount = ! empty($add_disc['discount']) ? $add_disc['discount'] : 0;
-                    foreach($idz as $id) {
-                        $ins->values([
-                            'good_id' => $id,
-                            'coupon_id' => $this->id,
-                            'discount' => $discount,
-                        ]);
-                        $new_good_idz[$id] = $discount;
+            foreach($goods as $discount => $qty_goodz) {
+                foreach($qty_goodz as $min_qty => $goodz) {
+                    $idz = array_unique($goodz);
+                    if ( ! empty($idz)) {
+                        $ins = DB::insert('z_coupon_good')->columns(['good_id', 'coupon_id', 'discount', 'min_qty']);
+                        if ($discount == 0) $discount = ! empty($add_disc['discount']) ? $add_disc['discount'] : 0;
+                        if ($min_qty == 0) $min_qty = ! empty($add_disc['min_qty']) ? $add_disc['min_qty'] : 1;
+                        foreach ($idz as $id) {
+                            $ins->values([
+                                'good_id' => $id,
+                                'coupon_id' => $this->id,
+                                'discount' => $discount,
+                                'min_qty' => $min_qty,
+                            ]);
+                            $new_good_idz[$id] = [$discount, $min_qty];
+                        }
+                        echo $ins."\n";
+                        DB::query(Database::INSERT, str_replace('INSERT', 'INSERT IGNORE ', $ins))->execute();
                     }
-                    DB::query(Database::INSERT, str_replace('INSERT', 'INSERT IGNORE ', $ins))->execute();
                 }
             }
 
-            $goods_del = array_diff_assoc($old_good_idz, $new_good_idz); // Удалены товары или смена скидки
+            $goods_del = array_diff_assoc($old_good_idz, $new_good_idz); // Удалены товары или смена скидки/кол-ва
             $goods_new = array_diff_assoc($new_good_idz, $old_good_idz); // Добавлены товары или смена скидки
             if ( ! empty($goods_new)) {
                 Model_History::log('coupon', $this->id, 'Добавлено товаров: '.count($goods_new), $goods_new);
