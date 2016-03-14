@@ -51,7 +51,7 @@ foreach($all_products as $product) {
 
     $rule = $rule[array_rand($rule)];
     $rule = str_replace('[group]', $product['group_name'], $rule);
-    $rule = str_replace('[name]', $product['good_group_name'].' '.$product['good_name'], $rule);
+    $rule = str_replace('[name]', str_replace('"', '\'', $product['good_group_name']).' '.str_replace('"', '\'', $product['good_name']), $rule);
     $rule = str_replace('[section]', $product['section_name'], $rule);
     $rule = str_replace('[brand]', $product['brand_name'], $rule);
     $rule = str_replace('[country]', $product['country_name'], $rule);
