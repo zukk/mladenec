@@ -803,8 +803,10 @@ class Model_Order extends ORM {
             $save_gift = Model_Coupon::generate($sum_gift[0]['price'], 1, 1, 1, 0, Model_Coupon::TYPE_SUM, date('Y-m-d H:i'), date(date('Y') + 1 .'-m-d H:i'));
 
             if(empty($sum_gift[0]['comment_email']) && $sum_gift[0]['comment_email'] == 0){
+                $email_buyer = '';
                 $email = $this->data->email;
             } else {
+                $email_buyer = $this->data->email;
                 $email = $sum_gift[0]['comment_email'];
             }
             if(empty($sum_gift[0]['comment']) && $sum_gift[0]['comment'] == 0){
@@ -813,6 +815,9 @@ class Model_Order extends ORM {
                 $message = $sum_gift[0]['comment'];
             }
             Mail::htmlsend('creategift', array('gift' => $save_gift, 'order' => $this, 'message' => $message), $email, 'Покупка сертификата!');
+            if(!empty($email_buyer)){
+                Mail::htmlsend('gift_buyer', array('gift' => $save_gift, 'email' => $email), $email_buyer, 'Подтверждение отправки сертификата');
+            }
         }
     }
 
