@@ -748,7 +748,11 @@ class Controller_Admin extends Controller_Authorised {
 
         if ($this->request->post('edit')) {
             $form_data = $this->request->post();
-            
+            if(isset($form_data['seo_auto'])){
+                $form_data['seo_auto'] = 1;
+            } else {
+                $form_data['seo_auto'] = 0;
+            }
             if (method_exists($this->model, 'img')) { // upload-and-resize images
                 $this->model = $this->save_form_images($this->model);
             }

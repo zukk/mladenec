@@ -148,6 +148,10 @@ $(document).ready(function() {
                 <input type="checkbox" name="zombie" value="1" {if $i->zombie}checked="checked"{/if}  />
                 <label>Зомби</label>
             </p>
+            <p>
+                <input type="checkbox" name="seo_auto" id="seo_auto" value="1" {if $i->seo_auto == 1}checked="checked"{/if}  />
+                <label>Автозаполнение для SEO</label>
+            </p>
         </div>
     {/if}
     </div>
