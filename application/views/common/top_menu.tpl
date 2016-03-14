@@ -61,9 +61,9 @@
                 {if $item->id eq 29890}
                     <li id="zima_menu"><a href="/catalog/progulka-i-puteshestvie/zima">Зимние забавы</a></li>
                 {/if}
-                {if $item->id eq 29429}
+                {*if $item->id eq 29429}
                     <li id="japan_menu"><a href="/jp_kr_cosmetics">Японская&nbsp;косметика</a></li>
-                {/if}
+                {/if*}
             </ul>
         </div>
         {/if}
