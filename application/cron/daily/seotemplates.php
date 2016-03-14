@@ -15,6 +15,7 @@ $del_products_from_seo = DB::delete('z_seo')
 $all_products = DB::select(
     'z_good.id',
     'z_good.price',
+    DB::expr('z_good.group_name as good_group_name'),
     DB::expr('z_good.name as good_name'),
     DB::expr('z_group.name as group_name'),
     DB::expr('z_section.name as section_name'),
@@ -50,6 +51,7 @@ foreach($all_products as $product) {
 
     $rule = $rule[array_rand($rule)];
     $rule = str_replace('[group]', $product['group_name'], $rule);
+    $rule = str_replace('[name]', $product['good_group_name'].' '.$product['good_name'], $rule);
     $rule = str_replace('[section]', $product['section_name'], $rule);
     $rule = str_replace('[brand]', $product['brand_name'], $rule);
     $rule = str_replace('[country]', $product['country_name'], $rule);

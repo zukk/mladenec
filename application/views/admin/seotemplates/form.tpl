@@ -35,7 +35,9 @@
             <b>Описание</b><br />
             <div>
                 <div>Вы можете использовать следующие атрибуты:<br /></div>
+
                 <div>Группа: [group]</div>
+                <div>Название продукта: [name]</div>
                 <div>Категория: [section]</div>
                 <div>Бренд: [brand]</div>
                 <div>Страна: [country]</div>

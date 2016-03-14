@@ -4,8 +4,7 @@ CREATE TABLE `z_seotemplates` (
 `rule`  text NULL ,
 `type`  enum('seo_title') CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'seo_title' ,
 `active`  tinyint(1) NULL ,
-PRIMARY KEY (`id`),
-INDEX `autocomplete` (`autocomplete`) USING BTREE,
+PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `z_good`
