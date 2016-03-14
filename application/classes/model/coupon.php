@@ -284,7 +284,6 @@ class Model_Coupon extends ORM {
                             ]);
                             $new_good_idz[$id] = [$discount, $min_qty];
                         }
-                        echo $ins."\n";
                         DB::query(Database::INSERT, str_replace('INSERT', 'INSERT IGNORE ', $ins))->execute();
                     }
                 }
