@@ -5,7 +5,7 @@ require('../../../www/preload.php');
  * Формирование YML файла для Адмитад
  */
 $start_memory = memory_get_usage();
-$lock_file = APPPATH.'cache/yml_on';
+$lock_file = APPPATH.'cache/admitad_on';
 
 if (file_exists($lock_file)) exit('Already running, lock file found at '.$lock_file);
 touch($lock_file);
