@@ -16,7 +16,8 @@
                 {if $cgood->new}<div class="product_new_marker"><img src="/i/new.png" /></div>{/if}
             </div>
 
-            {if $cgood->old_price > 0} {* есть старая цена - покажем скидку в процентах *}
+            {assign var=real value=$cgood->old_price-$cgood->price}
+            {if $cgood->old_price > 0 && $real > 1} {* есть старая цена - покажем скидку в процентах *}
 
                 {if not empty($good_action[$cgood->id])} {* ищем акцию *}
 
@@ -35,7 +36,7 @@
                 >
                     <span>СКИДКА {Txt::discount($cgood)}%</span>
                     {assign var=real value=$cgood->old_price-$cgood->price}
-                    <span>ЭКОНОМИЯ {$real|price:0} р.</span>
+                    <span>ЭКОНОМИЯ {$real|floor|price:0} р.</span>
                 </a>
 
             {/if}

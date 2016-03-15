@@ -6970,6 +6970,7 @@ td.select-present {
     font: bold 15px/26px 'PT Sans', Verdana, Tahoma, Geneva, sans-serif;
 }
 
+
 .real-discount:hover {
     color:#fff;
 }
@@ -7007,6 +7008,9 @@ td.select-present {
     height:26px;
     line-height:26px;
     display:block;
+}
+.zoombox .real-discount span {
+    padding:0 5px;
 }
 
 .g .real-discount span:last-child {

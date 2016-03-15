@@ -66,7 +66,8 @@
     {/if}
 </div>
 
-{if $g->old_price > 0} {* есть старая цена - покажем скидку в процентах *}
+{assign var=real value=$g->old_price-$g->price}
+{if $g->old_price > 0 && $real > 1} {* есть старая цена - покажем скидку в процентах *}
 
     {if not empty($good_action[$g->id])} {* ищем акцию *}
 
@@ -84,8 +85,8 @@
             {if ! empty($pop_icon)} abbr="<b>{$pop_icon.name|escape:html}</b><br />{$pop_icon.preview|escape:html}"{/if}
             >
         <span>-{Txt::discount($g)}%</span>
-        {assign var=real value=$g->old_price-$g->price}
-        <span>-{$real|price:0} р.</span>
+
+        <span>-{$real|floor|round|price:0} р.</span>
     </a>
 
 {/if}

@@ -559,8 +559,10 @@ class Controller_Odinc extends Controller {
                 elseif ($s == 'КОНЕЦЗАКАЗА') // проапдейтить заказ и отослать письмо
                 {
 
-                    $order = new Model_Order($id);
-                    $order->load_with('data');
+                    $order = ORM::factory('order')
+                        ->with('data')
+                        ->where('order.id', '=', $id)
+                        ->find();
 
                     if ( ! $order->loaded())
                     {
