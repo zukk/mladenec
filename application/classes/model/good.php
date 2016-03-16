@@ -1000,7 +1000,7 @@ class Model_Good extends ORM {
      * @param array $where - доп условия
      * @return boolean
      */
-    public static function for_yml($heap_size, $heap_number, $where = NULL, $ya = TRUE)
+    public static function for_yml($heap_size, $heap_number, $where = NULL, $type = FALSE)
     {
         $active_top_sections = DB::select('z_section.id')
                 ->from('z_section')
@@ -1020,9 +1020,13 @@ class Model_Good extends ORM {
                 ->join(['z_group',       'group'])   ->on('good.group_id',   '=', 'group.id')
                 ->join(['b_file',        'file'])    ->on('prop.img1600',    '=', 'file.id')
 
-                ->where('good.show',      '=', 1)
-                ->where('good.qty', '!=', '0')
-                ->where('good.section_id',  '>', 0)
+                ->where('good.show',      '=', 1);
+
+        if ($type != 'admitad') {
+            $query->where('good.qty', '!=', '0');
+        }
+
+            $query->where('good.section_id',  '>', 0)
                 ->where('good.brand_id',    '>', 0)
                 ->where('good.group_id',    '>', 0)
 
@@ -1041,7 +1045,7 @@ class Model_Good extends ORM {
         if ( ! empty($where)) {
             foreach($where as $w) $query->where($w[0], $w[1], $w[2]);
         }
-        if ($ya) {
+        if ($type == 'yandex') {
          // $query->where('prop.to_yandex', '!=', 0);
 		//	$query->where('good.big','=', 0);
         }

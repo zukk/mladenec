@@ -39,61 +39,11 @@ foreach($catalog as $item) {
 
 fwrite($fp, View::factory('smarty:page/export/yml/categories', ['catalog' => $catalog]));
 
-fwrite($fp, '</categories><local_delivery_cost>350</local_delivery_cost><offers>');
+fwrite($fp, '</categories><offers>');
 $goods_written = 0;
 
-define('EXPORTXML_SEX', 1951);
-define('EXPORTXML_COLOR', 1952);
-define('EXPORTXML_SIZE', 1949);
-define('EXPORTXML_GROWTH', 1950);
-
-$goodFilters = [
-    Model_Section::EXPORTYML_CLOTHERS => [
-        EXPORTXML_GROWTH	=> 'Рост',
-        EXPORTXML_SIZE		=> 'Размер',
-        EXPORTXML_COLOR		=> 'Цвет',
-        EXPORTXML_SEX		=> 'Пол'
-    ]
-];
-
-$filterClosures = [
-
-    EXPORTXML_SEX => function($name) {
-        return ['name' => preg_match('#^девочка$#iu', $name) ? 'Женский' : 'Мужской'];
-    },
-
-    EXPORTXML_GROWTH => function($name) {
-        if ( ! preg_match('#^([0-9\- ]+(см|м))$#iu', $name, $matches)) return FALSE;
-        return [
-            'name' => (int)$matches[1],
-            'unit' => $matches[2]
-        ];
-    },
-
-    EXPORTXML_SIZE => function($name) {
-
-        if( ! preg_match('#^([0-9\- ]+)$#iu', $name, $matches)) return FALSE;
-        return [
-            'name' => (int)$matches[1],
-            'unit' => 'RU'
-        ];
-    },
-
-    EXPORTXML_COLOR => function($name) {
-        return ['name' => mb_convert_case($name, MB_CASE_TITLE)];
-    },
-];
-
-$goodFiltersLabels = [];
-foreach($goodFilters as $type => $filters) {
-    foreach($filters as $id => $label) {
-        $goodFiltersLabels[$id] = $label;
-    }
-}
-
-$goodFiltersIds = [];
 $image_types = 'originals';
-for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size, $heap_number); $heap_number++) {
+for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size, $heap_number, NULL, 'admitad'); $heap_number++) {
     $c = 0;
     $good_ids = [];
     foreach ($goods as &$g) {
@@ -104,77 +54,20 @@ for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size, $heap_number); $
         }
 
         $g['real_section'] = $section->id;
-
-        if ($section->is_cloth()) {
-            $goodFiltersIds[1][] = $g['id'];
-        }
         $good_ids[] = $g['id'];
-    }
-
-    $goodFiltersV = [];
-    if ( ! empty($goodFiltersIds)) {
-        foreach ($goodFiltersIds as $filterType => $ids) {
-
-            $filtersIds = array_keys($goodFilters[$filterType]);
-
-            $result = DB::select('value_id', 'good_id', 'filter_id')
-                ->from('z_good_filter')
-                ->where('filter_id', 'IN', $filtersIds)
-                ->where('good_id', 'IN', $ids)
-                ->execute();
-
-            $filterValuesIds = [];
-            while ($row = $result->current()) {
-                $filterValuesIds[$row['value_id']] = 1;
-                $result->next();
-                $goodFiltersV[$row['good_id']][$row['filter_id']][] = $row['value_id'];
-            }
-        }
-    }
-
-    $filterValues = [];
-    if ( ! empty($filterValuesIds)) {
-
-        $filterValuesIds = array_keys( $filterValuesIds );
-
-        $result = DB::select('name', 'id')
-            ->from('z_filter_value')
-            ->where('id', 'IN', $filterValuesIds)
-            ->execute();
-
-        while ($row = $result->current()) {
-            $filterValues[$row['id']] = $row['name'];
-            $result->next();
-        }
     }
 
     $images = Model_Good::many_images([$image_types], $good_ids);
 
     foreach($goods as &$g) { // тут передаем по ссылке, иначе послдний элемент дублируется
-        // Если одновременно мальчик-девочка, то пол не передаем
-        if ( ! empty($goodFiltersV[$g['id']][EXPORTXML_SEX]) && count($goodFiltersV[$g['id']][EXPORTXML_SEX]) > 1) {
-            unset($goodFiltersV[$g['id']][EXPORTXML_SEX]);
-        }
 
-
-        if ( ! empty($goodFiltersV[$g['id']])) {
-            foreach($goodFiltersV[$g['id']] as $filter_id => $valuesIds) {
-                foreach($valuesIds as $key => $valueId) {
-                    $rr = $filterClosures[$filter_id]($filterValues[$valueId]);
-                    if ($rr !== FALSE) $valuesIds[$key] = $rr;
-                    break; // Яндекс примет только первое значение
-                }
-            }
-        }
         //подготовка изображений      
         $good_images = isset($images[$g['id']][$image_types]) ? $images[$g['id']][$image_types] : [];
 
-        fwrite($fp, View::factory('smarty:page/export/yml/good', [
+        fwrite($fp, View::factory('smarty:page/export/yml/admitad', [
             'g'             => $g,
             'images'        => $good_images,
             'section'       => $id2Catalog[$g['real_section']],
-            'filter_labels' => $goodFiltersLabels,
-            'good_filter'   => ! empty($goodFiltersV[$g['id']]) ? $goodFiltersV[$g['id']] : [],
         ]));
         $goods_written++;
     }
