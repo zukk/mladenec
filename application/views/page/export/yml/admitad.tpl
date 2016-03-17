@@ -15,7 +15,7 @@
     <currencyId>RUR</currencyId>
 
     <vendor><![CDATA[{Txt::clean_rude_symbols($g['brand_name']|escape:'html')}]]></vendor>
-    {if $g['code'] neq '' AND not empty($label) AND $label eq 'retailrocket'}<vendorCode>{$g['code']|escape:'html'}</vendorCode>{/if}
-    <model><![CDATA[{Txt::clean_rude_symbols($g['group_name']|escape:'html')} {Txt::clean_rude_symbols($g['name']|escape:'html')}]]></model>
+
+    <name><![CDATA[{Txt::clean_rude_symbols($g['group_name']|escape:'html')} {Txt::clean_rude_symbols($g['name']|escape:'html')}]]></name>
 
 </offer>
