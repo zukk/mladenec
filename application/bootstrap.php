@@ -576,7 +576,10 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 	Route::set('admin_spam_stat', 'od-men/spam_stat')
 		->defaults(array('controller' => 'admin', 'action' => 'spam_stat'));
 
-	Route::set('admin_list', 'od-men/<model>', array('model' => '[a-z_]+'))
+    Route::set('admin_dups', 'od-men/dups')
+        ->defaults(array('controller' => 'admin_ajax', 'action' => 'dups'));
+
+    Route::set('admin_list', 'od-men/<model>', array('model' => '[a-z_]+'))
 		->defaults(array('controller' => 'admin', 'action' => 'list'));
 
 	Route::set('admin_add', 'od-men/<model>/add', array('model' => '[a-z_]+'))
@@ -590,6 +593,7 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
 
 	Route::set('admin_unbind', 'od-men/unbind/<model>/<id>/<alias>/<far_key>', array('model' => '[a-z_]+', 'id' => '\d+', 'alias' => '[a-z_]+', 'far_key' => '\d+'))
 		->defaults(array('controller' => 'admin', 'action' => 'unbind'));
+
 	/*
 	Route::set('admin_sert_edit', 'od-men/sert/<id>', array('id' => '\d+'))
 		->defaults(array('controller' => 'admin', 'action' => 'sert_edit'));
