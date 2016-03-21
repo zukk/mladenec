@@ -7044,16 +7044,17 @@ td.select-present {
     font-size:10px; text-align:center; color:red;
 }
 
-#zima_menu {
+#bike_button {
     background:none;
 }
-#zima_menu a {
+#bike_button a {
     letter-spacing: 1px;
+    text-indent:-10000px;
     height: 37px;
     margin: 10px 8px 0 !important;
-    background: #fff url(/images/menu_zima.png) no-repeat 0 -13px;
+    background: #fff url(/images/button-bike.png) no-repeat 0 0;
     border-radius: 5px;
+    border-bottom: none !important;
     line-height: 37px !important;
-    font-size: 15px  !important;
     padding: 0 0 0 47px !important;
 }
