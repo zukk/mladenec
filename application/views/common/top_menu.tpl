@@ -1,33 +1,3 @@
-<style>
-    #zima_menu {
-        background:none;
-    }
-    #zima_menu a {
-        letter-spacing: 1px;
-        height: 37px;
-        margin: 10px 8px 0 !important;
-        background: #fff url(/images/menu_zima.png) no-repeat 0 -13px;
-        border-radius: 5px;
-        line-height: 37px !important;
-        font-size: 15px  !important;
-        padding: 0 0 0 47px !important;
-    }
-    #japan_menu {
-        background:none;
-    }
-    #japan_menu a {
-        letter-spacing: 1px;
-        height: 37px;
-        margin: 10px 8px 0 !important;
-        background: #fff url(/images/menu-japan.png) no-repeat 0 0;
-        border-radius: 5px;
-        line-height: 37px !important;
-        padding: 0 0 0 37px !important;
-    }
-    #japan_menu {
-        height:37px;
-    }
-</style>
 {assign var=td value=0}
 {assign var=half value=count($top_menu)/2}
 <table id="catalog">
@@ -58,9 +28,9 @@
                     {/if}
                     </li>
                 {/foreach}
-                {if $item->id eq 29890}
+                {*if $item->id eq 29890}
                     <li id="zima_menu"><a href="/catalog/progulka-i-puteshestvie/zima">Зимние забавы</a></li>
-                {/if}
+                {/if*}
                 {*if $item->id eq 29429}
                     <li id="japan_menu"><a href="/jp_kr_cosmetics">Японская&nbsp;косметика</a></li>
                 {/if*}

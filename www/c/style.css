@@ -7043,3 +7043,17 @@ td.select-present {
 .reminder {
     font-size:10px; text-align:center; color:red;
 }
+
+#zima_menu {
+    background:none;
+}
+#zima_menu a {
+    letter-spacing: 1px;
+    height: 37px;
+    margin: 10px 8px 0 !important;
+    background: #fff url(/images/menu_zima.png) no-repeat 0 -13px;
+    border-radius: 5px;
+    line-height: 37px !important;
+    font-size: 15px  !important;
+    padding: 0 0 0 47px !important;
+}
