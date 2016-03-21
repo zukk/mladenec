@@ -387,10 +387,9 @@ class Controller_Product extends Controller_Frontend {
 		$cart = Cart::instance();
 		$user = Model_User::current();
 		$post = $this->request->post();
-
-        if ($cart->gift_only()) { // сброс адреса если в заказе только подарочные сертификаты
-            $post['city'] = ' ';
-            $post['street'] = ' ';
+        if($cart->gift_only()){ // сброс адреса если в заказе только подарочные сертификаты
+            $post['city'] = '-';
+            $post['street'] = '-';
             $post['house'] = 1;
             $post['kv'] = 1;
             $post['name'] = trim($user->name);
