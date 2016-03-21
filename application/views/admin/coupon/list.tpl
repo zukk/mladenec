@@ -25,6 +25,7 @@
         <th>Условия работы</th>
         <th>Использований</th>
 	    <th>Работает</th>
+	    <th>Номер заказа</th>
     </tr>
     {foreach from=$list item=i}
     <tr {cycle values='class="odd",'}>
@@ -54,6 +55,9 @@
             {else}
                 <span class="red">нет</span>
             {/if}
+        </td>
+        <td>
+            {$i->order_id}
         </td>
     </tr>
     {/foreach}
