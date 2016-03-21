@@ -389,8 +389,8 @@ class Controller_Product extends Controller_Frontend {
 		$user = Model_User::current();
 		$post = $this->request->post();
         if($cart->gift_only()){ // сброс адреса если в заказе только подарочные сертификаты
-            $post['city'] = ' ';
-            $post['street'] = ' ';
+            $post['city'] = '-';
+            $post['street'] = '-';
             $post['house'] = 1;
             $post['kv'] = 1;
             $post['name'] = $user->name;
