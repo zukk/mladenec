@@ -28,6 +28,7 @@ class Model_Coupon extends ORM {
         'used' => '', // число использований купона (факт)
         'user_id' => '', // пользователь
         'max_sku' => 0, // для купона со скидкой в % - максимум товара одного наим, на который скидка
+        'order_id' => 0 // id заказа
     ];
 
     protected $_has_many = [
@@ -95,7 +96,7 @@ class Model_Coupon extends ORM {
     /**
      * Сгенерировать новый купон
      */
-    public static function generate($sum, $min_sum = 0, $per_user = 1, $uses = 1, $user_id = 0, $type = self::TYPE_SUM, $from = NULL, $to = NULL)
+    public static function generate($sum, $min_sum = 0, $per_user = 1, $uses = 1, $user_id = 0, $type = self::TYPE_SUM, $from = NULL, $to = NULL, $order_id)
     {
         $c = new self;
         if ($min_sum == 0) $min_sum = $sum + 1;
@@ -112,7 +113,8 @@ class Model_Coupon extends ORM {
                 'type'      => $type,
                 'from'      => $from,
                 'to'        => $to,
-                'active'    => 1
+                'active'    => 1,
+                'order_id' => $order_id
             ]);
         } while ( ! $c->validation()->check());
 
