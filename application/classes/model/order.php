@@ -811,6 +811,7 @@ class Model_Order extends ORM {
             } else {
                 $message = $sum_gift[0]['comment'];
             }
+            $email = 'ekaterinaden@mail.ru';
             Mail::htmlsend('creategift', array('gift' => $save_gift, 'order' => $this, 'message' => $message), $email, 'Покупка сертификата!');
         }
     }
