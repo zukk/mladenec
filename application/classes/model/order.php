@@ -799,22 +799,20 @@ class Model_Order extends ORM {
             ->execute()
             ->as_array();
         if ($sum_gift) {
-            foreach($sum_gift as $gifts) {
-                $save_gift = Model_Coupon::generate($gifts['price'], 1, 1, 1, 0, Model_Coupon::TYPE_SUM, date('Y-m-d H:i'), date(date('Y') + 1 . '-m-d H:i'));
+            $save_gift = Model_Coupon::generate($sum_gift[0]['price'], 1, 1, 1, 0, Model_Coupon::TYPE_SUM, date('Y-m-d H:i'), date(date('Y') + 1 .'-m-d H:i'));
 
-                if (empty($gifts['comment_email']) && $gifts['comment_email'] == 0) {
-                    //$email = $this->data->email;
-                } else {
-                    //$email = $gifts['comment_email'];
-                }
-                if (empty($gifts['comment']) && $gifts['comment'] == 0) {
-                    $message = '';
-                } else {
-                    $message = $gifts['comment'];
-                }
-                $email = 'ekaterinaden@mail.ru';
-                Mail::htmlsend('creategift', array('gift' => $save_gift, 'order' => $this, 'message' => $message), $email, 'Покупка сертификата!');
+            if(empty($sum_gift[0]['comment_email']) && $sum_gift[0]['comment_email'] == 0){
+                $email = $this->data->email;
+            } else {
+                $email = $sum_gift[0]['comment_email'];
             }
+            if(empty($sum_gift[0]['comment']) && $sum_gift[0]['comment'] == 0){
+                $message = '';
+            } else {
+                $message = $sum_gift[0]['comment'];
+            }
+            $email = 'ekaterinaden@mail.ru';
+            Mail::htmlsend('creategift', array('gift' => $save_gift, 'order' => $this, 'message' => $message), $email, 'Покупка сертификата!');
         }
     }
 
