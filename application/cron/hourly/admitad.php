@@ -47,13 +47,6 @@ for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size, $heap_number, NU
     $c = 0;
     $good_ids = [];
     foreach ($goods as &$g) {
-        if ($id2Catalog[$g['section_id']]->parent_id > 0) {
-            $section = $id2Catalog[$id2Catalog[$g['section_id']]->parent_id];
-        } else {
-            $section = $id2Catalog[$g['section_id']];
-        }
-
-        $g['real_section'] = $section->id;
         $good_ids[] = $g['id'];
     }
 
@@ -67,7 +60,7 @@ for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size, $heap_number, NU
         fwrite($fp, View::factory('smarty:page/export/yml/admitad', [
             'g'             => $g,
             'images'        => $good_images,
-            'section'       => $id2Catalog[$g['real_section']],
+            'section'       => $id2Catalog[$g['section_id']],
         ]));
         $goods_written++;
     }

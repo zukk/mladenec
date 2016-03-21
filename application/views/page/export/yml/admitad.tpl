@@ -1,4 +1,4 @@
-<offer id="{$g['id']}" available="{if $g['qty'] eq 0}false{else}true{/if}" {if not empty($section) and $section->is_cloth()}group_id="{$g['group_id']}"{/if}>
+<offer id="{$g['id']}" available="{if $g['qty'] eq 0}false{else}true{/if}" {if $section->is_cloth()}group_id="{$g['group_id']}"{/if}>
     <url>http://www.mladenec-shop.ru{Route::url('product',['translit'=>$g['translit'],'group_id'=>$g['group_id'],'id'=>$g['id']])}</url>
 
     <price>{$g['price']}</price>
