@@ -118,6 +118,51 @@
     </tfoot>
 </table>
 
+{if $coupons|count > 0}
+    <h2>Подарочные сертификаты</h2>
+    <table id="list">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Код</th>
+            <th>Тип</th>
+            <th>Активность</th>
+            <th>Использований</th>
+            <th>Работает</th>
+        </tr>
+        </thead>
+
+        <tbody>
+            {foreach from=$coupons item=coupon}
+                <tr {cycle values='class="odd",'}>
+                    <td>{$coupon.id}</td>
+                    <td><a href="{Route::url('admin_edit', ['model' => 'coupon', 'id' => $coupon.id])}">{$coupon.name}</a></td>
+                    <td>{Model_Coupon::type($coupon.type)}</td>
+                    <td>{if $coupon.active}
+                            <span class="green">вкл</span>
+                        {else}
+                            <span class="red">откл</span>
+                        {/if}
+                    </td>
+                    <td>
+                        {if $coupon.from}<span class="nowrap">c {$coupon.from}</span><br />{/if}
+                        {if $coupon.to}<span{if !empty($coupon.to) && ($coupon.to < date('Y-m-d G:i:00'))} class="red nowrap"{/if}>по {$coupon.to}</span><br />{/if}
+                        {if $coupon.min_sum}при сумме заказа от {$coupon.min_sum}р.<br />{/if}
+                        <br />
+                        {if $coupon.type eq Model_Coupon::TYPE_SUM}
+                            Дает скидку {$coupon.sum} руб
+                        {/if}
+                    </td>
+                    <td>{$coupon.uses} (использовано {$coupon.used})
+                        <br />{$coupon.per_user} раз на аккаунт
+                    </td>
+                </tr>
+            {/foreach}
+        </tbody>
+    </table>
+    <br />
+{/if}
+
 <h2>Информация о доставке</h2>
 <h3>Контактная информация</h3>
 <dl>

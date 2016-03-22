@@ -791,6 +791,13 @@ class Model_Order extends ORM {
      */
     function activate_gift()
     {
+        $config = new Model_Config(1);
+        $emails = $config->emails;
+        $emailsArr = array();
+        if(strpos($emails, ',') !== false){
+            $emailsArr = explode(',', $emails);
+        }
+
         $sum_gift = DB::select('g.price', 'og.comment','og.quantity', 'og.comment_email')
             ->from(['z_order_good', 'og'])
             ->join(['z_good', 'g'])
@@ -822,10 +829,16 @@ class Model_Order extends ORM {
                     if (!empty($email_buyer)) {
                         Mail::htmlsend('gift_buyer', array('gift' => $save_gift, 'email' => $email), $email_buyer, 'Подтверждение отправки сертификата');
                     }
+                    if(!empty($emailsArr)) {
+                        foreach ($emailsArr as $admin_email) {
+                            if(!empty($admin_email)){
+                                Mail::htmlsend('creategift', array('gift' => $save_gift, 'order' => $this, 'message' => $message), $admin_email, 'Покупка сертификата!');
+                            }
+                        }
+                    }
                 }
             }
         }
-        return true;
     }
 
     /**
@@ -933,4 +946,15 @@ class Model_Order extends ORM {
         $io->save($fname);
         return $fname;
     }
+
+    public function getcoupons(){
+        $coupons = DB::select('coupon.*')
+            ->from(['z_coupon', 'coupon'])
+            ->where('coupon.order_id', '=', $this->id)
+            ->order_by('id', 'DESC')
+            ->execute();
+
+        return $coupons;
+    }
+
 }

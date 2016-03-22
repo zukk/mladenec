@@ -28,7 +28,8 @@ class Model_Config extends ORM {
         'actions_subheader' =>'',
         'instant_search' => '',
         'rr_enabled' => '',
-        'use_ozon_delivery' => ''
+        'use_ozon_delivery' => '',
+        'emails' => ''
     );
 
     /**

@@ -92,7 +92,11 @@
                 
                 <dt>Работы на конкурсы</dt>
                 <dd><input type="text" id="mail_contest" name="mail_contest" value="{$i->mail_contest}" class="width-50" /></dd>
-                
+
+                <dt>Подарочные сертификаты</dt>
+                <dd><input type="text" value="{$i->emails}" class="width-50" name="emails" id="emails" placeholder="Заполнять через ,"/>
+                    <br />Через запятую без пробелов. Например: test@test.ru,admin@admin.com
+                </dd>
             </dl>
         </div>
     </p>
