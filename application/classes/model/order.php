@@ -790,7 +790,14 @@ class Model_Order extends ORM {
      */
     function activate_gift()
     {
-        $sum_gift = DB::select('g.price', 'og.comment', 'og.comment_email')
+        $config = new Model_Config(1);
+        $emails = $config->emails;
+        $emailsArr = array();
+        if(strpos($emails, ',') !== false){
+            $emailsArr = explode(',', $emails);
+        }
+
+        $sum_gift = DB::select('g.price', 'og.comment','og.quantity', 'og.comment_email')
             ->from(['z_order_good', 'og'])
             ->join(['z_good', 'g'])
             ->on('g.id', '=', 'og.good_id')
@@ -798,21 +805,38 @@ class Model_Order extends ORM {
             ->where('g.code', 'LIKE', '%syst_gift%')
             ->execute()
             ->as_array();
-        if ($sum_gift) {
-            $save_gift = Model_Coupon::generate($sum_gift[0]['price'], 1, 1, 1, 0, Model_Coupon::TYPE_SUM, date('Y-m-d H:i'), date(date('Y') + 1 .'-m-d H:i'));
 
-            if(empty($sum_gift[0]['comment_email']) && $sum_gift[0]['comment_email'] == 0){
-                $email = $this->data->email;
-            } else {
-                $email = $sum_gift[0]['comment_email'];
+        $order_id = $this->id;
+        if ($sum_gift) {
+            foreach($sum_gift as $gift) { // крутит сертификаты разного номинала
+                for ($i = 1; $i <= $gift['quantity']; $i++) {
+                    $save_gift = Model_Coupon::generate($gift['price'], 1, 1, 1, 0, Model_Coupon::TYPE_SUM, date('Y-m-d H:i'), date(date('Y') + 1 . '-m-d H:i'), $order_id);
+
+                    if (empty($gift['comment_email']) && $gift['comment_email'] == 0) {
+                        $email_buyer = '';
+                        $email = $this->data->email;
+                    } else {
+                        $email_buyer = $this->data->email;
+                        $email = $gift['comment_email'];
+                    }
+                    if (empty($gift['comment']) && $gift['comment'] == 0) {
+                        $message = '';
+                    } else {
+                        $message = $gift['comment'];
+                    }
+                    Mail::htmlsend('creategift', array('gift' => $save_gift, 'order' => $this, 'message' => $message), $email, 'Покупка сертификата!');
+                    if (!empty($email_buyer)) {
+                        Mail::htmlsend('gift_buyer', array('gift' => $save_gift, 'email' => $email), $email_buyer, 'Подтверждение отправки сертификата');
+                    }
+                    if(!empty($emailsArr)) {
+                        foreach ($emailsArr as $admin_email) {
+                            if(!empty($admin_email)){
+                                Mail::htmlsend('creategift', array('gift' => $save_gift, 'order' => $this, 'message' => $message), $admin_email, 'Покупка сертификата!');
+                            }
+                        }
+                    }
+                }
             }
-            if(empty($sum_gift[0]['comment']) && $sum_gift[0]['comment'] == 0){
-                $message = '';
-            } else {
-                $message = $sum_gift[0]['comment'];
-            }
-            $email = 'ekaterinaden@mail.ru';
-            Mail::htmlsend('creategift', array('gift' => $save_gift, 'order' => $this, 'message' => $message), $email, 'Покупка сертификата!');
         }
     }
 
@@ -921,4 +945,15 @@ class Model_Order extends ORM {
         $io->save($fname);
         return $fname;
     }
+
+    public function getcoupons(){
+        $coupons = DB::select('coupon.*')
+            ->from(['z_coupon', 'coupon'])
+            ->where('coupon.order_id', '=', $this->id)
+            ->order_by('id', 'DESC')
+            ->execute();
+
+        return $coupons;
+    }
+
 }

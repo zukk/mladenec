@@ -1407,6 +1407,10 @@ class Cart {
         if ( ! $this->total) {
             $this->recount();
         }
-        return $this->gift_sum > 0 && $this->gift_sum == $this->total;
+        $total_price = '';
+        foreach($this->recount() as $id => $rec) {
+            $total_price += $rec->price;
+        }
+        return $this->gift_sum > 0 && $this->gift_sum == $total_price;
     }
 }
