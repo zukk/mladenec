@@ -24,7 +24,7 @@
 
     <h2 class="mt">Статус оплаты</h2>
     <p>{$payment->status_info()} ({$payment->status_time})</p>
-    {if $payment->status == Model_Payment::STATUS_Rejected}
+    {if $payment->status == Model_Payment::STATUS_Rejected || $payment->status == Model_Payment::STATUS_Error}
         <p><span style="color:red;">При последней попытке оплаты произошла ошибка!</span></p>
 
         <form action="" method="post" class="cb ajax fl">
