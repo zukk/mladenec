@@ -1442,9 +1442,9 @@ class Model_Good extends ORM {
 		}
 		if ( ! empty($images[0]['255']) AND ($images[0]['255'] instanceof Model_File)) {
 			$this->image = $this->prop->img255 = $images[0]['255']->ID; // Обновим также и картинку в самом товаре, для расчета картинки группы
-            echo $this->image;
+            
             if ($this->changed('image')) {
-                echo 'changed';
+                
                 $this->save(); //  пересохраним данные
             }
 		}
