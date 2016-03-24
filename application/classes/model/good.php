@@ -590,7 +590,7 @@ class Model_Good extends ORM {
             ->from('z_good_img')
             ->where('good_id', 'IN', $ids)
             ->where('size', 'IN', $sizes)
-            ->order_by('file_id', 'DESC')
+            ->order_by('id')
             ->execute()
             ->as_array('file_id');
 
@@ -607,7 +607,9 @@ class Model_Good extends ORM {
         foreach ($imgs as $file_id => $data) {
             if ( ! empty($files[$file_id])) {
                 if ( ! $all_photos) {
-                    $return[$data['good_id']][$data['size']] = $files[$file_id];
+                    if (empty($return[$data['good_id']][$data['size']])) {
+                        $return[$data['good_id']][$data['size']] = $files[$file_id];
+                    }
                 } else {
                     $return[$data['good_id']][$data['size']][] = $files[$file_id];
                 }
@@ -1440,7 +1442,9 @@ class Model_Good extends ORM {
 		}
 		if ( ! empty($images[0]['255']) AND ($images[0]['255'] instanceof Model_File)) {
 			$this->image = $this->prop->img255 = $images[0]['255']->ID; // Обновим также и картинку в самом товаре, для расчета картинки группы
+            echo $this->image;
             if ($this->changed('image')) {
+                echo 'changed';
                 $this->save(); //  пересохраним данные
             }
 		}
