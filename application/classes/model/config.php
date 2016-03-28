@@ -24,6 +24,7 @@ class Model_Config extends ORM {
         'mail_contest'        => '',
         'mail_sms_warning'    => '',
         'mail_empty_section' => '',
+        'mail_emptytag' => '',
         'actions_header'      =>'',
         'actions_subheader' =>'',
         'instant_search' => '',

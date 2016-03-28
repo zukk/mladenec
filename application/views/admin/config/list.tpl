@@ -69,6 +69,9 @@
                         <dt>О пустых разделах</dt>
                         <dd>{$i->mail_empty_section|default:'нет'}</dd>
 
+                        <dt>О пустых теговых</dt>
+                        <dd>{$i->mail_emptytag|default:'нет'}</dd>
+
                         <dt>Об изменениях закупочных цен, для франшизы</dt>
                         <dd>{$i->mail_fransh|default:'нет'}</dd>
 

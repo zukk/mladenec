@@ -95,7 +95,7 @@
         <th>группа / категория</th>
         <th>url</th>
         <th>название</th>
-        <th>групп товаров</th>
+        <th>число товаров</th>
         <th>товары подсчитаны</th>
         <th>заполненность метатегов</th>
         <th>ЧПУ проверена руками</th>
@@ -106,11 +106,13 @@
         <td><small>{$i->id}</small></td>
         <td>{$i->tree->name} / {$i->section->name}</td>
         <td>{$i->code}</td>
-        <td><a href="/od-men/{$m}/{$i->id}">{$i->name}</a></td>
-        <td><a href="{$i->get_link(0)}" target="_blank" title="Открыть в новом окне на сайте, товары пересчитаются.">{$i->goods_count}{if $i->goods_count == 0} с {date('Y-d-m',$i->goods_empty_ts)}{/if}</a></td>
-        <td>{if $i->goods_count_ts > 0}{date('Y-d-m G:i',$i->goods_count_ts)}{else}&mdash;{/if}</td>
+        <td><a href="{Route::url('admin_edit', ['model' => $m, 'id' => $i->id])}">{$i->name}</a></td>
+        <td><a href="{$i->get_link(0)}" target="_blank" title="Открыть в новом окне на сайте.">{$i->goods_count}</a>
+            {if $i->goods_count == 0}<br /><small>{date('Y-d-m', $i->goods_empty_ts)}</small>{/if}
+        </td>
+        <td>{if $i->goods_count_ts > 0}{date('Y-d-m G:i', $i->goods_count_ts)}{else}&mdash;{/if}</td>
 		<td>
-			{if !empty( $i->seo->title) and !empty( $i->seo->keywords) and !empty( $i->seo->description)}
+			{if ! empty($i->seo->title) and ! empty( $i->seo->keywords) and ! empty( $i->seo->description)}
 				<span class="label label-green">да</span>
 			{else}
 				<span class="label label-red">нет</span>

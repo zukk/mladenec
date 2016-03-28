@@ -446,6 +446,8 @@ class Model_Tag extends ORM
         }
         $tags = $tags->find_all();
 
+        $warn_on_empty = [];
+
         foreach ($tags as $t) {
             if ( ! ($params = $t->parse_query())) {
                 Log::instance()->add(Log::INFO, 'Bad params for tag ' . $t->id . ":" . $t->query);
@@ -470,8 +472,20 @@ class Model_Tag extends ORM
             $meta = Database::instance('sphinx')->query(Database::SELECT, 'SHOW META')->as_array('Variable_name', 'Value');
 
             $t->goods_count = $meta['total_found'];
+            if ($t->goods_count == 0 && ($t->changed('goods_count') || $t->goods_empty_ts == '0')) {
+                $t->goods_empty_ts = time();
+
+                Model_History::log('tag', $t->id, 'tag is empty');
+
+                $warn_on_empty[] = $t; 
+            }
+
             $t->goods_count_ts = time();
             $t->save();
+        }
+        
+        if ( ! empty($warn_on_empty)) {
+            Mail::htmlsend('empty_tags', ['tags' => $warn_on_empty], Conf::instance()->mail_emptytag, 'Список теговых страниц, которые стали пустыми');
         }
     }
 }

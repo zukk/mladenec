@@ -10,7 +10,7 @@
     </tr>
     {foreach from=$tags item=title key=i}
     <tr>
-        <td><a href="http://mladenec.ru/od-men/tag/{$i}">{$title}</a></td>
+        <td><a href="{$site}{Route::url('admin_edit', ['model' => 'tag', 'id' => $i->id])}">{$t->name}</a></td>
     </tr>
     {/foreach}
 </table>

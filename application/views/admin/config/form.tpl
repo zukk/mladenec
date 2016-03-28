@@ -86,7 +86,10 @@
                 
                 <dt>О пустых категориях</dt>
                 <dd><input type="text" id="mail_empty_section" name="mail_empty_section" value="{$i->mail_empty_section}" class="width-50" /></dd>
-                
+
+                <dt>О пустых теговых</dt>
+                <dd><input type="text" id="mail_emptytag" name="mail_emptytag" value="{$i->mail_emptytag}" class="width-50" /></dd>
+
                 <dt>Об изменениях закупочных цен, для франшизы</dt>
                 <dd><input type="text" id="mail_fransh" name="mail_fransh" value="{$i->mail_fransh}" class="width-50" /></dd>
                 
