@@ -1009,7 +1009,7 @@ class Controller_Ajax extends Controller_Frontend {
             $mail = new Mail();
             $mail->setHTML(sprintf('<dl><dt>Имя</dt><dd>%s</dd><dt>Email</dt><dd>%s</dd><dt>Телефон</dt><dd>%s</dd></dl>',
                 $this->request->post('name'), $this->request->post('email'), $this->request->post('telephone')), FALSE);
-            $mail->send('0099060msk@gmail.com, a.melnikov@mladenec.ru, m.zukk@ya.ru, zakaz@mladenec.ru, request@mladenec.ru, a.sergeev@mladenec.ru', 'Арбузная форма!');
+            $mail->send('0099060msk@gmail.com, m.zukk@ya.ru, zakaz@mladenec.ru, request@mladenec.ru, a.sergeev@mladenec.ru', 'Арбузная форма!');
         }
         exit('ok');
     }
