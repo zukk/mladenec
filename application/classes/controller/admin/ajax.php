@@ -632,6 +632,6 @@ class Controller_Admin_Ajax extends Controller_Authorised {
     public function action_tag_recount()
     {
         Model_Tag::count();
-        $this->return_reload();
+        $this->return_redirect(Route::url('admin_list', ['model' => 'tag']));
     }
 }

@@ -8,9 +8,9 @@
     <tr>
         <th>Теговая</th>
     </tr>
-    {foreach from=$tags item=title key=i}
+    {foreach from=$tags item=t}
     <tr>
-        <td><a href="{$site}{Route::url('admin_edit', ['model' => 'tag', 'id' => $i->id])}">{$t->name}</a></td>
+        <td><a href="{$site}{Route::url('admin_edit', ['model' => 'tag', 'id' => $t->id])}">{$t->name}</a></td>
     </tr>
     {/foreach}
 </table>
