@@ -7062,3 +7062,8 @@ td.select-present {
     line-height: 37px !important;
     padding: 0 0 0 47px !important;
 }
+#insta_widget {
+    width:950px;
+    clear:both;
+    margin:0 auto 20px;
+}

@@ -64,6 +64,10 @@
     <div id="fb"></div>
 </div>
 
+<div id="insta_widget">
+    <iframe src="/inwidget/index.php?width=950&inline=9&view=9toolbar=false" scrolling="no" frameborder="no" style="border:none;width:994px;height:242px;overflow:hidden;"></iframe>
+</div>
+
 {if not empty($config->rr_enabled)}
     <div class="cl rr_slider" title="Покупают сейчас:" data-func="ItemsToMain"></div>
 {/if}
