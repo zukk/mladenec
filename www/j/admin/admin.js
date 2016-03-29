@@ -272,4 +272,19 @@ $(document).ready(function() {
     $('.datepicker-jqui').datepicker({
         dateFormat: 'yy-mm-dd'
     });
+
+    /* работа с дубликатами товаров */
+    $(document).on('click', '.del_dup', function() { // удаление
+        $.post('/od-men/dups', { do: 'del', id: $('#good_dups').attr('data-id'), section_id: $(this).attr('data-id')}, function(data) {
+            $('#good_dups').empty().append(data.html);
+        });
+        return false;
+    });
+
+    $(document).on('click', '#new_dup', function() { // добавление
+        $.post('/od-men/dups', { do: 'add', id: $('#good_dups').attr('data-id'), section_id: $('#new_dup').val()}, function(data) {
+            $('#good_dups').empty().append(data.html);
+        });
+        return false;
+    });
 });

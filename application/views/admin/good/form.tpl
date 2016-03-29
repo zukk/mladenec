@@ -77,21 +77,12 @@ $(document).ready(function() {
                     </td>
                 </tr>
                 <tr><td><b>Цена:</b></td><td>{$i->price}</td></tr>
-                <tr><td><b>Цена для любимых:</b></td><td>{$price1[$i->id]|default:'&mdash;'}</td></tr>
+                <tr><td><b>Цена для любимых:</b></td><td>{assign var=lovely_price value=Model_Good::get_status_price(1, $i->id)} {$lovely_price[$i->id]}</td></tr>
                 <tr><td><b>Старая цена:</b></td><td><s>{$i->old_price|default:'&mdash;'}</s></td></tr>
             </table>
         </div>
     </div>
-    <div class="units-row">
-        <div class="unit-33">
-            
-            
-        </div>
-        <div class="unit-33">
-            
-        </div>
-        
-    </div>
+
     <div class="units-row">
         <div class="unit-70">
              <p>
@@ -103,14 +94,6 @@ $(document).ready(function() {
                 <input name="translit" id="translit" value="{$i->translit}" class="width-100" />
             </p>
 			{include file='admin/seo/widget.tpl'}
-            <p>
-                <label for="popularity">Популярность</label>
-                <input name="popularity" id="popularity" value="{$i->popularity}" type="number" class="width-20" />
-            </p>
-            <p>
-                <label for="order">Искусственная Популярность</label>
-                <input name="order" id="order" value="{$i->order}" type="number" class="width-20" />
-            </p>
         </div>
     {if $i->id}
         <div class="unit-30">
@@ -149,6 +132,26 @@ $(document).ready(function() {
                 <label>Зомби</label>
             </p>
         </div>
+        </div>
+        <div class="units-row">
+            <div class="unit-30">
+                <p>
+                    <label for="popularity">Популярность</label>
+                    <input name="popularity" id="popularity" value="{$i->popularity}" type="number" class="width-20" />
+                </p>
+                <p>
+                    <label for="order">Искусственная Популярность</label>
+                    <input name="order" id="order" value="{$i->order}" type="number" class="width-20" />
+                </p>
+            </div>
+            <div class="unit-70">
+                <label>Дубликаты товара</label>
+
+                <div id="good_dups" data-id="{$i->id}">
+                    {include file='admin/good/dups.tpl'}
+                </div>
+            </div>
+
     {/if}
     </div>
     <p><label>Теговые страницы</label>

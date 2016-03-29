@@ -198,6 +198,7 @@ class Model_Section extends ORM {
             $return = ORM::factory('section')
                 ->with('menu_img')
                 ->where('code', '!=', '50061508') // сертификаты не показываем
+                ->order_by('vitrina')
                 ->order_by('parent_id')
                 ->order_by('sort');
 

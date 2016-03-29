@@ -1994,4 +1994,44 @@ class Model_Good extends ORM {
 
         return $res;
     }
+
+    /**
+     * получить витрины и категории в которых есть дубликат товара
+     */
+    public function get_dups()
+    {
+        return DB::select('s.name', 's.id', 's.vitrina')
+            ->from('good_dups')
+            ->join(['z_section', 's'])
+                ->on('section_id', '=', 's.id')
+            ->where('good_id', '=', $this->id)
+            ->execute()
+            ->as_array('id');
+    }
+
+    /**
+     * Добавить дубликат товара в другой категории
+     * @param $section_id
+     * @return object
+     */
+    public function add_dup($section_id)
+    {
+        return DB::insert('good_dups')
+            ->columns(['good_id', 'section_id'])
+            ->values(['good_id' => $this->id, 'section_id' => $section_id])
+            ->execute();
+    }
+
+    /**
+     * Удалить дубликат товара в другой категории
+     * @param $section_id
+     * @return object
+     */
+    public function del_dup($section_id)
+    {
+        return DB::delete('good_dups')
+            ->where('good_id', '=', $this->id)
+            ->where('section_id', '=', $section_id)
+            ->execute();
+    }
 }

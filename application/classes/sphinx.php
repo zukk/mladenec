@@ -307,7 +307,7 @@ class Sphinx {
             $q = DB::select(DB::expr('###'))
                 ->from('goods_zukk');
 
-            if ($this->_mode !== 'action') $q->where('shop_id', '=', self::shop_id()); // везде кроме акций учитывается витрина
+            if ($this->_mode !== 'action') $q->where('shop_id', 'IN', [self::shop_id()]); // везде кроме акций учитывается витрина
 
             $this->_apply_params($q, $this->_menu_params, TRUE); //$full ?: $this->_params
 
@@ -1277,7 +1277,7 @@ class Sphinx {
             ->from('goods_zukk')
             ->limit($pager->offset . ',' . $pager->per_page);
 
-        if ($this->_mode !== 'action') $q->where('shop_id', '=', self::shop_id()); // везде кроме акций учитывается витрина
+        if ($this->_mode !== 'action') $q->where('shop_id', 'IN', [self::shop_id()]); // везде кроме акций учитывается витрина
 
         $q = $this->_apply_params($q, $this->_params);
 
@@ -1330,7 +1330,7 @@ class Sphinx {
         if ( ! empty($with_other_shop)) {// результаты такого же запроса на другой витрине, 4 товара
             $q_ov = DB::select('id', 'grouped')
                 ->from('goods_zukk')
-                ->where('shop_id', '=', self::get_other_shop_id())
+                ->where('shop_id', 'IN', [self::get_other_shop_id()])
                 ->where('x', '!=', 0)
                 ->where(DB::expr('MATCH('), DB::expr(DB::query(Database::SELECT, ':query')->param(':query', $this->_params['q'])), DB::expr(')'))
                 ->limit('0,4');
@@ -1384,7 +1384,7 @@ class Sphinx {
         $q = DB::select('id')
             ->from('goods_suggest')
             ->limit(10)
-            ->where('shop_id', '=', self::shop_id());
+            ->where('shop_id', 'IN', [self::shop_id()]);
 
         // print_r($this->_params);
 

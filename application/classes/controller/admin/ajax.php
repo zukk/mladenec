@@ -634,4 +634,29 @@ class Controller_Admin_Ajax extends Controller_Authorised {
         Model_Tag::count();
         $this->return_redirect(Route::url('admin_list', ['model' => 'tag']));
     }
+
+    /**
+     * Работа с дубликатами товаров
+     */
+    public function action_dups()
+    {
+        $do = $this->request->post('do');
+        $good_id = $this->request->post('id');
+        $section_id = $this->request->post('section_id');
+        $changed = FALSE;
+
+        $good = new Model_Good($good_id);
+        if ( ! $good->loaded()) exit('no good');
+
+        if ($do == 'add') {
+            $good->add_dup($section_id);
+            $changed = TRUE;
+        }
+        if ($do == 'del') {
+            $good->del_dup($section_id);
+            $changed = TRUE;
+        }
+
+        $this->return_html(View::factory('smarty:admin/good/dups', ['i' => $good, 'changed' => $changed])->render());
+    }
 }
