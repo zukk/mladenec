@@ -3499,7 +3499,7 @@ div.action_info {
 #widgets {
     float: left;
     width: 300px;
-    margin-left: 27px;
+    margin-left: 20px;
 }
 
 #widgets > #fb {
@@ -5117,7 +5117,7 @@ a.ih2 {
 #ic {
     clear: left;
     float: left;
-    width: 645px;
+    width: 520px;
 }
 
 #ic a.ih2 {
@@ -5127,8 +5127,11 @@ a.ih2 {
 
 #ic > div {
     float: left;
-    width: 300px;
-    margin-left: 20px;
+    width: 250px;
+    margin-right: 20px;
+}
+#ic > div:last-child {
+    margin-right:0;
 }
 
 #hitz {
@@ -7063,7 +7066,7 @@ td.select-present {
     padding: 0 0 0 47px !important;
 }
 #insta_widget {
-    width:950px;
-    clear:both;
-    margin:0 auto 20px;
+    margin-left:20px;
+    float:left;
+    width:100px;
 }

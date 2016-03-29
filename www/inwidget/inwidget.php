@@ -20,7 +20,7 @@ class inWidget {
 	public $width = 260;
 	public $inline = 4;
 	public $view = 12;
-	public $toolbar = true;
+	public $toolbar = false;
 	public $preview = 'small';
 	public $imgWidth = 0;
 	public $cacheFile = '../../application/cache/instagram.txt';
