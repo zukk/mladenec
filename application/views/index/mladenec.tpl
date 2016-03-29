@@ -60,22 +60,14 @@
 </div>
 
 <div id="widgets">
-    {literal}
-        <div id="vk"></div>
-        <script src="//vk.com/js/api/openapi.js?56"></script>
-        <script>VK.Widgets.Group("vk", { mode: 0, width: "300", height: "200"}, 39518389);</script>
-
-        <div id="fb">
-            <iframe src="//www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fmladenec.ru&amp;width=300&amp;height=210&amp;colorscheme=light&amp;show_faces=true&amp;border_color&amp;stream=false&amp;header=true" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:300px; height:210px;" allowTransparency="true"></iframe>
-        </div>
-    {/literal}
+    <div id="vk"></div>
+    <div id="fb"></div>
 </div>
 
 {if not empty($config->rr_enabled)}
     <div class="cl rr_slider" title="Покупают сейчас:" data-func="ItemsToMain"></div>
 {/if}
 
-{* google adwords remarketing params *}
 <script>
     var google_tag_params = {
         ecomm_pagetype: 'home'

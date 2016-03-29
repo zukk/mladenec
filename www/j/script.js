@@ -1456,6 +1456,21 @@ $(document).ready(function () {
     //на странице товара - активация вкладки с отзывами    
     initFeedbacksTab();
     initToTopButton();
+
+    //виджеты соцсетей
+    if ($('body').hasClass('main')) {
+        $.ajax({
+            type: "GET",
+            url: '//vk.com/js/api/openapi.js?121',
+            dataType: "script",
+            cache: true,
+            success: function() {
+                VK.Widgets.Group("vk", { mode: 0, width: "300", height: "200"}, 39518389);
+            }
+        });
+
+        $('#fb').append('<iframe src="//www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fmladenec.ru&amp;width=300&amp;height=210&amp;colorscheme=light&amp;show_faces=true&amp;border_color&amp;stream=false&amp;header=true" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:300px; height:210px;" allowTransparency="true"></iframe>');
+    }
 });
 
 var executeGoodsTopBar = function() { // история просмотров товаров

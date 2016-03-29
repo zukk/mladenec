@@ -903,6 +903,10 @@ img.img70 {
     background-position: -25px 0;
 }
 
+#promotop > a.im {
+    background-position: 100% 0;
+}
+
 #logo {
     display: block;
     position: absolute;

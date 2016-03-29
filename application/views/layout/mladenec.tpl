@@ -134,10 +134,10 @@
                 Использование материалов сайта разрешено только при наличии активной ссылки на&nbsp;источник.<br />
                 <div id="promotop">
                     {if empty($main)}<!--noindex-->{/if}
-                    <a href="http://www.facebook.com/mladenec.ru" class="fb" title="Мы в facebook" target="_blank"{if empty($main)} rel="nofollow"{/if}>Мы в facebook</a>
-                    <a href="http://vk.com/mladenecshop" class="vk" title="Мы в контакте" target="_blank"{if empty($main)} rel="nofollow"{/if}>Мы в контакте</a>
-                    <a href="http://twitter.com/mladenecshop" class="tw" title="Наш твиттер" target="_blank"{if empty($main)} rel="nofollow"{/if}>Наш твиттер</a>
-                    <a href="http://www.odnoklassniki.ru/group/55719798046774" class="ok" title="Мы в одноклассниках" target="_blank"{if empty($main)} rel="nofollow"{/if}>Мы в одноклассниках</a>
+                    <a href="https://www.facebook.com/mladenec.ru" class="fb" title="Мы в facebook" target="_blank"{if empty($main)} rel="nofollow"{/if}>Мы в facebook</a>
+                    <a href="https://vk.com/mladenecshop" class="vk" title="Мы в контакте" target="_blank"{if empty($main)} rel="nofollow"{/if}>Мы в контакте</a>
+                    <a href="https://twitter.com/mladenecshop" class="tw" title="Наш твиттер" target="_blank"{if empty($main)} rel="nofollow"{/if}>Наш твиттер</a>
+                    <a href="https://www.instagram.com/mladenecshop" class="im" title="Наш Инстаграм" target="_blank"{if empty($main)} rel="nofollow"{/if}>Наш Инстаграм</a>
                     {if empty($main)}<!--/noindex-->{/if}
                 </div>
             </div>
