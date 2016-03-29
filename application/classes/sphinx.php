@@ -326,8 +326,8 @@ class Sphinx {
                 if (empty($this->_section)) {
                     $cloneq = clone $q;
                     $sections = $sphinx_db
-                        ->query(Database::SELECT, str_replace('###', 'section_id, COUNT(*) as qty ', $cloneq->group_by('section_id')->limit(250)))
-                        ->as_array('section_id', 'qty');
+                        ->query(Database::SELECT, str_replace('###', 'main_section_id, COUNT(*) as qty ', $cloneq->group_by('main_section_id')->limit(250)))
+                        ->as_array('main_section_id', 'qty');
                 } else {
                     $sections = [$this->_section->id => $total];
                 }
@@ -547,9 +547,9 @@ class Sphinx {
         if (isset($params_copy['c'])) unset($params_copy['c']);
         $this->_apply_params($cloneq, $params_copy + $this->_menu_params);
 
-        $sections = $sphinx_db->query(Database::SELECT, str_replace('###', 'section_id, COUNT(*) as qty', $cloneq->group_by('section_id')->limit(250)))
-            ->as_array('section_id', 'qty');
-
+        $sections = $sphinx_db->query(Database::SELECT, str_replace('###', 'main_section_id, COUNT(*) as qty', $cloneq->group_by('main_section_id')->limit(250)))
+            ->as_array('main_section_id', 'qty');
+        
         foreach($menu['sections'] as $id => $data) { // заполняем количества согласно найденному
             if ( ! empty($sections[$id])) {
                 $menu['sections'][$id]['qty'] = $sections[$id];
