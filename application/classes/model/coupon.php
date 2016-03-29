@@ -96,7 +96,7 @@ class Model_Coupon extends ORM {
     /**
      * Сгенерировать новый купон
      */
-    public static function generate($sum, $min_sum = 0, $per_user = 1, $uses = 1, $user_id = 0, $type = self::TYPE_SUM, $from = NULL, $to = NULL, $order_id)
+    public static function generate($sum, $min_sum = 0, $per_user = 1, $uses = 1, $user_id = 0, $type = self::TYPE_SUM, $from = NULL, $to = NULL, $order_id = 0)
     {
         $c = new self;
         if ($min_sum == 0) $min_sum = $sum + 1;
