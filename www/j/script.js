@@ -969,10 +969,10 @@ $(document).ready(function () {
             var qty_input = row.find('input[id^="qty_"]');
             var in_stock = qty_input.length;
 
-            $.get($(this).prop('href'), function (data) {
+            $.get($(this).prop('href')+ '?ajax=1', function (data) {
                 var j = $(data);
-                $('.fancybox-inner h1').replaceWith($('h1', j));
-                $('.fancybox-inner #etalage').replaceWith($('#etalage', j))
+                $('.fancybox-inner h1').first().replaceWith($('h1', j).first());
+                $('.fancybox-inner #etalage').replaceWith($('#etalage', j));
                 $('.fancybox-inner #good_desc').replaceWith($('#good_desc', j));
 
                 if (!isNaN(selected_price) && in_stock) {

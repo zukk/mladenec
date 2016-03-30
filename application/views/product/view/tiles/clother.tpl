@@ -104,7 +104,7 @@
         {assign var=name value=' '|explode:$g->group_name}
         <div>{$name.0} {if in_array(mb_substr($name.0, -1), ['й', 'е'])}{$name.1}{/if}</div>{* для одежды - начало названия товара, не больше 2х слов *}
 
-        <a href="{$link}?ajax=1" class="butt small fastview" rev="{$g->id}" rel="ajax" data-fancybox-type="ajax">Быстрый просмотр</a>
+        <a data-fancybox-href="{$link}?ajax=1" class="butt small fastview" rev="{$g->id}" rel="ajax" data-fancybox-type="ajax">Быстрый просмотр</a>
 
         <div class="price">
             {if $g->grouped eq 1}{$g->qty|qty:0}{/if}

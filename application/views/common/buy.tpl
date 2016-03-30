@@ -40,7 +40,7 @@
         <input type="hidden" id="qty_{$good->id}" name="qty[{$good->id}]" value="{$good->quantity|default:1}" oldval="{$good->quantity|default:1}" price="{$good->price|default:1}" max="{$good->qty|default:0}" />
         <a class="butt bbutt small i i_cart c" rel="{$good->id}">В корзину</a>
     {else}
-        <a href="{$good->get_link(FALSE)}?ajax=1" class="butt small" rev="{$good->id}" rel="ajax" data-fancybox-type="ajax">Выбрать</a>
+        <a data-fancybox-href="{$good->get_link(FALSE)}?ajax=1" class="butt small" rev="{$good->id}" rel="ajax" data-fancybox-type="ajax">Выбрать</a>
     {/if}
 
 {/if}
