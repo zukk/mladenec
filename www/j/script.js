@@ -958,16 +958,9 @@ $(document).ready(function () {
 
         .on('click', '.fancybox-inner a[rel="buy"]', function () { // ссылка на товар внутри всплывающего окна
             $('.fancybox-inner h1, .fancybox-inner #etalage li, .fancybox-inner #good_desc').prepend('<i class="load"></i>');
-
             $('.fancybox-inner tr').removeClass('a');
-            $('.fancybox-inner .buy input').val(0);
-            var row = $(this).closest('tr');
-            row.addClass('a').find('input').val('1');
 
-            var text_price = row.find('td.price span').contents()[0].data;
-            var selected_price = parseFloat(text_price.replace(/ /g,""));
-            var qty_input = row.find('input[id^="qty_"]');
-            var in_stock = qty_input.length;
+            var row = $(this).closest('tr');
 
             $.get($(this).prop('href')+ '?ajax=1', function (data) {
                 var j = $(data);
@@ -975,26 +968,17 @@ $(document).ready(function () {
                 $('.fancybox-inner #etalage').replaceWith($('#etalage', j));
                 $('.fancybox-inner #good_desc').replaceWith($('#good_desc', j));
 
-                if (!isNaN(selected_price) && in_stock) {
-                    total = 1;
-                    pricetotal = selected_price;
-                    row.find('input[id^="qty_"]').attr('value', 1);
-                    $('#total').text(1);
-                    $('#pricetotal').html( format_price(selected_price) );
-                } else {
-                    total = 0;
-                    pricetotal = 0;
-                    $('#total').text('0');
-                    $('#pricetotal').html(0 + '<small>р.</small>');
-                    $('#pricetotal').closest('tfoot').removeClass('a');
+                // если не выбрано ни одного - ставим выбранный
+                var selected = 0;
+                $('.fancybox-inner .buy input').each(function() {
+                    selected += parseInt($(this).val());
+                });
+
+                if (selected == 0) {
+                    row.addClass('a').find('a.inc').click();
                 }
-                $.when(
-                    $('.fancybox-inner input[id^="qty_"]').attr('oldval', 0).val(0),
-                    $('.fancybox-inner .dec').addClass('min-zero')
-                ).then(                    
-                    qty_input.attr('oldval', 1).val(1), qty_input.parent().find('.dec').removeClass('min-zero')                    
-                );
             });
+
             return false;
         })
         .on('blur', 'input.txt, textarea.txt, input.wtxt, textarea.wtxt', function (ev) { // посказки у инпутов - скрыть
@@ -1016,7 +1000,11 @@ $(document).ready(function () {
             return false;
         })
         .on('click', 'a.c', function () { // положить в корзину один товар
-            var id = $(this).attr('rel'), inp = $('#qty_' + id), q = inp.val();
+
+            var id = $(this).attr('rel'),
+                inp = $(this).closest('.fancybox-inner').length ? $('.fancybox-inner #qty_' + id) : $('#qty_' + id),
+                q = inp.val();
+
             if (q == 0 || q == undefined) q = 1;
 			
 			var p = {};

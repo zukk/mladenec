@@ -28,7 +28,7 @@
 {elseif $infancy|default:0} {* мы в быстром просмотре *}
 
     <div class="buy wide incdeced">
-        <a class="dec{if !$active} min-zero{/if}">-</a>
+        <a class="dec min-zero">-</a>
         <input id="qty_{$good->id}" name="qty[{$good->id}]" value="{if $active}1{else}0{/if}" oldval="{if $active}1{else}0{/if}" price="{$good->price|default:1}" max="{if $good->qty eq -1}500{else}{$good->qty}{/if}" />
         <a class="inc">+</a>
         <a class="c" rel="{$good->id}"></a>
