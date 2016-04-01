@@ -114,7 +114,7 @@
         <td><a href="/od-men/{$m}/{$i->id}">{$i->name}</a></td>
         <td>
             {if $i->zombie}<b class="red">ЗОМБИ!!!</b>{/if}<br />
-            <a href="{Route::url('product_1c',['code'=>$i->code])}" target="_blank">{$i->code}</a>
+            <a href="{Route::url('product_1c',['code'=>urlencode($i->code)])}" target="_blank">{$i->code}</a>
             <hr />
             {$i->code1c}<br />
             <hr />

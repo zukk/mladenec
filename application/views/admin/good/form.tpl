@@ -37,7 +37,7 @@ $(document).ready(function() {
                     <td>{if $i->show}<b class="green">отображается</b>{else}<b class="red">скрыт</b>{/if}</td>
                     <td>{if $i->active}<b class="green">активный</b>{else}<b class="red">не активный</b>{/if}</td>
                 </tr>
-                <tr><td><b>Артикул:</b></td><td><a href="{Route::url('product_1c',['code'=>$i->code])}" target="_blank">{$i->code}</a></td></tr>
+                <tr><td><b>Артикул:</b></td><td><a href="{Route::url('product_1c',['code'=>urlencode($i->code)])}" target="_blank">{$i->code}</a></td></tr>
                 <tr><td><b>Артикул 1c:</b></td><td>{$i->code1c|default:'&mdash;'}</td></tr>
                 <tr><td><b>Код 1С:</b></td><td>{$i->id1c|default:'&mdash;'}</td></tr>
                 <tr><td><b>Штрихкод:</b></td><td>{$i->barcode|default:'&mdash;'}</td></tr>
