@@ -7,8 +7,6 @@
         <oldprice>{$g['old_price']}</oldprice>
     {/if}
 
-    <price>{$g['price']}</price>
-
     {if not empty($images)}
         {foreach from=$images item=img name=i}
             {if $smarty.foreach.i.iteration lte 10}
