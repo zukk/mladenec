@@ -235,7 +235,7 @@ function tt(item, content) {
     tooltip.removeClass('top');
     tooltip.removeClass('ff');
     
-    if ($(item).is('input') || $(item).is('textarea')) { // inside form - show at right
+    if (($(item).is('input') || $(item).is('textarea')) && ! $(item).is('#do_pay')) { // inside form - show at right
         tooltip.addClass('r');
         var pos = {
             left: offset.left + $(item).outerWidth() + 10,
@@ -253,7 +253,7 @@ function tt(item, content) {
             left: offset.left + 178,
             top: offset.top - 8
         };
-    } else if ($(item).parent().hasClass('status')) { // user status
+    } else if ($(item).parent().hasClass('status')) { // show on bottom
         tooltip.addClass('b');
         var pos = {
             left: offset.left - tooltip.outerWidth() + 50,
@@ -269,6 +269,14 @@ function tt(item, content) {
             left: offset.left + 155,
             top: offset.top - tooltip.outerHeight() - 5
         };
+    } else if ($(item).is('#do_pay')) {
+        tooltip.addClass('b');
+
+        var pos = {
+            left: offset.left - tooltip.outerWidth() / 2,
+            top: offset.top + $(item).outerHeight() + 5
+        };
+
     } else {
         var pos = {
             left: offset.left - 10,
@@ -804,7 +812,7 @@ $(document).ready(function () {
                 if (data.redirect) {
                     redir = function () {
                         location.href = data.redirect;
-                    }
+                    };
 
                     var co = 0;
                     $.each(data, function () {
@@ -874,9 +882,9 @@ $(document).ready(function () {
                         var agree_checkbox = $('input[name="agree"]').closest('.mladenecbox-label');
                         agree_checkbox.addClass('error tooltip-top');
                         $(agree_checkbox).click(function(){
-                                tt(false);
-                                $(this).closest('.mladenecbox-label').removeClass('error').removeClass('tooltip-top');
-                            });
+                            tt(false);
+                            $(this).closest('.mladenecbox-label').removeClass('error').removeClass('tooltip-top');
+                        });
                         tt(agree_checkbox, data.error['agree']);
                     }
                     
@@ -885,13 +893,22 @@ $(document).ready(function () {
                         var ozon_tab = $('#ozon-error');
                         ozon_tab.addClass('tooltip-top');
                         setTimeout(
-                            function(){tt(false), ozon_tab.removeClass('tooltip-top')
-                            }, 5000);
+                            function() { tt(false); ozon_tab.removeClass('tooltip-top')},
+                            5000);
+
                         $(ozon_tab).click(function(){
-                                tt(false);
-                                ozon_tab.removeClass('tooltip-top');
-                            });
+                            tt(false);
+                            ozon_tab.removeClass('tooltip-top');
+                        });
+
                         tt(ozon_tab, data.error['ozonfail']);
+                    }
+
+                    // ошибка шлюза при инициализации оплаты
+                    if (subm.attr('id') == 'do_pay') {
+
+                        tt(subm, data.error);
+                        setTimeout(function() { tt(false); }, 5000);
                     }
                     
                     $('select', f).each(function () { // ошибки на селектах

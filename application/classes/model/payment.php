@@ -126,6 +126,7 @@ class Model_Payment extends ORM {
                     );
 
                     $return = json_decode($json, TRUE);
+
                     if ($return == NULL) {
                         $this->error('Cannot parse JSON ['.$json.'] for url '.$this->_conf['url'].$url);
                     }
@@ -160,13 +161,13 @@ class Model_Payment extends ORM {
 
         if (empty($this->id)) $this->save(); // get id here
 
-        switch($this->gate) {
+        switch ($this->gate) {
             case self::GATE_PAYTURE:
-                $data = 'SessionType=Block;OrderId='.$this->id.';Amount='.($this->sum).';Rub='.$total;
+                $data = 'SessionType=Block;OrderId=' . $this->id . ';Amount=' . ($this->sum) . ';Rub=' . $total;
                 $res = $this->request('Init', array('Data' => $data));
 
                 $this->session_id = $res['SessionId'];
-                $this->form_url = $this->_conf['url']."Pay?SessionId=".$this->session_id;
+                $this->form_url = $this->_conf['url'] . "Pay?SessionId=" . $this->session_id;
 
                 break;
 
@@ -174,7 +175,7 @@ class Model_Payment extends ORM {
                 $res = $this->request('registerPreAuth.do', [
                     'orderNumber' => $this->id,
                     'amount' => $this->sum,
-                    'returnUrl' => 'http://'.Kohana::$hostnames[Kohana::$server_name]['host'].Route::url('payment', ['todo' => 'pay_success'])
+                    'returnUrl' => 'http://' . Kohana::$hostnames[Kohana::$server_name]['host'] . Route::url('payment', ['todo' => 'pay_success'])
                 ]);
                 $this->session_id = $res['orderId'];
                 $this->form_url = $res['formUrl'];
@@ -182,6 +183,8 @@ class Model_Payment extends ORM {
                 break;
 
         }
+
+        if (empty($this->form_url)) return FALSE;
 
         $this->save();
         return $this->form_url;

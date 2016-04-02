@@ -772,7 +772,7 @@ class Controller_User extends Controller_Frontend
         if ( ! $o->loaded()) throw new HTTP_Exception_404; // нет заказа
         if ($o->pay_type != Model_Order::PAY_CARD || ! $o->can_pay) throw new HTTP_Exception_404; // не карта
 
-        if ($this->request->post('ajax')) { // хотят оплатить
+        if ($this->request->post('ajax') && $this->request->post('do_pay')) { // хотят оплатить
 
             $payment = $o->payments
                 ->where('status', '=', Model_Payment::STATUS_New)
@@ -781,7 +781,14 @@ class Controller_User extends Controller_Frontend
             if (empty($payment->id)) { // нет оплат - создадим новую
                 $payment = new Model_Payment();
             }
-            $this->return_redirect($payment->init($o));
+            $payment_url = $payment->init($o);
+
+            if ($payment_url) {
+                $this->return_redirect($payment_url);
+            } else {
+                $this->return_error("Ошибка при инициализации платежа: некорректный ответ платежного шлюза.\nПожалуйста, повторите попытку оплаты через несколько минут.");
+            }
+
         }
         $this->tmpl['order'] = $o;
 

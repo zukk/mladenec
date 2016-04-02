@@ -8,7 +8,7 @@
 
 {if $order->can_pay and $payment->status lt Model_Payment::STATUS_Authorized}
     <form action="" method="post" class="ajax fr">
-        <input type="submit" name="do_pay" class="butt" value="Перейти к оплате"/>
+        <input type="submit" id="do_pay" name="do_pay" class="butt" value="Перейти к оплате"/>
     </form>
 {/if}
 
@@ -28,7 +28,7 @@
         <p><span style="color:red;">При последней попытке оплаты произошла ошибка!</span></p>
 
         <form action="" method="post" class="cb ajax fl">
-            <input type="submit" name="do_pay" class="butt" value="Попробовать оплатить ещё раз"/>
+            <input type="submit" id="do_pay" name="do_pay" class="butt" value="Попробовать оплатить ещё раз"/>
         </form>
 
     {/if}
