@@ -917,3 +917,8 @@ drop table order_num;
 
 #sales_notes в yml
 alter table z_action add sales_notes varchar(255) not null default '';
+
+#запросы на удаление редиректов с карточек с ненулевой активностью
+UPDATE tag_redirect, z_good g SET url = concat(url, 'mazafaka')
+WHERE url = concat('product/', g.translit, '/', g.group_id, '.', g.id, '.html') and g.active != 0 and to_id > 0;
+DELETE FROM tag_redirect WHERE url like '%mazafaka';
