@@ -2528,7 +2528,7 @@ class Controller_Admin extends Controller_Authorised {
 
 		$return['log_exists'] = is_file( APPPATH . "cache/tags_log.txt" );
 		
-		if( isset( $_GET['log'] ) ){
+		if (isset($_GET['log'])) {
 		
 			header('Content-Description: File Transfer');
 			header('Content-Type: text/txt');
@@ -2630,6 +2630,7 @@ class Controller_Admin extends Controller_Authorised {
         if ($tree_id = $this->request->query('tree_id')) {
             $query->where('tree_id', '=', $tree_id);
         }
+
         $empty = $this->request->query('empty');
         
         if ('0' === $empty) {
@@ -2640,7 +2641,7 @@ class Controller_Admin extends Controller_Authorised {
         
         $filter_not_exists = $this->request->query('filter_not_exists');
         
-        if ( !empty( $filter_not_exists ) ) {
+        if ( ! empty( $filter_not_exists ) ) {
             $query->where('filter_not_exists', '=', 1);
         } elseif($filter_not_exists === '0') {
             $query->where('filter_not_exists', '=', "0");
@@ -2648,15 +2649,15 @@ class Controller_Admin extends Controller_Authorised {
 		
         $checked = $this->request->query('checked');
         
-        if ( !empty( $checked ) ) {
+        if ( ! empty( $checked ) ) {
             $query->where('checked', '=', 1);
         } elseif($checked === '0')  {
-            $query->where('checked', '=', "0");
+            $query->where('checked', '=', 0);
         }
         
         $not_redirected = $this->request->query('not_redirected');
         
-        if ( !empty($not_redirected)) {
+        if ( ! empty($not_redirected)) {
             $query->where('tag.code', 'NOT IN', DB::expr('(SELECT url FROM tag_redirect WHERE to_id <> 0)'));
         } elseif ($not_redirected === '0') {
             $query->where('tag.code', 'IN', DB::expr('(SELECT url FROM tag_redirect WHERE to_id <> 0)'));
@@ -2671,12 +2672,19 @@ class Controller_Admin extends Controller_Authorised {
         }
        
         $query->reset(FALSE);
+
         $return['brands'] = ORM::factory('brand')->distinct('id')
                 ->join('z_tag_brand')->on('brand.id','=','z_tag_brand.brand_id')
                 ->where('active','=',1)
                 ->order_by('name','asc')->find_all()->as_array();
+
         $return['pager'] = $pager = new Pager($query->count_all(), 50);
-        $return['list'] = $query->order_by('tag.name', 'desc')->offset($pager->offset)->limit($pager->per_page)->find_all();
+
+        $return['list'] = $query->order_by('tag.goods_empty_ts', 'DESC')
+            ->offset($pager->offset)
+            ->limit($pager->per_page)
+            ->find_all();
+
         return $return;
     }
     
