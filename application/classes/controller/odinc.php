@@ -1138,6 +1138,8 @@ class Controller_Odinc extends Controller {
                 
                 Log::instance()->add(Log::INFO, $this->request->action() . ($this->action ? ', action '.$this->action : '').', refresh finished timer: ' . $this->timer());
                 
+                Model_Tag::count(); // пересчитаем теговые
+                
                 break;
 
             case 'product_light':
