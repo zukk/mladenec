@@ -64,6 +64,3 @@ Disallow: /about/news/fest2015
 Disallow: */sale.php*
 
 Sitemap: http://www.mladenec-shop.ru/sitemap.xml
-
-User-Agent: Googlebot-Image
-Disallow:
