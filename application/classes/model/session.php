@@ -12,6 +12,9 @@ class Model_Session extends ORM {
     public function save(Validation $validation = NULL) {
 
         $this->last_active = time();
+        if($this->user_id == ''){
+            $this->user_id = 0;
+        }
         parent::save($validation);
     }
 
