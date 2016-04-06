@@ -70,6 +70,15 @@ class Model_File extends ORM {
     }
 
     /**
+     * Получить реальный урл файла
+     * @return string
+     */
+    public function get_real_url()
+    {
+        return sprintf('http://www.mladenec-shop.ru/upload/%s/%s', $this->SUBDIR, rawurlencode($this->FILE_NAME));
+    }
+
+    /**
      * Получить html картинки
      * @param array $props
      * @return string

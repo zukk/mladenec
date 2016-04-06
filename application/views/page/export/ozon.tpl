@@ -18,7 +18,7 @@
             </Availability>
             <Description>
                 <Name>{$i->group_name} {$i->name}</Name>
-                <Picture>{$i->prop->image500->get_url()}</Picture>
+                <Picture>{$i->prop->image500->get_real_url()}</Picture>
                 <Capability>
                     <Type>
 

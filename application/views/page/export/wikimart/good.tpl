@@ -11,7 +11,7 @@
     {if not empty($images)}
         {foreach from=$images item=img name=i}
             {if $smarty.foreach.i.iteration lte 10}
-                <picture>{$img->get_url()}</picture>
+                <picture>{$img->get_real_url()}</picture>
             {/if}
         {/foreach}
     {/if}
