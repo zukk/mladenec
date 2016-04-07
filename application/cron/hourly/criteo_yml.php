@@ -5,7 +5,7 @@ require(__DIR__.'/../../../www/preload.php');
  * Формирование YML файла для Criteo
  */
 $start_memory = memory_get_usage();
-$lock_file = APPPATH.'cache/yml_on';
+$lock_file = APPPATH.'cache/criteo_yml_on';
 
 if (file_exists($lock_file)) exit('Already running, lock file found at '.$lock_file);
 touch($lock_file);
@@ -200,6 +200,8 @@ fwrite($fp,'</offers>
 ');
 
 fclose($fp);
+
+unlink($lock_file);
 
 $memory = memory_get_usage() - $start_memory;
 Log::instance()->add(Log::INFO, 'Criteo XML file generated ok. Memory used: ' . $memory . '. Heap size: ' .
