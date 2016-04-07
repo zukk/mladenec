@@ -734,7 +734,28 @@ class Txt {
 	public static function discount(Model_Good $g)
 	{
 		return round(($g->old_price - $g->price) / $g->old_price * 100);
-
 	}
 
+	/**
+	 * Сгенерить уникальный translit
+	 */
+	public static function unique_translit($name, $model)
+	{
+		$translit = Txt::translit($name);
+
+		$dups = ORM::factory($model)
+			->where('translit', 'LIKE', $translit."%")
+			->find_all()
+			->as_array('translit', 'translit');
+
+		if (empty($dups)) return $translit;
+		if (empty($dups[$translit])) return $translit;
+
+		$i = 0;
+		do {
+			$i++;
+		} while( ! empty($dups[$translit.'-'.$i]));
+
+		return $translit.'-'.$i;
+	}
 }

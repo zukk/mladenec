@@ -947,17 +947,7 @@ class Controller_Odinc extends Controller {
 
                         // создаём транслит только для новых брендов, для старых сохраняем. потому что за транслит цепляются урлы!
                         if (empty($b->translit)) {
-                            $clear_translit = $translit = Txt::translit($b->name);
-                            // транслит должен быть уникальным
-                            $i = 1;
-                            do {
-                                $dup = clone $brand;
-                                $dup_count = $dup->clear()->where('translit', '=', $translit)->count_all();
-                                $translit = $clear_translit.'-'.$i;
-                                $i++;
-                            } while ($dup_count != 0);
-
-                            $b->translit = $translit;
+                            $b->translit = Txt::unique_translit($b->name, 'brand');
                         }
 
                         $b->save();
