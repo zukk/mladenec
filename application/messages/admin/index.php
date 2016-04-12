@@ -3,7 +3,8 @@
 // настройки группировки меню админки
 return [
     'Пользователи' => ['user', 'order', 'comment_theme', 'return'],
-    'Товары' => ['good', 'action', 'actiontag', 'section', 'wikicategories', 'googlecategories', 'ozontype', 'tag', 'brand', 'sert', 'group', 'seostatistics', 'blocklinks'],
+    'Товары' => ['good', 'action', 'actiontag', 'section', 'wikicategories', 'googlecategories', 'ozontype', 'tag', 'brand', 'sert', 'group'],
+    'SEO' => ['seostatistics', 'seotemplates', 'blocklinks'],
     'Контент' => ['menu', 'new', 'article', 'filemanager'],
     'Маркетинг' =>  ['spam', 'spam_stat', 'promo', 'slider_banner', 'coupon', 'poll', 'partner', 'direct'],
     'Доставка' => ['delivery', 'zone', 'zone_time', 'astra_order',],
