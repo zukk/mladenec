@@ -748,29 +748,32 @@ class Controller_Admin extends Controller_Authorised {
 
         if ($this->request->post('edit')) {
             $form_data = $this->request->post();
-            if(isset($form_data['seo_auto'])){
-                $form_data['seo_auto'] = 1;
-            } else {
-                $form_data['seo_auto'] = 0;
+            $model_name = $this->model->object_name();
+            if($model_name == 'good') {
+                if (isset($form_data['seo_auto'])) {
+                    $form_data['seo_auto'] = 1;
+                } else {
+                    $form_data['seo_auto'] = 0;
+                }
+                if (method_exists($this->model, 'img')) { // upload-and-resize images
+                    $this->model = $this->save_form_images($this->model);
+                }
             }
-            if (method_exists($this->model, 'img')) { // upload-and-resize images
-                $this->model = $this->save_form_images($this->model);
-            }
-            
-			$is_okey = $this->save_form($this->model, $form_data, self::ignore_fields());
 
-			if ($is_okey && method_exists($this->model, 'seo_save')) $this->messages_add($this->model->seo_save($form_data['seo']));
+            $is_okey = $this->save_form($this->model, $form_data, self::ignore_fields());
+
+            if ($is_okey && method_exists($this->model, 'seo_save')) $this->messages_add($this->model->seo_save($form_data['seo']));
 
             $view->ok = $is_okey;
 
             if ($is_okey) {
                 $search_query = $this->request->post('search_query'); // адрес возврата если есть
                 if ( ! empty($search_query)) $this->request->redirect($search_query); // редирект на поиск, если просили и всё сохранилось ок
-            } 
+            }
         }
 
         // собственный метод edit есть?
-        $f = 'action_'.$m.'_edit'; 
+        $f = 'action_'.$m.'_edit';
         if (method_exists($this, $f)) {
             $form_vars = $this->{$f}($this->model);
         }
@@ -783,7 +786,7 @@ class Controller_Admin extends Controller_Authorised {
             $view->name = $form_vars['name'];
         }
         $view->m = $m;
-        
+
         // если пришли со списка этой же модели - пропишем в форму адрес возврата
         if (parse_url($this->request->referrer(), PHP_URL_PATH) == Route::url('admin_list', array('model' => $m))) {
             $this->search_query = $view->search_query = parse_url($this->request->referrer(), PHP_URL_QUERY);
