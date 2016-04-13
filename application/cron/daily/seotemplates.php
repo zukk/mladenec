@@ -5,12 +5,12 @@
  */
 require(__DIR__.'/../../../www/preload.php');
 
-$del_products_from_seo = DB::delete('z_seo')
+/*$del_products_from_seo = DB::delete('z_seo')
     ->where('z_seo.item_id', 'NOT IN', DB::select('z_good.id')
         ->from('z_good')
         ->where('z_good.seo_auto', '=', 0))
     ->where('z_seo.type', '=', 4)
-    ->execute();
+    ->execute();*/
 
 $all_products = DB::select(
     'z_good.id',
@@ -35,6 +35,20 @@ $all_products = DB::select(
     ->execute()
     ->as_array();
 
+$arr_seo_id = DB::select('z_seo.item_id')
+    ->from('z_seo')
+    ->where('z_seo.type', '=', 4)
+    ->join('z_good')
+    ->on('z_good.id', '=', 'z_seo.item_id')
+    ->where('z_good.seo_auto', '=', 1)
+    ->execute()
+    ->as_array();
+
+$ids_seo = array();
+foreach($arr_seo_id as $seo_id){
+    $ids_seo[] = $seo_id['item_id'];
+}
+
 $all_templates = DB::select('z_seotemplates.id', 'z_seotemplates.title', 'z_seotemplates.rule', 'z_seotemplates.type', 'z_seotemplates.active')
     ->from('z_seotemplates')
     ->where('z_seotemplates.active', '=', 1)
@@ -46,8 +60,6 @@ foreach($all_products as $product) {
     foreach($all_templates as $template) {
         $rule[] = $template['rule'];
     }
-    $query = DB::insert('z_seo')
-        ->columns(array('title', 'description', 'keywords', 'item_id', 'type'));
 
     $rule = $rule[array_rand($rule)];
     $rule = str_replace('[group]', $product['group_name'], $rule);
@@ -57,6 +69,16 @@ foreach($all_products as $product) {
     $rule = str_replace('[country]', $product['country_name'], $rule);
     $rule = str_replace('[price]', $product['price'], $rule);
 
-    $query->values(array($rule, '', '', $product['id'], 4));
-    $query->execute();
+    if(in_array($product['id'], $ids_seo)){
+        DB::update('z_seo')
+            ->set(array('title' => $rule ))
+            ->where('item_id', '=', $product['id'])
+            ->and_where('type', '=', 4)
+            ->execute();
+    } else {
+        $query = DB::insert('z_seo')
+            ->columns(array('title', 'description', 'keywords', 'item_id', 'type'));
+        $query->values(array($rule, '', '', $product['id'], 4));
+        $query->execute();
+    }
 }
