@@ -11,7 +11,7 @@
 </div>
 {/if}
 
-{include file="user/order/view.tpl" o=$i od=$i->data order_goods=$i->get_goods() coupons=$i->getcoupons()}
+{include file="user/order/view.tpl" o=$i od=$i->data order_goods=$i->get_goods() coupons=$i->getcoupons() orderdata=$i->getorderdata()}
 
 <hr />
 {if $i->data->source}

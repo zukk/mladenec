@@ -15,34 +15,34 @@
     {assign var=big value=0}
     {assign var=x value=1}
     {foreach from=$order_goods item=g name=g}
-    {if $g->id neq Cart::BLAG_ID and $g->price neq 0}{assign var=qty value=$qty+$g->quantity}{/if}
-    <tr {if $x eq 1}class="odd"{/if}>
-        {assign var=x value=-$x}
-        <td>
-            {if $g->id eq Cart::BLAG_ID}
-                <img src="/i/otkazniki.jpg" alt="" class="img70" />
-            {elseif $g->price eq 0}
-                <img src="/i/gift70.png" alt="" class="img70" />
-            {else}
-                <img src="{$g->prop->get_img(70)}" alt="" class="img70" />
-            {/if}
-        </td>
-        <td class="name">
-            {if $g->id eq Cart::BLAG_ID}
-                <a href="/charity/cooperation.php">Благотворительность</a>
-            {elseif $g->price eq 0}
-                {$g->group_name} {$g->name}
+        {if $g->id neq Cart::BLAG_ID and $g->price neq 0}{assign var=qty value=$qty+$g->quantity}{/if}
+            <tr {if $x eq 1}class="odd"{/if}>
+                {assign var=x value=-$x}
+                <td>
+                    {if $g->id eq Cart::BLAG_ID}
+                        <img src="/i/otkazniki.jpg" alt="" class="img70" />
+                    {elseif $g->price eq 0}
+                        <img src="/i/gift70.png" alt="" class="img70" />
+                    {else}
+                        <img src="{$g->prop->get_img(70)}" alt="" class="img70" />
+                    {/if}
+                </td>
+                <td class="name">
+                    {if $g->id eq Cart::BLAG_ID}
+                        <a href="/charity/cooperation.php">Благотворительность</a>
+                    {elseif $g->price eq 0}
+                        {$g->group_name} {$g->name}
 
-                {assign var=total_pqty value=$total_pqty+$g->quantity}
-            {else}
-                <a href="{$g->get_link(0)}">{$g->group_name} {$g->name}</a><input type="hidden" name="qty[{$g->id}]" value="{$g->quantity}" />{if ! empty($g->order_comment)}<br />{$g->order_comment}{/if}
-            {/if}
-        </td>
-        <td class="r nw">{$g->price|price}</td>
-        <td class="r nw">x {$g->quantity} =</td>
-        <td class="r nw">{$g->total|price}</td>
-    </tr>
-	{if $g->big}{assign var=big value=$big+1}{/if}
+                        {assign var=total_pqty value=$total_pqty+$g->quantity}
+                    {else}
+                        <a href="{$g->get_link(0)}">{$g->group_name} {$g->name}</a><input type="hidden" name="qty[{$g->id}]" value="{$g->quantity}" />{if ! empty($g->order_comment)}<br />{$g->order_comment}{/if}
+                    {/if}
+                </td>
+                <td class="r nw">{$g->price|price}</td>
+                <td class="r nw">x {$g->quantity} =</td>
+                <td class="r nw">{$g->total|price}</td>
+            </tr>
+        {if $g->big}{assign var=big value=$big+1}{/if}
     {/foreach}
 
     {if not empty($presents)}
@@ -161,7 +161,38 @@
         </tbody>
     </table>
     <br />
+    {foreach from=$orderdata item=order_data}
+        {assign var=ship_date value=$order_data.ship_date}
+        {assign var=city value=$order_data.city}
+        {assign var=street value=$order_data.street}
+        {assign var=house value=$order_data.house}
+        {if $order_data.correct_addr == 1}
+            {assign var=correct_addr value=Y}
+        {else}
+            {assign var=correct_addr value=N}
+        {/if}
+        {assign var=latlong value=$order_data.latlong}
+        {assign var=enter value=$order_data.enter}
+        {assign var=lift value=$order_data.lift}
+        {assign var=floor value=$order_data.floor}
+        {assign var=domofon value=$order_data.domofon}
+        {assign var=kv value=$order_data.kv}
+        {assign var=mkad value=$order_data.mkad}
+        {assign var=comment value=$order_data.comment}
+    {/foreach}
+
+    <div>ЗАКАЗ</div>
+    <div>{$ship_date|date_format:"%e.%m.%y"}©{$i->id}©{$i->user_id}©{$i->status}©0©{$i->price}©©©©©0</div>
+    <div>АДРЕС: {$city}|{$street}|{$house}©{$correct_addr}©{$latlong}©{$enter}|{$lift}|{$floor}|{$domofon}|{$kv}|{$mkad}|{$comment}</div>
+    <div>СКИДКА: {$o->discount}</div>
+    <div>ОПЛАТА: {$i->pay_type}©{$i->price}©N</div>
+    {foreach from=$order_goods item=g name=g}
+        <div>{$g->code}©{$g->quantity}©{$g->price}</div>
+    {/foreach}
+    <div>КОНЕЦЗАКАЗА</div>
 {/if}
+
+<br />
 
 <h2>Информация о доставке</h2>
 <h3>Контактная информация</h3>

@@ -956,4 +956,14 @@ class Model_Order extends ORM {
         return $coupons;
     }
 
+    public function getorderdata(){
+        $order_data = DB::select('order_data.*')
+            ->from(['z_order_data', 'order_data'])
+            ->where('order_data.id', '=', $this->id)
+            ->execute()
+            ->as_array();
+
+        return $order_data;
+    }
+
 }
