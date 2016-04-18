@@ -1217,22 +1217,38 @@ class Sphinx {
         if ( ! empty($params['x'])) $q->where('x', '=', 1);
 
         // сортировка
-        if ( ! $no_order) {         
+        if ( ! $no_order) {
             //показывать сначала товары в наличии
             $q->order_by('x', 'DESC');
-           
+
             if ( ! empty($params['s'])) {
-                $sorts = [
-                    'new'       => '-nt',
-                    'rating'    => '-popularity',
-                    'name'      => 'alphabet',
-                    'price'     => 'price',
-                    'pricedesc' => '-price',
-                    'pricepack'     => 'price',
-                    'pricepackdesc' => '-price',
-                    'priceitem'     => 'priceitem',
-                    'priceitemdesc' => '-priceitem',
-                ];
+                if(isset($this->_params['q']) && $this->_params['q'] !== NULL){
+                    // search
+                    $sorts = [
+                        'new'       => '-nt',
+                        'rating'    => '-order_search',
+                        'name'      => 'alphabet',
+                        'price'     => 'price',
+                        'pricedesc' => '-price',
+                        'pricepack'     => 'price',
+                        'pricepackdesc' => '-price',
+                        'priceitem'     => 'priceitem',
+                        'priceitemdesc' => '-priceitem',
+                    ];
+                } else {
+                    // category
+                    $sorts = [
+                        'new'       => '-nt',
+                        'rating'    => '-popularity',
+                        'name'      => 'alphabet',
+                        'price'     => 'price',
+                        'pricedesc' => '-price',
+                        'pricepack'     => 'price',
+                        'pricepackdesc' => '-price',
+                        'priceitem'     => 'priceitem',
+                        'priceitemdesc' => '-priceitem',
+                    ];
+                }
                 if ( ! empty($sorts[$params['s']])) {
                     $sort = $sorts[$params['s']];
                     $q->order_by(trim($sort, '-'), substr($sort, 0, 1) === '-' ? 'DESC' : 'ASC');
