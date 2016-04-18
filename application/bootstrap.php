@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-ini_set('memory_limit', '1024M');
+ini_set('memory_limit', '4096M');
 // -- Environment setup --------------------------------------------------------
 // Load the core Kohana class
 require SYSPATH . 'classes/kohana/core' . EXT;
