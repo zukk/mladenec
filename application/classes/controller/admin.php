@@ -2929,7 +2929,10 @@ class Controller_Admin extends Controller_Authorised {
         $query = ORM::factory('good') // запрос на товары
             ->where('price', '>', '0')
             ->where('section_id', '>', '0')
-            ->where('brand_id', '>', '0');
+            ->where('brand_id', '>', '0')
+            ->where('show', '=', '1')
+            ->where('active', '=', '1')
+            ->where('qty', '!=', '0');
 
         $not_wiki = $this->request->post('not_wiki'); // условие на викикатегорию
 
