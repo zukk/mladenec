@@ -113,7 +113,8 @@ class Model_Good extends ORM {
         'wiki_cat_id'     => 0,   // id викимарт категории
         'ozon_type_id'    => 0,   // id озон категории
         'google_cat_id'   => 0,   // id google merchant
-        'seo_auto'        => 0
+        'seo_auto'        => 0,
+        'order_search'    => 0
     );
 	
 	protected $filters_data;
