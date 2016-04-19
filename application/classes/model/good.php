@@ -21,6 +21,7 @@
 * @property old_price
 * @property barcode
 * @property show
+* @property order_search
 */
 
 class Model_Good extends ORM {
