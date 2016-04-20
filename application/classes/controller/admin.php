@@ -3032,6 +3032,7 @@ class Controller_Admin extends Controller_Authorised {
                 ->where('show', '=', '1')
                 ->where('qty', '!=', '0');
 
+
             $id1c = array_unique(array_filter(preg_split('~\D+~isu', $this->request->post('id1c'))));  // если есть коды товаров - учитываем только их
 
             if ( ! empty($id1c)) {
