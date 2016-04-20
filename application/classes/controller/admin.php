@@ -3027,7 +3027,10 @@ class Controller_Admin extends Controller_Authorised {
             $query = ORM::factory('good')
                 ->where('price', '>', '0')
                 ->where('section_id', '>', '0')
-                ->where('brand_id', '>', '0');
+                ->where('brand_id', '>', '0')
+                ->where('active', '=', '1')
+                ->where('show', '=', '1')
+                ->where('qty', '!=', '0');
 
             $id1c = array_unique(array_filter(preg_split('~\D+~isu', $this->request->post('id1c'))));  // если есть коды товаров - учитываем только их
 
