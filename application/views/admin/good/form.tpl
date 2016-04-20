@@ -414,11 +414,16 @@ $(document).ready(function() {
 					$('.tabText').each(function(){
 						if( $(this).redactor('code.get').match(/^\s*$/i) ){
 							var t = $('#p-'+$(this).attr('id'));
-							t.find('label').css({
-								color: 'red'
-							});
-							$('html, body').animate({ scrollTop: t.offset().top}, 'fast');
-							empty = true;
+                            var lab = t.find('label')[0].innerText;
+                            if(lab == 'Видео'){
+                                empty = false;
+                            } else {
+                                t.find('label').css({
+                                    color: 'red'
+                                });
+                                $('html, body').animate({ scrollTop: t.offset().top}, 'fast');
+                                empty = true;
+                            }
 						}
 					});
 					
