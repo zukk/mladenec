@@ -181,6 +181,10 @@
         {assign var=comment value=$order_data.comment}
     {/foreach}
 
+    <form action="" method="post">
+        <input type="submit" value="Отправить купоны" class="btn" name="activate_coupon">
+    </form>
+
     <div>ЗАКАЗ</div>
     <div>{$ship_date|date_format:"%e.%m.%y"}©{$i->id}©{$i->user_id}©{$i->status}©0©{$i->price}©©©©©0</div>
     <div>АДРЕС: {$city}|{$street}|{$house}©{$correct_addr}©{$latlong}©{$enter}|{$lift}|{$floor}|{$domofon}|{$kv}|{$mkad}|{$comment}</div>

@@ -786,6 +786,67 @@ class Controller_Admin extends Controller_Authorised {
             $view->name = $form_vars['name'];
         }
         $view->m = $m;
+        $activate_coupon = $this->request->post('activate_coupon');
+
+        if(isset($activate_coupon)){
+            $i = $form_vars['i'];
+            $orderdata = $form_vars['i']->getorderdata();
+            $get_goods = $i->get_goods();
+
+            foreach($orderdata as $order_data){
+                $ship_date = date('d.m.y', strtotime($order_data['ship_date']));
+                $city = $order_data['city'];
+                $street = $order_data['street'];
+                $house = $order_data['house'];
+                if ($order_data['correct_addr'] == 1){
+                    $correct_addr = 'Y';
+                } else {
+                    $correct_addr = 'N';
+                }
+                $latlong = $order_data['latlong'];
+                $enter = $order_data['enter'];
+                $lift = $order_data['lift'];
+                $floor = $order_data['floor'];
+                $domofon = $order_data['domofon'];
+                $kv = $order_data['kv'];
+                $mkad = $order_data['mkad'];
+                $comment = $order_data['comment'];
+            }
+
+            $string = '';
+            $string .= 'ЗАКАЗ';
+            $string .= $ship_date.'©'.$i->id.'©'.$i->user_id.'©'.$i->status.'©0©'.$i->price.'©©©©©0';
+            $string .= 'АДРЕС: '.$city.'|'.$street.'|'.$house.'©'.$correct_addr.'©'.$latlong.'©'.$enter.'|'.$lift.'|'.$floor.'|'.$domofon.'|'.$kv.'|'.$mkad.'|'.$comment;
+            $string .= 'СКИДКА: '.$i->discount;
+            $string .= 'ОПЛАТА: '.$i->pay_type.'©'.$i->price.'©N';
+
+            foreach ($get_goods as $g){
+                $string .= $g->code.'©'.$g->quantity.'©'.$g->price;
+            }
+            $string .= 'КОНЕЦЗАКАЗА';
+            $domains = Kohana::$config->load('domains')->as_array(); // = Kohana::$config->load('domains')->as_array();
+            $host = $domains['mladenec']['host'];
+
+            $url = $host.'/1c/orders_import.php';
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $string);
+
+            $data = curl_exec($ch);
+
+            if (curl_errno($ch)) {
+                print "Error: " . curl_error($ch);
+            } else {
+                // Show me the result
+                var_dump($data);
+            }
+            curl_close($ch);
+            print_r('1111');
+            die();
+        }
+
 
         // если пришли со списка этой же модели - пропишем в форму адрес возврата
         if (parse_url($this->request->referrer(), PHP_URL_PATH) == Route::url('admin_list', array('model' => $m))) {
