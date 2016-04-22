@@ -779,18 +779,11 @@ class Controller_Admin extends Controller_Authorised {
         }
         $form_vars['i'] = $this->model;
 
-        $view->form = View::factory('smarty:admin/'.$m.'/form', $form_vars)->render();
-        if ( empty($form_vars['name'])) {
-            $view->name = Kohana::message('admin', $m);
-        } else {
-            $view->name = $form_vars['name'];
-        }
-        $view->m = $m;
         $activate_coupon = $this->request->post('activate_coupon');
 
         if(isset($activate_coupon)){
             $i = $form_vars['i'];
-            $orderdata = $form_vars['i']->getorderdata();
+            $orderdata = $i->getorderdata();
             $get_goods = $i->get_goods();
 
             foreach($orderdata as $order_data){
@@ -813,40 +806,47 @@ class Controller_Admin extends Controller_Authorised {
                 $comment = $order_data['comment'];
             }
 
-            $string = '';
-            $string .= 'ЗАКАЗ';
-            $string .= $ship_date.'©'.$i->id.'©'.$i->user_id.'©'.$i->status.'©0©'.$i->price.'©©©©©0';
-            $string .= 'АДРЕС: '.$city.'|'.$street.'|'.$house.'©'.$correct_addr.'©'.$latlong.'©'.$enter.'|'.$lift.'|'.$floor.'|'.$domofon.'|'.$kv.'|'.$mkad.'|'.$comment;
-            $string .= 'СКИДКА: '.$i->discount;
-            $string .= 'ОПЛАТА: '.$i->pay_type.'©'.$i->price.'©N';
+            if($i->status == 'N'){
+                $string = '';
+                $string .= "ЗАКАЗ\n";
+                $string .= $ship_date."©".$i->id."©".$i->user_id."©F©0©".$i->price."©0©0©0©0©0\n";
+                $string .= "АДРЕС: ".$city."|".$street."|".$house."©".$correct_addr."©".$latlong."©".$enter."|".$lift."|".$floor."|".$domofon."|".$kv."|".$mkad."|".$comment."\n";
+                $string .= "СКИДКА: ".$i->discount."\n";
+                $string .= "ОПЛАТА: ".$i->pay_type."©".$i->price."©N\n";
+                foreach ($get_goods as $g){
+                    $string .= $g->code."©".$g->quantity."©".$g->price." \n";
+                }
+                $string .= "КОНЕЦЗАКАЗА";
 
-            foreach ($get_goods as $g){
-                $string .= $g->code.'©'.$g->quantity.'©'.$g->price;
+                $domains = Kohana::$config->load('domains')->as_array(); // = Kohana::$config->load('domains')->as_array();
+                $host = $domains['mladenec']['host'];
+
+                $url = $host.'/1c/orders_import.php?encoding=utf8';
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+                curl_setopt($ch, CURLOPT_POST, TRUE);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $string);
+
+                $data = curl_exec($ch);
+                $form_vars['res_gift'] = 0;
+                if (curl_errno($ch)) {
+                    print "Error: " . curl_error($ch);
+                } else {
+                    $form_vars['res_gift'] = 1;
+                    $is_okey = true;
+                    $view->ok = $is_okey;
+                }
+                curl_close($ch);
             }
-            $string .= 'КОНЕЦЗАКАЗА';
-            $domains = Kohana::$config->load('domains')->as_array(); // = Kohana::$config->load('domains')->as_array();
-            $host = $domains['mladenec']['host'];
-
-            $url = $host.'/1c/orders_import.php';
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $string);
-
-            $data = curl_exec($ch);
-
-            if (curl_errno($ch)) {
-                print "Error: " . curl_error($ch);
-            } else {
-                // Show me the result
-                var_dump($data);
-            }
-            curl_close($ch);
-            print_r('1111');
-            die();
         }
-
+        $view->form = View::factory('smarty:admin/'.$m.'/form', $form_vars)->render();
+        if ( empty($form_vars['name'])) {
+            $view->name = Kohana::message('admin', $m);
+        } else {
+            $view->name = $form_vars['name'];
+        }
+        $view->m = $m;
 
         // если пришли со списка этой же модели - пропишем в форму адрес возврата
         if (parse_url($this->request->referrer(), PHP_URL_PATH) == Route::url('admin_list', array('model' => $m))) {

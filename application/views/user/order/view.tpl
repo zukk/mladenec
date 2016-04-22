@@ -8,6 +8,29 @@
         <th>Сумма</th>
     </tr>
     </thead>
+    {assign var=syst_gift value=1}
+    {assign var=quantity value=$order_goods|count}
+    {foreach from=$order_goods item=g name=g}
+        {if $g->code|strpos:"syst_gift" === false}
+            {assign var=syst_gift value=0}
+        {/if}
+    {/foreach}
+
+    {if $quantity == 1}
+        {assign var=coupon_btn value='купон'}
+    {else}
+        {assign var=coupon_btn value='купоны'}
+    {/if}
+
+    {if $syst_gift == 1 && $i->status == 'N' && $res_gift == 0}
+        <br />
+        <form action="" method="post" id="form_activate_coupon">
+            {*<input type="submit" value="Активировать {$coupon_btn}" class="btn" name="activate_coupon">*}
+            <button class="btn" name="activate_coupon" id="activate_coupon">Активировать {$coupon_btn}</button>
+        </form>
+        <br />
+    {/if}
+
     <tbody>
     {assign var=total_pqty value=0}
     {assign var=pqty value=0}
@@ -160,40 +183,6 @@
             {/foreach}
         </tbody>
     </table>
-    <br />
-    {foreach from=$orderdata item=order_data}
-        {assign var=ship_date value=$order_data.ship_date}
-        {assign var=city value=$order_data.city}
-        {assign var=street value=$order_data.street}
-        {assign var=house value=$order_data.house}
-        {if $order_data.correct_addr == 1}
-            {assign var=correct_addr value=Y}
-        {else}
-            {assign var=correct_addr value=N}
-        {/if}
-        {assign var=latlong value=$order_data.latlong}
-        {assign var=enter value=$order_data.enter}
-        {assign var=lift value=$order_data.lift}
-        {assign var=floor value=$order_data.floor}
-        {assign var=domofon value=$order_data.domofon}
-        {assign var=kv value=$order_data.kv}
-        {assign var=mkad value=$order_data.mkad}
-        {assign var=comment value=$order_data.comment}
-    {/foreach}
-
-    <form action="" method="post">
-        <input type="submit" value="Отправить купоны" class="btn" name="activate_coupon">
-    </form>
-
-    <div>ЗАКАЗ</div>
-    <div>{$ship_date|date_format:"%e.%m.%y"}©{$i->id}©{$i->user_id}©{$i->status}©0©{$i->price}©©©©©0</div>
-    <div>АДРЕС: {$city}|{$street}|{$house}©{$correct_addr}©{$latlong}©{$enter}|{$lift}|{$floor}|{$domofon}|{$kv}|{$mkad}|{$comment}</div>
-    <div>СКИДКА: {$o->discount}</div>
-    <div>ОПЛАТА: {$i->pay_type}©{$i->price}©N</div>
-    {foreach from=$order_goods item=g name=g}
-        <div>{$g->code}©{$g->quantity}©{$g->price}</div>
-    {/foreach}
-    <div>КОНЕЦЗАКАЗА</div>
 {/if}
 
 <br />
@@ -273,3 +262,11 @@
     {/if}
 </dl>
 {/if}
+<script>
+    $(document).ready(function(){
+        $("#activate_coupon").click(function(){
+            $("#form_activate_coupon").submit();
+            location.reload();
+        });
+    });
+</script>
