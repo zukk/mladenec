@@ -806,7 +806,7 @@ class Controller_Admin extends Controller_Authorised {
                 $comment = $order_data['comment'];
             }
 
-            if($i->status == 'N'){
+            if($i->status != 'F'){
                 $string = '';
                 $string .= "ЗАКАЗ\n";
                 $string .= $ship_date."©".$i->id."©".$i->user_id."©F©0©".$i->price."©0©0©0©0©0\n";
