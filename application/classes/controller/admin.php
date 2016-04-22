@@ -779,6 +779,67 @@ class Controller_Admin extends Controller_Authorised {
         }
         $form_vars['i'] = $this->model;
 
+        $activate_coupon = $this->request->post('activate_coupon');
+
+        if(isset($activate_coupon)){
+            $i = $form_vars['i'];
+            $orderdata = $i->getorderdata();
+            $get_goods = $i->get_goods();
+
+            foreach($orderdata as $order_data){
+                $ship_date = date('d.m.y', strtotime($order_data['ship_date']));
+                $city = $order_data['city'];
+                $street = $order_data['street'];
+                $house = $order_data['house'];
+                if ($order_data['correct_addr'] == 1){
+                    $correct_addr = 'Y';
+                } else {
+                    $correct_addr = 'N';
+                }
+                $latlong = $order_data['latlong'];
+                $enter = $order_data['enter'];
+                $lift = $order_data['lift'];
+                $floor = $order_data['floor'];
+                $domofon = $order_data['domofon'];
+                $kv = $order_data['kv'];
+                $mkad = $order_data['mkad'];
+                $comment = $order_data['comment'];
+            }
+
+            if($i->status == 'N'){
+                $string = '';
+                $string .= "ЗАКАЗ\n";
+                $string .= $ship_date."©".$i->id."©".$i->user_id."©F©0©".$i->price."©0©0©0©0©0\n";
+                $string .= "АДРЕС: ".$city."|".$street."|".$house."©".$correct_addr."©".$latlong."©".$enter."|".$lift."|".$floor."|".$domofon."|".$kv."|".$mkad."|".$comment."\n";
+                $string .= "СКИДКА: ".$i->discount."\n";
+                $string .= "ОПЛАТА: ".$i->pay_type."©".$i->price."©N\n";
+                foreach ($get_goods as $g){
+                    $string .= $g->code."©".$g->quantity."©".$g->price." \n";
+                }
+                $string .= "КОНЕЦЗАКАЗА";
+
+                $domains = Kohana::$config->load('domains')->as_array(); // = Kohana::$config->load('domains')->as_array();
+                $host = $domains['mladenec']['host'];
+
+                $url = $host.'/1c/orders_import.php?encoding=utf8';
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+                curl_setopt($ch, CURLOPT_POST, TRUE);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $string);
+
+                $data = curl_exec($ch);
+                $form_vars['res_gift'] = 0;
+                if (curl_errno($ch)) {
+                    print "Error: " . curl_error($ch);
+                } else {
+                    $form_vars['res_gift'] = 1;
+                    $is_okey = true;
+                    $view->ok = $is_okey;
+                }
+                curl_close($ch);
+            }
+        }
         $view->form = View::factory('smarty:admin/'.$m.'/form', $form_vars)->render();
         if ( empty($form_vars['name'])) {
             $view->name = Kohana::message('admin', $m);
