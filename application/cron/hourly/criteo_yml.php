@@ -186,7 +186,7 @@ for ($heap_number = 0; $goods = Model_Good::for_criteo_yml($heap_size, $heap_num
             'section'       => $id2Catalog[$g['real_section']],
             'filter_labels' => $goodFiltersLabels,
             'good_filter'   => ! empty($goodFiltersV[$g['id']]) ? $goodFiltersV[$g['id']] : [],
-            'label'         => 'market.yandex.ru'
+            'label'         => 'criteo'
         ]));
         $goods_written++;
     }
