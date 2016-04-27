@@ -1,8 +1,49 @@
+{assign var=link_f value=$config->link_left}
+{assign var=link_s value=$config->link_right}
+{assign var=bg_image value=$config->bg_image}
+
 {* google adwords remarketing params *}
 <script>
+    function getPosition(e) {
+        var posx = 0;
+        var posy = 0;
+
+        if (!e) var e = window.event;
+        if (e.pageX || e.pageY) {
+            posx = e.pageX;
+            posy = e.pageY;
+        }
+        else if (e.clientX || e.clientY) {
+            posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+            posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+        }
+        return {
+            x: posx,
+            y: posy
+        }
+    }
+
+    document.addEventListener( "click", function(e) {
+        var x = getPosition(e).x;
+        var y = getPosition(e).y;
+        var pos_left = $("div#body").offset().left;
+        var pos_right = pos_left + 995;
+        if(x <= pos_left && y >= 100){
+            if("{$link_f}") {
+                window.open("{$link_f}");
+            }
+        }
+        if(x >= pos_right && y >= 100){
+            if("{$link_s}"){
+                window.open("{$link_s}");
+            }
+        }
+    });
+
     var google_tag_params = {
         ecomm_pagetype: 'other'
     };
+
 </script>
 
 {* findologic search *}
@@ -32,6 +73,8 @@
 {/if}
 
 <div id="all">
+    <div id="bg" {if !empty($bg_image)} style="background: url('{$bg_image}') 50% 0 no-repeat;"{/if}></div>
+
     <div id="head">
 
         {$ad->html('banner_top')}

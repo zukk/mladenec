@@ -123,6 +123,20 @@
         <label><input type="radio" name="use_ozon_delivery" value="0" {if $i->use_ozon_delivery eq 0} checked{/if}> Выключена</label>
         <label><input type="radio" name="use_ozon_delivery" value="1" {if $i->use_ozon_delivery eq 1} checked{/if}> Включена</label>
     </p>
+
+    <p>
+        <label>Левая ссылка на картинке</label>
+        <input type="text" value="{$i->link_left}" class="width-50" name="link_left" />
+    </p>
+    <p>
+        <label>Правая ссылка на картинке</label>
+        <input type="text" value="{$i->link_right}" class="width-50" name="link_right" />
+    </p>
+    <p>
+        <label>Картинка для бэкграунда</label>
+        <input type="file" name="image_id" />
+    </p>
+
     <p class="do">
         <input name="edit" value="Сохранить" type="submit" class="btn ok"/>
         <input name="edit" value="Сохранить и вернуться к списку" type="submit" class="btn ok" alt="list" />

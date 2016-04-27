@@ -755,9 +755,9 @@ class Controller_Admin extends Controller_Authorised {
                 } else {
                     $form_data['seo_auto'] = 0;
                 }
-                if (method_exists($this->model, 'img')) { // upload-and-resize images
-                    $this->model = $this->save_form_images($this->model);
-                }
+            }
+            if (method_exists($this->model, 'img')) { // upload-and-resize images
+                $this->model = $this->save_form_images($this->model);
             }
 
             $is_okey = $this->save_form($this->model, $form_data, self::ignore_fields());

@@ -7,7 +7,8 @@ class Model_Config extends ORM {
     protected $_table_name = 'z_config';
 
     protected $_belongs_to = array(
-        'logo' => array('model' => 'file', 'foreign_key' => 'logo_id')
+        'logo' => array('model' => 'file', 'foreign_key' => 'logo_id'),
+        'image' => array('model' => 'file', 'foreign_key' => 'image_id')
     );
 
     protected $_table_columns = array(
@@ -30,7 +31,10 @@ class Model_Config extends ORM {
         'instant_search' => '',
         'rr_enabled' => '',
         'use_ozon_delivery' => '',
-        'emails' => ''
+        'emails' => '',
+        'link_left' => '',
+        'link_right' => '',
+        'image_id' => '',
     );
 
     /**

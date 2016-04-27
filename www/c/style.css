@@ -7070,3 +7070,11 @@ td.select-present {
     float:left;
     width:100px;
 }
+#bg {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+#bg:hover{
+    cursor: pointer;
+}

@@ -86,6 +86,15 @@
             <tr>
                 <th>Доставка от Озона</th><td>{if $i->use_ozon_delivery eq 1}Включена{else}Выключена{/if}</td>
             </tr>
+            <tr>
+                <th>Левая ссылка на картинке</th><td>{$i->link_left}</td>
+            </tr>
+            <tr>
+                <th>Правая ссылка на картинке</th><td>{$i->link_right}</td>
+            </tr>
+            <tr>
+                <th>Картинка для бэкграунда</th><td>{$i->image_id}</td>
+            </tr>
         </table>
     {/foreach}
 </form>
