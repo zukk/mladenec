@@ -43,7 +43,7 @@ class Model_Config extends ORM {
      */
     public function img()
     {
-        return array('logo_id' => array(270, 90));
+        return array('logo_id' => array(270, 90), 'image_id' => array());
     }
 
     /**

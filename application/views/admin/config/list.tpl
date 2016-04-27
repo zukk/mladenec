@@ -93,7 +93,8 @@
                 <th>Правая ссылка на картинке</th><td>{$i->link_right}</td>
             </tr>
             <tr>
-                <th>Картинка для бэкграунда</th><td>{$i->image_id}</td>
+                <th>Картинка для бэкграунда</th>
+                <td>{if $i->image_id}<img src="/{$i->image->get_path()}" alt="" width="230px"/> {/if}</td>
             </tr>
         </table>
     {/foreach}

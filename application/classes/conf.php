@@ -34,6 +34,10 @@ class Conf {
             if ( ! empty($config['logo_id'])) {
                 $config['logo'] = ORM::factory('file', $config['logo_id'])->as_array();
             }
+            $image = ORM::factory('file', $config['image_id'])->as_array();
+            if(!empty($image)){
+                $config['image'] = $image;
+            }
             Cache::instance()->set('config', $config);
         }
 

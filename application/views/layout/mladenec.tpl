@@ -1,9 +1,13 @@
 {assign var=link_f value=$config->link_left}
 {assign var=link_s value=$config->link_right}
-{assign var=bg_image value=$config->bg_image}
+{assign var=bg_image value="/upload/`$config->image.SUBDIR`/`$config->image.FILE_NAME`"}
 
 {* google adwords remarketing params *}
 <script>
+    var google_tag_params = {
+        ecomm_pagetype: 'other'
+    };
+
     function getPosition(e) {
         var posx = 0;
         var posy = 0;
@@ -39,11 +43,6 @@
             }
         }
     });
-
-    var google_tag_params = {
-        ecomm_pagetype: 'other'
-    };
-
 </script>
 
 {* findologic search *}
