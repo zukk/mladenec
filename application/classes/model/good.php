@@ -1034,6 +1034,8 @@ class Model_Good extends ORM {
             $query->where('good.section_id',  '>', 0)
                 ->where('good.brand_id',    '>', 0)
                 ->where('good.group_id',    '>', 0)
+                ->where('good.active',  '=', 1)
+                ->where('good.show',    '=', 1)
 
                 ->where('prop.img1600',     '>', 0)
                 ->where('section.active',   '=', 1)
@@ -1092,9 +1094,12 @@ class Model_Good extends ORM {
 
         $query->where('good.section_id',  '>', 0)
             ->where('good.brand_id',    '>', 0)
+            ->where('good.brand_id',    '!=', 51596) // исключаем бренд Schwartau
             ->where('good.group_id',    '>', 0)
             ->where('good.price',   '>=', 200)
             ->where('good.qty',     '!=', 0)
+            ->where('good.active',  '=', 1)
+            ->where('good.show',    '=', 1)
 
             ->where('prop.img1600',     '>', 0)
             ->where('section.active',   '=', 1)
@@ -1139,6 +1144,7 @@ class Model_Good extends ORM {
             ->join(['b_file',        'file'])    ->on('prop.img1600',    '=', 'file.id')
 
             ->where('good.show',      '=', 1)
+            ->where('good.active',      '=', 1)
             ->where('good.qty', '!=', '0')
             ->where('good.section_id',  '>', 0)
             ->where('good.brand_id',    '>', 0)
@@ -1174,6 +1180,7 @@ class Model_Good extends ORM {
                 ->on('z_good.wiki_cat_id','=','wiki_categories.category_id')
                 ->where('z_good.qty',   '!=', 0)
                 ->where('z_good.show',  '=', 1)
+                ->where('z_good.active',  '=', 1)
                 ->where('z_good.price', '>', 300)
                 ->execute()
                 ->as_array();
@@ -1218,6 +1225,7 @@ class Model_Good extends ORM {
             ->join(['z_country',      'country'], 'LEFT')  ->on('good.country_id', '=', 'country.id')
 
             ->where('good.show',        '=', 1)
+            ->where('good.active',      '=', 1)
             ->where('good.qty',         '!=', 0)
             ->where('good.brand_id',    '>', 0)
             ->where('good.group_id',    '>', 0)
