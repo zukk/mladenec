@@ -22,7 +22,7 @@
         {assign var=coupon_btn value='купоны'}
     {/if}
 
-    {if $syst_gift == 1 && $i->status == 'N' && $res_gift == 0}
+    {if $syst_gift == 1 && $i->status != 'F' && $res_gift == 0}
         <br />
         <form action="" method="post" id="form_activate_coupon">
             {*<input type="submit" value="Активировать {$coupon_btn}" class="btn" name="activate_coupon">*}
