@@ -444,6 +444,7 @@ class Model_Order extends ORM {
                     'price' => 0,
                     'quantity' => 1,
                     'comment' => 'Приз по купону',
+                    'comment_email'   => '',
                     'action_id' => $cart->coupon['id'],
                 ]);
             }
@@ -797,41 +798,49 @@ class Model_Order extends ORM {
             $emailsArr = explode(',', $emails);
         }
 
-        $sum_gift = DB::select('g.price', 'og.comment','og.quantity', 'og.comment_email')
-            ->from(['z_order_good', 'og'])
-            ->join(['z_good', 'g'])
-            ->on('g.id', '=', 'og.good_id')
-            ->where('og.order_id', '=', $this->id)
-            ->where('g.code', 'LIKE', '%syst_gift%')
-            ->execute()
-            ->as_array();
+        $coupon = DB::select('c.id')
+        ->from(['z_coupon', 'c'])
+        ->where('c.order_id', '=', $this->id)
+        ->execute()
+        ->as_array();
 
-        $order_id = $this->id;
-        if ($sum_gift) {
-            foreach($sum_gift as $gift) { // крутит сертификаты разного номинала
-                for ($i = 1; $i <= $gift['quantity']; $i++) {
-                    $save_gift = Model_Coupon::generate($gift['price'], 1, 1, 1, 0, Model_Coupon::TYPE_SUM, date('Y-m-d H:i'), date(date('Y') + 1 . '-m-d H:i'), $order_id);
+        if(empty($coupon)){
+            $sum_gift = DB::select('g.price', 'og.comment','og.quantity', 'og.comment_email')
+                ->from(['z_order_good', 'og'])
+                ->join(['z_good', 'g'])
+                ->on('g.id', '=', 'og.good_id')
+                ->where('og.order_id', '=', $this->id)
+                ->where('g.code', 'LIKE', '%syst_gift%')
+                ->execute()
+                ->as_array();
 
-                    if (empty($gift['comment_email']) && $gift['comment_email'] == 0) {
-                        $email_buyer = '';
-                        $email = $this->data->email;
-                    } else {
-                        $email_buyer = $this->data->email;
-                        $email = $gift['comment_email'];
-                    }
-                    if (empty($gift['comment']) && $gift['comment'] == 0) {
-                        $message = '';
-                    } else {
-                        $message = $gift['comment'];
-                    }
-                    Mail::htmlsend('creategift', array('gift' => $save_gift, 'order' => $this, 'message' => $message), $email, 'Покупка сертификата!');
-                    if (!empty($email_buyer)) {
-                        Mail::htmlsend('gift_buyer', array('gift' => $save_gift, 'email' => $email), $email_buyer, 'Подтверждение отправки сертификата');
-                    }
-                    if(!empty($emailsArr)) {
-                        foreach ($emailsArr as $admin_email) {
-                            if(!empty($admin_email)){
-                                Mail::htmlsend('creategift', array('gift' => $save_gift, 'order' => $this, 'message' => $message), $admin_email, 'Покупка сертификата!');
+            $order_id = $this->id;
+            if ($sum_gift) {
+                foreach($sum_gift as $gift) { // крутит сертификаты разного номинала
+                    for ($i = 1; $i <= $gift['quantity']; $i++) {
+                        $save_gift = Model_Coupon::generate($gift['price'], 1, 1, 1, 0, Model_Coupon::TYPE_SUM, date('Y-m-d H:i'), date(date('Y') + 1 . '-m-d H:i'), $order_id);
+
+                        if (empty($gift['comment_email']) && $gift['comment_email'] == 0) {
+                            $email_buyer = '';
+                            $email = $this->data->email;
+                        } else {
+                            $email_buyer = $this->data->email;
+                            $email = $gift['comment_email'];
+                        }
+                        if (empty($gift['comment']) && $gift['comment'] == 0) {
+                            $message = '';
+                        } else {
+                            $message = $gift['comment'];
+                        }
+                        Mail::htmlsend('creategift', array('gift' => $save_gift, 'order' => $this, 'message' => $message), $email, 'Покупка сертификата!');
+                        if (!empty($email_buyer)) {
+                            Mail::htmlsend('gift_buyer', array('gift' => $save_gift, 'email' => $email), $email_buyer, 'Подтверждение отправки сертификата');
+                        }
+                        if(!empty($emailsArr)) {
+                            foreach ($emailsArr as $admin_email) {
+                                if(!empty($admin_email)){
+                                    Mail::htmlsend('creategift', array('gift' => $save_gift, 'order' => $this, 'message' => $message), $admin_email, 'Покупка сертификата!');
+                                }
                             }
                         }
                     }
