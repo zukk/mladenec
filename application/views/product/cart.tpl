@@ -291,6 +291,7 @@ $(document).ready( function() {
                         myMap.setBounds(myMap.geoObjects.getBounds());
 
                         var km = Math.ceil(length / 1000);
+                        $('#mkad_real').val(km);
                         $('#mkad_action').val(0);
                         if(km <= 50){
                             if(free_delivery === true){

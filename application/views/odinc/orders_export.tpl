@@ -37,7 +37,7 @@
 {/if}
 {/if}
 SystDost{if $o->delivery_type == Model_Order::SHIP_SERVICE}TR{/if}©{$clear_price}
-{if $o->data->mkad || $o->data->mkad_action == 1}SystMKAD©{if $o->data->mkad_action == 1}{$o->data->mkad+50}©АкцияМкад{else}{$o->data->mkad}{/if}
+{if $o->data->mkad_real}SystMKAD©{$o->data->mkad_real}{if $o->data->mkad_action == 1}©АкцияМкад{/if}
 
 {/if}
 КОНЕЦ ЗАКАЗА

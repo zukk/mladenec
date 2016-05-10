@@ -170,6 +170,7 @@
                         <input name="ship_zone" id="real-zone" type="hidden" value="0" />
                         <input id="mkad" name="mkad" type="hidden" value="0" />
                         <input id="mkad_action" name="mkad_action" type="hidden" value="0" />
+                        <input id="mkad_real" name="mkad_real" type="hidden" value="0" />
                         <input id="dpd_city_id" value="0" class="hide" />
                         <abbr id="real-zone-name" abbr="Зона доставки определяется по координатам точки доставки.">Не определена</abbr>
                     </dd>
