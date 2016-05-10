@@ -10,7 +10,7 @@ class Model_Order_Data extends ORM {
     protected $_table_columns = [
         'id' => '', 'last_name' => '', 'second_name' => '', 'name' => '', 'phone' => '',
         'phone2' => '', 'mobile_phone' => '', 'email' => '', 'ship_time' => '', 'ship_time_text' => '', 'ship_date' => '',
-        'ship_zone' => '', 'mkad' => '', 'city' => '', 'street' => '', 'house' => '', 'corp' => '',
+        'ship_zone' => '', 'mkad' => '', 'mkad_action' =>'', 'city' => '', 'street' => '', 'house' => '', 'corp' => '',
         'enter' => '', 'domofon' => '', 'floor' => '', 'call' => '', 'no_ring' => 0, 'no_call' => 0, 'lift' => '', 'kv' => '', 'urname' => '',
         'uraddr' => '', 'postaddr' => '', 'rs' => '', 'ks' => '', 'bik' => '', 'bank' => '', 'innkpp' => '', 'ogrn' => '',
         'okpo' => '', 'gendir' => '', 'user_status' => '', 'address' => '', 'latlong' => '',

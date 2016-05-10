@@ -87,14 +87,35 @@ class Controller_Ajax extends Controller_Frontend {
     public function action_zone()
     {
         $latlong = $this->request->query('latlong');
+        $all_data = $this->request->query('free_delivery');
         if (empty($latlong)) exit('no latlong');
 
         $zone = Model_Zone::locate($latlong); // определяем зону доставки
+        $section_cods = array(1081, 1110, 1124, 1398, 1426, 1474, 1491, 30016536, 30016537, 352, 50056991, 50056994, 50057194, 50057277);
 
         $cart = Cart::instance();
         $cart->recount();
+        $sum = '';
+        if(!empty($all_data)) {
+            foreach ($all_data as $data) {
+                $id = $data['id'];
+                $price = $data['price'];
+                $goods = new Model_Good($id);
+                $code = $goods->section->code;
+
+                if (in_array($code, $section_cods)) {
+                    $sum += $price;
+                }
+            }
+        }
+        if ($sum >= 20000) { // бесплатная доставка от МКАД
+            $free_delivery = TRUE;
+        } else {
+            $free_delivery = FALSE;
+        }
 
         $return = ['zone_id' => strval($zone)];
+        $return['free_delivery'] = $free_delivery;
 
         if ($zone !== FALSE) { // доставка в наши зоны доставки
 

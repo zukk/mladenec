@@ -239,14 +239,14 @@ $(document).ready( function() {
             $('#addr-map').empty().append(gui);
         },
 
-        calcMkad: function (mkad, dest) { // расчет расстояния от мкад до точки
+        calcMkad: function (mkad, dest, free_delivery) { // расчет расстояния от мкад до точки
 
             if (typeof(ymaps) == 'undefined') {
 
                 addr.chooser('Определяем расстояние до МКаД');
                 $('#mkad').val('?');
                 $.getScript('http://api-maps.yandex.ru/2.1/?lang=ru_RU&coordorder=longlat', function() { // грузим Я-карты / долгота,широта
-                    addr.calcMkad(mkad, dest); // как погрузим - вызовем ещё раз
+                    //addr.calcMkad(mkad, dest, free_delivery); // как погрузим - вызовем ещё раз
                 });
 
             } else {
@@ -291,6 +291,22 @@ $(document).ready( function() {
                         myMap.setBounds(myMap.geoObjects.getBounds());
 
                         var km = Math.ceil(length / 1000);
+                        $('#mkad_action').val(0);
+                        if(km <= 50){
+                            if(free_delivery === true){
+                                $('#mkad_action').val(1);
+                                km = 0;
+                            } else {
+                                km = km;
+                            }
+                        } else {
+                            if(free_delivery === true){
+                                $('#mkad_action').val(1);
+                                km = km - 50;
+                            } else {
+                                km = km;
+                            }
+                        }
                         $('#mkad').val(km);
                         $('#real-zone-name').append(' (' + km + 'км от МКАД)');
                         addr.showShipPrice();
@@ -349,8 +365,29 @@ $(document).ready( function() {
             sd.empty();
             sd.append('Определяем варианты доставки');
 
+            var pattern = /[0-9]+/g;
+            var total_prod = new Object();
+            var main = [];
+            $("table#cart_goods tbody tr").each(function(){
+                var id_val = $(this).attr("id");
+                if(id_val) {
+                    var attr_id = id_val.match(pattern);
+
+                    var val_qty = $('#qty_' + attr_id).val();
+                    var val_price = $('#qty_' + attr_id).attr('price');
+                    var total_price = val_qty * val_price;
+
+                    if (attr_id != null && !isNaN(total_price)) {
+                        total_prod = new Object();
+                        total_prod.id = attr_id[0];
+                        total_prod.price = total_price;
+                        main.push(total_prod);
+                    }
+                }
+            });
+
             $.get('{Route::url('delivery_zone')}',
-                { latlong: latlong , dpd_city_id: $('#dpd_city_id').val(), city: $('#city').val(), mkad: $('#mkad').val() },
+                { latlong: latlong, dpd_city_id: $('#dpd_city_id').val(), city: $('#city').val(), mkad: $('#mkad').val(), free_delivery: main},
                 function (data) {
 
                     $('#real-zone').val(data.zone_id);
@@ -365,8 +402,9 @@ $(document).ready( function() {
 
                         if (data.closest) { /* это доставка заМкаД - расчёт МКаД*/
                             $('#mkad').val('?');
-                            addr.calcMkad(data.closest, latlong.split(','));
+                            addr.calcMkad(data.closest, latlong.split(','), data.free_delivery);
                         } else {
+                            $('#mkad_action').val(0);
                             $('#mkad').val(0);
                         }
                         $('input', st).mladenecradio({
