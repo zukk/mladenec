@@ -91,21 +91,14 @@ class Controller_Ajax extends Controller_Frontend {
         if (empty($latlong)) exit('no latlong');
 
         $zone = Model_Zone::locate($latlong); // определяем зону доставки
-        $section_cods = array(1081, 1110, 1124, 1398, 1426, 1474, 1491, 30016536, 30016537, 352, 50056991, 50056994, 50057194, 50057277, 50051642);
 
         $cart = Cart::instance();
         $cart->recount();
         $sum = '';
         if(!empty($all_data)) {
             foreach ($all_data as $data) {
-                $id = $data['id'];
                 $price = $data['price'];
-                $goods = new Model_Good($id);
-                $code = $goods->section->code;
-
-                if (in_array($code, $section_cods)) {
-                    $sum += $price;
-                }
+                $sum += $price;
             }
         }
         if ($sum >= 20000) { // бесплатная доставка от МКАД
