@@ -1370,6 +1370,14 @@ class Sphinx {
 
         $has_section = ! empty($this->_section->id) ? $this->_section->id : 0;
 
+        $user = new Model_User();
+        $cur_user = $user->current();
+
+        foreach($this->goods as $g){
+            $g_id[] = '"'.$g->id.'"';
+        }
+        $three_goods = implode(",", array_slice($g_id, 0, 3) ) ;
+
         return View::factory('smarty:common/groups', [
             'sphinx'    => $this,
             'goods'     => $this->goods,
@@ -1388,6 +1396,8 @@ class Sphinx {
             'is_diapers'=> $has_section == Model_Section::DIAPERS_ID,
             'per_pack'  => in_array($has_section, [Model_Section::DIAPERS_ID, Model_Section::LINEN_ID]),
             'show_qty'  => $this->_mode == 'action' && $this->_query == 192982,
+            'user'      => $cur_user,
+            'three_goods'=> $three_goods,
         ])->render();
     }
 

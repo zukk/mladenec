@@ -127,8 +127,12 @@ class Controller_Product extends Controller_Frontend {
 
         if ( empty($goods[$good->id])) $goods[$good->id] = $good;
 
+        $user = new Model_User();
+        $cur_user = $user->current();
+
         $this->tmpl['cgood'] = $good;
         $this->tmpl['prop'] = new Model_Good_Prop($good->id);
+        $this->tmpl['cur_user'] = $cur_user;
 
         $keys = array_keys($goods); // сохраним ид товаров, чтобы потом получить скопом все картинки
 

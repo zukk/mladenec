@@ -273,3 +273,17 @@
     {/if*}
 
 {/if}
+<script type="text/javascript" src="//static.criteo.net/js/ld/ld.js" async="true"></script>
+<script type="text/javascript">
+    window.criteo_q = window.criteo_q || [];
+    window.criteo_q.push(
+            { event: "setAccount", account: {$o->user_id} },
+            { event: "setEmail", email: "{$o->data->email}" },
+            { event: "setSiteType", type: "d" },
+            { event: "trackTransaction", id: "{$o->id}", item: [
+                    {foreach from=$order_goods item=order_good}
+                        { id: "{$order_good->id}", price: {$order_good->price}, quantity: {$order_good->quantity} },
+                    {/foreach}
+            ]}
+    );
+</script>

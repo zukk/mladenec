@@ -227,6 +227,8 @@ class Controller_Page extends Controller_Frontend {
             ->find_all()
             ->as_array();
 
+        $this->tmpl['user'] = $this->user;
+
         $this->layout->body = View::factory('smarty:index/'.Kohana::$server_name, $this->tmpl);
     }
 
