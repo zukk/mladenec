@@ -273,12 +273,11 @@
     {/if*}
 
 {/if}
-{if !empty($o->data->email)}
 <script type="text/javascript" src="//static.criteo.net/js/ld/ld.js" async="true"></script>
 <script type="text/javascript">
     window.criteo_q = window.criteo_q || [];
     window.criteo_q.push(
-            { event: "setAccount", account: {$o->user_id} },
+            { event: "setAccount", account: 28691 },
             { event: "setEmail", email: "{$o->data->email}" },
             { event: "setSiteType", type: "d" },
             { event: "trackTransaction", id: "{$o->id}", item: [
@@ -288,4 +287,3 @@
             ]}
     );
 </script>
-{/if}
