@@ -212,21 +212,22 @@
             setTimeout(hideBlocks, 2000);
         });
     </script>
-
-    <script type="text/javascript" src="//static.criteo.net/js/ld/ld.js" async="true"></script>
-    <script type="text/javascript">
-        window.criteo_q = window.criteo_q || [];
-        window.criteo_q.push(
-                { event: "setAccount", account: {$user->id} },
-                { event: "setEmail", email: "{$user->email}" },
-                { event: "setSiteType", type: "d" },
-                { event: "viewBasket", item: [
-                    {foreach from=$goods item=g}
-                        { id: "{$g->id}", price: {$g->price}, quantity: {$g->quantity} },
-                    {/foreach}
-                ]}
-        );
-    </script>
+    {if !empty({$user->email})}
+        <script type="text/javascript" src="//static.criteo.net/js/ld/ld.js" async="true"></script>
+        <script type="text/javascript">
+            window.criteo_q = window.criteo_q || [];
+            window.criteo_q.push(
+                    { event: "setAccount", account: {$user->id} },
+                    { event: "setEmail", email: "{$user->email}" },
+                    { event: "setSiteType", type: "d" },
+                    { event: "viewBasket", item: [
+                        {foreach from=$goods item=g}
+                            { id: "{$g->id}", price: {$g->price}, quantity: {$g->quantity} },
+                        {/foreach}
+                    ]}
+            );
+        </script>
+    {/if}
 
 </form>
 

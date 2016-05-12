@@ -115,14 +115,15 @@ $(document).ready(function() {
     _paq.push(['trackPageView']);
 </script>
 {/if}
-
-<script type="text/javascript" src="//static.criteo.net/js/ld/ld.js" async="true"></script>
-<script type="text/javascript">
-    window.criteo_q = window.criteo_q || [];
-    window.criteo_q.push(
-            { event: "setAccount", account: {$cur_user->id} },
-            { event: "setEmail", email: "{$cur_user->email}" },
-            { event: "setSiteType", type: "d" },
-            { event: "viewItem", item: "{$cgood->id}" }
-    );
-</script>
+{if !empty($cur_user->email)}
+    <script type="text/javascript" src="//static.criteo.net/js/ld/ld.js" async="true"></script>
+    <script type="text/javascript">
+        window.criteo_q = window.criteo_q || [];
+        window.criteo_q.push(
+                { event: "setAccount", account: {$cur_user->id} },
+                { event: "setEmail", email: "{$cur_user->email}" },
+                { event: "setSiteType", type: "d" },
+                { event: "viewItem", item: "{$cgood->id}" }
+        );
+    </script>
+{/if}
