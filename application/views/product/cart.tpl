@@ -652,6 +652,10 @@ $(document).ready( function() {
         $(this).closest('form').submit();
     });
 
+    $(document).on('change', '#sborka', function(){
+        cart_recount();
+    });
+
     $(document).on('click', '#addr_add', function() { // добавить новый адрес - чистим поля
         $('input', realAddr).val('').prop('checked', false);
         $('input[name=address_id]', form).prop('checked', true); // новый адрес
