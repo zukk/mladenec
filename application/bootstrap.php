@@ -755,6 +755,8 @@ if ( ! empty($_SERVER['REQUEST_URI'])) {
 		$hh[] = "*.retailrocket.net"; // retailrocket
 		$hh[] = "*.criteo.net"; // criteo
 		$hh[] = "*.criteo.com"; // criteo
+		$hh[] = "*.lenmit.com"; // lenmit
+
 
         $hh[] = "*.wapstart.ru"; // counters & trackers
         $hh[] = "https://*.doubleclick.net";
