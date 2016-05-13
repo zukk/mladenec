@@ -752,6 +752,9 @@ if ( ! empty($_SERVER['REQUEST_URI'])) {
         $hh[] = "wss://*.jivosite.com";
 
 		$hh[] = "*.retailrocket.ru"; // retailrocket
+		$hh[] = "*.retailrocket.net"; // retailrocket
+		$hh[] = "*.criteo.net"; // criteo
+		$hh[] = "*.criteo.com"; // criteo
 
         $hh[] = "*.wapstart.ru"; // counters & trackers
         $hh[] = "https://*.doubleclick.net";
