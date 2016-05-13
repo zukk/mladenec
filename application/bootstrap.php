@@ -756,6 +756,9 @@ if ( ! empty($_SERVER['REQUEST_URI'])) {
 		$hh[] = "*.criteo.net"; // criteo
 		$hh[] = "*.criteo.com"; // criteo
 		$hh[] = "*.lenmit.com"; // lenmit
+		$hh[] = "*.moxielinks.com"; // moxielinks
+		$hh[] = "*.luxup.ru"; // luxup
+		$hh[] = "*.mixmarket.biz"; // mixmarket
 
 
         $hh[] = "*.wapstart.ru"; // counters & trackers
