@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 class Model_Order extends ORM {
 
     const TYPE_ONECLICK = 1; // тип заказа = заказ в один клик
@@ -798,14 +800,8 @@ class Model_Order extends ORM {
             $emailsArr = explode(',', $emails);
         }
 
-        $coupon = DB::select('c.id')
-        ->from(['z_coupon', 'c'])
-        ->where('c.order_id', '=', $this->id)
-        ->execute()
-        ->as_array();
-
-        if(empty($coupon)){
-            $sum_gift = DB::select('g.price', 'og.comment','og.quantity', 'og.comment_email')
+        //if(count($this->getcoupons()) == 0){
+            $sum_gift = DB::select('g.price', 'og.comment','og.quantity', 'og.comment_email', 'og.good_id')
                 ->from(['z_order_good', 'og'])
                 ->join(['z_good', 'g'])
                 ->on('g.id', '=', 'og.good_id')
@@ -817,6 +813,7 @@ class Model_Order extends ORM {
             $order_id = $this->id;
             if ($sum_gift) {
                 foreach($sum_gift as $gift) { // крутит сертификаты разного номинала
+                    $good = new Model_Good($gift['good_id']);
                     for ($i = 1; $i <= $gift['quantity']; $i++) {
                         $save_gift = Model_Coupon::generate($gift['price'], 1, 1, 1, 0, Model_Coupon::TYPE_SUM, date('Y-m-d H:i'), date(date('Y') + 1 . '-m-d H:i'), $order_id);
 
@@ -832,7 +829,22 @@ class Model_Order extends ORM {
                         } else {
                             $message = $gift['comment'];
                         }
-                        Mail::htmlsend('creategift', array('gift' => $save_gift, 'order' => $this, 'message' => $message), $email, 'Покупка сертификата!');
+
+                        /*echo '<br />save_gift = ';
+                        //print_r($save_gift);
+                        echo '<br />data = ';
+                        //print_r($this->data);
+                        echo '<br />gift = ';
+                        //print_r($gift);
+                        echo '<br />';
+                        echo '<br />good = ';
+                        print_r($good->price);
+                        echo '<br />';*/
+
+                        Mail::htmlsend('creategift', array('gift' => $save_gift, 'order' => $this, 'message' => $message, 'price' => $good->price), $email, 'Покупка сертификата!');
+                        //echo '<br />';
+                        //die('aaa');
+
                         if (!empty($email_buyer)) {
                             Mail::htmlsend('gift_buyer', array('gift' => $save_gift, 'email' => $email), $email_buyer, 'Подтверждение отправки сертификата');
                         }
@@ -846,7 +858,7 @@ class Model_Order extends ORM {
                     }
                 }
             }
-        }
+        //}
     }
 
     /**
