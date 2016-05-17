@@ -370,12 +370,12 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="padding: 16px 0 0;">
-                                                <span style="font-size: 12px; font-family:Arial, 'Helvetica Neue',Helvetica,sans-serif; color:#939393; font-weight: normal; line-height: 1.4;">Если у вас есть вопрос, комментарии или предложения, вы можете задать его, написав <a style="color: #2cacdc; text-decoration: underline" href="milto:a.hohlacheva@mladenec.ru">нам</a> или опубликовать на <a style="color: #2cacdc; text-decoration: underline" href="http://www.mladenec-shop.ru/about/review">сайте</a>. Все письма обязательно читаем и отвечаем!</span>
+                                                <span style="font-size: 12px; font-family:Arial, 'Helvetica Neue',Helvetica,sans-serif; color:#939393; font-weight: normal; line-height: 1.4;">Если у вас есть вопрос, комментарии или предложения, вы можете задать его, написав <a style="color: #2cacdc; text-decoration: underline" href="mailto:a.hohlacheva@mladenec.ru">нам</a> или опубликовать на <a style="color: #2cacdc; text-decoration: underline" href="http://www.mladenec-shop.ru/about/review">сайте</a>. Все письма обязательно читаем и отвечаем!</span>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td align="left" style="padding: 16px 0 0;">
-                                                <span style="font-size: 12px; font-family:Arial, 'Helvetica Neue',Helvetica,sans-serif; color:#939393; font-weight: normal; line-height: 1.4;">Чтобы не пропустить наши новости и акции, добавьте <a style="color: #2cacdc;" href="milto:Mladenec.ru@retailrocket.ne">Mladenec.ru@retailrocket.net</a> в свою адресную книгу.</span>
+                                                <span style="font-size: 12px; font-family:Arial, 'Helvetica Neue',Helvetica,sans-serif; color:#939393; font-weight: normal; line-height: 1.4;">Чтобы не пропустить наши новости и акции, добавьте <a style="color: #2cacdc;" href="mailto:Mladenec.ru@retailrocket.ne">Mladenec.ru@retailrocket.net</a> в свою адресную книгу.</span>
                                             </td>
                                         </tr>
                                         <tr>
