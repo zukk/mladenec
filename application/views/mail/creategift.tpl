@@ -187,7 +187,12 @@
                                                         <td align="left" style="padding: 0; height: 111px" valign="middle">
                                                             <table align="left" border="0" cellpadding="0" cellspacing="0" style="margin:0;padding:0;" width="100%">
                                                                 <tbody><tr>
-                                                                    <td align="left" style="padding:0 0 0 6px; margin: 0px; line-height: 1.2;font-family:Arial, 'Helvetica Neue',Helvetica,sans-serif;color:#000;font-size:15px;font-weight:normal;">Код Сертификата: <span style="font-weight: bold; font-size: 19px">{$gift->name}</span></td>
+                                                                    <td align="left" style="padding:0 0 0 6px; margin: 0px; line-height: 1.2;font-family:Arial, 'Helvetica Neue',Helvetica,sans-serif;color:#000;font-size:15px;font-weight:normal;">
+                                                                        Код Сертификата:
+                                                                        <span style="font-weight: bold; font-size: 19px">
+                                                                            {$gift->name}
+                                                                        </span>
+                                                                    </td>
                                                                 </tr>
                                                                 </tbody></table>
                                                         </td>
