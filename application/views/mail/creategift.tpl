@@ -29,7 +29,7 @@
                                 <td style="padding: 4px 0 0; margin: 0">
                                     <table align="left" border="0" cellpadding="0" cellspacing="0" style="margin:0;padding:0;height: 1px" height="1" width="100%">
                                         <tr>
-                                            <td  align="right" style="padding: 0;height: 1px; background: #e9ddb9; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height=“1" src="images/mail/gifts/br.png" style="display:block;" width=“1" /></td>
+                                            <td  align="right" style="padding: 0;height: 1px; background: #e9ddb9; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height="1" src="images/mail/gifts/br.png" style="display:block;" width="1" /></td>
                                         </tr>
                                     </table>
                                 </td>
@@ -77,7 +77,7 @@
                                 <td align="left" style="margin:0;padding:0;" valign="top">
                                     <table align="left" border="0" cellpadding="0" cellspacing="0" style="margin:0;padding:0;" width="100%">
                                         <tbody><tr>
-                                            <td align="right" style="padding: 0;height: 1px; background: #e9ddb9; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height=“1" src="images/mail/gifts/br.png" style="display:block;" width=“1" /></td>
+                                            <td align="right" style="padding: 0;height: 1px; background: #e9ddb9; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height="1" src="images/mail/gifts/br.png" style="display:block;" width="1" /></td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -113,7 +113,7 @@
                                 <td align="left" style="margin:0;padding:0;" valign="top">
                                     <table align="left" border="0" cellpadding="0" cellspacing="0" style="margin:0;padding:0;" width="100%">
                                         <tbody><tr>
-                                            <td align="right" style="padding: 0;height: 1px; background: #e9ddb9; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height=“1" src="images/mail/gifts/br.png" style="display:block;" width=“1" /></td>
+                                            <td align="right" style="padding: 0;height: 1px; background: #e9ddb9; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height="1" src="images/mail/gifts/br.png" style="display:block;" width="1" /></td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -138,7 +138,7 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="padding: 18px 0 0;">
-                                                <span style="font-size: 15px; font-family:Arial, 'Helvetica Neue',Helvetica,sans-serif; color: rgb(39, 39, 39); font-weight: normal; line-height: 1.2;">Чтобы воспользоваться сертификатом введите код в поле “промокод”:</span>
+                                                <span style="font-size: 15px; font-family:Arial, 'Helvetica Neue',Helvetica,sans-serif; color: rgb(39, 39, 39); font-weight: normal; line-height: 1.2;">Чтобы воспользоваться сертификатом введите код в поле "промокод”:</span>
                                             </td>
                                         </tr>
                                         </tbody>
@@ -175,7 +175,9 @@
                                                             <table align="left" border="0" cellpadding="0" cellspacing="0" style="margin:0;padding:0;" width="100%">
                                                                 <tbody>
                                                                 <tr>
-                                                                    <td valign="top" align="right" style="padding: 0;height: 2px; background: #dddddd; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height=“1" src="images/mail/gifts/br.png" style="display:block;" width=“1" /></td>
+                                                                    <td valign="top" align="right" style="padding: 0;height: 2px; background: #dddddd; margin: 0px;font-size:1px;font-weight:normal;color: transparent">
+                                                                        <img alt="" data-origsrc="img/br.png" data-src="img/br.png" height="1" src="images/mail/gifts/br.png" style="display:block;" width="1" />
+                                                                    </td>
                                                                 </tr>
                                                                 </tbody>
                                                             </table>
@@ -196,7 +198,7 @@
                                                             <table align="left" border="0" cellpadding="0" cellspacing="0" style="margin:0;padding:0;" width="100%">
                                                                 <tbody>
                                                                 <tr>
-                                                                    <td valign="top" align="right" style="padding: 0;height: 2px; background: #dddddd; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height=“1" src="images/mail/gifts/br.png" style="display:block;" width=“1" /></td>
+                                                                    <td valign="top" align="right" style="padding: 0;height: 2px; background: #dddddd; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height="1" src="images/mail/gifts/br.png" style="display:block;" width="1" /></td>
                                                                 </tr>
                                                                 </tbody>
                                                             </table>
@@ -303,7 +305,7 @@
                                                     <tbody>
                                                     <tr>
                                                         <td align="center" style="margin:0;padding:3px 0 0;" valign="middle" width=""><a href="https://www.facebook.com/mladenec.ru/"><img alt="" border="0" data-origsrc="img/fb.jpg" data-src="img/fb.jpg" src="images/mail/gifts/fb.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="37" height="36"></a></td>
-                                                        <td align="center" style="margin:0;padding:3px 0 0;" valign="middle" width=""><a href="https://vk.com/mladenecshop"><img alt="" border="0" data-origsrc="img/vk.jpg" data-src="img/vk.jpg" src="www/images/mail/gifts/vk.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="37" height="36"></a></td>
+                                                        <td align="center" style="margin:0;padding:3px 0 0;" valign="middle" width=""><a href="https://vk.com/mladenecshop"><img alt="" border="0" data-origsrc="img/vk.jpg" data-src="img/vk.jpg" src="images/mail/gifts/vk.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="37" height="36"></a></td>
                                                         <td align="center" style="margin:0;padding:3px 0 0;" valign="middle" width=""><a href="https://twitter.com/mladenecshop"><img alt="" border="0" data-origsrc="img/tw.jpg" data-src="img/tw.jpg" src="images/mail/gifts/tw.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="37" height="36"></a></td>
                                                         <td align="center" style="margin:0;padding:3px 0 0;" valign="middle" width=""><a href="https://ok.ru/mladenec"><img alt="" border="0" data-origsrc="img/od.jpg" data-src="img/od.jpg" src="images/mail/gifts/od.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="37" height="36"></a></td>
                                                         <td align="center" style="margin:0;padding:3px 0 0;" valign="middle" width=""><a href="https://www.instagram.com/mladenecshop/"><img alt="" border="0" data-origsrc="img/in.jpg" data-src="img/in.jpg" src="images/mail/gifts/in.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="37" height="36"></a></td>
@@ -339,7 +341,7 @@
                                 <td align="left" style="margin:0;padding:50px 0 0;" valign="top">
                                     <table align="left" border="0" cellpadding="0" cellspacing="0" style="margin:0;padding:0;" width="100%">
                                         <tbody><tr>
-                                            <td align="right" style="padding: 0;height: 1px; background: #e8e8e8; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height=“1" src="images/mail/gifts/br.png" style="display:block;" width=“1" /></td>
+                                            <td align="right" style="padding: 0;height: 1px; background: #e8e8e8; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height="1" src="images/mail/gifts/br.png" style="display:block;" width="1" /></td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -358,7 +360,7 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="padding: 16px 0 0;">
-                                                <span style="font-size: 12px; font-family:Arial, 'Helvetica Neue',Helvetica,sans-serif; color:#939393; font-weight: normal; line-height: 1.4;">Общество с ограниченной ответственностью “ТД Младенец.РУ” ОГРН: 1125018000667 Телефон +7 495 662-999-4.</span>
+                                                <span style="font-size: 12px; font-family:Arial, 'Helvetica Neue',Helvetica,sans-serif; color:#939393; font-weight: normal; line-height: 1.4;">Общество с ограниченной ответственностью "ТД Младенец.РУ” ОГРН: 1125018000667 Телефон +7 495 662-999-4.</span>
                                             </td>
                                         </tr>
                                         <tr>
