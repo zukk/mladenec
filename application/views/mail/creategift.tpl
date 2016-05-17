@@ -29,7 +29,7 @@
                                 <td style="padding: 4px 0 0; margin: 0">
                                     <table align="left" border="0" cellpadding="0" cellspacing="0" style="margin:0;padding:0;height: 1px" height="1" width="100%">
                                         <tr>
-                                            <td  align="right" style="padding: 0;height: 1px; background: #e9ddb9; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height=“1" src="../../../www/images/mail/gifts/br.png" style="display:block;" width=“1" /></td>
+                                            <td  align="right" style="padding: 0;height: 1px; background: #e9ddb9; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height=“1" src="images/mail/gifts/br.png" style="display:block;" width=“1" /></td>
                                         </tr>
                                     </table>
                                 </td>
@@ -43,7 +43,7 @@
                                                 <table align="left" border="0" cellpadding="0" cellspacing="0" data-editable="image" width="100%">
                                                     <tbody>
                                                     <tr>
-                                                        <td align="left" style="padding:0; margin: 0px; " valign="top"><a href="http://www.mladenec-shop.ru/" style="text-decoration: none" target="_blank"><img alt="" data-origsrc="img/logo.jpg" data-src="img/logo.jpg" height="82" src="../../../www/images/mail/gifts/logo.jpg" style="display:block;" width="260" /> </a></td>
+                                                        <td align="left" style="padding:0; margin: 0px; " valign="top"><a href="http://www.mladenec-shop.ru/" style="text-decoration: none" target="_blank"><img alt="" data-origsrc="img/logo.jpg" data-src="img/logo.jpg" height="82" src="images/mail/gifts/logo.jpg" style="display:block;" width="260" /> </a></td>
                                                     </tr>
                                                     </tbody>
                                                 </table>
@@ -52,7 +52,7 @@
                                                 <table align="left" border="0" cellpadding="0" cellspacing="0" data-editable="image" width="100%">
                                                     <tbody>
                                                     <tr>
-                                                        <td align="left" style="padding:0; margin: 0px; " valign="top"><a href="http://www.mladenec-shop.ru/actions" style="text-decoration: none" target="_blank"><img alt="" data-origsrc="img/sail.jpg" data-src="img/sail.jpg" height="82" src="../../../www/images/mail/gifts/sail.jpg" style="display:block;" width="158" /> </a></td>
+                                                        <td align="left" style="padding:0; margin: 0px; " valign="top"><a href="http://www.mladenec-shop.ru/actions" style="text-decoration: none" target="_blank"><img alt="" data-origsrc="img/sail.jpg" data-src="img/sail.jpg" height="82" src="images/mail/gifts/sail.jpg" style="display:block;" width="158" /> </a></td>
                                                     </tr>
                                                     </tbody>
                                                 </table>
@@ -61,7 +61,7 @@
                                                 <table align="right" border="0" cellpadding="0" cellspacing="0" data-editable="image" width="100%">
                                                     <tbody>
                                                     <tr>
-                                                        <td align="left" style="padding:0; margin: 0px; " valign="top"><img alt="" data-origsrc="img/phone.jpg" data-src="img/phone.jpg" height="82" src="../../../www/images/mail/gifts/phone.jpg" style="display:block;" width="181" /></td>
+                                                        <td align="left" style="padding:0; margin: 0px; " valign="top"><img alt="" data-origsrc="img/phone.jpg" data-src="img/phone.jpg" height="82" src="images/mail/gifts/phone.jpg" style="display:block;" width="181" /></td>
                                                     </tr>
                                                     </tbody>
                                                 </table>
@@ -77,7 +77,7 @@
                                 <td align="left" style="margin:0;padding:0;" valign="top">
                                     <table align="left" border="0" cellpadding="0" cellspacing="0" style="margin:0;padding:0;" width="100%">
                                         <tbody><tr>
-                                            <td align="right" style="padding: 0;height: 1px; background: #e9ddb9; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height=“1" src="../../../www/images/mail/gifts/br.png" style="display:block;" width=“1" /></td>
+                                            <td align="right" style="padding: 0;height: 1px; background: #e9ddb9; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height=“1" src="images/mail/gifts/br.png" style="display:block;" width=“1" /></td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -102,7 +102,7 @@
                                                 </table>
                                             </td>
                                             <td align="right" style="margin:0;padding:0;width: 119px" valign="top" width="119">
-                                                <img alt="" data-origsrc="img/winter.jpg" data-src="img/winter.jpg" height="49" src="../../../www/images/mail/gifts/winter.jpg" style="display:block;" width="119" />
+                                                <img alt="" data-origsrc="img/winter.jpg" data-src="img/winter.jpg" height="49" src="images/mail/gifts/winter.jpg" style="display:block;" width="119" />
                                             </td>
                                         </tr>
                                         </tbody>
@@ -113,7 +113,7 @@
                                 <td align="left" style="margin:0;padding:0;" valign="top">
                                     <table align="left" border="0" cellpadding="0" cellspacing="0" style="margin:0;padding:0;" width="100%">
                                         <tbody><tr>
-                                            <td align="right" style="padding: 0;height: 1px; background: #e9ddb9; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height=“1" src="../../../www/images/mail/gifts/br.png" style="display:block;" width=“1" /></td>
+                                            <td align="right" style="padding: 0;height: 1px; background: #e9ddb9; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height=“1" src="images/mail/gifts/br.png" style="display:block;" width=“1" /></td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -158,9 +158,9 @@
                                                     <tr>
                                                         <td align="left" style="padding:0; margin: 0px; " valign="top">
                                                             {if $price == 1000.00}
-                                                                <img alt="" data-origsrc="img/sert1.jpg" data-src="img/sert1.jpg" height="130" src="../../../www/images/mail/gifts/sert1.jpg" style="display:block;" width="252">
+                                                                <img alt="" data-origsrc="img/sert1.jpg" data-src="img/sert1.jpg" height="130" src="images/mail/gifts/sert1.jpg" style="display:block;" width="252">
                                                             {else}
-                                                                <img alt="" data-origsrc="img/sert5.jpg" data-src="img/sert5.jpg" height="130" src="../../../www/images/mail/gifts/sert5.jpg" style="display:block;" width="252">
+                                                                <img alt="" data-origsrc="img/sert5.jpg" data-src="img/sert5.jpg" height="130" src="images/mail/gifts/sert5.jpg" style="display:block;" width="252">
                                                             {/if}
                                                         </td>
                                                     </tr>
@@ -175,7 +175,7 @@
                                                             <table align="left" border="0" cellpadding="0" cellspacing="0" style="margin:0;padding:0;" width="100%">
                                                                 <tbody>
                                                                 <tr>
-                                                                    <td valign="top" align="right" style="padding: 0;height: 2px; background: #dddddd; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height=“1" src="../../../www/images/mail/gifts/br.png" style="display:block;" width=“1" /></td>
+                                                                    <td valign="top" align="right" style="padding: 0;height: 2px; background: #dddddd; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height=“1" src="images/mail/gifts/br.png" style="display:block;" width=“1" /></td>
                                                                 </tr>
                                                                 </tbody>
                                                             </table>
@@ -196,7 +196,7 @@
                                                             <table align="left" border="0" cellpadding="0" cellspacing="0" style="margin:0;padding:0;" width="100%">
                                                                 <tbody>
                                                                 <tr>
-                                                                    <td valign="top" align="right" style="padding: 0;height: 2px; background: #dddddd; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height=“1" src="../../../www/images/mail/gifts/br.png" style="display:block;" width=“1" /></td>
+                                                                    <td valign="top" align="right" style="padding: 0;height: 2px; background: #dddddd; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height=“1" src="images/mail/gifts/br.png" style="display:block;" width=“1" /></td>
                                                                 </tr>
                                                                 </tbody>
                                                             </table>
@@ -210,7 +210,7 @@
                                                 <table align="right" border="0" cellpadding="0" cellspacing="0" data-editable="image" width="100%">
                                                     <tbody>
                                                     <tr>
-                                                        <td align="left" style="padding:0; margin: 0px; " valign="top"><img alt="" data-origsrc="img/sert2.jpg" data-src="img/sert2.jpg" height="130" src="../../../www/images/mail/gifts/sert2.jpg" style="display:block;" width="16"></td>
+                                                        <td align="left" style="padding:0; margin: 0px; " valign="top"><img alt="" data-origsrc="img/sert2.jpg" data-src="img/sert2.jpg" height="130" src="images/mail/gifts/sert2.jpg" style="display:block;" width="16"></td>
                                                     </tr>
                                                     </tbody>
                                                 </table>
@@ -242,7 +242,7 @@
                                     <table align="center" border="0" cellpadding="0" cellspacing="0" data-editable="image" data-mobile-width="0" style="margin: 0px; padding: 0px;">
                                         <tbody>
                                         <tr>
-                                            <td align="center" style="display: inline-block; padding: 0px; margin: 0px; " valign="top"><img alt="" border="0" data-origsrc="img/big-baner1.jpg" data-src="img/big-baner1.jpg" src="../../../www/images/mail/gifts/big-baner1.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="600" height="152"></td>
+                                            <td align="center" style="display: inline-block; padding: 0px; margin: 0px; " valign="top"><img alt="" border="0" data-origsrc="img/big-baner1.jpg" data-src="img/big-baner1.jpg" src="images/mail/gifts/big-baner1.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="600" height="152"></td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -269,7 +269,7 @@
                                     <table align="center" border="0" cellpadding="0" cellspacing="0" data-editable="image" data-mobile-width="0" style="margin: 0px; padding: 0px;">
                                         <tbody>
                                         <tr>
-                                            <td align="center" style="display: inline-block; padding: 0px; margin: 0px; " valign="top"><img alt="" border="0" data-origsrc="img/big-baner2.jpg" data-src="img/big-baner2.jpg" src="../../../www/images/mail/gifts/big-baner2.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="600" height="103"></td>
+                                            <td align="center" style="display: inline-block; padding: 0px; margin: 0px; " valign="top"><img alt="" border="0" data-origsrc="img/big-baner2.jpg" data-src="img/big-baner2.jpg" src="images/mail/gifts/big-baner2.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="600" height="103"></td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -282,7 +282,7 @@
                                     <table align="center" border="0" cellpadding="0" cellspacing="0" data-editable="image" data-mobile-width="0" style="margin: 0px; padding: 0px;">
                                         <tbody>
                                         <tr>
-                                            <td align="center" style="display: inline-block; padding: 0px; margin: 0px; " valign="top"><img alt="" border="0" data-origsrc="img/big-baner3.jpg" data-src="img/big-baner3.jpg" src="../../../www/images/mail/gifts/big-baner3.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="600" height="106"></td>
+                                            <td align="center" style="display: inline-block; padding: 0px; margin: 0px; " valign="top"><img alt="" border="0" data-origsrc="img/big-baner3.jpg" data-src="img/big-baner3.jpg" src="images/mail/gifts/big-baner3.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="600" height="106"></td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -302,11 +302,11 @@
                                                 <table align="right" style="margin:0;padding:0;" border="0" cellpadding="0" cellspacing="0" width="100%">
                                                     <tbody>
                                                     <tr>
-                                                        <td align="center" style="margin:0;padding:3px 0 0;" valign="middle" width=""><a href="https://www.facebook.com/mladenec.ru/"><img alt="" border="0" data-origsrc="img/fb.jpg" data-src="img/fb.jpg" src="../../../www/images/mail/gifts/fb.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="37" height="36"></a></td>
-                                                        <td align="center" style="margin:0;padding:3px 0 0;" valign="middle" width=""><a href="https://vk.com/mladenecshop"><img alt="" border="0" data-origsrc="img/vk.jpg" data-src="img/vk.jpg" src="../../../www/images/mail/gifts/vk.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="37" height="36"></a></td>
-                                                        <td align="center" style="margin:0;padding:3px 0 0;" valign="middle" width=""><a href="https://twitter.com/mladenecshop"><img alt="" border="0" data-origsrc="img/tw.jpg" data-src="img/tw.jpg" src="../../../www/images/mail/gifts/tw.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="37" height="36"></a></td>
-                                                        <td align="center" style="margin:0;padding:3px 0 0;" valign="middle" width=""><a href="https://ok.ru/mladenec"><img alt="" border="0" data-origsrc="img/od.jpg" data-src="img/od.jpg" src="../../../www/images/mail/gifts/od.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="37" height="36"></a></td>
-                                                        <td align="center" style="margin:0;padding:3px 0 0;" valign="middle" width=""><a href="https://www.instagram.com/mladenecshop/"><img alt="" border="0" data-origsrc="img/in.jpg" data-src="img/in.jpg" src="../../../www/images/mail/gifts/in.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="37" height="36"></a></td>
+                                                        <td align="center" style="margin:0;padding:3px 0 0;" valign="middle" width=""><a href="https://www.facebook.com/mladenec.ru/"><img alt="" border="0" data-origsrc="img/fb.jpg" data-src="img/fb.jpg" src="images/mail/gifts/fb.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="37" height="36"></a></td>
+                                                        <td align="center" style="margin:0;padding:3px 0 0;" valign="middle" width=""><a href="https://vk.com/mladenecshop"><img alt="" border="0" data-origsrc="img/vk.jpg" data-src="img/vk.jpg" src="www/images/mail/gifts/vk.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="37" height="36"></a></td>
+                                                        <td align="center" style="margin:0;padding:3px 0 0;" valign="middle" width=""><a href="https://twitter.com/mladenecshop"><img alt="" border="0" data-origsrc="img/tw.jpg" data-src="img/tw.jpg" src="images/mail/gifts/tw.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="37" height="36"></a></td>
+                                                        <td align="center" style="margin:0;padding:3px 0 0;" valign="middle" width=""><a href="https://ok.ru/mladenec"><img alt="" border="0" data-origsrc="img/od.jpg" data-src="img/od.jpg" src="images/mail/gifts/od.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="37" height="36"></a></td>
+                                                        <td align="center" style="margin:0;padding:3px 0 0;" valign="middle" width=""><a href="https://www.instagram.com/mladenecshop/"><img alt="" border="0" data-origsrc="img/in.jpg" data-src="img/in.jpg" src="images/mail/gifts/in.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="37" height="36"></a></td>
                                                     </tr>
                                                     </tbody>
                                                 </table>
@@ -325,9 +325,9 @@
                                     <table align="right" style="margin:0;padding:30px 0 0;" border="0" cellpadding="0" cellspacing="0" width="100%">
                                         <tbody>
                                         <tr>
-                                            <td align="left" style="margin:0;padding:0;" valign="middle" width=""><a href="http://www.mladenec-shop.ru/about/skidki"><img alt="" border="0" data-origsrc="img/small-baner1.jpg" data-src="img/small-baner1.jpg" src="../../../www/images/mail/gifts/small-baner1.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="164" height="72"></a></td>
-                                            <td align="center" style="margin:0;padding:0;" valign="middle" width=""><a href="https://market.yandex.ru/shop/3812/reviews"><img alt="" border="0" data-origsrc="img/small-baner2.jpg" data-src="img/small-baner2.jpg" src="../../../www/images/mail/gifts/small-baner2.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="164" height="72"></a></td>
-                                            <td align="right" style="margin:0;padding:0;" valign="middle" width=""><a href="http://www.mladenec-shop.ru/novelty"><img alt="" border="0" data-origsrc="img/small-baner3.jpg" data-src="img/small-baner3.jpg" src="../../../www/images/mail/gifts/small-baner3.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="164" height="72"></a></td>
+                                            <td align="left" style="margin:0;padding:0;" valign="middle" width=""><a href="http://www.mladenec-shop.ru/about/skidki"><img alt="" border="0" data-origsrc="img/small-baner1.jpg" data-src="img/small-baner1.jpg" src="images/mail/gifts/small-baner1.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="164" height="72"></a></td>
+                                            <td align="center" style="margin:0;padding:0;" valign="middle" width=""><a href="https://market.yandex.ru/shop/3812/reviews"><img alt="" border="0" data-origsrc="img/small-baner2.jpg" data-src="img/small-baner2.jpg" src="images/mail/gifts/small-baner2.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="164" height="72"></a></td>
+                                            <td align="right" style="margin:0;padding:0;" valign="middle" width=""><a href="http://www.mladenec-shop.ru/novelty"><img alt="" border="0" data-origsrc="img/small-baner3.jpg" data-src="img/small-baner3.jpg" src="images/mail/gifts/small-baner3.jpg" style="border-width: 0px; border-style: none; border-color: transparent; display: block;" width="164" height="72"></a></td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -339,7 +339,7 @@
                                 <td align="left" style="margin:0;padding:50px 0 0;" valign="top">
                                     <table align="left" border="0" cellpadding="0" cellspacing="0" style="margin:0;padding:0;" width="100%">
                                         <tbody><tr>
-                                            <td align="right" style="padding: 0;height: 1px; background: #e8e8e8; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height=“1" src="../../../www/images/mail/gifts/br.png" style="display:block;" width=“1" /></td>
+                                            <td align="right" style="padding: 0;height: 1px; background: #e8e8e8; margin: 0px;font-size:1px;font-weight:normal;color: transparent"><img alt="" data-origsrc="img/br.png" data-src="img/br.png" height=“1" src="images/mail/gifts/br.png" style="display:block;" width=“1" /></td>
                                         </tr>
                                         </tbody>
                                     </table>
