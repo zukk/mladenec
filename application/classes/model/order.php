@@ -800,7 +800,7 @@ class Model_Order extends ORM {
             $emailsArr = explode(',', $emails);
         }
 
-        //if(count($this->getcoupons()) == 0){
+        if(count($this->getcoupons()) == 0){
             $sum_gift = DB::select('g.price', 'og.comment','og.quantity', 'og.comment_email', 'og.good_id')
                 ->from(['z_order_good', 'og'])
                 ->join(['z_good', 'g'])
@@ -829,21 +829,7 @@ class Model_Order extends ORM {
                         } else {
                             $message = $gift['comment'];
                         }
-
-                        /*echo '<br />save_gift = ';
-                        //print_r($save_gift);
-                        echo '<br />data = ';
-                        //print_r($this->data);
-                        echo '<br />gift = ';
-                        //print_r($gift);
-                        echo '<br />';
-                        echo '<br />good = ';
-                        print_r($good->price);
-                        echo '<br />';*/
-
                         Mail::htmlsend('creategift', array('gift' => $save_gift, 'order' => $this, 'message' => $message, 'price' => $good->price), $email, 'Покупка сертификата!');
-
-
                         if (!empty($email_buyer)) {
                             Mail::htmlsend('gift_buyer', array('gift' => $save_gift, 'email' => $email), $email_buyer, 'Подтверждение отправки сертификата');
                         }
@@ -857,7 +843,7 @@ class Model_Order extends ORM {
                     }
                 }
             }
-        //}
+        }
     }
 
     /**
