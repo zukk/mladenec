@@ -842,8 +842,7 @@ class Model_Order extends ORM {
                         echo '<br />';*/
 
                         Mail::htmlsend('creategift', array('gift' => $save_gift, 'order' => $this, 'message' => $message, 'price' => $good->price), $email, 'Покупка сертификата!');
-                        //echo '<br />';
-                        //die('aaa');
+
 
                         if (!empty($email_buyer)) {
                             Mail::htmlsend('gift_buyer', array('gift' => $save_gift, 'email' => $email), $email_buyer, 'Подтверждение отправки сертификата');
