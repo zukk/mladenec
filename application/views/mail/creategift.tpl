@@ -370,7 +370,7 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="padding: 16px 0 0;">
-                                                <span style="font-size: 12px; font-family:Arial, 'Helvetica Neue',Helvetica,sans-serif; color:#939393; font-weight: normal; line-height: 1.4;">Если у вас есть вопрос, комментарии или предложения, вы можете задать его, написав <a style="color: #2cacdc; text-decoration: underline" href="a.hohlacheva@mladenec.ru">нам</a> или опубликовать на <a style="color: #2cacdc; text-decoration: underline" href="http://www.mladenec-shop.ru/about/review">сайте</a>. Все письма обязательно читаем и отвечаем!</span>
+                                                <span style="font-size: 12px; font-family:Arial, 'Helvetica Neue',Helvetica,sans-serif; color:#939393; font-weight: normal; line-height: 1.4;">Если у вас есть вопрос, комментарии или предложения, вы можете задать его, написав <a style="color: #2cacdc; text-decoration: underline" href="milto:a.hohlacheva@mladenec.ru">нам</a> или опубликовать на <a style="color: #2cacdc; text-decoration: underline" href="http://www.mladenec-shop.ru/about/review">сайте</a>. Все письма обязательно читаем и отвечаем!</span>
                                             </td>
                                         </tr>
                                         <tr>
