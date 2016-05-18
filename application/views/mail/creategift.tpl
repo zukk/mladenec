@@ -138,7 +138,12 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="padding: 18px 0 0;">
-                                                <span style="font-size: 15px; font-family:Arial, 'Helvetica Neue',Helvetica,sans-serif; color: rgb(39, 39, 39); font-weight: normal; line-height: 1.2;">Чтобы воспользоваться сертификатом введите код в поле "промокод”:</span>
+                                                <span style="font-size: 15px; font-family:Arial, 'Helvetica Neue',Helvetica,sans-serif; color: rgb(39, 39, 39); font-weight: normal; line-height: 1.2;">Чтобы воспользоваться сертификатом введите код в поле "промокод":</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="left" style="padding: 9px 0 0;">
+                                                <span style="font-size: 15px; font-family:Arial, 'Helvetica Neue',Helvetica,sans-serif; color: rgb(39, 39, 39); font-weight: normal; line-height: 1.2;">Срок действия каждого сертификата: 12 месяцев с момента покупки.</span>
                                             </td>
                                         </tr>
                                         </tbody>
@@ -233,12 +238,11 @@
                                 <td align="left" style="margin:0;padding:0;" valign="top">
                                     <table align="left" border="0" cellpadding="0" cellspacing="0" style="margin:0;padding:0;" width="100%">
                                         <tbody>
-
-                                        <tr>
-                                            <td align="left" style="padding: 9px 0 0;">
-                                                <span style="font-size: 15px; font-family:Arial, 'Helvetica Neue',Helvetica,sans-serif; color: rgb(39, 39, 39); font-weight: normal; line-height: 1.2;">Срок действия каждого сертификата: 12 месяцев с момента покупки.</span>
-                                            </td>
-                                        </tr>
+                                            <tr>
+                                                <td align="left" style="padding: 9px 0 0;">
+                                                    <span style="font-size: 15px; font-family:Arial, 'Helvetica Neue',Helvetica,sans-serif; color: rgb(39, 39, 39); font-weight: normal; line-height: 1.2;">{$message}</span>
+                                                </td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </td>
@@ -365,7 +369,7 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="padding: 16px 0 0;">
-                                                <span style="font-size: 12px; font-family:Arial, 'Helvetica Neue',Helvetica,sans-serif; color:#939393; font-weight: normal; line-height: 1.4;">Общество с ограниченной ответственностью "ТД Младенец.РУ” ОГРН: 1125018000667 Телефон +7 495 662-999-4.</span>
+                                                <span style="font-size: 12px; font-family:Arial, 'Helvetica Neue',Helvetica,sans-serif; color:#939393; font-weight: normal; line-height: 1.4;">Общество с ограниченной ответственностью "ТД Младенец.РУ" ОГРН: 1125018000667 Телефон +7 495 662-999-4.</span>
                                             </td>
                                         </tr>
                                         <tr>
