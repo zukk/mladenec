@@ -7065,6 +7065,17 @@ td.select-present {
     line-height: 37px !important;
     padding: 0 0 0 47px !important;
 }
+#japan_button a {
+    letter-spacing: 1px;
+    text-indent:-10000px;
+    height: 37px;
+    margin: 10px 8px 0 !important;
+    background: #fff url(/images/japan_button.png) no-repeat 0 0;
+    border-radius: 5px;
+    border-bottom: none !important;
+    line-height: 37px !important;
+    padding: 0 0 0 47px !important;
+}
 #insta_widget {
     margin-left:20px;
     float:left;
