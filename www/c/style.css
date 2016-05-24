@@ -959,8 +959,8 @@ img.img70 {
     width: 150px;
 }
 
-#userpad > a.open,
-#userpad > .top-forms-holder > a.open {
+#comenu #userpad > a.open,
+#comenu #userpad > .top-forms-holder > a.open {
     border-color: #22bbea;
     border-radius: 5px 5px 0 0;
     border-bottom: none;

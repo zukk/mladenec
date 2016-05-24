@@ -8,6 +8,7 @@ class Controller_Frontend extends Controller_Smarty
 
     public static $scripts = [
         'j/jquery.min.js',
+        'j/jquery.countdown.js',
         'j/jquery.scrollTo.min.js',
         'j/script.js',
         'j/jquery.maskedinput.min.js',
@@ -16,6 +17,7 @@ class Controller_Frontend extends Controller_Smarty
         'j/history-exec.js',
         'j/base64.js',
         'j/trunk8.js',
+
 
 		'plugins/incdec/jquery.incdec.js',
 		'plugins/pencilator/jquery.pencilator.js',
@@ -31,6 +33,7 @@ class Controller_Frontend extends Controller_Smarty
     public static $css = [
         'j/fancybox/jquery.fancybox.css',
         'c/style.css',
+        'c/countdown.css',
 		'plugins/incdec/style.css',
 		'plugins/mladenecbox/style.css',
 		'plugins/mladenecaccordeon/style.css',
