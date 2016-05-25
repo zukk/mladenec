@@ -165,6 +165,11 @@
             <div class="fr txt-rht">
                 <a href="{Route::url('user_error')}" id="error_button" rel="ajax" data-fancybox-type="ajax">Сообщить об ошибке</a><br />
                 <img title="Принимаем к оплате Visa и Mastercard" src="/i/cards.png" alt="Принимаем к оплате Visa и Mastercard" />
+                {if not empty($main)}
+                    <a href="http://www.kids-price.ru" target="_blank">
+                        <img height="31" width="88" alt="Kids-Price.Ru - цены на детские товары, кол€ски, автомобильные детские кресла, одежду и обувь." src="http://www.kids-price.ru/i/banner6.gif" border="0" />
+                    </a>
+                {/if}
                 <!--noindex-->
                 <a href="http://clck.yandex.ru/redir/dtype=stred/pid=47/cid=2508/*http://market.yandex.ru/shop/3812/reviews" id="ya_rating" rel="nofollow"><img src="http://clck.yandex.ru/redir/dtype=stred/pid=47/cid=2505/*http://grade.market.yandex.ru/?id=3812&action=image&size=0" border="0" width="88" height="31" alt="Читайте отзывы покупателей и оценивайте качество магазина на Яндекс.Маркете" /></a>
                 <!--/noindex-->
