@@ -1376,7 +1376,11 @@ class Sphinx {
         foreach($this->goods as $g){
             $g_id[] = '"'.$g->id.'"';
         }
-        $three_goods = implode(",", array_slice($g_id, 0, 3) ) ;
+
+        $three_goods = '';
+        if(is_array($g_id)){
+            $three_goods = implode(",", array_slice($g_id, 0, 3) ) ;
+        }
 
         return View::factory('smarty:common/groups', [
             'sphinx'    => $this,
