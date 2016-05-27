@@ -39,8 +39,10 @@
 
         {$search_result}
         {if $action->id == 193190}
-            <div><a href="http://www.mladenec-shop.ru/actions/193191" target="_blank">Товары 1001 - 2000</a></div>
-            <div><a href="http://www.mladenec-shop.ru/actions/193192" target="_blank">Товары 2001 - 2258</a></div>
+            <div style="font-size: 14px">
+                <div><a href="http://www.mladenec-shop.ru/actions/193191" target="_blank">Товары 1001 - 2000</a></div>
+                <div><a href="http://www.mladenec-shop.ru/actions/193192" target="_blank">Товары 2001 - 2258</a></div>
+            </div>
         {/if}
 
         {include file='action/star.tpl'}
