@@ -5,10 +5,6 @@ require('../../../www/preload.php');
  * Формирование YML файла для Адмитад
  */
 $start_memory = memory_get_usage();
-$lock_file = APPPATH.'cache/admitad_on';
-
-if (file_exists($lock_file)) exit('Already running, lock file found at '.$lock_file);
-touch($lock_file);
 
 $filename = APPPATH . 'cache/admitad.xml';
 $heap_size = 1000; // Сколько товаров писать в файл за 1 раз
@@ -76,6 +72,5 @@ fwrite($fp,'</offers>
 fclose($fp);
 
 exec('gzip -c '.$filename.' > '.$filename.'.gz'); // делаем gzip
-unlink($lock_file);
 $memory = memory_get_usage() - $start_memory;
 Log::instance()->add(Log::INFO, 'Admitad YML file generated ok. Memory used: ' . $memory . '. Heap size: ' . $heap_size . '. Exported ' . $goods_written . ' offers.');

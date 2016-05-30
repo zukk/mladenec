@@ -5,10 +5,6 @@ require(__DIR__.'/../../../www/preload.php');
  * Формирование YML файла для Google merchant
  */
 $start_memory = memory_get_usage();
-$lock_file = APPPATH.'cache/google_merchant_on';
-
-if (file_exists($lock_file)) exit('Already running, lock file found at '.$lock_file);
-touch($lock_file);
 
 $filename = APPPATH . '/cache/google_merchant.xml';
 $heap_size = 1000; // Сколько товаров писать в файл за 1 раз
@@ -69,6 +65,5 @@ fwrite($fp,'
 ');
 
 fclose($fp);
-unlink($lock_file);
 $memory = memory_get_usage() - $start_memory;
 Log::instance()->add(Log::INFO, 'Google Merchant XML file generated ok. Memory used: ' . $memory . '. Heap size: ' . $heap_size . '. Exported ' . $goods_written . ' offers.');

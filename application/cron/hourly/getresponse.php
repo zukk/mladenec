@@ -8,11 +8,6 @@
  */
 require('../../../www/preload.php');
 
-$lock_file = APPPATH.'cache/getresponse_on';
-
-if (file_exists($lock_file)) exit('Already running, lock file found at '.$lock_file);
-touch($lock_file);
-
 ob_end_flush();
 flush();
 
@@ -189,7 +184,5 @@ foreach ($user_ids as $row) {
         $uploaded_ids[] = $row['id'];
     }
 }
-
-unlink($lock_file);
 
 print( PHP_EOL . count($uploaded_ids) . " contacts uploaded" . PHP_EOL);
