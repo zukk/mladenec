@@ -32,7 +32,7 @@
                     <li id="bike_button"><a href="/det-transport">Детский транспорт</a></li>
                 {/if}
                 {if $item->id eq 29429}
-                    <li id="holika-holika"><a href="/holika">Холика</a></li>
+                    <li id="holika"><a href="/holika-holika">Холика</a></li>
                 {/if}
 
             </ul>
