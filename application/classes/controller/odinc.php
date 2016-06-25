@@ -12,7 +12,7 @@ class Controller_Odinc extends Controller {
     protected $log_dir_suffix = '';
     
     private $good_qty_changed = array(); // [id=>[new_qty=>x,old_qty=>y]]
-    
+
     private function timer()
     {
         $current_time = microtime(TRUE);
@@ -82,6 +82,7 @@ class Controller_Odinc extends Controller {
      */
     public function before()
     {
+        set_time_limit(0);
 
         $this->action = $this->request->query('action');
         
