@@ -34,6 +34,9 @@
                 {if $item->id eq 29429}
                     <li id="holika"><a href="/holika-holika">Холика</a></li>
                 {/if}
+                {if $item->id eq 28627}
+                    <li id="sert"><a href="/gift-cards">Холика</a></li>
+                {/if}
 
             </ul>
         </div>
