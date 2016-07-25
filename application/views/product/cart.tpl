@@ -421,7 +421,7 @@ $(document).ready( function() {
 
                         delivery.modeRegion();
                         $('.txt-cntr').css('display', 'none');
-                        $('#courier-tab').append('<h2 class="no_dost" style="color: red;">Пока не доставляется и не даем оформить заказ</h2>');
+                        $('#courier-tab').append('<h2 class="no_dost" style="color: red;">К сожалению, доставка детских товаров временно осуществляется только по Москве и Московской области. Приносим свои извинения за доставленные неудобства.</h2>');
 
                         $('input', sd).mladenecradio( { onClick: addr.showShipPrice });
                         $('input', st).mladenecradio( { onClick: addr.showShipPrice });
