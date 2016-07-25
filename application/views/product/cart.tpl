@@ -414,10 +414,14 @@ $(document).ready( function() {
                                 addr.showShipPrice();
                             }
                         });
+                        $('.txt-cntr').css('display', 'block');
+                        $('.no_dost').remove();
 
                     } else { // доставка DPD - выбор тарифа
 
                         delivery.modeRegion();
+                        $('.txt-cntr').css('display', 'none');
+                        $('#courier-tab').append('<h2 class="no_dost" style="color: red;">Пока не доставляется и не даем оформить заказ</h2>');
 
                         $('input', sd).mladenecradio( { onClick: addr.showShipPrice });
                         $('input', st).mladenecradio( { onClick: addr.showShipPrice });
