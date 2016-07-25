@@ -422,8 +422,6 @@ $(document).ready( function() {
                     } else { // доставка DPD - выбор тарифа
 
                         delivery.modeRegion();
-                        alert('1111');
-
 
                         $('input', sd).mladenecradio( { onClick: addr.showShipPrice });
                         $('input', st).mladenecradio( { onClick: addr.showShipPrice });
