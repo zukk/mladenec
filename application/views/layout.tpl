@@ -100,6 +100,10 @@
     }
 </script>
 
+{if !empty($user->email) && !empty($user->name)}
+    <div class="i-flocktory" data-fl-user-name="{$user->name} {$user->last_name}" data-fl-user-email="{$user->email}"></div>
+{/if}
+
 {if Kohana::$environment eq Kohana::PRODUCTION}{* revive ad server *}
 <script async src="//www.mladenec-shop.ru/bonuses/www/logic/forum.php"></script>
 {/if}
