@@ -125,3 +125,5 @@ $(document).ready(function() {
             { event: "viewItem", item: "{$cgood->id}" }
     );
 </script>
+
+<div class="i-flocktory" data-fl-action="track-item-view" data-fl-item-id="{$cgood->id}"></div>

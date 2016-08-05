@@ -155,3 +155,5 @@
             { event: "viewList", item:[ {$three_goods} ]}
     );
 </script>
+
+<div class="i-flocktory" data-fl-action="track-category-view" data-fl-category-id="{$section}"></div>

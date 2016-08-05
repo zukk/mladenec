@@ -88,3 +88,7 @@
             { event: "viewHome" }
     );
 </script>
+
+{if !empty($user->email) && !empty($user->name)}
+    <div class="i-flocktory" data-fl-user-name="{$user->name} {$user->last_name}" data-fl-user-email="{$user->email}"></div>
+{/if}

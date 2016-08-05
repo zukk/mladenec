@@ -26,6 +26,7 @@
     <link rel="stylesheet" type="text/css" href="/c/ie7.css?v=010114" />
     <script>IE7 = true;</script>
     <![endif]-->
+    <script type="text/javascript" src="//api.flocktory.com/v2/loader.js?site_id=1083" async="async"></script>
 
 </head>
 <body {if not empty($main)}class="main"{/if}>

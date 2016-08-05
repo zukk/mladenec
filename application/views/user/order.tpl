@@ -273,6 +273,7 @@
     {/if*}
 
 {/if}
+
 <script type="text/javascript" src="//static.criteo.net/js/ld/ld.js" async="true"></script>
 <script type="text/javascript">
     window.criteo_q = window.criteo_q || [];
@@ -286,4 +287,21 @@
                     {/foreach}
             ]}
     );
+
+    window.flocktory = window.flocktory || [];
+    window.flocktory.push(['postcheckout', {
+        user: {
+            name: {$o->data->name} {$o->data->last_name},
+            email: {$o->data->email}
+        },
+        order: {
+            id: "{$o->id}",
+            price: {$o->price}
+            items: [
+                {foreach from=$order_goods item=order_good}
+                    { id: "{$order_good->id}", title: "{$order_good->group_name} {$order_good->name}", price: {$order_good->price}, count: {$order_good->quantity}},
+                {/foreach}
+            ]
+        }
+    }]);
 </script>

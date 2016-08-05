@@ -670,6 +670,37 @@ $(document).ready( function() {
         addr.chooser('Пожалуйста, заполните адрес доставки', true);
     });
 
+    $(document).on('click', '.dec', function() { // -
+        var price = $(this).siblings('input').attr('price');
+        var attr_id = $(this).siblings('input').attr('id');
+        var pattern = /[0-9]+/g;
+        var id_val = attr_id.match(pattern);
+
+        window.flocktory = window.flocktory || [];
+        window.flocktory.push(['removeFromCart', {
+            item: {
+                id: id_val, // product id
+                count: 1 // quantity of this product removed
+            }
+        }]);
+    });
+
+    $(document).on('click', '.inc', function() { // +
+        var price = $(this).siblings('input').attr('price');
+        var attr_id = $(this).siblings('input').attr('id');
+        var pattern = /[0-9]+/g;
+        var id_val = attr_id.match(pattern);
+
+        window.flocktory = window.flocktory || [];
+        window.flocktory.push(['addToCart', {
+            item: {
+                "id": id_val, // product id
+                "price": price, // product price
+                "count": 1 // quantity of this product  added
+            }
+        }]);
+    });
+
     if (navigator.geolocation) {
         // $('#address').append('<label><input type="radio" name="address_id" value="-1" /> Текущее местоположение</label>');
     }
@@ -709,6 +740,7 @@ $(document).ready( function() {
     $(document).on('click', '.cart-remove-link', function() { // удаление товара из корзины
 
         var q = $(this), id = q.attr("data-id");
+        var quntity = $('#qty_'+id).val();
 
         if (confirm("Удалить товар из корзины?")){
 
@@ -729,6 +761,14 @@ $(document).ready( function() {
                     }
                 });
             }
+
+            window.flocktory = window.flocktory || [];
+            window.flocktory.push(['removeFromCart', {
+                item: {
+                    id: id, // product id
+                    count: quntity // quantity of this product removed
+                }
+            }]);
 
             $.post(
                 '{Route::url('cart_remove_good')}',

@@ -763,6 +763,15 @@ $(document).ready(function () {
 					products.push(item);
 				}
 
+                window.flocktory = window.flocktory || [];
+                window.flocktory.push(['addToCart', {
+                    item: {
+                        "id": item['id'], // product id
+                        "price": item['price'], // product price
+                        "count": item['quantity'] // quantity of this product  added
+                    }
+                }]);
+
 				window.dataLayer = window.dataLayer || [];
 
 				dataLayer.push({
