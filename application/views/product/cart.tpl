@@ -211,10 +211,6 @@ var delivery = {
     modeRegion: function (reg) { // режим доставки в регион
         $('input[name=delivery_type]').val({Model_Order::SHIP_SERVICE});
         $('#real-zone-name').text('{Model_Zone::NAME_REGION}');
-        $('.txt-cntr').css('display', 'none');
-        if(!$("h2").is(".no_dost")){
-            $('#courier-tab').append('<h2 class="no_dost" style="color: red;">К сожалению, доставка детских товаров временно осуществляется только по Москве и Московской области. Приносим свои извинения за доставленные неудобства.</h2>');
-        }
 
         $('#addr-courier').addClass('hide');
         $('#addr-region').removeClass('hide');
@@ -418,8 +414,6 @@ $(document).ready( function() {
                                 addr.showShipPrice();
                             }
                         });
-                        $('.txt-cntr').css('display', 'block');
-                        $('.no_dost').remove();
 
                     } else { // доставка DPD - выбор тарифа
 
