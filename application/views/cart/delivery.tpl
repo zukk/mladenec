@@ -194,7 +194,7 @@
                         <dt class="cl"><label for="house">Дом<sup>*</sup>:</label></dt><dd id="real-house"><input required name="house" value="{$o->house|default:''}" class="txt short" id="house" placeholder="?"/></dd>
                         <dt><label for="kv">Квартира/офис:</label></dt><dd id="real-kv"><input name="kv" id="kv" value="{$o->kv|default:''}" class="txt short" /></dd>
                     </dl>
-                    <em>Если стоимость доставки не определилась, Вы всё равно можете отправить заказ. Менеджер сообщит стоимость доставки дополнительно.</em>
+                    <em><b>Доставка заказов осуществляется только по Москве и Московской области.</b> Если стоимость доставки не определилась, Вы всё равно можете отправить заказ. Менеджер сообщит стоимость доставки дополнительно.</em>
 
                     <h3 class="mt">Информация для курьера:</h3>
                     <dl id="addr-courier" class="cb">
