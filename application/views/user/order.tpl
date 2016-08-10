@@ -291,8 +291,8 @@
     window.flocktory = window.flocktory || [];
     window.flocktory.push(['postcheckout', {
         user: {
-            name: {$o->data->name} {$o->data->last_name},
-            email: {$o->data->email}
+            name: "{$o->data->name} {$o->data->last_name}",
+            email: "{$o->data->email}"
         },
         order: {
             id: "{$o->id}",
