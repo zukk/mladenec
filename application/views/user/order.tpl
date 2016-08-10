@@ -296,7 +296,7 @@
         },
         order: {
             id: "{$o->id}",
-            price: {$o->price}
+            price: {$o->price},
             items: [
                 {foreach from=$order_goods item=order_good}
                     { id: "{$order_good->id}", title: "{$order_good->group_name} {$order_good->name}", price: {$order_good->price}, count: {$order_good->quantity}},
