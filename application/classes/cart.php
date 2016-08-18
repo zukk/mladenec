@@ -95,6 +95,7 @@ class Cart {
             $this->delivery_open = ! empty($cart_s->delivery_open);
         }
         $this->add($goods); // может быть сразу добавление товаров
+        echo '1';
     }
         
     /**
