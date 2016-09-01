@@ -30,7 +30,7 @@ host=localhost
 socket="/var/run/mysqld/mysqld.sock"
 port=3306
 username=revive
-password=revivePa33
+password=LKnmofm435ogmk65lh6
 name=revive
 persistent=
 mysql4_compatibility=1
@@ -107,18 +107,18 @@ text=1
 video=
 
 [delivery]
-cacheExpire=1200
+cacheExpire=5
 cacheStorePlugin="deliveryCacheStore:oxCacheFile:oxCacheFile"
 cachePath=
-acls=1
-aclsDirectSelection=1
-obfuscate=
-execPhp=
+acls=true
+aclsDirectSelection=true
+obfuscate=false
+execPhp=false
 ctDelimiter=__
 chDelimiter=","
 keywords=
 cgiForceStatusHeader=
-clicktracking=
+clicktracking=0
 ecpmSelectionRate="0.9"
 enableControlOnPureCPM=1
 assetClientCacheExpire=3600
@@ -127,7 +127,7 @@ assetClientCacheExpire=3600
 imageUrl=
 
 [p3p]
-policies=1
+policies=true
 compactPolicy="CUR ADM OUR NOR STA NID"
 policyLocation=
 
@@ -232,7 +232,7 @@ fromCompany=
 useManagerDetails=
 
 [log]
-enabled=1
+enabled=
 methodNames=
 lineNumbers=
 type=file
