@@ -179,7 +179,6 @@
                 &copy;&nbsp;&laquo;Младенец.РУ&raquo;. Все права защищены.
                 <a href="{Route::url('map')}" id="sitemap">Карта сайта</a><br />
                 Использование материалов сайта разрешено только при наличии активной ссылки на&nbsp;источник.<br />
-                Разработка — <a href="https://tagesjump.ru/" target="_blank">Tages Jump.</a><br />
                 <div id="promotop">
                     {if empty($main)}<!--noindex-->{/if}
                     <a href="https://www.facebook.com/mladenec.ru" class="fb" title="Мы в facebook" target="_blank"{if empty($main)} rel="nofollow"{/if}>Мы в facebook</a>
