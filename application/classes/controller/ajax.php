@@ -87,24 +87,16 @@ class Controller_Ajax extends Controller_Frontend {
     public function action_zone()
     {
         $latlong = $this->request->query('latlong');
-        $all_data = $this->request->query('free_delivery');
         if (empty($latlong)) exit('no latlong');
 
         $zone = Model_Zone::locate($latlong); // определяем зону доставки
 
         $cart = Cart::instance();
         $cart->recount();
-        $sum = '';
-        if(!empty($all_data)) {
-            foreach ($all_data as $data) {
-                $price = $data['price'];
-                $sum += $price;
-            }
-        }
 
         $return = ['zone_id' => strval($zone)];
         // расстояние и сумма для бесплатной доставки замкад
-        $return['free_delivery'] = $sum >= 2000 ? 10 : 0;
+        $return['free_delivery'] = $cart->total >= 2000 ? 10 : 0;
 
         if ($zone !== FALSE) { // доставка в наши зоны доставки
 

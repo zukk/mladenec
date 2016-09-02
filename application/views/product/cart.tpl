@@ -355,29 +355,8 @@ $(document).ready( function() {
             sd.empty();
             sd.append('Определяем варианты доставки');
 
-            var pattern = /[0-9]+/g;
-            var total_prod = new Object();
-            var main = [];
-            $("table#cart_goods tbody tr").each(function(){
-                var id_val = $(this).attr("id");
-                if(id_val) {
-                    var attr_id = id_val.match(pattern);
-
-                    var val_qty = $('#qty_' + attr_id).val();
-                    var val_price = $('#qty_' + attr_id).attr('price');
-                    var total_price = val_qty * val_price;
-
-                    if (attr_id != null && !isNaN(total_price)) {
-                        total_prod = new Object();
-                        total_prod.id = attr_id[0];
-                        total_prod.price = total_price;
-                        main.push(total_prod);
-                    }
-                }
-            });
-
             $.get('{Route::url('delivery_zone')}',
-                { latlong: latlong, dpd_city_id: $('#dpd_city_id').val(), city: $('#city').val(), mkad: $('#mkad').val(), free_delivery: main},
+                { latlong: latlong, dpd_city_id: $('#dpd_city_id').val(), city: $('#city').val(), mkad: $('#mkad').val()},
                 function (data) {
 
                     $('#real-zone').val(data.zone_id);
