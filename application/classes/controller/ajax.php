@@ -101,14 +101,10 @@ class Controller_Ajax extends Controller_Frontend {
                 $sum += $price;
             }
         }
-        if ($sum >= 20000) { // бесплатная доставка от МКАД
-            $free_delivery = TRUE;
-        } else {
-            $free_delivery = FALSE;
-        }
 
         $return = ['zone_id' => strval($zone)];
-        $return['free_delivery'] = $free_delivery;
+        // расстояние и сумма для бесплатной доставки замкад
+        $return['free_delivery'] = $sum >= 2000 ? 10 : 0;
 
         if ($zone !== FALSE) { // доставка в наши зоны доставки
 

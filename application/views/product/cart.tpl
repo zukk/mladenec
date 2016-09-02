@@ -290,28 +290,17 @@ $(document).ready( function() {
                         }
                         myMap.setBounds(myMap.geoObjects.getBounds());
 
-                        var km = Math.ceil(length / 1000);
+                        var km = Math.ceil(length / 1000), $action = $('#mkad_action');
                         $('#mkad_real').val(km);
-                        $('#mkad_action').val(0);
-                        if(km <= 50){
-                            if(free_delivery === true){
-                                $('#mkad_action').val(1);
-                                km = 0;
-                            } else {
-                                km = km;
-                            }
-                        } else {
-                            if(free_delivery === true){
-                                $('#mkad_action').val(1);
-                                km = km - 50;
-                            } else {
-                                km = km;
-                            }
+
+                        $action.val(0);
+                        if (free_delivery) { // акция на бесплатную доставку
+                            $action.val(1);
+                            km = max(0, km - free_delivery);
                         }
                         $('#mkad').val(km);
                         $('#real-zone-name').append(' (' + km + 'км от МКАД)');
                         addr.showShipPrice();
-
                     });
                 });
             }
