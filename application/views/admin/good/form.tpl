@@ -41,6 +41,7 @@ $(document).ready(function() {
                 <tr><td><b>Артикул 1c:</b></td><td>{$i->code1c|default:'&mdash;'}</td></tr>
                 <tr><td><b>Код 1С:</b></td><td>{$i->id1c|default:'&mdash;'}</td></tr>
                 <tr><td><b>Штрихкод:</b></td><td>{$i->barcode|default:'&mdash;'}</td></tr>
+                <tr><td><b>CPA-модель</b></td><td><input type="checkbox" name="cpa_model" value="1" {if $i->cpa_model}checked="checked"{/if} /></td></tr>
             </table>
         </div>
         <div class="unit-50">

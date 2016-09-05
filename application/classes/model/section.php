@@ -42,7 +42,8 @@ class Model_Section extends ORM {
 		'h1' => '', 'title' => '', 'keywords' => '', 'description' => '',
         'empty_date' => '',
         'market_category' => '',
-        'roditi' => ''
+        'roditi' => '',
+        'cpa_model' => '', 'fee' => ''
     ];
 
     const SHOW_OUT_OF_STOCK 	     = 0;
@@ -603,5 +604,10 @@ class Model_Section extends ORM {
             Cache::instance()->set($cache_key, $cache);
         }
         return ! empty($ids[$id]);
+    }
+
+    public function flag()
+    {
+        return ['cpa_model'];
     }
 }

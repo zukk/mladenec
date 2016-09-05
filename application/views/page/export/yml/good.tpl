@@ -1,4 +1,15 @@
-<offer id="{$g['id']}" type="vendor.model" available="{if $g['qty'] gt 0}true{else}false{/if}" {if not empty($section) and $section->is_cloth()}group_id="{$g['group_id']}"{/if}>
+{if $section->cpa_model && $section->fee && $g['cpa'] gt 0}
+    {assign var=cpa_on value=1}
+{else}
+    {assign var=cpa_on value=0}
+{/if}
+
+<offer id="{$g['id']}"
+    type="vendor.model"
+    available="{if $g['qty'] gt 0}true{else}false{/if}"
+    {if not empty($section) and $section->is_cloth()}group_id="{$g['group_id']}"{/if}
+    {if $cpa_on}fee="{$section->fee}"{/if} />
+>
 	<url>http://www.mladenec-shop.ru{Route::url('product',['translit'=>$g['translit'],'group_id'=>$g['group_id'],'id'=>$g['id']])}{if not empty($label)}?utm_source={$label}&amp;utm_medium=cpc&amp;utm_term={Txt::translit($g['group_name'], '_')|urlencode}_{Txt::translit($g['name'], '_')|urlencode}&amp;utm_campaign={Txt::translit($section->name, '_')|urlencode}{/if}</url>
 	<price>{$g['price']}</price>
 	{$oldprice = round($g['old_price'],2)}{if (($g['price'] * 1.05) lte $oldprice) AND ($g['price']  gte (0.05 * $oldprice))}<oldprice>{$oldprice}</oldprice>{/if}
@@ -29,6 +40,7 @@
 	<model><![CDATA[{Txt::clean_rude_symbols($g['group_name']|escape:'html')} {Txt::clean_rude_symbols($g['name']|escape:'html')}]]></model>
 	<description><![CDATA[{Txt::clean_rude_symbols($g['desc']|strip_tags|escape:'html')}]]></description>
     <manufacturer_warranty>true</manufacturer_warranty>
+    {if $cpa_on}<cpa>1</cpa>{/if}
 
     {if not empty($section) and ($section->is_cloth() or $section->id eq Model_Section::CLOTHS_ROOT)}
 		{if not empty( $good_filter )}

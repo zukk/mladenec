@@ -39,6 +39,9 @@
                         <input type="file" name="img_menu" />
                     </p>
                 </td></tr>
+                <tr><td><b>CPA-модель</b> <input type="checkbox" name="cpa_model" value="1" {if $i->cpa_model}checked="checked"{/if} /></td>
+                    <td><b>Fee:</b> <input type="number" value="{$i->fee}" name="fee" /></td>
+                </tr>
             {else}
                 <tr><td><b>Значок NEW в верхнем меню</b></td><td><input type="checkbox" name="misc[new]" value="1" {if $i->setting("new")}checked="checked"{/if} /></td></tr>
             {/if}
@@ -72,41 +75,6 @@ $(function() {
         }
     });
 });
-/*$(function(){
-    // create an instance when the DOM is ready
-    $.jstree.defaults.core.themes.variant = "small";
-    $('#jstree').on('loaded.jstree', function(e, data) {
-        var wikimart_cat_id =$("#wikimart_cat_id").val();
-        if(wikimart_cat_id) {
-            $('#jstree').jstree(true).select_node('#' + wikimart_cat_id);
-        }
-    });
-    $('#jstree').jstree({
-        "core" : {
-            "multiple" : false
-        },
-        "checkbox" : {
-            "keep_selected_style" : false
-        },
-        "plugins" : [ "wholerow", "checkbox" ]
-    });
-
-    // bind to events triggered on the tree
-    $('#jstree').on("changed.jstree", function (e, data) {
-        console.log(data.selected);
-        var id_ckecked = data.selected;
-
-        if(id_ckecked.length == 0 || id_ckecked.length == 1) {
-            $("#wikimart_cat_id").val(id_ckecked);
-        } else {
-            var id_ckecked_z = data.selected[0];
-            $("#wikimart_cat_id").val(id_ckecked_z);
-        }
-    });
-    $('#jstree').show();
-
-
-});*/
 </script>
 
     {if $i->parent_id}

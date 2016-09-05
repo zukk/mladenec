@@ -115,7 +115,8 @@ class Model_Good extends ORM {
         'ozon_type_id'    => 0,   // id озон категории
         'google_cat_id'   => 0,   // id google merchant
         'seo_auto'        => 0,
-        'order_search'    => 0
+        'order_search'    => 0,
+        'cpa_model'       => 0,  // включить для товара cpa model
     );
 	
 	protected $filters_data;
@@ -2100,5 +2101,10 @@ class Model_Good extends ORM {
             ->where('good_id', '=', $this->id)
             ->where('section_id', '=', $section_id)
             ->execute();
+    }
+
+    public function flag()
+    {
+        return ['cpa_model'];
     }
 }
