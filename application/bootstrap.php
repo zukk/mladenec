@@ -784,7 +784,6 @@ if ( ! empty($_SERVER['REQUEST_URI'])) {
 		$hh[] = "*.googletagmanager.com";
 		$hh[] = "*.googleapis.com";
         $hh[] = "*.trmit.com"; // retag cdn
-        $hh[] = "*.kids-price.ru"; // kids-price
 
         $hh[] = "*.yandex.ru"; // yandex
 		$hh[] = "*.yandex.net";
