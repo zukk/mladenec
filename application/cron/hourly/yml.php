@@ -97,15 +97,8 @@ for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size, $heap_number); $
     $c = 0;
     $good_ids = [];
     foreach ($goods as &$g) {
-        if ($id2Catalog[$g['section_id']]->parent_id > 0) {
-            $section = $id2Catalog[$id2Catalog[$g['section_id']]->parent_id];
-        } else {
-            $section = $id2Catalog[$g['section_id']];
-        }
-
+        $section = $id2Catalog[$g['section_id']];        }
         if (empty($section)) continue;
-        $g['real_section'] = $section->id;
-
         if ($section->is_cloth()) {
             $goodFiltersIds[1][] = $g['id'];
         }
@@ -179,7 +172,7 @@ for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size, $heap_number); $
         fwrite($fp, View::factory('smarty:page/export/yml/good', [
             'g'             => $g,
             'images'        => $good_images,
-            'section'       => $id2Catalog[$g['real_section']],
+            'section'       => $id2Catalog[$g['section_id']],
             'filter_labels' => $goodFiltersLabels,
             'good_filter'   => ! empty($goodFiltersV[$g['id']]) ? $goodFiltersV[$g['id']] : [],
             'label'         => 'market.yandex.ru'

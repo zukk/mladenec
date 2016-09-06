@@ -1004,7 +1004,7 @@ class Model_Good extends ORM {
      * @param int $heap_size сколько товаров вытаскивать в 1 пачке
      * @param int $heap_number сколько пачек уже вытащено
      * @param array $where - доп условия
-     * @return boolean
+     * @return array|bool
      */
     public static function for_yml($heap_size, $heap_number, $where = NULL, $type = FALSE)
     {
