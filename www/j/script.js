@@ -1541,6 +1541,7 @@ function initToTopButton() {
             $('body').scrollTo(0,{
                 duration:'fast'
             });
+            e.stopPropagation();
         })
     }
 }
