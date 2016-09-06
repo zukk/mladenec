@@ -1,4 +1,4 @@
-{if $section->cpa_model && $section->fee && $g['cpa'] gt 0}
+{if $section->cpa_model and $section->fee and $g['cpa_model']}
     {assign var=cpa_on value=1}
 {else}
     {assign var=cpa_on value=0}
