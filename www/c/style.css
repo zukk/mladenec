@@ -6800,7 +6800,7 @@ input.plain {
     display: none;
     position: fixed;
     bottom: 5%;
-    right: 3%;
+    left: 3%;
     border-radius: 10px;
     width: 51px;
     height: 50px;
