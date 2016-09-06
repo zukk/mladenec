@@ -97,8 +97,9 @@ for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size, $heap_number); $
     $c = 0;
     $good_ids = [];
     foreach ($goods as &$g) {
-        $section = $id2Catalog[$g['section_id']];        }
+        $section = $id2Catalog[$g['section_id']];
         if (empty($section)) continue;
+
         if ($section->is_cloth()) {
             $goodFiltersIds[1][] = $g['id'];
         }
