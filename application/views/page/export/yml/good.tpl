@@ -40,7 +40,7 @@
 	<model><![CDATA[{Txt::clean_rude_symbols($g['group_name']|escape:'html')} {Txt::clean_rude_symbols($g['name']|escape:'html')}]]></model>
 	<description><![CDATA[{Txt::clean_rude_symbols($g['desc']|strip_tags|escape:'html')}]]></description>
     <manufacturer_warranty>true</manufacturer_warranty>
-    {if $cpa_on}<cpa>1</cpa>{/if}
+    <cpa>{if $cpa_on}1{else}0{/if}</cpa>
 
     {if not empty($section) and ($section->is_cloth() or $section->id eq Model_Section::CLOTHS_ROOT)}
 		{if not empty( $good_filter )}
