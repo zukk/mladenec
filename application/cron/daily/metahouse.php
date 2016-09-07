@@ -39,7 +39,7 @@ $post = [
     //"request" => json_decode('{"requestFacets":true,"filters":{"source":["origin"],"availability":["inStock"],"markdown":["none"]}'),
     "marketIds" => [
         "mladenec-shop.ru", "esky.ru", "akusherstvo.ru", "dochkisinochki.ru", "babadu.ru",
-        "utkonos.ru", "baby-country.ru", "detmir.ru", "wikimart.ru", "korablik.ru"
+        "utkonos.ru", "baby-country.ru", "detmir.ru", "wikimart.ru", "korablik.ru", "pampers-shop.ru"
     ],
     "sources" => ["origin"],
 //    "skuArticles" => ["30019899","30003690"],
