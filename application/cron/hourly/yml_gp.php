@@ -39,12 +39,12 @@ fwrite($fp, '</categories><offers>');
 $goods_written = 0;
 
 $image_types = 'originals';
-for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size, $heap_number, [['id', '=', 51738]]); $heap_number++) {
+for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size, $heap_number); $heap_number++) {
     foreach($goods as &$g) { // тут передаем по ссылке, иначе послдний элемент дублируется
         $g['desc'] = mb_substr(Txt::clean_rude_symbols(htmlentities(strip_tags($g['desc']))), 0, 175);
 
         if (mb_strlen($g['desc']) == 175) { // не более 175 символов, обрезаем по слову (крайний пробел)
-            $g['desc'] = mb_substr($g['desc'], 0, strrpos($g['desc'], ' '));
+            $g['desc'] = mb_substr($g['desc'], 0, mb_strrpos($g['desc'], ' '));
         }
         fwrite($fp, View::factory('smarty:page/export/yml/good', [
             'g'             => $g,
@@ -66,3 +66,7 @@ fclose($fp);
 exec('gzip -c '.$filename.' > '.$filename.'.gz'); // делаем gzip
 $memory = memory_get_usage() - $start_memory;
 Log::instance()->add(Log::INFO, 'YML GP file generated ok. Memory used: ' . $memory . '. Heap size: ' . $heap_size . '. Exported ' . $goods_written . ' offers.');
+
+Подгузники Goon Гун до 5 кг. 90 шт. (NB)
+
+Новая линейка подгузников Goon с мягким впитывающим слоем с добавлением витамина Е, для еще большей защиты от опрелостей и покрасн
