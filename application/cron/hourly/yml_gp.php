@@ -66,7 +66,3 @@ fclose($fp);
 exec('gzip -c '.$filename.' > '.$filename.'.gz'); // делаем gzip
 $memory = memory_get_usage() - $start_memory;
 Log::instance()->add(Log::INFO, 'YML GP file generated ok. Memory used: ' . $memory . '. Heap size: ' . $heap_size . '. Exported ' . $goods_written . ' offers.');
-
-Подгузники Goon Гун до 5 кг. 90 шт. (NB)
-
-Новая линейка подгузников Goon с мягким впитывающим слоем с добавлением витамина Е, для еще большей защиты от опрелостей и покрасн
