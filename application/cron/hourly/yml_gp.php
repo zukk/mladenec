@@ -39,22 +39,12 @@ fwrite($fp, '</categories><offers>');
 $goods_written = 0;
 
 $image_types = 'originals';
-for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size, $heap_number); $heap_number++) {
-    $c = 0;
-    $good_ids = [];
-    foreach ($goods as &$g) {
-        $good_ids[] = $g['id'];
-    }
-
+for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size, $heap_number, [['id', '=', 51738]]); $heap_number++) {
     foreach($goods as &$g) { // тут передаем по ссылке, иначе послдний элемент дублируется
+        $g['desc'] = mb_substr(Txt::clean_rude_symbols(htmlentities(strip_tags($g['desc']))), 0, 175);
 
-        //подготовка изображений      
-        $good_images = isset($images[$g['id']][$image_types]) ? $images[$g['id']][$image_types] : [];
-
-        $g['desc'] = Txt::clean_rude_symbols(htmlentities(strip_tags($g['desc'])));
-
-        if (mb_strlen($g['desc']) > 175) { // не более 175 символов, обрезаем по слову
-            $g['desc'] = mb_substr($g['desc'], 0, strrpos($g['desc'], ' ', 175));
+        if (mb_strlen($g['desc']) == 175) { // не более 175 символов, обрезаем по слову (крайний пробел)
+            $g['desc'] = mb_substr($g['desc'], 0, strrpos($g['desc'], ' '));
         }
         fwrite($fp, View::factory('smarty:page/export/yml/good', [
             'g'             => $g,
