@@ -46,7 +46,7 @@ for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size, $heap_number); $
         if (mb_strlen($g['desc']) == 175) { // не более 175 символов, обрезаем по слову (крайний пробел)
             $g['desc'] = mb_substr($g['desc'], 0, mb_strrpos($g['desc'], ' '));
         }
-        fwrite($fp, View::factory('smarty:page/export/yml/good', [
+        fwrite($fp, View::factory('smarty:page/export/yml/good_gp', [
             'g'             => $g,
             'section'       => $id2Catalog[$g['section_id']],
         ]));
