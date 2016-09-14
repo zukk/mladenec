@@ -10,6 +10,7 @@
             <label><i class="tr{$smarty.get._graf|default:''}"></i><span>Графика</span><input type="hidden" name="_graf" value="{$smarty.get._graf|default:''}" /></label>
             {*<label><i class="tr{$smarty.get._full_graf|default:''}"></i><span>Полная графика</span><input type="hidden" name="_full_graf" value="{$smarty.get._full_graf|default:''}" /></label>*}
             <label><i class="tr{$smarty.get._supervisor|default:''}"></i><span>Проверено супервизором</span><input type="hidden" name="_supervisor" value="{$smarty.get._supervisor|default:''}" /></label>
+            <label><i class="tr{$smarty.get.cpa_model|default:''}"></i><span>Cpa-модель</span><input type="hidden" name="cpa_model" value="{$smarty.get.cpa_model|default:''}" /></label>
             <br />
             <br />
             <label><i class="tr{$smarty.get.show|default:''}"></i><span>Отображение</span><input type="hidden" name="show" value="{$smarty.get.show|default:''}" /></label>

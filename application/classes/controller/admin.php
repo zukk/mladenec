@@ -1588,7 +1588,7 @@ class Controller_Admin extends Controller_Authorised {
             }
 
 
-            $flags = array('_new_item', 'superprice', '_modify_item',  '_desc',  '_optim',  '_graf',  '_full_graf',  '_supervisor');
+            $flags = array('_new_item', 'superprice', '_modify_item',  '_desc',  '_optim',  '_graf',  '_full_graf',  '_supervisor', 'cpa_model');
             
             $has_flags = array();
             
