@@ -667,6 +667,7 @@ class Controller_Admin_Ajax extends Controller_Authorised {
         if ( ! $item->loaded()) throw new HTTP_Exception_404;
         $item->cpa_model = $item->cpa_model ? 0 : 1;
         $item->save();
-        exit($item->cpa_model);
+        echo $item->cpa_model;
+        exit();
     }
 }
