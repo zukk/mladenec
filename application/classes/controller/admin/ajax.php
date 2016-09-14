@@ -665,7 +665,7 @@ class Controller_Admin_Ajax extends Controller_Authorised {
         $id = $this->request->post('id');
         $item = ORM::factory('good', $id);
         if ( ! $item->loaded()) throw new HTTP_Exception_404;
-        $item->cpa_model = intval(!$item->cpa_model);
+        $item->cpa_model = $item->cpa_model ? 0 : 1;
         $item->save();
         exit($item->cpa_model);
     }
