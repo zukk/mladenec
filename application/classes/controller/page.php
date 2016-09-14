@@ -750,10 +750,20 @@ class Controller_Page extends Controller_Frontend {
             $this->layout->allbg = $section->id;
 
             $this->tmpl['goods'] = $goods = ORM::factory('good')
-                ->where('section_id', '=', $section->id)
-                ->where('show', '=', 1)
-                ->group_by('group_id')
-                ->order_by('group_name')
+                ->join(['z_brand', 'b'])
+                    ->on('b.id', '=', 'good.brand_id')
+                ->where('b.active', '=', 1)
+
+                ->join(['z_group', 'gr'])
+                    ->on('gr.id', '=', 'good.group_id')
+                ->where('gr.active', '=', 1)
+
+                ->where('good.section_id', '=', $section->id)
+                ->where('good.show', '=', 1)
+                ->where('good.qty', '!=', 0)
+                ->where('good.active', '=', 1)
+                ->order_by('good.group_name')
+                ->order_by('good.name')
                 ->find_all();
 
         } else {
