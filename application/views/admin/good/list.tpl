@@ -129,7 +129,7 @@
             <input name="active[{$i->id}]" type="checkbox" value="1" {if $i->active}checked="checked"{/if} disabled="disabled" />&nbsp;<span class="{if $i->active}green{else}red{/if}">акт</span>
         </td>
         <td>{if $i->move}Да{/if}
-            <label class="cpa" data-id="{$i->id}">cpa <input name="cpa[{$i->id}]" type="checkbox" value="1" {if $i->cpa}checked="checked"{/if} id="cpa_{$i->id}"/></label>
+            <label class="cpa" data-id="{$i->id}">cpa <input name="cpa[{$i->id}]" type="checkbox" value="1" {if $i->cpa_model}checked="checked"{/if} id="cpa_{$i->id}"/></label>
         </td>
 	    <td>{if $i->big}Да{/if}</td>
         {if $smarty.get.ozon|default:''}
