@@ -659,4 +659,14 @@ class Controller_Admin_Ajax extends Controller_Authorised {
 
         $this->return_html(View::factory('smarty:admin/good/dups', ['i' => $good, 'changed' => $changed])->render());
     }
+
+    public function action_cpa()
+    {
+        $id = $this->request->post('id');
+        $item = ORM::factory('good', $id);
+        if ( ! $item->loaded()) throw new HTTP_Exception_404;
+        $item->cpa = intval(!$item->cpa);
+        $item->save();
+        exit($item->cpa);
+    }
 }

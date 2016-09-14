@@ -128,7 +128,9 @@
             <input name="show[{$i->id}]" type="checkbox" value="1" {if $i->show}checked="checked"{/if} disabled="disabled" />&nbsp;<span class="{if $i->show}green{else}red{/if}">отобр</span><br />
             <input name="active[{$i->id}]" type="checkbox" value="1" {if $i->active}checked="checked"{/if} disabled="disabled" />&nbsp;<span class="{if $i->active}green{else}red{/if}">акт</span>
         </td>
-        <td>{if $i->move}Да{/if}</td>
+        <td>{if $i->move}Да{/if}
+            <label class="cpa" data-id="{$i->id}">cpa <input name="cpa[{$i->id}]" type="checkbox" value="1" {if $i->cpa}checked="checked"{/if} id="cpa_{$i->id}"/></label>
+        </td>
 	    <td>{if $i->big}Да{/if}</td>
         {if $smarty.get.ozon|default:''}
             <td>
@@ -165,12 +167,16 @@
 
 {$pager->html('Товары')}
 <script type="text/javascript">
-{literal}
     $(document).ready(function() {
         $('.list_expandable_body').hide();
         $('.list_expandable_switch').click(function() {
            $(this).next().toggle(); 
         });
+
+        $('.cpa').click(function () {
+            $.post({Route::url('cpa_change')}, { id: $(this).data('id')}, function(data) {
+                $('#cpa_' + $(this).data('id')).prop('checked', data);
+            })
+        })
     });
-{/literal}
 </script>
