@@ -761,6 +761,7 @@ class Controller_Page extends Controller_Frontend {
                 ->where('good.section_id', '=', $section->id)
                 ->where('good.show', '=', 1)
                 ->where('good.qty', '!=', 0)
+                ->where('good.price', '>', 0)
                 ->where('good.active', '=', 1)
                 ->order_by('good.group_name')
                 ->order_by('good.name')
