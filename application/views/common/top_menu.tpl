@@ -32,12 +32,14 @@
                     <li id="bike_button"><a href="/det-transport">Детский транспорт</a></li>
                 {/if}
                 {if $item->id eq 29429}
-                    <li id="holika"><a href="/holika-holika">Холика</a></li>
+                    <li id="menu_japonica"><a href="/japan-sept">Холика</a></li>
                 {/if}
                 {if $item->id eq 28627}
                     <li id="sert"><a href="/gift-cards">Холика</a></li>
                 {/if}
-
+                {if $item->id eq 29558}
+                    <li id="menu_toy_sale"><a href="/toys-sale">Распродажа игрушек</a></li>
+                {/if}
             </ul>
         </div>
         {/if}
