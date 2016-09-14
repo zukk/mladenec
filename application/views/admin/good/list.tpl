@@ -174,7 +174,7 @@
         });
 
         $('.cpa').click(function () {
-            $.post({Route::url('cpa_change')}, { id: $(this).data('id')}, function(data) {
+            $.post({Route::url('admin_cpa')}, { id: $(this).data('id')}, function(data) {
                 $('#cpa_' + $(this).data('id')).prop('checked', data);
             })
         })
