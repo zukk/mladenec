@@ -15,7 +15,7 @@
 	<h1>Карта товарной категории &laquo;{$section->name}&raquo;</h1>
 
 	{foreach from=$goods item=g}
-		<a href="{$g->get_link(0)}">{$g->group_name}</a><br />
+		<a href="{$g->get_link(0)}">{$g->group_name} {$g->name}</a><br />
 	{/foreach}
 
 {else}
