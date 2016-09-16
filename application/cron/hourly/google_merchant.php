@@ -23,13 +23,12 @@ fwrite($fp,'<?xml version="1.0" encoding="utf-8"?>
 $goods_written = 0;
 $image_types = 'originals';
 
-for ($heap_number = 0; $goods = Model_Good::for_google_merchant($heap_size,$heap_number);$heap_number++) {
+for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size,$heap_number);$heap_number++) {
     $good_ids = [];
-    foreach($goods as &$g) {
-        $good_ids[] = $g['id'];
-    }
-    unset($g);
+    foreach($goods as &$g) $good_ids[] = $g['id'];
+
     $images = Model_Good::many_images([$image_types], $good_ids);
+
     foreach($goods as $g) {
         //подготовка изображений
         $good_images = [];

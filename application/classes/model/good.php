@@ -1009,10 +1009,11 @@ class Model_Good extends ORM {
     public static function for_yml($heap_size, $heap_number, $where = NULL, $type = FALSE)
     {
         $active_top_sections = DB::select('z_section.id')
-                ->from('z_section')
-                ->where('parent_id','=',0)
-                ->where('active','=',1)
-                ->execute()->as_array();
+            ->from('z_section')
+                ->where('parent_id', '=', 0)
+                ->where('active', '=', 1)
+            ->execute()
+            ->as_array();
         
         $query = DB::select('good.*', 'file.SUBDIR', 'file.FILE_NAME','prop.img1600','prop.img500','prop.desc',
                 ['brand.name','brand_name'],

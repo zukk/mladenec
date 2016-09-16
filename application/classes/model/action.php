@@ -1203,7 +1203,7 @@ class Model_Action extends ORM
                 $return .= $action->sales_notes.' ';
             }
         }
-        if ($return == '') return 'Наличные, Visa/Mastercard';
+        if ($return == '') return 'Доставка: выбор удобного для Вас интервала, бесплатно при заказе от 2000р. Оплата: наличные, Visa/Mastercard';
         return $return;
     }
 
