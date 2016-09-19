@@ -1116,7 +1116,7 @@ class Cart {
      */
     public function ship_price($latlong = 0, $zone_id = NULL, $mkad_or_city = 0)
     {
-        if (is_null($zone_id) || $latlong = 0) { // нет зоны доставки - попробуем определить из крайнего адреса
+        if (is_null($zone_id) || $latlong == 0) { // нет зоны доставки - попробуем определить из крайнего адреса
 
             $zone_id = 0;
 
@@ -1148,6 +1148,36 @@ class Cart {
             if ( ! $zt->loaded()) return FALSE;
 
             $sum =  $zt->get_price($this->total);
+
+            // !!! акция нутрилон - бесплатная доставка внутри мкад если есть товары из списка
+            if ($sum > 0 && Model_Zone::locate($latlong, Model_Zone::MKAD)) { // внутри мкад
+                $total = DB::select(DB::expr('COUNT(*)', 'total'))
+                    ->from('z_good')
+                    ->where('id', 'IN', array_keys($this->goods))
+                    ->where('id1c', 'IN', [
+                        50061439,
+                        30001108,
+                        30001109,
+                        30011695,
+                        50056098,
+                        50056099,
+                        50056100,
+                        30012319,
+                        30001113,
+                        30001114,
+                        30009925,
+                        30001120,
+                        30001121,
+                        30011584
+                    ])
+                    ->execute()
+                    ->get('total', 0);
+
+                if ($total > 0) {
+                    $sum = 0;
+                }
+            }
+
             if ($zone_id == Model_Zone::ZAMKAD) $sum += intval($mkad_or_city) * Model_Order::PRICE_KM;
 
             return $sum;
@@ -1215,7 +1245,7 @@ class Cart {
      * @param string $date - дата
      * @param string $latlong - координаты точки для проверки замкад в пятницу или сегодня - мытищи
      * @param bool|float $sum - считать цену
-     * @return array - со св-вами - times - интервалы, friday_mkad - флаг того что это доставка за мкад в птн и интервалы ограничены
+     * @return array|bool - со св-вами - times - интервалы, friday_mkad - флаг того что это доставка за мкад в птн и интервалы ограничены
      */
     public function allowed_time($zone, $date, $latlong, $sum = FALSE)
     {

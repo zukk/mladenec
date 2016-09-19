@@ -48,7 +48,7 @@ class Model_Zone extends ORM { // зоны доставки
      * если 2 - проверка что координаты в зоне (не учитывая активности зоны)
      * @param string $latlong - координаты зоны через пробел, запятую или запятую+пробел
      * @param int $zone_id - ид зоны
-     * @return Model_Zone
+     * @return Model_Zone|bool
      */
     static public function locate($latlong, $zone_id = FALSE)
     {
