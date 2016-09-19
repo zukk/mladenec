@@ -511,7 +511,12 @@ class Controller_Product extends Controller_Frontend {
 
 			if (in_array($o->delivery_type, array(Model_Order::SHIP_COURIER, Model_Order::SHIP_SERVICE))) { // доставка по адресу
                 $o->price_ship = $o->price_ship($order_data); // проставим цену доставки
-			} elseif( $o->delivery_type == Model_Order::SHIP_OZON && isset($post['ozon_delivery_id']) ) {
+
+                if (Session::instance()->get('nutrilon')) {
+                    $o->price_ship -= Session::instance()->get('nutrilon');
+                }
+
+            } elseif( $o->delivery_type == Model_Order::SHIP_OZON && isset($post['ozon_delivery_id']) ) {
                 $ozon = new OzonDelivery();
                 $price_ship = $ozon->calculate_price($post['ozon_delivery_id'], $cart->weight());
                 $o->price_ship = isset($price_ship['price']) ? $price_ship['price'] : 0;

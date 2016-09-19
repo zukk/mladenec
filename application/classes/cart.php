@@ -1295,6 +1295,8 @@ class Cart {
         reset($return['times']);
         $first_price = current($return['times'])['price'];
 
+        Session::instance()->set('nutrilon', 0);
+
         // !!! акция нутрилон - бесплатная доставка внутри мкад если есть товары из списка
         if ($first_price > 0 && Model_Zone::locate($latlong, Model_Zone::MKAD)) { // внутри мкад
 
@@ -1326,6 +1328,8 @@ class Cart {
                     if (ctype_digit($t['price'])) $t['price'] -= $first_price;
                 }
             }
+
+            Session::instance()->set('nutrilon', $first_price);
         }
 
         return $return;
