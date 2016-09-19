@@ -1160,7 +1160,7 @@ class Cart {
 
             // !!! акция нутрилон - бесплатная доставка внутри мкад если есть товары из списка
             if ($sum > 0 && Model_Zone::locate($latlong, Model_Zone::MKAD)) { // внутри мкад
-                $total = DB::select(DB::expr('COUNT(*)', 'total'))
+                $total = DB::select(DB::expr('COUNT(*)'), 'total')
                     ->from('z_good')
                     ->where('id', 'IN', array_keys($this->goods))
                     ->where('id1c', 'IN', [
