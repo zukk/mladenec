@@ -1200,10 +1200,10 @@ class Model_Action extends ORM
         $return = '';
         foreach(self::by_goods([$gid]) as $action) {
             if ($action->sales_notes > '') {
-                $return .= $action->sales_notes.' ';
+                $return = $action->sales_notes;
             }
         }
-        if ($return == '') return 'Доставка: выбор удобного для Вас интервала, бесплатно при заказе от 2000р. Оплата: наличные, Visa/Mastercard';
+        if ($return == '') return 'Выбор удобного интервала доставки. Наличные/Карта';
         return $return;
     }
 
