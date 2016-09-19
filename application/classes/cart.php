@@ -1146,7 +1146,8 @@ class Cart {
             if ($zukk) Log::instance()->add(Log::INFO, 'ZUZU '.__LINE__.':'.$z->loaded());
             if ( ! $z->loaded()) return FALSE;
             $date = key($this->allowed_date($z, $latlong)); // первая дата
-            $time_id = key($this->allowed_time($z, $date, $latlong)); // первое время
+            $allowed_times = $this->allowed_time($z, $date, $latlong);
+            $time_id = key($allowed_times['times']); // первое время
 
             if ($zukk) Log::instance()->add(Log::INFO, 'ZUZU '.__LINE__.':'.$time_id);
 
