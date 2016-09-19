@@ -1226,7 +1226,7 @@ class Sphinx {
                     // search
                     $sorts = [
                         'new'       => '-nt',
-                        'rating'    => '-order_search',
+                        'rating'    => '-popularity',
                         'name'      => 'alphabet',
                         'price'     => 'price',
                         'pricedesc' => '-price',
