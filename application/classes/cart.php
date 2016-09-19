@@ -1293,7 +1293,7 @@ class Cart {
             ];
         }
         reset($return['times']);
-        $first_price = current($return['times']);
+        $first_price = current($return['times'])['price'];
 
         $zukk = Model_User::logged() && Model_User::current()->id == 59315;
         if ($zukk) Log::instance()->add(Log::INFO, 'ZUZU '.__LINE__.$first_price);
