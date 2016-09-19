@@ -1179,11 +1179,9 @@ class Cart {
                     ->execute()
                     ->get('total', 0);
 
-                if ($zukk) Log::instance()->add(Log::INFO, 'ZUZU '.$total);
-
-                if ($total > 0) {
-                    $sum = 0;
-                }
+                if ($zukk) Log::instance()->add(Log::INFO, 'ZUZU '.__LINE__.':'.$total);
+                if ($total > 0) $sum = 0;
+                if ($zukk) Log::instance()->add(Log::INFO, 'ZUZU '.__LINE__.':'.$sum);
             }
 
             if ($zone_id == Model_Zone::ZAMKAD) $sum += intval($mkad_or_city) * Model_Order::PRICE_KM;
