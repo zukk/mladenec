@@ -1295,12 +1295,9 @@ class Cart {
         reset($return['times']);
         $first_price = current($return['times'])['price'];
 
-        $zukk = Model_User::logged() && Model_User::current()->id == 59315;
-        if ($zukk) Log::instance()->add(Log::INFO, 'ZUZU '.__LINE__.$first_price);
-
         // !!! акция нутрилон - бесплатная доставка внутри мкад если есть товары из списка
         if ($first_price > 0 && Model_Zone::locate($latlong, Model_Zone::MKAD)) { // внутри мкад
-            if ($zukk) Log::instance()->add(Log::INFO, 'ZUZU '.__LINE__.$first_price);
+
             $total = DB::select([DB::expr('COUNT(*)'), 'total'])
                 ->from('z_good')
                 ->where('id', 'IN', array_keys($this->goods))
