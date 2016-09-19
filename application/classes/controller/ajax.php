@@ -98,8 +98,6 @@ class Controller_Ajax extends Controller_Frontend {
         // расстояние и сумма для бесплатной доставки замкад
         $return['free_delivery'] = $cart->total >= 2000 ? 10 : 0;
 
-        Log::instance()->add(Log::INFO, 'ZUZU '.$zone);
-
         if ($zone !== FALSE) { // доставка в наши зоны доставки
 
             $dates = $cart->allowed_date($zone, $latlong);
