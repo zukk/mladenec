@@ -1150,41 +1150,6 @@ class Cart {
             if ( ! $zt->loaded()) return FALSE;
 
             $sum =  $zt->get_price($this->total);
-
-            // !!! акция нутрилон - бесплатная доставка внутри мкад если есть товары из списка
-            if ($sum > 0 && Model_Zone::locate($latlong, Model_Zone::MKAD)) { // внутри мкад
-                $total = DB::select([DB::expr('COUNT(*)'), 'total'])
-                    ->from('z_good')
-                    ->where('id', 'IN', array_keys($this->goods))
-                    ->where('id1c', 'IN', [
-                        50061439,
-                        30001108,
-                        30001109,
-                        30011695,
-                        50056098,
-                        50056099,
-                        50056100,
-                        30012319,
-                        30001113,
-                        30001114,
-                        30009925,
-                        30001120,
-                        30001121,
-                        30011584
-                    ])
-                    ->execute()
-                    ->get('total', 0);
-
-                if ($total > 0) {
-                    $sum = 0;
-                    // и еще от всех цен доставки по интервалам надо отнять первую цену
-                    $first_price = current($allowed_times['times']);
-                    foreach($allowed_times['times'] as &$t) {
-                        if (ctype_digit($t)) $t -= $first_price;
-                    }
-                }
-            }
-
             if ($zone_id == Model_Zone::ZAMKAD) $sum += intval($mkad_or_city) * Model_Order::PRICE_KM;
 
             return $sum;
@@ -1327,6 +1292,41 @@ class Cart {
                 'price' => $time->get_price($sum === FALSE ? $this->total : $sum),
             ];
         }
+        reset($return['times']);
+        $first_price = current($return['times']);
+
+        // !!! акция нутрилон - бесплатная доставка внутри мкад если есть товары из списка
+        if ($first_price > 0 && Model_Zone::locate($latlong, Model_Zone::MKAD)) { // внутри мкад
+            $total = DB::select([DB::expr('COUNT(*)'), 'total'])
+                ->from('z_good')
+                ->where('id', 'IN', array_keys($this->goods))
+                ->where('id1c', 'IN', [
+                    50061439,
+                    30001108,
+                    30001109,
+                    30011695,
+                    50056098,
+                    50056099,
+                    50056100,
+                    30012319,
+                    30001113,
+                    30001114,
+                    30009925,
+                    30001120,
+                    30001121,
+                    30011584
+                ])
+                ->execute()
+                ->get('total', 0);
+
+            if ($total > 0) {
+                // и еще от всех цен доставки по интервалам надо отнять первую цену
+                foreach($return['times'] as &$t) {
+                    if (ctype_digit($t)) $t -= $first_price;
+                }
+            }
+        }
+
         return $return;
     }
 
