@@ -613,7 +613,7 @@ $(document).ready(function () {
                 });
                 $('#index_slider #nav').append(point);
             });
-            $('#index_slider #nav').css('left', Math.round((step - picCount * 29) / 2) + 'px');
+            $('#index_slider #nav').css('left', Math.round((step - picCount * 16) / 2) + 'px');
 
             wrap.css('width', picCount * step + 'px');
             $('#index_slider').append('<i class="l"></i><i class="r"></i>');

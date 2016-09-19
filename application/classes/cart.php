@@ -1149,6 +1149,8 @@ class Cart {
 
             $sum =  $zt->get_price($this->total);
 
+            Log::instance()->add(Log::INFO, 'ZUZU '.$sum);
+
             // !!! акция нутрилон - бесплатная доставка внутри мкад если есть товары из списка
             if ($sum > 0 && Model_Zone::locate($latlong, Model_Zone::MKAD)) { // внутри мкад
                 $total = DB::select(DB::expr('COUNT(*)', 'total'))
@@ -1172,6 +1174,8 @@ class Cart {
                     ])
                     ->execute()
                     ->get('total', 0);
+
+                Log::instance()->add(Log::INFO, 'ZUZU '.$total);
 
                 if ($total > 0) {
                     $sum = 0;
