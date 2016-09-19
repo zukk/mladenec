@@ -1139,21 +1139,23 @@ class Cart {
 
         } else { // есть зона - определим по зоне на ближайшую дату
 
-            Log::instance()->add(Log::INFO, 'ZUZU '.__LINE__.':'.$zone_id);
+            $zukk = Model_User::logged() && Model_User::current()->id == 59315;
+            if ($zukk) Log::instance()->add(Log::INFO, 'ZUZU '.__LINE__.':'.$zone_id);
 
             $z = new Model_Zone($zone_id);
+            if ($zukk) Log::instance()->add(Log::INFO, 'ZUZU '.__LINE__.':'.$z->loaded());
             if ( ! $z->loaded()) return FALSE;
             $date = key($this->allowed_date($z, $latlong)); // первая дата
             $time_id = key($this->allowed_time($z, $date, $latlong)); // первое время
 
-            Log::instance()->add(Log::INFO, 'ZUZU '.__LINE__.':'.$time_id);
+            if ($zukk) Log::instance()->add(Log::INFO, 'ZUZU '.__LINE__.':'.$time_id);
 
             $zt = new Model_Zone_Time($time_id);
             if ( ! $zt->loaded()) return FALSE;
 
             $sum =  $zt->get_price($this->total);
 
-            Log::instance()->add(Log::INFO, 'ZUZU '.__LINE__.':'.$sum);
+            if ($zukk) Log::instance()->add(Log::INFO, 'ZUZU '.__LINE__.':'.$sum);
 
             // !!! акция нутрилон - бесплатная доставка внутри мкад если есть товары из списка
             if ($sum > 0 && Model_Zone::locate($latlong, Model_Zone::MKAD)) { // внутри мкад
@@ -1179,7 +1181,7 @@ class Cart {
                     ->execute()
                     ->get('total', 0);
 
-                Log::instance()->add(Log::INFO, 'ZUZU '.$total);
+                if ($zukk) Log::instance()->add(Log::INFO, 'ZUZU '.$total);
 
                 if ($total > 0) {
                     $sum = 0;
