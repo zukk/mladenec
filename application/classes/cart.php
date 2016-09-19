@@ -1326,7 +1326,7 @@ class Cart {
             if ($total > 0) {
                 // и еще от всех цен доставки по интервалам надо отнять первую цену
                 foreach($return['times'] as &$t) {
-                    if (ctype_digit($t)) $t['price'] -= $first_price;
+                    if (ctype_digit($t['price'])) $t['price'] -= $first_price;
                 }
             }
         }
