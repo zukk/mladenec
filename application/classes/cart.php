@@ -1139,10 +1139,14 @@ class Cart {
 
         } else { // есть зона - определим по зоне на ближайшую дату
 
+            Log::instance()->add(Log::INFO, 'ZUZU '.$zone_id);
+
             $z = new Model_Zone($zone_id);
             if ( ! $z->loaded()) return FALSE;
             $date = key($this->allowed_date($z, $latlong)); // первая дата
             $time_id = key($this->allowed_time($z, $date, $latlong)); // первое время
+
+            Log::instance()->add(Log::INFO, 'ZUZU '.$time_id);
 
             $zt = new Model_Zone_Time($time_id);
             if ( ! $zt->loaded()) return FALSE;
