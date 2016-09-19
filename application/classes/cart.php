@@ -1139,8 +1139,6 @@ class Cart {
 
         } else { // есть зона - определим по зоне на ближайшую дату
 
-            $zukk = Model_User::logged() && Model_User::current()->id == 59315;
-
             $z = new Model_Zone($zone_id);
             if ( ! $z->loaded()) return FALSE;
 
@@ -1177,12 +1175,17 @@ class Cart {
                     ->execute()
                     ->get('total', 0);
 
-                if ($total > 0) $sum = 0;
+                if ($total > 0) {
+                    $sum = 0;
+                    // и еще от всех цен доставки по интервалам надо отнять первую цену
+                    $first_price = current($allowed_times['times']);
+                    foreach($allowed_times['times'] as &$t) {
+                        if (ctype_digit($t)) $t -= $first_price;
+                    }
+                }
             }
 
             if ($zone_id == Model_Zone::ZAMKAD) $sum += intval($mkad_or_city) * Model_Order::PRICE_KM;
-
-            if ( ! empty($zukk)) Log::instance()->add(Log::INFO, 'ZUZU '.__LINE__.':'.$sum);
 
             return $sum;
         }
