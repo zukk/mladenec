@@ -1152,7 +1152,7 @@ class Cart {
             if ( ! $zt->loaded()) return FALSE;
 
             $sum =  $zt->get_price($this->total);
-            if ($zukk) Log::instance()->add(Log::INFO, 'ZUZU '.__LINE__.':'.$sum);
+            if ($zukk) Log::instance()->add(Log::INFO, 'ZUZU '.__LINE__.':'.$sum.':'.$latlong);
             if ($zukk) Log::instance()->add(Log::INFO, 'ZUZU '.__LINE__.':'.Model_Zone::locate($latlong, Model_Zone::MKAD));
 
             // !!! акция нутрилон - бесплатная доставка внутри мкад если есть товары из списка
