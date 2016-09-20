@@ -512,8 +512,9 @@ class Controller_Product extends Controller_Frontend {
 			if (in_array($o->delivery_type, array(Model_Order::SHIP_COURIER, Model_Order::SHIP_SERVICE))) { // доставка по адресу
                 $o->price_ship = $o->price_ship($order_data); // проставим цену доставки
 
-                if (Session::instance()->get('nutrilon')) {
-                    $o->price_ship -= Session::instance()->get('nutrilon');
+                $nutrilon = Session::instance()->get_once('nutrilon');
+                if ($nutrilon) {
+                    $o->price_ship -= $nutrilon;
                 }
 
             } elseif( $o->delivery_type == Model_Order::SHIP_OZON && isset($post['ozon_delivery_id']) ) {
@@ -525,7 +526,6 @@ class Controller_Product extends Controller_Frontend {
             if ($o->pay_type == Model_Order::PAY_CARD && empty($cart->to_wait) && $o->delivery_type != 0) { // заказу можно сразу разрешить оплату
                 //$o->can_pay = 1;
             }
-            Session::instance()->set('nutrilon', 0);
 
             if(isset($addr)) {
                 // { дата доставки не должна быть меньше ближайшей            
