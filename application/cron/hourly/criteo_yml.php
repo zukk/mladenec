@@ -93,7 +93,12 @@ foreach($goodFilters as $type => $filters) {
 
 $goodFiltersIds = [];
 $image_types = '500';
-for ($heap_number = 0; $goods = Model_Good::for_criteo_yml($heap_size, $heap_number); $heap_number++) {
+for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size, $heap_number,
+    [
+        ['good.brand_id', '!=', 51596], // исключаем бренд Schwartau
+        ['good.price', '>=', 200]
+    ]
+); $heap_number++) {
     $c = 0;
     $good_ids = [];
     foreach ($goods as &$g) {
@@ -150,12 +155,14 @@ for ($heap_number = 0; $goods = Model_Good::for_criteo_yml($heap_size, $heap_num
 	}
 
     $images = Model_Good::many_images([$image_types], $good_ids);
+    $actions = Model_Action::for_icons($good_ids);
+
     foreach($goods as &$g) { // тут передаем по ссылке, иначе послдний элемент дублируется
 		// Если одновременно мальчик-девочка, то пол не передаем
 		if ( ! empty($goodFiltersV[$g['id']][EXPORTXML_SEX]) && count($goodFiltersV[$g['id']][EXPORTXML_SEX]) > 1) {
 			unset($goodFiltersV[$g['id']][EXPORTXML_SEX]);
 		}
-		
+        $g['sale'] = ! empty($actions[$g['id']]) ? 1 : 0;
 
         if ( ! empty($goodFiltersV[$g['id']])) {
 			foreach($goodFiltersV[$g['id']] as $filter_id => $valuesIds) {
