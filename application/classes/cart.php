@@ -1327,9 +1327,8 @@ class Cart {
                 foreach($return['times'] as &$t) {
                     if (ctype_digit($t['price'])) $t['price'] -= $first_price;
                 }
+                Session::instance()->set('nutrilon', $first_price);
             }
-
-            Session::instance()->set('nutrilon', $first_price);
         }
 
         return $return;
