@@ -5,13 +5,10 @@
 	<categoryId>{$g['section_id']}</categoryId>
 
     <delivery>true</delivery>
-    <delivery-options>
-        <option cost="{Model_Zone::min_price(Model_Zone::DEFAULT_ZONE, $g.price)}" days="{if $g.qty == -1}3-5{else}0{/if}" order-before="12" />
-    </delivery-options>
     <sales_notes>{Model_Action::sales_notes($g.id)}</sales_notes>
 
 	<vendor><![CDATA[{Txt::clean_rude_symbols($g['brand_name']|escape:'html')}]]></vendor>
-    {if $g['code'] neq '' AND not empty($label) AND $label eq 'retailrocket'}<vendorCode>{$g['code']|escape:'html'}</vendorCode>{/if}
+
 	<model><![CDATA[{Txt::clean_rude_symbols($g['group_name']|escape:'html')} {Txt::clean_rude_symbols($g['name']|escape:'html')}]]></model>
 	<description><![CDATA[{Txt::clean_rude_symbols($g['desc']|strip_tags|escape:'html')}]]></description>
     <manufacturer_warranty>true</manufacturer_warranty>

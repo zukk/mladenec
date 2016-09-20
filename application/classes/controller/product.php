@@ -525,6 +525,7 @@ class Controller_Product extends Controller_Frontend {
             if ($o->pay_type == Model_Order::PAY_CARD && empty($cart->to_wait) && $o->delivery_type != 0) { // заказу можно сразу разрешить оплату
                 //$o->can_pay = 1;
             }
+            Session::instance()->set('nutrilon', 0);
 
             if(isset($addr)) {
                 // { дата доставки не должна быть меньше ближайшей            
