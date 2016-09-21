@@ -3,11 +3,157 @@
  * Скрипт для генерации Sitemap.xml
  * Запускать раз в сутки
  * Карта сайта и все подкарты кладутся в каталог /export
+ * А. В xml карте сайта не должно быть изображений
+ * Б. В карте сайте не должно быть ссылок на товары или категории, которые редиректятся на итмарт
+ * В. Карта сайта не должна содержать элементы вида http://www.mladenec-shop.ru/catalog/bytovaya-himiya/pigeon.html - т.е. категорийные страницы, заканчивающиеся на html
+ * Г. Карта сайта не должна содержать ни одной ссылки с параметрами
+ * Д. Самое важное - в карте сайта не должно быть неактуальных ссылок или ошибочных ссылок, например, http://www.mladenec-shop.ru/product/-dostavka-za-mkad/32801.52716.html
+ * Е. Карту сайта надо разбить на следующие файлы:
+ * 1. список категорийных теговых /catalog
+ * 2. список всех продуктов /product
+ * 3. список всех действующих теговых старого формата /tag
+ * 4. Список актуальных (и только актуальных) акций /actions БЕЗ комбинаций фильтров вида http://www.mladenec-shop.ru/actions/detskaya-komnata/interest
+ * 5. Список всех статей /article
+ * 6. Список всех новостей /about/news/
+ * 7. Список страниц карты сайта /site_map
+ * 8. Список остальных страниц - список тут https://docs.google.com/spreadsheets/d/1k4TTdEi-2ebgkMQKxHrZ8gswPcu1jqkdUQf8B_qrkRo/edit?usp=sharing - все кроме тех, что в папке user
  */
+
+$config = [
+
+    'catalog' => [
+        'data' => [
+            DB::select('id', 'translit')
+                ->from('z_section')
+                    ->where('active', '=', 1)
+                    ->where('vitrina', '=', 'mladenec')
+                    ->where('code', '!=', '50061508') // сертификаты не показываем
+                ->execute()
+                ->as_array('id', 'translit'),
+
+            DB::select('t.id', 'code')
+                ->from(['z_tag', 't'])
+                    ->join('tag_redirect', 'LEFT')
+                        ->on('url', '=', 'code')
+                        ->on('to_id', '>', 0)
+                ->where('section_id', '>', 1)
+                ->where('code', 'LIKE', 'catalog%')
+                ->where('code', 'NOT LIKE', '%.html')
+                ->where('goods_count', '>', '0')
+                ->where('url', 'IS', null)
+                ->execute()
+                ->as_array('id', 'code')
+            ],
+    ],
+
+    'product' => [
+        'data' => [
+            DB::select('good.id',
+                DB::expr("CONCAT('product/', good.translit, '/', good.group_id, '.', good.id, '.html') as url")
+            )->from(['z_good', 'good'])
+                ->join(['z_good_prop',   'prop'])   ->on('good.id',         '=', 'prop.id')
+                ->join(['z_brand',       'brand'])  ->on('good.brand_id',   '=', 'brand.id')
+                ->join(['z_section',     'section'])->on('good.section_id', '=', 'section.id')
+                ->join(['z_section',     'sp'])     ->on('section.parent_id', '=', 'sp.id')
+                ->join(['z_group',       'group'])  ->on('good.group_id',   '=', 'group.id')
+                ->join(['b_file',        'file'])   ->on('prop.img1600',    '=', 'file.id')
+
+                ->where('good.show',        '=', 1)
+                ->where('good.section_id',  '>', 0)
+                ->where('good.brand_id',    '>', 0)
+                ->where('good.group_id',    '>', 0)
+                ->where('good.active',      '=', 1)
+                ->where('prop.img1600',     '>', 0)
+                ->where('section.active',   '=', 1)
+                ->where('sp.active',   '=', 1)
+                ->where('good.vitrina',     '=', 'mladenec')
+                ->where('group.active',     '=', 1)
+                ->where('brand.active',     '=', 1)
+                ->order_by('good.id')
+                ->execute()
+                ->as_array('id', 'url')
+        ]
+    ],
+
+    'tag' => [
+        'data' => [
+            DB::select('t.id', 'code')
+                ->from(['z_tag', 't'])
+                ->join('tag_redirect', 'LEFT')
+                ->on('url', '=', 'code')
+                ->on('to_id', '>', 0)
+                ->where('code', 'LIKE', 'tag%')
+                ->where('code', 'NOT LIKE', '%.html')
+                ->where('goods_count', '>', '0')
+                ->where('url', 'IS', null)
+                ->execute()
+                ->as_array('id', 'code')
+        ]
+    ],
+
+    'action' => [
+        'data' => [
+            DB::select('id', DB::expr('CONCAT(\'action/\', id) as  as url'))
+                ->from('z_action')
+                ->where('show_actions', '=', 1)
+                ->where('active', '=', 1)
+                ->where('show', '=', 1)
+                ->where_open()
+                    ->where('vitrina_show', '=', 'all')
+                    ->or_where('vitrina_show', '=', 'mladenec')
+                ->where_close()
+                ->execute()
+                ->as_array('id', 'url'),
+
+            DB::select('at.id', DB::expr('CONCAT(\'action/\', url) as  url'))
+                ->from(['z_actiontag', 'at'])
+                ->where('at.id', 'IN',
+                    DB::select('actiontag_id')->distinct(TRUE)->from('z_actiontag_ids')
+                )
+                ->join('z_actiontag_ids')
+                    ->on('at.id', '=', 'z_actiontag_ids.actiontag_id')
+                ->join('z_action')
+                    ->on('z_action.id', '=', 'z_actiontag_ids.action_id')
+                ->where('z_action.active', '=', 1)
+                ->where('z_action.show', '=', 1)
+                ->where_open()
+                    ->where('vitrina_show', '=', 'all')
+                    ->or_where('vitrina_show', '=', 'mladenec')
+                ->where_close()
+                ->order_by('order')
+                ->execute()
+                ->as_array('id', 'url')
+        ]
+    ],
+
+    'article' => [
+        DB::select('id', DB::expr('CONCAT(\'article/\', id) as url)'))
+            ->where('active', '=', 1)
+            ->execute()
+            ->as_array('id', 'url')
+    ],
+
+    'news' => [
+        DB::select('id', DB::expr('CONCAT(\'about/news/\', id) as url)'))
+            ->where('date','<=',date('Y-m-d'))
+            ->where('active', '=', 1)
+            ->execute()
+            ->as_array('id', 'url')
+    ],
+
+    'sitemap' => [
+
+    ],
+
+    'page' => [
+
+    ],
+];
+
 ini_set('memory_limit', '1024M');
 require(__DIR__.'/../../../www/preload.php');
 
-$domains = Kohana::$config->load('domains')->as_array(); // = Kohana::$config->load('domains')->as_array();
+$domains = Kohana::$config->load('domains')->as_array();
 $host = $domains['mladenec']['host'];
 
 $dir = APPPATH.'../www/export/sitemap/';
@@ -21,69 +167,41 @@ function clearDir($dir) {
 	}
 }
 
-function get_sections( $data = [], $parent = 0 ){
-	
-	$result = DB::select('id', 'name', 'translit')
-        ->from('z_section')
-        ->where('parent_id', '=',  $parent)
-        ->where('active', '=', 1)
-        ->execute();
-	
-	while ($row = $result->current()) {
-		$result->next();
-		$data[] = $row;
-		$data = get_sections($data, $row['id']);
-	}
-	
-	return $data;
-}
-
 $i = 0;
 $c = 0;
 $length = 0;
 $file = null;
+$prefix = '';
 
-function newPart()
+function newPart($name, $finish = FALSE)
 {
-	global $dir, $i, $length, $file, $c;
+	global $dir, $length, $file, $c;
 	
-	if ($file !== null) {
+	if ($finish) {
 		fwrite($file, '</urlset>');
 		fclose($file);
 	}
-	$i++;
-	
-	$file = fopen( $dir . $i . '.xml', 'w' );
-	fwrite($file, '<?xml version="1.0" encoding="UTF-8"?>'. "\n". '<?xml-stylesheet type="text/xsl" href="/xml-sitemap.xsl"?>'. "\n". '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'."\n");
+
+	$file = fopen( $dir . $name . '.xml', 'w' );
+	fwrite($file,
+        '<?xml version="1.0" encoding="UTF-8"?>'. "\n".
+        '<?xml-stylesheet type="text/xsl" href="/xml-sitemap.xsl"?>'. "\n".
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'."\n"
+    );
 	
 	$length = $c = 0;
 }
 
-function writeUrl($url, $params = [], $images = [] )
-{
+function writeUrl($url, $params = []) {
 	global $length, $file, $host, $c;
 	
-	// по стандарту ограничение на 10мб. я делаю на 8
-	if( $file === null || $length > 1024 * 1024 * 8 || $c > 45000 ){
-		newPart();
-	}
-	
 	$line = '<url><loc>http://' . $host . $url . '</loc>';
-	
-	foreach( $params as $key => &$param ){
-	
-		if( in_array( $key, ['changefreq', 'priority'] ) ){
+
+	foreach($params as $key => $param){
+		if (in_array($key, ['changefreq', 'priority'])) {
 			$line .= '<' . $key . '>' . $param . '</' . $key . '>';
 		}
 	}
-	unset( $param );
-	
-	foreach( $images as &$image ){
-	
-		$line .= '<image:image><image:loc>' . $image . '</image:loc></image:image>';
-	}
-	unset( $image );
-	
 	$line .= '</url>' . "\n";
 	
 	fwrite($file, $line);
@@ -95,134 +213,39 @@ function writeUrl($url, $params = [], $images = [] )
 clearDir($dir); // стираем старые кусочки
 
 // главная страница
-writeUrl('/',
-			[
-				'changefreq' => 'always',
-				'priority' => '1'
-			]
-);
+//writeUrl('/',
+//    [
+//        'changefreq' => 'always',
+//        'priority' => '1'
+//    ]
+//);
 
-// категории каталога
-$sections = get_sections();
-$sections_count = count($sections);
-foreach($sections as &$section){
-	
-	writeUrl(
-			Route::url('section', ['translit' => $section['translit']]),
-			[
-				'changefreq' => 'daily',
-				'priority' => '0.8'
-			]
-		);
-	
-	$e = DB::select('b.id')
-		->from(['z_brand', 'b'])
-		->join(['z_section_brand', 'sb'])
-			->on('b.id', '=', 'sb.brand_id')
-		->where('b.active', '=', 1)
-		->where('sb.section_id', '=', $section['id'])
-		->execute()
-		->as_array();
-	
-	foreach( $e as &$b ){
-		writeUrl(
-				Route::url('section', ['translit' => $section['translit']]) . '?b=' . $b['id'],
-				[
-					'changefreq' => 'daily',
-					'priority' => '0.8'
-				]
-			);
-	}
-	unset( $b );
-} 
-unset($section);
-
-// товары
-$result = DB::select('g.id', 'g.name', 'g.translit', 'g.group_id')
-		->from(['z_good', 'g'])
-		->join(['z_group', 'gr'])
-			->on('g.group_id', '=', 'gr.id')
-		->where('g.show', '=', 1)
-		->where('gr.active', '=', 1)
-		->execute()
-		->as_array();
-$prod_count = count($result);
-foreach ($result as $row) {
-	
-	$f = DB::select('file_id')->from('z_good_img')->where('good_id', '=', $row['id'])->where('size', '=', 1600)->execute()->as_array('file_id');
-
-	$images = [];
-	if( !empty( $f ) ){
-		
-		$files = DB::select('subdir', 'file_name')->from('b_file')->where('id', 'in', array_keys( $f ))->execute()->as_array();
-
-		foreach( $files as &$item ){
-
-			$images[] = 'http://' . $host . '/upload/' . $item['subdir'] . '/' . $item['file_name'];
-		}
-		unset( $item );
-	}
-	
-    writeUrl(
-			Route::url('product', $row),
-			[
-				'changefreq' => 'weekly',
-				'priority' => '0.6'
-			], $images );
+foreach($config as $name => $data) {
+    newPart($name);
+    foreach($data['data'] as $arr) {
+        foreach($arr as $id => $url)  {
+            writeUrl($url, [
+                [
+                    'changefreq' => 'daily',
+                    'priority' => '0.8'
+                ]
+            ]);
+        }
+    }
+    newPart($name, TRUE);
 }
-
-// теговые
-$result = DB::select('code')->from('z_tag')->where('goods_count', '>', 0)/*->where('checked', '=', 1) */->execute();
-$tags_count = count($result);
-while( $tag = $result->current() ){
-	
-    writeUrl(
-			'/' . $tag['code'],
-			[
-				'changefreq' => 'weekly',
-				'priority' => '0.6'
-			] );
-	
-	$result->next();
-}
-	
-// статьи
-$result = DB::select('id')->from('z_article')->where('active', '=', 1)->execute()->as_array();
-foreach ($result as $row) {
-    writeUrl(
-			Route::url('article', $row),
-			[
-				'changefreq' => 'weekly',
-				'priority' => '0.6'
-			]);
-}
-
-// новости
-$result = DB::select('id')->from('z_new')->where('active', '=', 1)->execute()->as_array();
-foreach ($result as $row) {
-    writeUrl(
-			Route::url('new', $row),
-			[
-				'changefreq' => 'weekly',
-				'priority' => '0.6'
-			]);
-}
-
-fwrite($file, '</urlset>');
-fclose( $file );
 
 // индекс
 $index = '<?xml version="1.0" encoding="UTF-8"?>'
 		. '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
-for ($j = 1; $j <= $i; $j++) {
-	$index .= '<sitemap><loc>http://' . $host . '/export/sitemap/' . $j . '.xml</loc></sitemap>';
+foreach($config as $name => $data) {
+	$index .= '<sitemap><loc>http://' . $host . '/export/sitemap/' . $name . '.xml</loc></sitemap>';
 }
 $index .= '</sitemapindex>';
 		
 if(is_file($indexFile)) unlink($indexFile);
 if($in = fopen($indexFile, 'w')) fwrite($in, $index );
-
 fclose( $in );
 
 /***************************** SEO STATISTICS ************************************/
