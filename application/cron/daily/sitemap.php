@@ -223,7 +223,7 @@ function newPart($name, $finish = FALSE)
 function writeUrl($url, $params = []) {
     global $length, $file, $host, $c;
 
-    $line = '<url><loc>http://' . $host . '/' . $url . '</loc>';
+    $line = '<url><loc>http://' . $host . '/' . htmlentities($url) . '</loc>';
 
     foreach($params as $key => $param){
         if (in_array($key, ['changefreq', 'priority'])) {
@@ -248,6 +248,7 @@ $redirects = [
     'about/article',
     'actions/current',
     'delivery/korolev.php',
+    'about/review',
     'about/review/price.php',
     'catalog/egednevnyy-uhod/vata',
     'catalog/kolyaski/kolyaski-trekhkolesnye-progulochnye',
