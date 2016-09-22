@@ -749,141 +749,142 @@ class Sphinx {
         $redir = FALSE;
         $stats = $this->stats();
 
-if ($request) {        
-foreach($request->query() as $k => $v) {
-            switch ($k) {
-                case 'b': // брэнд
-                    $this->_params['b'] = array_filter(explode('_', $v), 'ctype_digit');
-                    sort($this->_params['b']);
+        if ($request) {
+            foreach($request->query() as $k => $v) {
+                switch ($k) {
+                    case 'b': // брэнд
+                        $this->_params['b'] = array_filter(explode('_', $v), 'ctype_digit');
+                        sort($this->_params['b']);
 
-                    foreach ($this->_params['b'] as $key => $b) {
-                        if (empty($stats['brands'][$b])) {
-                            $redir = TRUE;
-                            unset($this->_params['b'][$key]);
+                        foreach ($this->_params['b'] as $key => $b) {
+                            if (empty($stats['brands'][$b])) {
+                                $redir = TRUE;
+                                unset($this->_params['b'][$key]);
+                            }
                         }
-                    }
-                    if ( ! empty($this->_params['b'])) $this->qs = TRUE;
-                    break;
+                        if ( ! empty($this->_params['b'])) $this->qs = TRUE;
+                        break;
 
-                case 'c': // раздел
-                    $this->_params['c'] = array_filter(explode('_', $v), 'ctype_digit');
-                    sort($this->_params['c']);
+                    case 'c': // раздел
+                        $this->_params['c'] = array_filter(explode('_', $v), 'ctype_digit');
+                        sort($this->_params['c']);
 
-                    foreach ($this->_params['c'] as $key => $c) {
-                        if (empty($stats['sections'][$c])) {
-                            $redir = TRUE;
-                            unset($this->_params['c'][$key]);
+                        foreach ($this->_params['c'] as $key => $c) {
+                            if (empty($stats['sections'][$c])) {
+                                $redir = TRUE;
+                                unset($this->_params['c'][$key]);
+                            }
                         }
-                    }
-                    if ( ! empty($this->_params['c'])) $this->qs = TRUE;
-                    break;
+                        if ( ! empty($this->_params['c'])) $this->qs = TRUE;
+                        break;
 
-                case 'co': // страна
-                    $this->_params['co'] = array_filter(explode('_', $v), 'ctype_digit');
-                    sort($this->_params['co']);
+                    case 'co': // страна
+                        $this->_params['co'] = array_filter(explode('_', $v), 'ctype_digit');
+                        sort($this->_params['co']);
 
-                    foreach ($this->_params['co'] as $key => $c) {
-                        if (empty($stats['countries'][$c])) {
-                            $redir = TRUE;
-                            unset($this->_params['co'][$key]);
+                        foreach ($this->_params['co'] as $key => $c) {
+                            if (empty($stats['countries'][$c])) {
+                                $redir = TRUE;
+                                unset($this->_params['co'][$key]);
+                            }
                         }
-                    }
-                    if ( ! empty($this->_params['co'])) $this->qs = TRUE;
-                    break;
+                        if ( ! empty($this->_params['co'])) $this->qs = TRUE;
+                        break;
 
-                case 'pr': // цена - принимаем всегда
-                    $p = array_filter(explode('-', $v, 2), 'ctype_digit');
-                    if ( ! empty($p)) {
-                        if (empty($p[1])) {
-                            $this->_params['pr'] = [0, $p[0]]; // только макс цена
-                        } elseif (empty($p[0])) {
-                            $this->_params['pr'] = [0, $p[1]]; // только макс цена
-                        } elseif ($p[1] >= $p[0]) {
-                            $this->_params['pr'] = [$p[0], $p[1]];
-                        }
-                    }
-                    break;
-
-                case 'weight': // вес - бывает в подгузниках
-                    if ( ! empty($this->_section) && $this->_section->id == Model_Section::DIAPERS_ID) {
+                    case 'pr': // цена - принимаем всегда
                         $p = array_filter(explode('-', $v, 2), 'ctype_digit');
                         if ( ! empty($p)) {
-                            if (empty($p[0])) $p[0] = 0;
-                            if (empty($p[1])) $p[1] = 0;
-
-                            if ($p[0] > $p[1]) { // swap values
-                                $swap = $p[1];
-                                $p[1] = $p[0];
-                                $p[0] = $swap;
+                            if (empty($p[1])) {
+                                $this->_params['pr'] = [0, $p[0]]; // только макс цена
+                            } elseif (empty($p[0])) {
+                                $this->_params['pr'] = [0, $p[1]]; // только макс цена
+                            } elseif ($p[1] >= $p[0]) {
+                                $this->_params['pr'] = [$p[0], $p[1]];
                             }
-                            if ($p[1] == 0) { // пустой вес
-                                $redir = TRUE;
-                            } else {
-                                $this->_params['weight'] = array($p[0], $p[1]);
+                        }
+                        break;
 
-                                if ($this->_params['weight'][0] < 0) {
-                                    $this->_params['weight'][0] = 0;
-                                    $redir = TRUE;
+                    case 'weight': // вес - бывает в подгузниках
+                        if ( ! empty($this->_section) && $this->_section->id == Model_Section::DIAPERS_ID) {
+                            $p = array_filter(explode('-', $v, 2), 'ctype_digit');
+                            if ( ! empty($p)) {
+                                if (empty($p[0])) $p[0] = 0;
+                                if (empty($p[1])) $p[1] = 0;
+
+                                if ($p[0] > $p[1]) { // swap values
+                                    $swap = $p[1];
+                                    $p[1] = $p[0];
+                                    $p[0] = $swap;
                                 }
-                                if ($this->_params['weight'][1] > 35) {
-                                    $this->_params['weight'][1] = 35;
+                                if ($p[1] == 0) { // пустой вес
                                     $redir = TRUE;
-                                }
-                                if (($this->_params['weight'][0] == 0) and ($this->_params['weight'][1] == 35)) {
-                                    $redir = TRUE;
-                                    unset($this->_params['weight']);
+                                } else {
+                                    $this->_params['weight'] = array($p[0], $p[1]);
+
+                                    if ($this->_params['weight'][0] < 0) {
+                                        $this->_params['weight'][0] = 0;
+                                        $redir = TRUE;
+                                    }
+                                    if ($this->_params['weight'][1] > 35) {
+                                        $this->_params['weight'][1] = 35;
+                                        $redir = TRUE;
+                                    }
+                                    if (($this->_params['weight'][0] == 0) and ($this->_params['weight'][1] == 35)) {
+                                        $redir = TRUE;
+                                        unset($this->_params['weight']);
+                                    }
                                 }
                             }
                         }
-                    }
-                    break;
+                        break;
 
-                case 'pp': // на странице
-                    $this->_params['pp'] = intval($v);
-                    if ( ! in_array($this->_params['pp'], $this->_params['per_page'])) { // на странице стоит неразрешённое число - сбрасываем
-                        $redir = TRUE;
-                        unset($this->_params['pp']);
-                    }
-                    break;
+                    case 'pp': // на странице
+                        $this->_params['pp'] = intval($v);
+                        if ( ! in_array($this->_params['pp'], $this->_params['per_page'])) { // на странице стоит неразрешённое число - сбрасываем
+                            $redir = TRUE;
+                            unset($this->_params['pp']);
+                        }
+                        break;
 
-                case 's': // сортировка
-                    if (in_array($v, $this->_params['sorts'])) {
-                        $this->_params['s'] = $v;
-                    } else { // не разрешённая сортировка - сбрасываем
-                        $redir = TRUE;
-                        unset($this->_params['s']);
-                    }
-                    break;
+                    case 's': // сортировка
+                        if (in_array($v, $this->_params['sorts'])) {
+                            $this->_params['s'] = $v;
+                        } else { // не разрешённая сортировка - сбрасываем
+                            $redir = TRUE;
+                            unset($this->_params['s']);
+                        }
+                        break;
 
-                case 'a': // акция
-                    if ( ! empty($this->_params['a']) && ctype_digit($this->_params['a'])) { // мы уже на странице акции - сбросим параметр a
-                        $redir = TRUE;
-                        unset($this->_params['a']);
-                    } else {
-                        if ($v == 1) {
-                            $this->_params['a'] = TRUE;
-                        } else { // не разрешённый флаг акции - сбрасываем
+                    case 'a': // акция
+                        if ( ! empty($this->_params['a']) && ctype_digit($this->_params['a'])) { // мы уже на странице акции - сбросим параметр a
                             $redir = TRUE;
                             unset($this->_params['a']);
-                        }
-                    }
-                    break;
-
-                default:
-                    if (preg_match('~^f(\d+)$~', $k, $matches)) { // фильтры
-                        $fid = $matches[1];
-                        if (Model_Filter::begunok($fid) && preg_match('~^([0-9\.]+)-([0-9\.]+)$~', $v)) {
-                            $this->_params['f'][$fid] = $v;
                         } else {
-                            $vals = array_filter(explode('_', $v), 'ctype_digit');
-                            if ( ! empty($vals)) $this->_params['f'][$fid] = $vals;
+                            if ($v == 1) {
+                                $this->_params['a'] = TRUE;
+                            } else { // не разрешённый флаг акции - сбрасываем
+                                $redir = TRUE;
+                                unset($this->_params['a']);
+                            }
                         }
-                    }
-                    if ( ! empty($this->_params['f'])) $this->qs = TRUE;
-                    break;
+                        break;
+
+                    default:
+                        if (preg_match('~^f(\d+)$~', $k, $matches)) { // фильтры
+                            $fid = $matches[1];
+                            if (Model_Filter::begunok($fid) && preg_match('~^([0-9\.]+)-([0-9\.]+)$~', $v)) {
+                                $this->_params['f'][$fid] = $v;
+                            } else {
+                                $vals = array_filter(explode('_', $v), 'ctype_digit');
+                                if ( ! empty($vals)) $this->_params['f'][$fid] = $vals;
+                            }
+                        }
+                        if ( ! empty($this->_params['f'])) $this->qs = TRUE;
+                        break;
+                }
             }
         }
-}
+
         if ( ! empty($this->_params['f'])) {
             foreach ($this->_params['f'] as $fid => $vals) { // выкидываем некорректные фидьтры
 
