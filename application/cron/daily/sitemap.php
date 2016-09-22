@@ -175,7 +175,9 @@ $config = [
                 'about/news',
                 'about/brands',
                 // brand/(translit), ?
-                ''
+                'about/review',
+                // about/review/(id), ?
+                'about/review/list',
             ]
         ]
     ]
@@ -254,7 +256,7 @@ foreach($config as $name => $data) {
     newPart($name);
     foreach($data['data'] as $arr) {
         foreach($arr as $id => $url)  {
-            if ( ! in_array($redirects, $url)) {
+            if ( ! in_array($url, $redirects)) {
                 writeUrl($url,
                     [
                         'changefreq' => 'daily',
