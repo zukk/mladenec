@@ -82,7 +82,6 @@ $config = [
                 ->from(['z_tag', 't'])
                 ->join('tag_redirect', 'LEFT')->on('url', '=', 'code')->on('to_id', '>', DB::expr(0))
                 ->where('code', 'LIKE', 'tag%')
-                ->where('code', 'NOT LIKE', '%.html')
                 ->where('goods_count', '>', '0')
                 ->where('url', 'IS', null)
                 ->execute()
@@ -162,7 +161,22 @@ $config = [
                 ->from('z_menu')
                 ->where('show', '=', 1)
                 ->execute()
-                ->as_array('id', 'link')
+                ->as_array('id', 'link'),
+            [
+                '',
+                'registration',
+                'catalog',
+                'pampers',
+                'novelty',
+                'superprice',
+                'hitz',
+                'about/sale.php',
+                'site_map/list.php',
+                'about/news',
+                'about/brands',
+                // brand/(translit), ?
+                ''
+            ]
         ]
     ]
 ];
@@ -226,6 +240,8 @@ function writeUrl($url, $params = []) {
 
 clearDir($dir); // стираем старые кусочки
 
+$redirects = DB::select('id', 'url')->from('tag_redirect')->where('to_id', '>', 0)->execute()->as_array('id', 'url');
+
 // главная страница
 //writeUrl('/',
 //    [
@@ -238,12 +254,14 @@ foreach($config as $name => $data) {
     newPart($name);
     foreach($data['data'] as $arr) {
         foreach($arr as $id => $url)  {
-            writeUrl($url,
-                [
-                    'changefreq' => 'daily',
-                    'priority' => '0.8'
-                ]
-            );
+            if ( ! in_array($redirects, $url)) {
+                writeUrl($url,
+                    [
+                        'changefreq' => 'daily',
+                        'priority' => '0.8'
+                    ]
+                );
+            }
         }
     }
     newPart($name, TRUE);

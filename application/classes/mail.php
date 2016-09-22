@@ -11,7 +11,7 @@ class Mail {
         'host' => 'ssl://smtp.yandex.ru',
         'port' => 465,
         'login' => self::MAIL_FROM,
-        'password' => 'fg6gr84gh',
+        'password' => 'Gdtdhd700',
         'from' => self::MAIL_FROM
     );
 
