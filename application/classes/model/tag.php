@@ -482,6 +482,8 @@ class Model_Tag extends ORM
 
             $t->goods_count_ts = time();
             $t->save();
+
+            $sphinx = new Sphinx('tag', $t->id); // проверит тег на редиректы
         }
         
         if ( ! empty($warn_on_empty)) {

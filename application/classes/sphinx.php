@@ -984,6 +984,10 @@ class Sphinx {
         $href = $this->href();
 
         if ($redir || (in_array($this->_mode, ['section', 'section_filter']) && parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) != parse_url($href, PHP_URL_PATH))) {
+            if ($this->_mode == 'tag' && $this->_tag) {
+                $this->_tag->filter_not_exists = 0;
+                $this->_tag->save();
+            }
             $request->redirect($href, 301); // редирект
         }
 

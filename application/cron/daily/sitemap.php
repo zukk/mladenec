@@ -41,6 +41,7 @@ $config = [
                 ->where('code', 'LIKE', 'catalog%')
                 ->where('code', 'NOT LIKE', '%.html')
                 ->where('goods_count', '>', '0')
+                ->where('filter_not_exists', '=', '0')
                 ->where('url', 'IS', null)
                 ->execute()
                 ->as_array('id', 'code')
@@ -84,6 +85,7 @@ $config = [
                 ->join('tag_redirect', 'LEFT')->on('url', '=', 'code')->on('to_id', '>', DB::expr(0))
                 ->where('code', 'LIKE', 'tag%')
                 ->where('goods_count', '>', '0')
+                ->where('filter_not_exists', '=', '0')
                 ->where('url', 'IS', null)
                 ->execute()
                 ->as_array('id', 'code')
@@ -253,42 +255,6 @@ $redirects = [
     'delivery/korolev.php',
     'about/review',
     'about/review/price.php',
-    'catalog/egednevnyy-uhod/vata',
-    'catalog/kolyaski/kolyaski-trekhkolesnye-progulochnye',
-    'catalog/pyure/gerber-myasnye',
-    'catalog/pyure/gerber-fruktovye',
-    'catalog/pyure/hipp-fruktovye',
-    'catalog/pyure/hipp-ovoshchnye',
-    'catalog/pyure/hipp-myasnye',
-    'catalog/kolyaski/kolyaski-inglesina-lyulki',
-    'catalog/pyure/semper-ovoshchnye',
-    'catalog/pyure/semper-myasnye',
-    'catalog/pyure/semper-fruktovye',
-    'catalog/pyure/babushkino-lukoshko-myasnye',
-    'catalog/pyure/babushkino-lukoshko-ovoshchnye',
-    'catalog/pyure/babushkino-lukoshko-fruktovye',
-    'catalog/podguzniki/podguzniki-dlya-novorozhdennyh',
-    'catalog/pyure/frutonyanya-fruktovye',
-    'catalog/pyure/frutonyanya-ovoshchnye',
-    'catalog/pyure/frutonyanya-myasnye',
-    'catalog/pyure/agusha-myasnoe',
-    'catalog/pyure/agusha-fruktovoe',
-    'catalog/pyure/semper-s-riboy',
-    'catalog/avtokresla/avtokresla-cybex-dlya-novorozhdennykh',
-    'catalog/avtokresla/avtokresla-baby-care-dlya-novorozhdennykh',
-    'catalog/prinadlegnosti-dlya-kupaniya/kovrik',
-    'catalog/prinadlegnosti-dlya-kupaniya/kovsh',
-    'catalog/avtokresla/avtokresla-romer-dlya-novorozhdennykh',
-    'catalog/avtokresla/avtokresla-carmate-dlya-novorozhdennykh',
-    'catalog/avtokresla/avtokresla-graco-dlya-novorozhdennykh',
-    'catalog/podguzniki/pampers-7-18-kg',
-    'catalog/podguzniki/pampers-11-25-kg',
-    'catalog/avtokresla/avtokresla-maxi-cosi-dlya-novorozhdennykh',
-    'catalog/avtokresla/avtokresla-peg-perego-dlya-novorozhdennykh',
-    'catalog/avtokresla/avtokresla-dlya-novorozhdennykh',
-    'catalog/podguzniki/libero-4',
-    'catalog/kolyaski/kolyaski-dlya-novorozhdennykh',
-    'catalog/kolyaski/kolyaski-lyulki',
     ] + DB::select('id', 'url')->from('tag_redirect')->where('to_id', '>', 0)->execute()->as_array('id', 'url');
 
 // главная страница
