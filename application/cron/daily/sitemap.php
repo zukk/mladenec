@@ -60,6 +60,7 @@ $config = [
                 ->join(['b_file',        'file'])   ->on('prop.img1600',    '=', 'file.id')
 
                 ->where('good.show',        '=', 1)
+                ->where('good.qty',        '!=', 0)
                 ->where('good.section_id',  '>', 0)
                 ->where('good.brand_id',    '>', 0)
                 ->where('good.group_id',    '>', 0)
