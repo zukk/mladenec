@@ -164,7 +164,6 @@ $config = [
                 ->as_array('id', 'link'),
             [
                 '',
-                'registration',
                 'catalog',
                 'pampers',
                 'novelty',
@@ -174,10 +173,9 @@ $config = [
                 'site_map/list.php',
                 'about/news',
                 'about/brands',
+                'article',
                 // brand/(translit), ?
-                'about/review',
                 // about/review/(id), ?
-                'about/review/list',
             ]
         ]
     ]
@@ -242,7 +240,16 @@ function writeUrl($url, $params = []) {
 
 clearDir($dir); // стираем старые кусочки
 
-$redirects = DB::select('id', 'url')->from('tag_redirect')->where('to_id', '>', 0)->execute()->as_array('id', 'url');
+$redirects = [
+    'catalog/kolyaski/kolyaski-inglesina-dlya-novorozhdennykh',
+    'tag/gigiena_i_uxod/gigiena_dlya_novorozhdennyx.html',
+    'tag/son_progulka_puteshestvie/avtokresla_maxi-cosi/xp_s_0-12_mes.html',
+    'news',
+    'about/article',
+    'actions/current',
+    'delivery/korolev.php',
+    'about/review/price.php',
+    ] + DB::select('id', 'url')->from('tag_redirect')->where('to_id', '>', 0)->execute()->as_array('id', 'url');
 
 // главная страница
 //writeUrl('/',
