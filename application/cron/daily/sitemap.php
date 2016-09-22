@@ -249,6 +249,13 @@ $redirects = [
     'actions/current',
     'delivery/korolev.php',
     'about/review/price.php',
+    'catalog/egednevnyy-uhod/vata',
+    'catalog/kolyaski/kolyaski-trekhkolesnye-progulochnye',
+    'catalog/pyure/gerber-myasnye',
+    'catalog/pyure/gerber-fruktovye',
+    'catalog/pyure/hipp-fruktovye',
+    'catalog/pyure/hipp-ovoshchnye',
+    'catalog/pyure/hipp-myasnye',
     ] + DB::select('id', 'url')->from('tag_redirect')->where('to_id', '>', 0)->execute()->as_array('id', 'url');
 
 // главная страница
