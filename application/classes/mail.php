@@ -27,7 +27,7 @@ class Mail {
     private static $allowed_extensions = array('doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'rtf', 'txt', 'csv',
         'jpg', 'jpeg', 'gif', 'png', 'tiff', 'wbmp', 'zip', 'gz', 'gzip', 'rar');
 
-    public static $test_accounts = ['neverovsky@gmail.com','artem2102@list.ru','ekaterinaden@mail.ru', 'm.zukk@ya.ru', 'm.zukk@yandex.ru', 'a.hohlacheva@mladenec.ru', 'mmladenec@bk.ru'];
+    public static $test_accounts = ['m.zukk@ya.ru', 'm.zukk@yandex.ru'];
     
     function __construct($charset = false)
     {
