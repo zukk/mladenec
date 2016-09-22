@@ -223,7 +223,8 @@ function newPart($name, $finish = FALSE)
 function writeUrl($url, $params = []) {
     global $length, $file, $host, $c;
 
-    $line = '<url><loc>http://' . $host . '/' . htmlentities($url) . '</loc>';
+    if ($url == 'p&g') $url = rawurlencode($url);
+    $line = '<url><loc>http://' . $host . '/' . $url . '</loc>';
 
     foreach($params as $key => $param){
         if (in_array($key, ['changefreq', 'priority'])) {
