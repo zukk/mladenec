@@ -749,7 +749,8 @@ class Sphinx {
         $redir = FALSE;
         $stats = $this->stats();
 
-        foreach($request->query() as $k => $v) {
+if ($request) {        
+foreach($request->query() as $k => $v) {
             switch ($k) {
                 case 'b': // брэнд
                     $this->_params['b'] = array_filter(explode('_', $v), 'ctype_digit');
@@ -882,7 +883,7 @@ class Sphinx {
                     break;
             }
         }
-
+}
         if ( ! empty($this->_params['f'])) {
             foreach ($this->_params['f'] as $fid => $vals) { // выкидываем некорректные фидьтры
 
@@ -985,10 +986,10 @@ class Sphinx {
 
         if ($redir || (in_array($this->_mode, ['section', 'section_filter']) && parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) != parse_url($href, PHP_URL_PATH))) {
             if ($this->_mode == 'tag' && $this->_tag) {
-                $this->_tag->filter_not_exists = 0;
+                $this->_tag->filter_not_exists = 1;
                 $this->_tag->save();
             }
-            $request->redirect($href, 301); // редирект
+            if ($request) $request->redirect($href, 301); // редирект
         }
 
         return $this->_params;
