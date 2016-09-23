@@ -226,7 +226,9 @@ function newPart($name, $finish = FALSE)
 function writeUrl($url, $params = []) {
     global $length, $file, $host, $c;
 
-    if ($url == 'p&g') $url = rawurlencode($url);
+    $base = basename($url);
+    $before_base = substr($url, -strlen($base));
+    $url = $before_base.rawurlencode($base);
     $line = '<url><loc>http://' . $host . '/' . $url . '</loc>';
 
     foreach($params as $key => $param){
@@ -255,6 +257,11 @@ $redirects = [
     'delivery/korolev.php',
     'about/review',
     'about/review/price.php',
+    'about/sale.php',
+    'brands/detail.php',
+    'brands/pigeon.php',
+    'brands/procter_and_gambel.php',
+    'brands/pigeon.php',
     ] + DB::select('id', 'url')->from('tag_redirect')->where('to_id', '>', 0)->execute()->as_array('id', 'url');
 
 // главная страница
