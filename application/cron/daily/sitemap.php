@@ -227,7 +227,7 @@ function writeUrl($url, $params = []) {
     global $length, $file, $host, $c;
 
     $base = basename($url);
-    $before_base = substr($url, -strlen($base));
+    $before_base = substr($url, 0, strlen($url)-strlen($base));
     $url = $before_base.rawurlencode($base);
     $line = '<url><loc>http://' . $host . '/' . $url . '</loc>';
 
