@@ -746,7 +746,7 @@ class Sphinx {
         ];
 
         $request = Request::current();
-        $redir = FALSE;
+        $redir = '';
         $stats = $this->stats();
 
         if ($request) {
@@ -758,7 +758,7 @@ class Sphinx {
 
                         foreach ($this->_params['b'] as $key => $b) {
                             if (empty($stats['brands'][$b])) {
-                                $redir = TRUE;
+                                $redir .= 'nob'.$b;
                                 unset($this->_params['b'][$key]);
                             }
                         }
@@ -771,7 +771,7 @@ class Sphinx {
 
                         foreach ($this->_params['c'] as $key => $c) {
                             if (empty($stats['sections'][$c])) {
-                                $redir = TRUE;
+                                $redir .= 'noc'.$c;
                                 unset($this->_params['c'][$key]);
                             }
                         }
@@ -784,7 +784,7 @@ class Sphinx {
 
                         foreach ($this->_params['co'] as $key => $c) {
                             if (empty($stats['countries'][$c])) {
-                                $redir = TRUE;
+                                $redir .= 'noco'.$c;
                                 unset($this->_params['co'][$key]);
                             }
                         }
@@ -817,20 +817,20 @@ class Sphinx {
                                     $p[0] = $swap;
                                 }
                                 if ($p[1] == 0) { // пустой вес
-                                    $redir = TRUE;
+                                    $redir .= 'now1';
                                 } else {
                                     $this->_params['weight'] = array($p[0], $p[1]);
 
                                     if ($this->_params['weight'][0] < 0) {
                                         $this->_params['weight'][0] = 0;
-                                        $redir = TRUE;
+                                        $redir .= 'badw0';
                                     }
                                     if ($this->_params['weight'][1] > 35) {
                                         $this->_params['weight'][1] = 35;
-                                        $redir = TRUE;
+                                        $redir .= 'badw1';
                                     }
                                     if (($this->_params['weight'][0] == 0) and ($this->_params['weight'][1] == 35)) {
-                                        $redir = TRUE;
+                                        $redir .= 'badww';
                                         unset($this->_params['weight']);
                                     }
                                 }
@@ -841,7 +841,7 @@ class Sphinx {
                     case 'pp': // на странице
                         $this->_params['pp'] = intval($v);
                         if ( ! in_array($this->_params['pp'], $this->_params['per_page'])) { // на странице стоит неразрешённое число - сбрасываем
-                            $redir = TRUE;
+                            $redir .= 'badpp';
                             unset($this->_params['pp']);
                         }
                         break;
@@ -850,20 +850,20 @@ class Sphinx {
                         if (in_array($v, $this->_params['sorts'])) {
                             $this->_params['s'] = $v;
                         } else { // не разрешённая сортировка - сбрасываем
-                            $redir = TRUE;
+                            $redir .= 'bads';
                             unset($this->_params['s']);
                         }
                         break;
 
                     case 'a': // акция
                         if ( ! empty($this->_params['a']) && ctype_digit($this->_params['a'])) { // мы уже на странице акции - сбросим параметр a
-                            $redir = TRUE;
+                            $redir .= 'bada';
                             unset($this->_params['a']);
                         } else {
                             if ($v == 1) {
                                 $this->_params['a'] = TRUE;
                             } else { // не разрешённый флаг акции - сбрасываем
-                                $redir = TRUE;
+                                $redir .= 'bada1';
                                 unset($this->_params['a']);
                             }
                         }
@@ -905,16 +905,16 @@ class Sphinx {
                         list($from, $to) = explode('-', $vals);
                         if ($from < $min) {
                             $from = $min;
-                            $redir = TRUE;
+                            $redir .= 'mm1';
                         }
                         if ($to > $max) {
                             $to = $max;
-                            $redir = TRUE;
+                            $redir .= 'mm2';
                         }
                         $this->_params['f'][$fid] = $from . '-' . $to;
 
                         if ($from == $min && $to == $max) {
-                            $redir = TRUE;
+                            $redir .= 'mm3 '.$fid;
                             unset($this->_params['f'][$fid]);
                         }
                     }
@@ -930,18 +930,18 @@ class Sphinx {
                     $fv = current($vals);
                     $this->_mode = 'section_filter';
                     $this->_query = $fid.'_'.$fv;
-                    $redir = TRUE;
+                    $redir .= 'sf '.$fid.'_'.$fv;
                     unset($this->_params['f'][$fid]);
                 };
 
                 foreach ($vals as $key => $fv) {
                     if (empty($stats['vals'][$fid][$fv]) && $fid != Model_Filter::TASTE) {  // выбран фильтр которого нет в категории
-                        $redir = TRUE;
+                        $redir .= 'sf1 '.$fid.'_'.$key;
                         unset($this->_params['f'][$fid][$key]);
                     }
 
                     if ( ! empty($fv_redirect[$fv])) { // редиректим старые
-                        $redir = TRUE;
+                        $redir .= 'sf2 '.$fid.'_'.$fv;
                         unset($this->_params['f'][$fid][$key]);
                         $this->_params['f'][$fid][$fv_redirect[$fv]] = $fv_redirect[$fv];
                     }
@@ -965,7 +965,7 @@ class Sphinx {
                         }
 
                         if ($unset) {
-                            $redir = TRUE;
+                            $redir .= 'funset '.$unset;
                             unset($this->_params['f'][$unset]);
                         }
                     }
@@ -990,7 +990,10 @@ class Sphinx {
                 $this->_tag->filter_not_exists = 1;
                 $this->_tag->save();
             }
-            if ($request) $request->redirect($href, 301); // редирект
+            if ($request) {
+                Log::instance()->add(Log::INFO, 'redir '.$_SERVER['REQUEST_URI'].' to '.$href.'. REASON: '.$redir);
+                $request->redirect($href, 301);
+            } // редирект
         }
 
         return $this->_params;
