@@ -514,7 +514,7 @@ class Controller_Product extends Controller_Frontend {
 
                 $nutrilon = Session::instance()->get_once('nutrilon');
                 if ($nutrilon) {
-                    $o->price_ship -= $nutrilon;
+                    // $o->price_ship -= $nutrilon;
                 }
 
             } elseif( $o->delivery_type == Model_Order::SHIP_OZON && isset($post['ozon_delivery_id']) ) {
