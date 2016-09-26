@@ -936,7 +936,7 @@ class Sphinx {
 
                 foreach ($vals as $key => $fv) {
                     if (empty($stats['vals'][$fid][$fv]) && $fid != Model_Filter::TASTE) {  // выбран фильтр которого нет в категории
-                        $redir .= 'sf1 '.$fid.'_'.$key;
+                        $redir .= 'sf1 '.$fid.'_'.$fv;
                         unset($this->_params['f'][$fid][$key]);
                     }
 
