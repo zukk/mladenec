@@ -1298,7 +1298,7 @@ class Cart {
         $first_price = current($return['times'])['price'];
 
         // !!! акция нутрилон - бесплатная доставка внутри мкад если есть товары из списка
-        if ($first_price > 0 && Model_Zone::locate($latlong, Model_Zone::MKAD)) { // внутри мкад
+        if (FALSE && $this->goods && $first_price > 0 && Model_Zone::locate($latlong, Model_Zone::MKAD)) { // внутри мкад
 
             $total = DB::select([DB::expr('COUNT(*)'), 'total'])
                 ->from('z_good')
