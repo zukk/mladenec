@@ -125,7 +125,7 @@ class Controller_Frontend extends Controller_Smarty
         View::bind_global('vitrina',    Kohana::$server_name);
 
         if ($this->request->query('admitad_uid')) {
-            Cookie::set('admitad_uid', $this->request->query('admitad_uid'));
+            Cookie::set('admitad_uid', $this->request->query('admitad_uid'), 30 * 24 * 3600); // 30 дней
         }
 		
 		// убираем от роботов цены

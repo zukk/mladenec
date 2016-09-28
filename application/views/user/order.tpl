@@ -152,9 +152,8 @@
         {include file='common/retag.tpl' level=4}
 
         {* admitad counter *}
-        {assign var=admitad_uid value=Cookie::get('admitad_uid')}
         {capture assign=action_code}{if $o->data->num eq 1}2{* новый клиент*}{else}3{/if}{/capture}
-        {if $admitad_uid}
+        {if not empty($admitad_uid)}
             <script>
                 (function (d, w) {
                     w._admitadPixel = {

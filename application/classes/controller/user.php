@@ -717,7 +717,11 @@ class Controller_User extends Controller_Frontend
             if (Session::instance()->get('show_ecommerce') == $order->id) { // чтобы не слать статистику в ГА и Я второй раз
                 $this->tmpl['is_new'] = TRUE;
                 Session::instance()->delete('show_ecommerce');
-                $this->layout->dataLayer = View::factory('smarty:user/order/datalayer', ['o' => $order, 'order_goods' => $order_goods]); // хотели dataLayer выше gtm
+                $this->layout->dataLayer = View::factory('smarty:user/order/datalayer',
+                    ['o' => $order, 'order_goods' => $order_goods]
+                ); // хотели dataLayer выше gtm
+                $this->tmpl['admitad_uid'] = Cookie::get('admitad_uid');
+                Cookie::delete('admitad_uid');
             }
             $this->tmpl['thanx'] = TRUE;
             $this->layout->o = $order;
