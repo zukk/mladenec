@@ -464,7 +464,10 @@ if( empty($_SERVER['HTTP_HOST']) ||  ! preg_match( '#^m\.#', $_SERVER['HTTP_HOST
     Route::set('admin_valupd', 'admin/valupd.php')
         ->defaults(array('controller' => 'admin', 'action' => 'valupd'));
 
-    Route::set('admin_valgooglecatupd', 'admin/valgooglecatupd.php')
+Route::set('admin_getinfo', 'od-men/getinfo.php')
+->defaults(['controller' => 'admin', 'action' => 'getinfo']);   
+
+ Route::set('admin_valgooglecatupd', 'admin/valgooglecatupd.php')
         ->defaults(array('controller' => 'admin', 'action' => 'valgooglecatupd'));
 
     Route::set('admin_ajax_call', 'od-men/ajax/card_call')

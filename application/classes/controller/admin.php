@@ -11,7 +11,7 @@ class Controller_Admin extends Controller_Authorised {
 
     /**
      * Url возврата
-     * 
+    * 
      * @var string
      */
     protected $search_query = '';
@@ -3435,17 +3435,19 @@ class Controller_Admin extends Controller_Authorised {
 
     public function action_getinfo()
     {
-        $info = [
+        
+
+$info = [
             'orders' =>
                 DB::select(
                     'u.id',
-                    DB::expr('FROM_UNIXTIME(u.created) as created'),
+                    DB::expr('date(FROM_UNIXTIME(u.created)) as created'),
                     DB::expr('sum(IF(o.status = \'F\', 1, 0)) as delivered'),
                     DB::expr('sum(IF(o.status != \'F\', 1, 0)) as other'),
-                    DB::expr('sum(IF(o.status = \'F\', o.price + o.price_ship, 0)) as delivered_sum'),
-                    DB::expr('sum(IF(o.status != \'F\', o.price + o.price_ship, 0)) as other_sum'),
-                    DB::expr('min(o.created) as first'),
-                    DB::expr('min(o.created) as last')
+                    DB::expr('round(sum(IF(o.status = \'F\', o.price + o.price_ship, 0))) as delivered_sum'),
+                    DB::expr('round(sum(IF(o.status != \'F\', o.price + o.price_ship, 0))) as other_sum'),
+                    DB::expr('date(min(o.created)) as first'),
+                    DB::expr('date(max(o.created)) as last')
                 )
                     ->from(['z_order', 'o'])
                     ->join(['z_user', 'u'])
@@ -3454,22 +3456,29 @@ class Controller_Admin extends Controller_Authorised {
         ];
 
         $type = $this->request->post('type');
+if ($type) {
         if (empty($info[$type])) throw new HTTP_Exception_404();
         $q = $info[$type];
         $where = $this->request->post('where');
         if ( ! empty($where)) {
-            foreach($where as $k1) {
-                foreach($k1 as $k2 => $vals) {
-                    $q->where($k1, $k2, preg_split('~\D~', $vals));
+            foreach($where as $k1 => $v1) {
+                foreach($v1 as $k2 => $vals) {
+                    $q->where(DB::expr($k1), $k2, preg_split('~\D~', $vals));
                 }
             }
         }
 
         $result = $q->execute()->as_array();
+header('Content-Type: text/csv');
+header('Content-Disposition: attachment; filename="'.$type.'.csv"');
         $out = fopen('php://output', 'w');
-        fputcsv($out, $result);
+if ($result) fputcsv($out, array_keys($result[0]), ';');
+foreach($result as $str) fputcsv($out, $str, ';');
         fclose($out);
         exit();
+} else {
+        $this->layout->body = View::factory('smarty:admin/getinfo/list');
+}
     }
 }
 
