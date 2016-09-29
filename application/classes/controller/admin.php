@@ -3432,5 +3432,44 @@ class Controller_Admin extends Controller_Authorised {
         }
         $this->request->redirect(Route::url('admin_list', array('model' => 'blocklinks')));
     }
+
+    public function action_getinfo()
+    {
+        $info = [
+            'orders' =>
+                DB::select(
+                    'u.id',
+                    DB::expr('FROM_UNIXTIME(u.created) as created'),
+                    DB::expr('sum(IF(o.status = \'F\', 1, 0)) as delivered'),
+                    DB::expr('sum(IF(o.status != \'F\', 1, 0)) as other'),
+                    DB::expr('sum(IF(o.status = \'F\', o.price + o.price_ship, 0)) as delivered_sum'),
+                    DB::expr('sum(IF(o.status != \'F\', o.price + o.price_ship, 0)) as other_sum'),
+                    DB::expr('min(o.created) as first'),
+                    DB::expr('min(o.created) as last')
+                )
+                    ->from(['z_order', 'o'])
+                    ->join(['z_user', 'u'])
+                    ->on('u.id', '=', 'o.user_id')
+                    ->group_by('u.id')
+        ];
+
+        $type = $this->request->post('type');
+        if (empty($info[$type])) throw new HTTP_Exception_404();
+        $q = $info[$type];
+        $where = $this->request->post('where');
+        if ( ! empty($where)) {
+            foreach($where as $k1) {
+                foreach($k1 as $k2 => $vals) {
+                    $q->where($k1, $k2, preg_split('~\D~', $vals));
+                }
+            }
+        }
+
+        $result = $q->execute()->as_array();
+        $out = fopen('php://output', 'w');
+        fputcsv($out, $result);
+        fclose($out);
+        exit();
+    }
 }
 
