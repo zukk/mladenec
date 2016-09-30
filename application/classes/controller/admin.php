@@ -3435,50 +3435,48 @@ class Controller_Admin extends Controller_Authorised {
 
     public function action_getinfo()
     {
-        
-
-$info = [
-            'orders' =>
-                DB::select(
-                    'u.id',
-                    DB::expr('date(FROM_UNIXTIME(u.created)) as created'),
-                    DB::expr('sum(IF(o.status = \'F\', 1, 0)) as delivered'),
-                    DB::expr('sum(IF(o.status != \'F\', 1, 0)) as other'),
-                    DB::expr('round(sum(IF(o.status = \'F\', o.price + o.price_ship, 0))) as delivered_sum'),
-                    DB::expr('round(sum(IF(o.status != \'F\', o.price + o.price_ship, 0))) as other_sum'),
-                    DB::expr('date(min(o.created)) as first'),
-                    DB::expr('date(max(o.created)) as last')
-                )
-                    ->from(['z_order', 'o'])
-                    ->join(['z_user', 'u'])
-                    ->on('u.id', '=', 'o.user_id')
-                    ->group_by('u.id')
-        ];
-
         $type = $this->request->post('type');
-if ($type) {
-        if (empty($info[$type])) throw new HTTP_Exception_404();
-        $q = $info[$type];
-        $where = $this->request->post('where');
-        if ( ! empty($where)) {
-            foreach($where as $k1 => $v1) {
-                foreach($v1 as $k2 => $vals) {
-                    $q->where(DB::expr($k1), $k2, preg_split('~\D~', $vals));
+        switch ($type) {
+            case "orders":
+                $sub = DB::select('user_id')->from('z_order');
+                $where = $this->request->post('where');
+                if ( ! empty($where)) {
+                    foreach($where as $k1 => $v1) {
+                        foreach($v1 as $k2 => $vals) {
+                            $sub->where(DB::expr($k1), $k2, preg_split('~\D~', $vals));
+                        }
+                    }
                 }
-            }
-        }
+                $q = DB::select(
+                        'u.id',
+                        DB::expr('date(FROM_UNIXTIME(u.created)) as created'),
+                        DB::expr('sum(IF(o.status = \'F\', 1, 0)) as delivered'),
+                        DB::expr('sum(IF(o.status != \'F\', 1, 0)) as other'),
+                        DB::expr('round(sum(IF(o.status = \'F\', o.price + o.price_ship, 0))) as delivered_sum'),
+                        DB::expr('round(sum(IF(o.status != \'F\', o.price + o.price_ship, 0))) as other_sum'),
+                        DB::expr('date(min(o.created)) as first'),
+                        DB::expr('date(max(o.created)) as last')
+                    )
+                        ->from(['z_order', 'o'])
+                        ->join(['z_user', 'u'])
+                        ->on('u.id', '=', 'o.user_id')
+                        ->where('u.id', 'IN', $sub)
+                        ->group_by('u.id');
+                break;
 
-        $result = $q->execute()->as_array();
-header('Content-Type: text/csv');
-header('Content-Disposition: attachment; filename="'.$type.'.csv"');
-        $out = fopen('php://output', 'w');
-if ($result) fputcsv($out, array_keys($result[0]), ';');
-foreach($result as $str) fputcsv($out, $str, ';');
-        fclose($out);
-        exit();
-} else {
-        $this->layout->body = View::factory('smarty:admin/getinfo/list');
-}
+            default:
+                $this->layout->body = View::factory('smarty:admin/getinfo/list');
+        }
+        if ($type && ! empty($q)) {
+            $result = $q->execute()->as_array();
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment; filename="'.$type.'.csv"');
+            $out = fopen('php://output', 'w');
+            if ($result) fputcsv($out, array_keys($result[0]), ';');
+            foreach($result as $str) fputcsv($out, $str, ';');
+            fclose($out);
+            exit();
+        }
     }
 }
 
