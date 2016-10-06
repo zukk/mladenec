@@ -8,40 +8,16 @@
         ecomm_pagetype: 'other'
     };
 
-    function getPosition(e) {
-        var posx = 0;
-        var posy = 0;
-
-        if (!e) var e = window.event;
-        if (e.pageX || e.pageY) {
-            posx = e.pageX;
-            posy = e.pageY;
-        }
-        else if (e.clientX || e.clientY) {
-            posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-            posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-        }
-        return {
-            x: posx,
-            y: posy
-        }
-    }
-
-    document.addEventListener( "click", function(e) {
-        var x = getPosition(e).x;
-        var y = getPosition(e).y;
-        var pos_left = $("div#body").offset().left;
-        var pos_right = pos_left + 995;
-        if(x <= pos_left && y >= 100){
-            if("{$link_f}") {
-                window.open("{$link_f}");
-            }
-        }
-        if(x >= pos_right && y >= 100){
-            if("{$link_s}"){
-                window.open("{$link_s}");
-            }
-        }
+    document.on('click', '#all', function(e) {
+       if (e.currentTarget == e.target) {
+           var margin_width = ($('body').width() - 994) / 2;
+           if (e.pageX < margin_width && "{$link_f}") {
+               window.open("{$link_f}");
+           }
+           if (e.pageX > margin_width + 994 && "{$link_s}") {
+               window.open("{$link_s}");
+           }
+       }
     });
 </script>
 
