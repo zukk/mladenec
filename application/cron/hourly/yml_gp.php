@@ -41,7 +41,7 @@ $goods_written = 0;
 $image_types = 'originals';
 for ($heap_number = 0; $goods = Model_Good::for_yml($heap_size, $heap_number); $heap_number++) {
     foreach($goods as &$g) { // тут передаем по ссылке, иначе послдний элемент дублируется
-        $g['desc'] = mb_substr(Txt::clean_rude_symbols(htmlentities(strip_tags($g['desc']))), 0, 175);
+        $g['desc'] = mb_substr(Txt::clean_rude_symbols(htmlentities(strip_tags(str_replace('><', '> <', $g['desc'])))), 0, 175);
 
         if (mb_strlen($g['desc']) == 175) { // не более 175 символов, обрезаем по слову (крайний пробел)
             $g['desc'] = mb_substr($g['desc'], 0, mb_strrpos($g['desc'], ' '));

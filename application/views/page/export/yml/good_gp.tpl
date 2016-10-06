@@ -7,10 +7,10 @@
     <delivery>true</delivery>
     <sales_notes>{Model_Action::sales_notes($g.id)}</sales_notes>
 
-	<vendor><![CDATA[{Txt::clean_rude_symbols($g['brand_name']|escape:'html')}]]></vendor>
+	<vendor>{$g.brand_name|escape:'html'}</vendor>
 
-	<model><![CDATA[{Txt::clean_rude_symbols($g['group_name']|escape:'html')} {Txt::clean_rude_symbols($g['name']|escape:'html')}]]></model>
-	<description><![CDATA[{Txt::clean_rude_symbols($g['desc']|replace:'><':'> <'|strip_tags|escape:'html')}]]></description>
+	<model>{$g.group_name|escape:'html'} {$g.name|escape:'html'}</model>
+	<description>{$g.desc|escape:'html'}</description>
     <manufacturer_warranty>true</manufacturer_warranty>
 
 </offer>
