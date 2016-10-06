@@ -10,7 +10,7 @@
 	<vendor><![CDATA[{Txt::clean_rude_symbols($g['brand_name']|escape:'html')}]]></vendor>
 
 	<model><![CDATA[{Txt::clean_rude_symbols($g['group_name']|escape:'html')} {Txt::clean_rude_symbols($g['name']|escape:'html')}]]></model>
-	<description><![CDATA[{Txt::clean_rude_symbols($g['desc']|strip_tags|escape:'html')}]]></description>
+	<description><![CDATA[{Txt::clean_rude_symbols($g['desc']|replace:'><':'> <'|strip_tags|escape:'html')}]]></description>
     <manufacturer_warranty>true</manufacturer_warranty>
 
 </offer>
