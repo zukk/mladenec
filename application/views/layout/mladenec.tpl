@@ -8,7 +8,7 @@
         ecomm_pagetype: 'other'
     };
 
-    $(document).on('click', '#all', function(e) {
+    $(document).on('click', '#bg', function(e) {
        if (e.currentTarget == e.target) {
            var margin_width = ($('body').width() - 994) / 2;
            if (e.pageX < margin_width && "{$link_f}") {
