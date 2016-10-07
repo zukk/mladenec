@@ -994,7 +994,7 @@ class Sphinx {
                 Log::instance()->add(Log::INFO, 'redir '.$this->_mode.$this->_query.' to '.$href.'. REASON: '.$redir);
                 $request->redirect($href, 301);
             } // редирект
-        } elseif ($this->_mode == 'tag' && $this->_tag) { {
+        } elseif ($this->_mode == 'tag' && $this->_tag) {
             $this->_tag->filter_not_exists = 0;
             $this->_tag->save();
         }
