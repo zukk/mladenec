@@ -38,7 +38,7 @@
                     <li id="sert"><a href="/gift-cards">Холика</a></li>
                 {/if}
                 {if $item->id eq 29558}
-                    <li id="menu_toy_sale"><a href="/toys-sale">Распродажа игрушек</a></li>
+                    <li id="menu_toy_sale"><a href="/br-toys">Распродажа игрушек</a></li>
                 {/if}
             </ul>
         </div>
