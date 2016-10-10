@@ -247,7 +247,7 @@ class Model_File extends ORM {
      */
     function get_host()
     {
-        return 'http://st'.($this->pk() % 10).'.mladenec.ru';
+        return 'http://www.mladenec-shop.ru'; // 'http://st'.($this->pk() % 10).'.mladenec.ru';
     }
 
     /**
