@@ -256,6 +256,7 @@ class Sphinx {
                 if ( ! $action->loaded() || ! $action->active) return FALSE; //throw new HTTP_Exception_404;
                 if ($action->type == Model_Action::TYPE_PRICE) {
                     $this->_params['sorts'] = ['discount', 'rating', 'new', 'price', 'pricedesc']; // первая сортировка - по скидке
+                    $this->_params['s'] = 'discount'; // ставим ее по-умолчанию
                 }
                 $this->_params['a'] = $this->_menu_params['a'] = intval($this->_query);
                 $this->_params['x'] = $this->_menu_params['x'] = 1;
