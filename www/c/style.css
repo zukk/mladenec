@@ -7076,18 +7076,6 @@ td.select-present {
     line-height: 37px !important;
     padding: 0 0 0 47px !important;
 }
-#menu_japonica a {
-    letter-spacing: 1px;
-    text-indent:-10000px;
-    height: 37px;
-    margin: 10px 8px 0 !important;
-    background: #fff url(/images/menu_japonica.png) no-repeat 0 0;
-    border-radius: 5px;
-    border-bottom: none !important;
-    line-height: 37px !important;
-    padding: 0 0 0 47px !important;
-}
-
 
 #holika a {
     letter-spacing: 1px;

@@ -31,9 +31,6 @@
                 {if $item->id eq 29890}
                     <li id="bike_button"><a href="/det-transport">Детский транспорт</a></li>
                 {/if}
-                {if $item->id eq 29429}
-                    <li id="menu_japonica"><a href="/japan-sept">Холика</a></li>
-                {/if}
                 {if $item->id eq 28627}
                     <li id="sert"><a href="/gift-cards">Холика</a></li>
                 {/if}
