@@ -148,10 +148,6 @@ $(document).ready(function() {
                     <label for="order">Искусственная Популярность</label>
                     <input name="order" id="order" value="{$i->order}" type="number" class="width-20" />
                 </p>
-                <p>
-                    <label for="order_search">Сортировка для поиска</label>
-                    <input name="order_search" id="order_search" value="{$i->order_search}" type="number" class="width-20" />
-                </p>
             </div>
             <div class="unit-70">
                 <label>Дубликаты товара</label>
