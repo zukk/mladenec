@@ -21,7 +21,6 @@
 * @property old_price
 * @property barcode
 * @property show
-* @property order_search
 */
 
 class Model_Good extends ORM {
@@ -115,7 +114,6 @@ class Model_Good extends ORM {
         'ozon_type_id'    => 0,   // id озон категории
         'google_cat_id'   => 0,   // id google merchant
         'seo_auto'        => 0,
-        'order_search'    => 0,
         'cpa_model'       => 0,  // включить для товара cpa model
     );
 	

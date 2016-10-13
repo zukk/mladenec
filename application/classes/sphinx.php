@@ -254,6 +254,10 @@ class Sphinx {
             case 'action':
                 $action = new Model_Action($this->_query);
                 if ( ! $action->loaded() || ! $action->active) return FALSE; //throw new HTTP_Exception_404;
+                if ($action->type == Model_Action::TYPE_PRICE) {
+                    $this->_params['sorts'] = ['discount', 'rating', 'new', 'price', 'pricedesc']; // первая сортировка - по скидке
+                    $this->_params['s'] = 'discount'; // ставим ее по-умолчанию
+                }
                 $this->_params['a'] = $this->_menu_params['a'] = intval($this->_query);
                 $this->_params['x'] = $this->_menu_params['x'] = 1;
 
@@ -1234,33 +1238,18 @@ class Sphinx {
             $q->order_by('x', 'DESC');
 
             if ( ! empty($params['s'])) {
-                if(isset($this->_params['q']) && $this->_params['q'] !== NULL){
-                    // search
-                    $sorts = [
-                        'new'       => '-nt',
-                        'rating'    => '-popularity',
-                        'name'      => 'alphabet',
-                        'price'     => 'price',
-                        'pricedesc' => '-price',
-                        'pricepack'     => 'price',
-                        'pricepackdesc' => '-price',
-                        'priceitem'     => 'priceitem',
-                        'priceitemdesc' => '-priceitem',
-                    ];
-                } else {
-                    // category
-                    $sorts = [
-                        'new'       => '-nt',
-                        'rating'    => '-popularity',
-                        'name'      => 'alphabet',
-                        'price'     => 'price',
-                        'pricedesc' => '-price',
-                        'pricepack'     => 'price',
-                        'pricepackdesc' => '-price',
-                        'priceitem'     => 'priceitem',
-                        'priceitemdesc' => '-priceitem',
-                    ];
-                }
+                $sorts = [
+                    'new'       => '-nt',
+                    'rating'    => '-popularity',
+                    'name'      => 'alphabet',
+                    'price'     => 'price',
+                    'pricedesc' => '-price',
+                    'pricepack'     => 'price',
+                    'pricepackdesc' => '-price',
+                    'priceitem'     => 'priceitem',
+                    'priceitemdesc' => '-priceitem',
+                    'discount'      => '-discount_percent'
+                ];
                 if ( ! empty($sorts[$params['s']])) {
                     $sort = $sorts[$params['s']];
                     $q->order_by(trim($sort, '-'), substr($sort, 0, 1) === '-' ? 'DESC' : 'ASC');
