@@ -994,7 +994,7 @@ class Sphinx {
                 $this->_tag->filter_not_exists = 1;
                 $this->_tag->save();
             }
-            if ($request) {
+            if ($request && $request->controller() != 'odinc') {
                 Log::instance()->add(Log::INFO, 'redir '.$this->_mode.$this->_query.' to '.$href.'. REASON: '.$redir);
                 $request->redirect($href, 301);
             } // редирект

@@ -11,7 +11,7 @@ $CONFIG = array(
 	// ACCESS TOKEN granted to you by some Instagram app.
 	// Follow this link: http://inwidget.ru/getAccessToken.php
 	// to get your own ACCESS TOKEN by inWidget app.
-	'ACCESS_TOKEN' => '2039687311.0671eae.cc324871be2d4677aec8c19e0845b57b',
+	'ACCESS_TOKEN' => '2039687311.0671eae.281b4a78d18349c5886be8a7f44cee43',
 
 	// Get pictures from WORLDWIDE by tag name. 
 	// Use this options only if you want show pictures of other users. 
@@ -22,7 +22,7 @@ $CONFIG = array(
 	'imgRandom' => true,
 
 	// How many pictures widget will get from Instagram?
-	'imgCount' => 30,
+	'imgCount' => 10,
 
 	// Cache expiration time (hours)
 	'cacheExpiration' => 6,
