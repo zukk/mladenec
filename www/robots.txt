@@ -1,0 +1,88 @@
+User-agent: *
+Disallow: /search
+Disallow: /account/
+Disallow: /auth/
+Disallow: /brands/
+Disallow: /catalog*html
+Disallow: /callback/
+Disallow: /personal/
+Disallow: /novelty/
+Disallow: /about/review
+Disallow: /review/
+Disallow: /product/warn/
+Disallow: /account
+Disallow: /od-men
+Disallow: /*mamypoko
+Disallow: /about/news/fest2015
+Disallow: */sale.php
+Disallow: *amp;
+Disallow: *[
+Disallow: *?b%3D51650
+Disallow: *&filter%
+Disallow: /actions/*/
+Disallow: /user/
+Disallow: /1
+Disallow: /2
+Disallow: /3
+Disallow: /4
+Disallow: /5
+Disallow: /6
+Disallow: /7
+Disallow: /8
+Disallow: /9
+Disallow: /0
+Allow: /23*f
+Allow: /9*m
+Allow: /8*m
+
+Sitemap: http://www.mladenec-shop.ru/sitemap.xml
+
+User-agent: Yandex
+Disallow: /search
+Disallow: /account/
+Disallow: /auth/
+Disallow: /brands/
+Disallow: /catalog*html
+Disallow: /callback/
+Disallow: /personal/
+Disallow: /novelty/
+Disallow: /about/review
+Disallow: /review/
+Disallow: /product/warn/
+Disallow: /account
+Disallow: /od-men
+Disallow: /*mamypoko
+Disallow: /about/news/fest2015
+Disallow: */sale.php
+Disallow: *amp;
+Disallow: *[
+Disallow: *?b%3D51650
+Disallow: *&filter%
+Disallow: /actions/*/
+Disallow: /user/
+Disallow: /1
+Disallow: /2
+Disallow: /3
+Disallow: /4
+Disallow: /5
+Disallow: /6
+Disallow: /7
+Disallow: /8
+Disallow: /9
+Disallow: /0
+Allow: /23*f
+Allow: /9*m
+Allow: /8*m
+
+Host: www.mladenec-shop.ru
+
+Crawl-delay: 1
+
+
+Clean-param: co&f2200&admitad_uid&f2334&pid&b&f2329&c&f2066&f2235&f2124&f2211&f2220&f2056&f2057&f2228&a&f2069&f2096&f2234&f2237&f2201&f2198&utm_source&utm_medium&utm_campaign&utm_term&f1950&f2199&f2064&f2254&f2004&f2005&pm_ad_id&pm_campaign_id&pm_phrase_id&pm_position&pm_position_type&pm_source&pm_source_type&f2006&f1948&f1949&f2335&f2338&f2333&f1951&f2003&f2210&f2127&cat&f2238&f2010&f2100&f2065&f1425&f2266&q&f2309&f2221&f2091&f2061&f2060&f2209&f2339&f2343&f2089&f1954&f2086&f2324&f1952 /
+Clean-param: f2236&f2051&f2323&f1947&f2290&f2229&f2219&s&f2125&f2230&f2114&f1999&f2336&f1705&f2337&f2326&f1990&f1953&f1991&f2049&f2011&_escaped_fragment_&manuf_id&f2062&f2068&f2014&f2202&f1996&f2222&f2322&f2099&f2203&pp&MailTrackingId&f2306&f2314&f2077&f2080&gclid&m&f2097&f2076&f2058&f2257&f2308&f2303&f2102&f2265&f2013&f2274&utm_content&f2292&f2101&f2261&f2262&f2260&x&f2264&f2319&f2090&f2312&f2253&f2293&f2294&f2291&reg_done&f2301&f2071&f2305&f2063&f2082&f2084&f2107&f2214&f2216 /
+Clean-param: f2286&f2327&f2313&utm_camp&f1989&f2072&f2231&f2328&f2126&f2342&f2067&from&f2244&width&inline&view&preview&f1998&f1985&f2320&f2008&f2252&f2001&frommarket&size&ba&f2095&f2197&rr_setemail&k50id&f1813&f2267&f2050&f2321&vozrast&f2272&f2012&f2110&f1997&f2295&f2103&f2074&weight&f2217&f2218&yclid&f2311&f2070&f2289&f2052&f2316&f2275&placement&position&adid&f2325&brend&f2121&f2276&f2015&f2098&f2318&f2093&f2273&f2002 /
+Clean-param: f2075&subid&gsaid&gsmid&_gs_cttl&gstid&gs_direct_link&ymclid&f2277&f2243&f2094&f2259&f2255&f2283&f2007&f2279&f2332&f2250&f2282&f2246&f2000&f2302&f2083&f2245&f2204&uid&f2284&f2073&f2088&f2288&_ga&f2344&f2341&f2287&f2087&f2340&rr_content&f2242&how&deliveryincluded&cvredirect&sk&f2280&f2225&f2304&f2269&f2268&f2296&f2122&f2079&upm_source&f101&f2345&f2317&age&clid&text&view-mode&mc&f2300&f2085&admitad_&f2263&login&f2059&rr_productId&rr_linkid&rr_linkpos&f2256&f1910 /
+Clean-param: f1827&f2285&f1828&f1836&f1883&f1660&f1867&f2249&f1837&f1658&f1830&f1829&f1913&f2092&id&f2281&f2248&f2331&hid&first&query&utm_nooverride&f2232&f2032&f1981&f2035&f1982&f2030&f2021&f2022&f2031&f2033&f2017&f2212&f2213&f2020&f2048&f1984&f2104&f1987&f2128&f1994&f2054&f2016&f1992&f2233&f2053&f1993&f2018 /
+Clean-param: f1995&f2040&f2019&f2115&f2117&f2215&f2046&f2025&f2118&f2009&f2055&f2116&f2105&f1986&f2119&f100&f2106&pr&f2196&f2142&f2023&f2129&f2024&f2026&f1983&f2034&f2036&order&f2120&f2123&f2027&f2206&f2081&f2045&f2310&pcat&pname&f2042&p&pg /
+Clean-param: f2029&f2037&f2270&f1988&f2108&f2205&f2043&f2028&f1420&f1195&f&f2330&f2258&f2078&f2278&f2130&razdel&f2247&f1657&f1666&ct&oaparams&item_id&article_id&ID&mode&u&m_id&sub&ajax /

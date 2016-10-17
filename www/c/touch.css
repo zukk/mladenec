@@ -1,0 +1,7 @@
+#catalog td > div:hover > div {
+    display: none;
+}
+
+.g:hover > a.fastview {
+    display: none;
+}

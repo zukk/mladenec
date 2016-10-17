@@ -1,0 +1,15 @@
+
+#catalog td > div > a:hover {
+    color: #7eb20a;
+}
+
+#catalog td > div > a > span {
+    z-index: 1;
+
+}
+
+.catalog_ie_shadow {
+    position: absolute;
+    display: block;
+    color: #fff;
+}

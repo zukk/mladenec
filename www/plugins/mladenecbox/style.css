@@ -1,0 +1,57 @@
+.mladenecbox-label {
+}
+
+.mladenecbox-label {
+	position: relative;
+	line-height: 18px;
+	padding-left: 27px;
+}
+
+.mladenecbox-label:hover{
+	color: #22bbea;
+}
+
+.mladenecbox-face {
+	float: left;
+	width: 16px;
+	height: 16px;
+	margin-top: -9px;
+	border-color: #dbdbdb;
+	border-style: solid;
+	border-width: 2px;
+	border-radius: 5px;	
+	position: absolute;
+	top: 50%;
+	left: 0px;
+}
+
+.mladenecbox-face-img {
+	position: absolute;
+	top: 10%;
+	left: 10%;
+	width: 80%;
+	height: 80%;
+	background-size: 100% 100%;
+}
+
+.mladenecbox-label.checked .mladenecbox-face-img, .mladenecbox-label:hover .mladenecbox-face-img{
+	background: url(/plugins/mladenecbox/bg-checked.svg) no-repeat;
+}
+.mladenecbox-label:hover .mladenecbox-face-img {
+	opacity: 0.3;
+}
+.mladenecbox-label.checked:hover .mladenecbox-face-img {
+	opacity: 1;
+}
+
+.mladenecbox-label:hover .mladenecbox-face {
+	border-color: #22bbea;
+}
+
+.mladenecbox-label.checked:hover .mladenecbox-face {
+	border-color: #dbdbdb;
+}
+
+.mladenecbox-label.error {
+        color: #C33636;
+}

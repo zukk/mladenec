@@ -1,0 +1,102 @@
+#wowwindow {
+    position: absolute;
+    left: 50%;/*margins are adjusted by plugin to place window at center center*/
+    top: 50%;
+   
+    
+    position: absolute;
+   
+}
+
+#wowwindow-image {
+    line-height: 0;
+}
+
+#wowwindow-image-loading {
+    background: url(images/wowwindow-loading.gif) center center no-repeat;
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -50px;
+    margin-top: -50px;
+}
+
+#wowwindow-iframe, #wowwindow-video-flash {
+    /*position: absolute;
+    left: 10px;
+    top: 10px;*/
+    position: relative;
+    z-index: 10;
+}
+
+.wowwindow-title {
+    font-weight: bold;
+    font-size: 11px;
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    color: #bfbfbf;
+    cursor: default;
+    /*IE6 rules*/
+    _display: block;
+    _position: relative;
+	display:none;
+}
+
+#wowwindow-inner {
+    padding: 10px;
+    position: relative;
+    overflow: hidden; /*contains floating elements*/
+    /*IE6 rule*/
+    _zoom: 1;
+	background-color:#fff;
+	
+}
+
+.wowwindow-controlbar {
+    background: url(images/topt.png) no-repeat;
+    overflow: hidden;
+    padding: 0 30px 0 10px;
+    line-height: 1px;
+    /*IE6 rule*/
+    _zoom: 1;
+	height:13px;
+}
+
+#wowwindow-footer
+{
+	
+    background: url(images/bott.png) no-repeat;
+    overflow: hidden;
+    padding: 0 30px 0 10px;
+    line-height: 1px;
+    /*IE6 rule*/
+    _zoom: 1;
+	height:13px;	
+	}
+
+a.wowwindow-close {
+    display: block;
+    height: 28px;
+    width: 28px;
+    text-indent: -999em;
+    background: url(images/closeb.png) no-repeat top left;
+   
+    /*rules for IE7 and below*/
+    *position: relative;
+    *right: -9px;
+    /*IE6 rule*/
+    _display: inline;
+	position:absolute;
+	z-index:40000;
+	margin-left: 826px;
+    margin-top: -15px;
+}
+
+a.wowwindow-close:hover {
+    background-position: bottom left;
+}
+
+#wowwindow-inner {
+    /**/
+}

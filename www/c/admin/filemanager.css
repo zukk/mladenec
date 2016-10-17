@@ -1,0 +1,105 @@
+[data-filemanager] {
+    cursor:pointer;
+}
+#filemanager-paper {
+    text-align:center;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    height:100%;
+    width:100%;
+    background-color: rgba(20, 20, 20, 0.7);
+    z-index:1000;  
+}
+#filemanager-body {
+    position:relative;
+    min-width:700pt;
+    min-height:200pt;
+    margin:20px 20px;
+    background-color:#fff;
+    border-radius:4px;
+    border:1px solid #ccc;
+    padding:5px;
+
+}
+#filemanager-body.wait {
+    background-image:url('/i/load.gif');
+    background-position: center;
+    background-repeat: no-repeat;
+}
+#filemanager-close {
+    
+    cursor:pointer;
+    
+}
+#filemanager-content {
+    overflow:hidden;
+    background-color:#fff;
+}
+ul.filemanager-folders, div.filemanager-folders-add {
+    text-align: left;
+    border:1px solid #ccc;
+    margin:5px;
+    border-radius:4px;
+    padding:5px;
+}
+div.filemanager-top-box {
+    text-align: left;
+    border:1px solid #ccc;
+    border-radius:4px;
+    padding:5px;
+    background-color: #eee;
+}
+ul.filemanager-folders {
+    list-style-type: none;
+    max-height:700px;
+    overflow-y: scroll;
+}
+
+ul.filemanager-folders li span {
+    background-image: url('/i/filemanager/folder.png');
+    background-position: left center;
+    background-repeat: no-repeat;
+    padding-left:25px;
+    cursor:pointer;
+}
+div.filemanager-files-add {
+    text-align:left;
+}
+ul.filemanager-files {
+    list-style-type: none;
+    max-height:500px;
+    overflow-y: scroll;
+}
+ul.filemanager-files li {
+    
+    font-size:small;
+    border:1px solid #ccc;
+    cursor:pointer;
+    height:170px;
+    min-width: 120px;
+    overflow-y: hidden;
+}
+ul.filemanager-files li div {
+    margin:5px;
+    padding:2px;
+    height:110px;
+}
+ul.filemanager-files li div img {
+    margin:auto;
+}
+div.filemanager-files-add input[type=button] {
+    margin-left:3px;
+    padding:3px;
+}
+div.filemanager-pathway {
+    text-align: left;
+}
+div.filemanager-pathway span {
+    background-image: url('/i/filemanager/folder.png');
+    background-position: left center;
+    background-repeat: no-repeat;
+    padding-left:25px;
+    line-height:25px;
+    cursor:pointer;
+}

@@ -1,0 +1,1 @@
+<script>document.write(Base64.decode('{$content}'));</script>

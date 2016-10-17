@@ -1,0 +1,28 @@
+.mladenecradio {
+	line-height: 24px;
+	cursor: pointer;
+}
+
+.mladenecradio:hover {
+	color: #0090cc;
+}
+
+.mladenecradio:hover i {
+	border-color: #22bbea;
+	background: #bfedfd;
+}
+
+.mladenecradio i {
+	display: block;
+	float: left;
+	margin-right: 12px;
+	width: 24px;
+	height: 24px;
+	border-radius: 24px;
+	box-shadow: inset 0 0 0 4px #fff;
+	border: 2px solid #dbdbdb;
+}
+
+.mladenecradio.checked i {
+	background: #22bbea;
+}

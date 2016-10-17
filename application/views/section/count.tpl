@@ -1,0 +1,1 @@
+<strong>{'товар'|plural:$count}</strong> <a href="{$query}">Показать</a>

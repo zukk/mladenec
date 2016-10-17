@@ -1,0 +1,56 @@
+.mladenecaccordeon {
+	display: block;
+}
+
+.mladenecaccordeon > div {
+	border-width: 0 1px 1px 1px;
+	border-style: solid;
+	border-color: #e8e8e8;
+	cursor: pointer;
+}
+.mladenecaccordeon > div > div {
+	cursor: auto;
+}
+
+.mladenecaccordeon > div:hover  {
+	background-color: #a8f2ff;
+	border-color: #a8f2ff;
+}
+
+.mladenecaccordeon > div > span {
+	display: block;
+	line-height: 80px;
+	padding-left: 30px;
+	font-size: 1.2em;
+}
+
+.mladenecaccordeon > div > div {
+	padding: 10px 20px;
+}
+
+.mladenecaccordeon > div.active {
+	border-color: #43dcf3;
+	background: #43dcf3;
+	border-width: 1px !important;
+}
+.mladenecaccordeon > div.active > span {
+	cursor: inherit;
+	font-weight: bold;
+	color: #fff;
+}
+.mladenecaccordeon > div.active > div {
+	background: #fff;
+	display: block;
+}
+
+.mladenecaccordeon > div:nth-child(1) {
+	border-width: 1px 1px 0 1px;
+	border-radius: 8px 8px 0 0;
+}
+.mladenecaccordeon > div:nth-last-child(1) {
+	border-width: 0 1px 1px 1px;
+	border-radius: 0 0 8px 8px;
+}
+.mladenecaccordeon > div:nth-last-child(1) > div {
+	border-radius: 0 0 8px 8px;
+}

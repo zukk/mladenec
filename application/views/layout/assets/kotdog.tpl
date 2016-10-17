@@ -1,0 +1,1 @@
+<link href="/c/{$vitrina}.css" rel="stylesheet" type="text/css" />
